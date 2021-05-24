@@ -1,4 +1,6 @@
-# Getting Started with Create React App
+# Uniswap V3 Pools
+
+A UI to manage Uniswap v3 pools.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

@@ -8,10 +8,14 @@ export function usePool(
   token0: Token | null,
   token1: Token | null,
   fee: number
-) {
+): {
+  pool: Pool | null;
+  poolAddress: string | null;
+} {
   const contract = usePoolContract(token0, token1, fee);
 
   const [pool, setPool] = useState<Pool | null>(null);
+  const [poolAddress, setPoolAddress] = useState<string | null>(null);
 
   useEffect(() => {
     const call = async () => {
@@ -19,12 +23,15 @@ export function usePool(
         return;
       }
 
+      setPoolAddress(contract.address.toLowerCase());
+
       const result = await contract.functions.slot0();
       const sqrtPriceX96 = result[0];
       const tickCurrent = result[1];
 
       const liquidityResult = await contract.functions.liquidity();
       const liquidity = liquidityResult[0];
+
       setPool(
         new Pool(
           token0 as Token,
@@ -40,5 +47,5 @@ export function usePool(
     call();
   }, [contract, token0, token1, fee]);
 
-  return pool;
+  return { pool, poolAddress };
 }

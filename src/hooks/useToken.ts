@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { parseBytes32String } from "@ethersproject/strings";
-import { ChainId, Token } from "@uniswap/sdk-core";
+import { ChainId, Token, wrappedCurrency } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
 
 import { useTokenContract, useBytes32TokenContract } from "./useContract";
@@ -46,5 +46,5 @@ export function useToken(address: string | undefined): Token | null {
     initToken();
   }, [address, contract, bytes32Contract, chainId]);
 
-  return token;
+  return token && chainId ? wrappedCurrency(token, chainId) : null;
 }

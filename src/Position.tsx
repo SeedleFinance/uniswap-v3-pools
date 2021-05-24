@@ -1,45 +1,40 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { BigNumber } from "@ethersproject/bignumber";
+import { CurrencyAmount, Price, Token as UniToken } from "@uniswap/sdk-core";
+import { Pool } from "@uniswap/v3-sdk";
 
-import { useToken } from "./hooks/useToken";
-import { usePool } from "./hooks/usePool";
 import { usePosition } from "./hooks/usePosition";
 import { usePositionFees } from "./hooks/usePositionFees";
+import { useUSDConversion } from "./hooks/useUSDConversion";
 
+import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
+
+import Transaction from "./Transaction";
 import Token from "./Token";
 
 export interface PositionProps {
   id: BigNumber;
-  token0address: string;
-  token1address: string;
-  fee: number;
+  pool: Pool;
+  quoteToken: UniToken;
   tickLower: number;
   tickUpper: number;
   liquidity: BigNumber;
-  feeGrowthInside0LastX128: BigNumber;
-  feeGrowthInside1LastX128: BigNumber;
-  tokensOwed0: BigNumber;
-  tokensOwed1: BigNumber;
+  priceLower: Price<UniToken, UniToken>;
+  priceUpper: Price<UniToken, UniToken>;
+  transactions: any[];
 }
 
 function Position({
   id,
-  token0address,
-  token1address,
-  fee,
+  pool,
+  quoteToken,
   tickLower,
   tickUpper,
   liquidity,
-  feeGrowthInside0LastX128,
-  feeGrowthInside1LastX128,
-  tokensOwed0,
-  tokensOwed1,
+  priceLower,
+  priceUpper,
+  transactions,
 }: PositionProps) {
-  const token0 = useToken(token0address);
-  const token1 = useToken(token1address);
-
-  const pool = usePool(token0, token1, fee);
-
   const position = usePosition(
     pool,
     liquidity.toString(),
@@ -47,41 +42,213 @@ function Position({
     tickUpper
   );
 
+  const getUSDValue = useUSDConversion(quoteToken);
+
   const uncollectedFees = usePositionFees(pool, id);
 
-  const isInRange = useMemo(() => {
-    if (!pool) {
-      return false;
+  const totalLiquidity = useMemo(() => {
+    if (!quoteToken || !pool || !position) {
+      return 0;
     }
-    return tickLower < pool.tickCurrent && tickUpper > pool.tickCurrent;
-  }, [pool, tickLower, tickUpper]);
+    return pool.token0.equals(quoteToken)
+      ? pool.priceOf(pool.token1).quote(position.amount1).add(position.amount0)
+      : pool.priceOf(pool.token0).quote(position.amount0).add(position.amount1);
+  }, [quoteToken, pool, position]);
 
-  if (!token0 || !token1 || !pool || !position) {
+  const [showTransactions, setShowTransactions] = useState(false);
+  const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
+
+  const { percent0, percent1 } = useMemo(() => {
+    if (
+      !quoteToken ||
+      !pool ||
+      !position ||
+      totalLiquidity === 0 ||
+      totalLiquidity.equalTo(0)
+    ) {
+      return { percent0: "0", percent1: "0" };
+    }
+    const [value0, value1] = pool.token0.equals(quoteToken)
+      ? [position.amount0, pool.priceOf(pool.token1).quote(position.amount1)]
+      : [pool.priceOf(pool.token0).quote(position.amount0), position.amount1];
+    const calcPercent = (val: CurrencyAmount<UniToken>) =>
+      (
+        (parseFloat(val.toSignificant(15)) /
+          parseFloat(totalLiquidity.toSignificant(15))) *
+        100
+      ).toFixed(2);
+
+    return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
+  }, [totalLiquidity, position, pool, quoteToken]);
+
+  const totalUncollectedFees = useMemo(() => {
+    if (!quoteToken || !pool || !uncollectedFees[0] || !uncollectedFees[1]) {
+      return 0;
+    }
+    return pool.token0.equals(quoteToken)
+      ? pool
+          .priceOf(pool.token1)
+          .quote(uncollectedFees[1])
+          .add(uncollectedFees[0])
+      : pool
+          .priceOf(pool.token0)
+          .quote(uncollectedFees[0])
+          .add(uncollectedFees[1]);
+  }, [quoteToken, pool, uncollectedFees]);
+
+  const totalValue = useMemo(() => {
+    if (totalLiquidity === 0 || totalUncollectedFees === 0) {
+      return 0;
+    }
+
+    return totalLiquidity.add(totalUncollectedFees);
+  }, [totalLiquidity, totalUncollectedFees]);
+
+  const formattedRange = useMemo(() => {
+    const prices = priceLower.lessThan(priceUpper)
+      ? [priceLower, priceUpper]
+      : [priceUpper, priceLower];
+    const decimals = Math.min(quoteToken.decimals, 8);
+    return prices.map((price) => price.toFixed(decimals)).join(" - ");
+  }, [priceUpper, priceLower, quoteToken]);
+
+  const positionStatus = useMemo((): PositionStatus => {
+    if (!pool) {
+      return PositionStatus.Inactive;
+    }
+
+    return getPositionStatus(pool.tickCurrent, {
+      tickUpper,
+      tickLower,
+      liquidity,
+    });
+  }, [pool, tickLower, tickUpper, liquidity]);
+
+  const statusLabel = useMemo(() => {
+    const labels = {
+      [PositionStatus.Inactive]: "Inactive",
+      [PositionStatus.InRange]: "In Range",
+      [PositionStatus.OutRange]: "Out of Range",
+    };
+    return labels[positionStatus];
+  }, [positionStatus]);
+
+  const getStatusColor = (status: PositionStatus) => {
+    const colors = {
+      [PositionStatus.Inactive]: "text-gray-500",
+      [PositionStatus.InRange]: "text-green-500",
+      [PositionStatus.OutRange]: "text-yellow-500",
+    };
+    return colors[positionStatus];
+  };
+
+  if (!pool || !position) {
     return null;
   }
 
   return (
-    <div className="mx-2 my-4">
-      <div>Id: {id.toString()}</div>
-      <div>
-        Token0: <Token name={token0.name} symbol={token0.symbol} />
-      </div>
-      <div>
-        Token1: <Token name={token1.name} symbol={token1.symbol} />
-      </div>
-      <div>Fee: {fee / 10000}</div>
-      <div>
-        Range: {position.token0PriceLower.toFixed()} -{" "}
-        {position.token0PriceUpper.toFixed()}
-      </div>
-      <div>Token0 Price: {pool.token0Price.toFixed()}</div>
-      <div>Token1 Price: {pool.token1Price.toFixed()}</div>
-      <div>Amount 0: {position.amount0.toFixed(4)}</div>
-      <div>Amount 1: {position.amount1.toFixed(4)}</div>
-      <div>Uncollected Fees (token 0): {uncollectedFees[0]?.toFixed()}</div>
-      <div>Uncollected Fees (token 1): {uncollectedFees[1]?.toFixed()}</div>
-      <div>{isInRange ? "In Range" : "Out of Range"}</div>
-    </div>
+    <>
+      <tr
+        className={
+          positionStatus === PositionStatus.Inactive ? "text-gray-500" : ""
+        }
+      >
+        <td>
+          <div className="text-lg font-bold">{formattedRange}</div>
+          <div className={`text-md ${getStatusColor(positionStatus)}`}>
+            {statusLabel}
+          </div>
+        </td>
+        <td>
+          <div>
+            <Token symbol={pool.token0.symbol} />:{" "}
+            {position.amount0.toSignificant(4)}({percent0}%)
+          </div>
+          <div>
+            <Token symbol={pool.token1.symbol} />:{" "}
+            {position.amount1.toSignificant(4)}({percent1}%)
+          </div>
+        </td>
+
+        <td>
+          <div>USD {getUSDValue(totalLiquidity)}</div>
+        </td>
+        <td>
+          <div>
+            <button
+              style={{ borderBottom: "1px dotted" }}
+              onClick={() =>
+                setExpandedUncollectedFees(!expandedUncollectedFees)
+              }
+            >
+              USD {getUSDValue(totalUncollectedFees)}
+            </button>
+          </div>
+          {expandedUncollectedFees ? (
+            <div className="flex flex-col text-sm">
+              <div>
+                {uncollectedFees[0]?.toFixed(6)}{" "}
+                <Token symbol={pool.token0.symbol} />
+              </div>
+              <div>
+                {uncollectedFees[1]?.toFixed(6)}{" "}
+                <Token symbol={pool.token1.symbol} />
+              </div>
+            </div>
+          ) : (
+            <div></div>
+          )}
+        </td>
+        <td>
+          <div>USD {getUSDValue(totalValue)}</div>
+        </td>
+        <td>
+          <div className="flex my-2 justify-end">
+            <button
+              className="text-blue-500 mr-2"
+              onClick={() => {
+                setShowTransactions(!showTransactions);
+              }}
+            >
+              Transactions
+            </button>
+            <button
+              className="text-blue-500 mr-2"
+              onClick={() => {
+                window.open(`https://app.uniswap.org/#/pool/${id}`);
+              }}
+            >
+              Manage
+            </button>
+          </div>
+        </td>
+      </tr>
+      {showTransactions && (
+        <tr>
+          <td colSpan={4}>
+            <table className="table-auto border-separate w-full my-2">
+              <thead>
+                <tr className="text-left">
+                  <th>Type</th>
+                  <th>Timestamp</th>
+                  <th>Distribution</th>
+                  <th>Liquidity</th>
+                  <th>Gas cost</th>
+                </tr>
+              </thead>
+              {transactions.map((tx: any) => (
+                <Transaction
+                  key={tx.id}
+                  pool={pool}
+                  quoteToken={quoteToken}
+                  {...tx}
+                />
+              ))}
+            </table>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 

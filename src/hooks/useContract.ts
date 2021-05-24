@@ -114,6 +114,8 @@ export function usePoolContract(
   withSignerIfPossible?: boolean
 ): Contract | null {
   const address =
-    token0 && token1 ? Pool.getAddress(token0, token1, fee) : undefined;
+    token0 && token1 && !token0.equals(token1)
+      ? Pool.getAddress(token0, token1, fee)
+      : undefined;
   return useContract(address, V3PoolABI, withSignerIfPossible);
 }
