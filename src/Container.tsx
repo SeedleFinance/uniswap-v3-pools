@@ -31,12 +31,12 @@ function Container() {
 
   if (active) {
     return (
-      <div className="lg:container mx-auto">
+      <div className="lg:container mx-auto pb-4">
         <div className="w-full px-2 py-4 flex justify-end">
           <Account address={account} />
         </div>
         <div>
-          <h2 className="text-4xl text-center font-bold text-red-600 m-4">
+          <h2 className="text-5xl text-center font-bold text-red-600 m-5">
             Uniswap V3 Pools
           </h2>
           <div>
