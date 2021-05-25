@@ -10,7 +10,7 @@ function Token({ name, symbol }: TokenProps) {
   return (
     <div className="inline">
       <span className="pr-1" title={name}>
-        {symbolOrName === "WETH9" ? "ETH" : symbolOrName}
+        {symbolOrName && symbolOrName.startsWith("WETH") ? "ETH" : symbolOrName}
       </span>
     </div>
   );
