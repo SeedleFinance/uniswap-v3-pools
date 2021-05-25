@@ -40,19 +40,6 @@ const QUERY_MINTS_BURNS = gql`
         gasPrice
       }
     }
-
-    collects(where: { owner: $origin, pool: $poolAddress }) {
-      tickLower
-      tickUpper
-      timestamp
-      amount0
-      amount1
-      transaction {
-        id
-        gasUsed
-        gasPrice
-      }
-    }
   }
 `;
 
@@ -140,7 +127,6 @@ export function useTransactions(
 
   const mints = data.mints.map(formatTx("mint"));
   const burns = data.burns.map(formatTx("burn"));
-  const collects = data.burns.map(formatTx("collect"));
 
-  return [...mints, ...burns, collects];
+  return [...mints, ...burns].sort((a, b) => a.timestamp - b.timestamp);
 }
