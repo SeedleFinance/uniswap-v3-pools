@@ -66,12 +66,12 @@ function Transaction({
 
   return (
     <tr className="">
-      <td>{type}</td>
       <td>
         <a href={`https://etherscan.io/tx/${id}`} className="text-blue-500">
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
+      <td>{type}</td>
       <td>
         <div>
           <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}(

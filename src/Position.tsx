@@ -55,6 +55,17 @@ function Position({
       : pool.priceOf(pool.token0).quote(position.amount0).add(position.amount1);
   }, [quoteToken, pool, position]);
 
+  const tickDistance = useMemo(() => {
+    const { tickCurrent } = pool;
+    if (tickCurrent < tickLower) {
+      return tickLower - tickCurrent;
+    } else if (tickCurrent > tickUpper) {
+      return tickCurrent - tickUpper;
+    } else {
+      return 0;
+    }
+  }, [pool, tickUpper, tickLower]);
+
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
 
@@ -156,7 +167,8 @@ function Position({
         <td>
           <div className="text-lg font-bold">{formattedRange}</div>
           <div className={`text-md ${getStatusColor(positionStatus)}`}>
-            {statusLabel}
+            {statusLabel}{" "}
+            {tickDistance > 0 ? `(distance: ${tickDistance} ticks)` : ""}
           </div>
         </td>
         <td>
@@ -229,8 +241,8 @@ function Position({
             <table className="table-auto border-separate w-full my-2">
               <thead>
                 <tr className="text-left">
-                  <th>Type</th>
                   <th>Timestamp</th>
+                  <th>Type</th>
                   <th>Distribution</th>
                   <th>Liquidity</th>
                   <th>Gas cost</th>
