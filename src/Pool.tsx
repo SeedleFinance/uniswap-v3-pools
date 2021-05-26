@@ -104,7 +104,11 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
   const toggleShowPositions = () => setShowPositions(!showPositions);
 
   if (!baseToken || !quoteToken || !chainId || !pool) {
-    return null;
+    return (
+      <div className="my-4 p-4 border rounded-md">
+        <div className="text-gray-400">Loading...</div>
+      </div>
+    );
   }
 
   return (
