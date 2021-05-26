@@ -11,6 +11,7 @@ import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 
 import Transaction from "./Transaction";
 import Token from "./Token";
+import RangeVisual from "./RangeVisual";
 
 export interface PositionProps {
   id: BigNumber;
@@ -54,17 +55,6 @@ function Position({
       ? pool.priceOf(pool.token1).quote(position.amount1).add(position.amount0)
       : pool.priceOf(pool.token0).quote(position.amount0).add(position.amount1);
   }, [quoteToken, pool, position]);
-
-  const tickDistance = useMemo(() => {
-    const { tickCurrent } = pool;
-    if (tickCurrent < tickLower) {
-      return tickLower - tickCurrent;
-    } else if (tickCurrent > tickUpper) {
-      return tickCurrent - tickUpper;
-    } else {
-      return 0;
-    }
-  }, [pool, tickUpper, tickLower]);
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
@@ -168,8 +158,12 @@ function Position({
           <div className="text-lg font-bold">{formattedRange}</div>
           <div className={`text-md ${getStatusColor(positionStatus)}`}>
             {statusLabel}{" "}
-            {tickDistance > 0 ? `(distance: ${tickDistance} ticks)` : ""}
           </div>
+          <RangeVisual
+            tickCurrent={pool.tickCurrent}
+            tickLower={tickLower}
+            tickUpper={tickUpper}
+          />
         </td>
         <td>
           <div>

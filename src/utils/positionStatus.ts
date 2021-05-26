@@ -15,6 +15,8 @@ export function getPositionStatus(
   tickCurrent: number,
   position: PositionFields
 ): PositionStatus {
+  console.log("in utils: tick current", tickCurrent);
+  console.log("in utils: position", position);
   if (position.liquidity.isZero()) {
     return PositionStatus.Inactive;
   } else {
