@@ -18,7 +18,10 @@ function RangeVisual({ tickCurrent, tickLower, tickUpper }: RangeVisualProps) {
   const beforeRangeWidth = Math.abs((minTick - rangeStart) * scale);
   const rangeWidth = Math.abs((maxTick - minTick) * scale);
   const afterRangeWidth = Math.abs((rangeEnd - maxTick) * scale);
-  const currentTickDistance = (tickCurrent - rangeStart) * scale;
+  const currentTickDistance = Math.min(
+    (tickCurrent - rangeStart) * scale,
+    cssWidth
+  );
 
   return (
     <div
