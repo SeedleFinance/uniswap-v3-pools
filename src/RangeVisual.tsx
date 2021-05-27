@@ -23,8 +23,8 @@ function RangeVisual({
   } else if (tickSpacing === 10) {
     spaceMultiplier = 5;
   }
-  const rangeStart = tickCurrent / (spacing * spaceMultiplier);
-  const rangeEnd = tickCurrent * (spacing * spaceMultiplier);
+  const rangeStart = tickCurrent - spacing * spaceMultiplier;
+  const rangeEnd = tickCurrent + spacing * spaceMultiplier;
 
   const barWidth = 250;
   const scale = barWidth / (rangeEnd - rangeStart);

@@ -154,7 +154,7 @@ function Position({
           positionStatus === PositionStatus.Inactive ? "text-gray-500" : ""
         }
       >
-        <td>
+        <td className="flex flex-col justify-between">
           <div className="text-lg font-bold">{formattedRange}</div>
           <div className={`text-md ${getStatusColor(positionStatus)}`}>
             {statusLabel}{" "}
