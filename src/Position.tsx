@@ -163,6 +163,7 @@ function Position({
             tickCurrent={pool.tickCurrent}
             tickLower={tickLower}
             tickUpper={tickUpper}
+            tickSpacing={pool.tickSpacing}
           />
         </td>
         <td>
