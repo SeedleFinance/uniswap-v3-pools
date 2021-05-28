@@ -43,6 +43,23 @@ const QUERY_MINTS_BURNS = gql`
   }
 `;
 
+const QUERY_COLLECTS = gql`
+  query collectsByTransactions($ids: [String]!) {
+    collects(where: { transaction_in: $ids }) {
+      tickLower
+      tickUpper
+      timestamp
+      amount0
+      amount1
+      transaction {
+        id
+        gasUsed
+        gasPrice
+      }
+    }
+  }
+`;
+
 interface PoolTransactionResponse {
   tickLower: string;
   tickUpper: string;
@@ -52,7 +69,7 @@ interface PoolTransactionResponse {
   transaction: { id: string; gasUsed: string; gasPrice: string };
 }
 
-interface FormattedPoolTransaction {
+export interface FormattedPoolTransaction {
   id: string;
   type: string;
   tickLower: number;
@@ -82,6 +99,8 @@ export function useTransactions(
     variables: { origin: account, poolAddress },
     fetchPolicy: "network-only",
   });
+
+  const collectData = useCollects(data ? data.burns : []);
 
   if (loading || error || !data || !token0 || !token1) {
     return [];
@@ -127,6 +146,60 @@ export function useTransactions(
 
   const mints = data.mints.map(formatTx("mint"));
   const burns = data.burns.map(formatTx("burn"));
+  const collects = collectData.map(formatTx("collect"));
 
-  return [...mints, ...burns].sort((a, b) => a.timestamp - b.timestamp);
+  const reconcileBurnsAndCollects = (
+    accm: FormattedPoolTransaction[],
+    tx: FormattedPoolTransaction
+  ) => {
+    const prevTxIdx = accm.findIndex((ptx) => ptx.id === tx.id);
+    // no previous tx found, returning early
+    if (prevTxIdx === -1) {
+      return [...accm, tx];
+    }
+
+    const prevTx = accm[prevTxIdx];
+
+    // Burn transaction with 0 liquidity, this means no liquidity was burnt only fees collected.
+    // Remove the transaction from the list
+    if (prevTx.amount0.equalTo(0) && prevTx.amount1.equalTo(0)) {
+      accm.splice(prevTxIdx, 1);
+    } else if (tx.type === "collect") {
+      // burn with liquidity + fees
+      // reset the gas cost (already included in the burn)
+      tx.gas = {
+        ...tx.gas,
+        cost: BigNumber.from(0),
+        costFormatted: "0.00",
+        costUSD: "0.00",
+      };
+
+      // subtract the burn amount to get only the fees collected
+      tx.amount0 = tx.amount0.subtract(prevTx.amount0);
+      tx.amount1 = tx.amount1.subtract(prevTx.amount1);
+    }
+
+    return [...accm, tx];
+  };
+
+  return [...mints, ...burns, ...collects]
+    .reduce(reconcileBurnsAndCollects, [] as FormattedPoolTransaction[])
+    .sort(
+      (a: FormattedPoolTransaction, b: FormattedPoolTransaction) =>
+        a.timestamp - b.timestamp
+    );
+}
+
+export function useCollects(burns: any[]) {
+  const ids = burns.map(({ transaction }) => transaction.id);
+  const { loading, error, data } = useQuery(QUERY_COLLECTS, {
+    variables: { ids },
+    fetchPolicy: "network-only",
+  });
+
+  if (loading || error || !data) {
+    return [];
+  }
+
+  return data.collects;
 }

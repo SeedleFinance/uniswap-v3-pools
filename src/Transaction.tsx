@@ -64,6 +64,17 @@ function Transaction({
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
   }, [totalLiquidity, pool, quoteToken, amount0, amount1]);
 
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case "mint":
+        return "Add liquidity";
+      case "burn":
+        return "Remove liquidity";
+      case "collect":
+        return "Collect fees";
+    }
+  };
+
   return (
     <tr className="">
       <td>
@@ -71,7 +82,7 @@ function Transaction({
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
-      <td>{type}</td>
+      <td>{getTypeLabel(type)}</td>
       <td>
         <div>
           <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}(

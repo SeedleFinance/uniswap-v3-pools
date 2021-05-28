@@ -22,7 +22,7 @@ export function useUSDConversion(quoteToken: Token) {
       : 0;
     return (val: CurrencyAmount<Token> | number) => {
       if (val === 0) {
-        return "0";
+        return "0.00";
       }
 
       if (quoteToken.equals(USDC)) {

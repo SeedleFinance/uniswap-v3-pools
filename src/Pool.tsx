@@ -8,7 +8,10 @@ import { DAI, USDC, USDT, FEI, LUSD } from "./constants";
 
 import { useToken } from "./hooks/useToken";
 import { usePool } from "./hooks/usePool";
-import { useTransactions } from "./hooks/useTransactions";
+import {
+  useTransactions,
+  FormattedPoolTransaction,
+} from "./hooks/useTransactions";
 
 import Token from "./Token";
 import Position from "./Position";
@@ -93,7 +96,7 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
         priceLower,
         priceUpper,
         transactions: transactions.filter(
-          (tx) =>
+          (tx: FormattedPoolTransaction) =>
             tx.tickLower === position.tickLower &&
             tx.tickUpper === position.tickUpper
         ),

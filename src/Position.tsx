@@ -181,7 +181,7 @@ function Position({
           <div>USD {getUSDValue(totalLiquidity)}</div>
         </td>
         <td>
-          <div>
+          <div className="flex flex-col items-start justify-center">
             <button
               style={{ borderBottom: "1px dotted" }}
               onClick={() =>
@@ -190,21 +190,21 @@ function Position({
             >
               USD {getUSDValue(totalUncollectedFees)}
             </button>
+            {expandedUncollectedFees ? (
+              <div className="flex flex-col text-sm">
+                <div>
+                  {uncollectedFees[0]?.toFixed(6)}{" "}
+                  <Token symbol={pool.token0.symbol} />
+                </div>
+                <div>
+                  {uncollectedFees[1]?.toFixed(6)}{" "}
+                  <Token symbol={pool.token1.symbol} />
+                </div>
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
-          {expandedUncollectedFees ? (
-            <div className="flex flex-col text-sm">
-              <div>
-                {uncollectedFees[0]?.toFixed(6)}{" "}
-                <Token symbol={pool.token0.symbol} />
-              </div>
-              <div>
-                {uncollectedFees[1]?.toFixed(6)}{" "}
-                <Token symbol={pool.token1.symbol} />
-              </div>
-            </div>
-          ) : (
-            <div></div>
-          )}
         </td>
         <td>
           <div>USD {getUSDValue(totalValue)}</div>
