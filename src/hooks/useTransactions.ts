@@ -164,6 +164,13 @@ export function useTransactions(
     // Remove the transaction from the list
     if (prevTx.amount0.equalTo(0) && prevTx.amount1.equalTo(0)) {
       accm.splice(prevTxIdx, 1);
+    } else if (
+      tx.type === "burn" &&
+      tx.amount0.equalTo(0) &&
+      tx.amount1.equalTo(0)
+    ) {
+      // an empty burn, this will be followed by a collect. Don't include this tx.
+      return [...accm];
     } else if (tx.type === "collect") {
       // burn with liquidity + fees
       // reset the gas cost (already included in the burn)
