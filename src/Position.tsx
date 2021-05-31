@@ -164,6 +164,7 @@ function Position({
             tickLower={tickLower}
             tickUpper={tickUpper}
             tickSpacing={pool.tickSpacing}
+            flip={pool.token0.equals(quoteToken)}
           />
         </td>
         <td>

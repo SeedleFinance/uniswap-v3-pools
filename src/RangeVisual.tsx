@@ -5,6 +5,7 @@ interface RangeVisualProps {
   tickLower: number;
   tickUpper: number;
   tickSpacing: number;
+  flip: boolean;
 }
 
 function RangeVisual({
@@ -12,9 +13,11 @@ function RangeVisual({
   tickLower,
   tickUpper,
   tickSpacing,
+  flip,
 }: RangeVisualProps) {
-  const minTick = Math.min(tickLower, tickUpper);
-  const maxTick = Math.max(tickLower, tickUpper);
+  let [minTick, maxTick] = [tickLower, tickUpper].sort((a, b) =>
+    flip ? a - b : b - a
+  );
 
   const spacing = tickSpacing / 100;
   let spaceMultiplier = 2;
