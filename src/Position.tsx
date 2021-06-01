@@ -193,7 +193,11 @@ function Position({
   const returnPercent = useMemo(() => {
     return (
       (parseFloat(returnValue.toSignificant(2)) /
-        parseFloat(totalMintValue.add(totalTransactionCost).toSignificant(2))) *
+        parseFloat(
+          totalMintValue
+            .add(convertEthToQuote(totalTransactionCost))
+            .toSignificant(2)
+        )) *
       100
     ).toFixed(2);
   }, [totalMintValue, totalTransactionCost, returnValue]);
