@@ -204,10 +204,13 @@ function Position({
 
   const apr = useMemo(() => {
     const startDate = new Date(transactions[0].timestamp * 1000);
-    const secondsSince = differenceInSeconds(new Date(), startDate);
+    const endDate = liquidity.isZero()
+      ? new Date(transactions[transactions.length - 1].timestamp * 1000)
+      : new Date();
+    const secondsSince = differenceInSeconds(endDate, startDate);
     const yearInSeconds = 365 * 24 * 60 * 60;
     return (returnPercent / secondsSince) * yearInSeconds;
-  }, [returnPercent, transactions]);
+  }, [returnPercent, transactions, liquidity]);
 
   const statusLabel = useMemo(() => {
     const labels = {
