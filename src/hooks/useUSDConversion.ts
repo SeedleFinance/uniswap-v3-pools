@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { useWeb3React } from "@web3-react/core";
+import { WETH9, ChainId, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { usePool } from "./usePool";
 import { USDC, DAI, USDT, LUSD } from "../constants";
@@ -39,4 +40,25 @@ export function useUSDConversion(quoteToken: Token) {
       ).toFixed(2);
     };
   }, [quoteToken, pool]);
+}
+
+export function useEthToQuote(quoteToken: Token) {
+  let fee = 0.3;
+  const { chainId } = useWeb3React();
+  const weth = WETH9[chainId as ChainId];
+  const { pool } = usePool(quoteToken, weth, fee * 10000);
+
+  return useMemo(() => {
+    return (val: CurrencyAmount<Token>) => {
+      if (quoteToken.equals(weth)) {
+        return val;
+      }
+
+      if (!pool) {
+        return CurrencyAmount.fromRawAmount(quoteToken, 0);
+      }
+
+      return pool.priceOf(weth).quote(val);
+    };
+  }, [quoteToken, pool, weth]);
 }

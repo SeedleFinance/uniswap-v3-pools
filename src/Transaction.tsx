@@ -1,5 +1,12 @@
 import React, { useMemo } from "react";
-import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
+import { useWeb3React } from "@web3-react/core";
+import {
+  WETH9,
+  ChainId,
+  Price,
+  Token,
+  CurrencyAmount,
+} from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
@@ -16,7 +23,7 @@ export interface TransactionProps {
   amount1: CurrencyAmount<Token>;
   priceLower: Price<Token, Token>;
   priceUpper: Price<Token, Token>;
-  gas: { costFormatted: string; costUSD: string };
+  gas: { costCurrency: CurrencyAmount<Token> };
 }
 
 function Transaction({
@@ -31,7 +38,9 @@ function Transaction({
   priceUpper,
   gas,
 }: TransactionProps) {
+  const { chainId } = useWeb3React();
   const getUSDValue = useUSDConversion(quoteToken);
+  const getGasUSDValue = useUSDConversion(WETH9[chainId as ChainId]);
 
   const totalLiquidity = useMemo(() => {
     if (!quoteToken || !pool) {
@@ -93,8 +102,8 @@ function Transaction({
           {percent1}%)
         </div>
       </td>
-      <td>USD {getUSDValue(totalLiquidity)}</td>
-      <td>USD {gas.costUSD}</td>
+      <td>${getUSDValue(totalLiquidity)}</td>
+      <td>${getGasUSDValue(gas.costCurrency)}</td>
     </tr>
   );
 }
