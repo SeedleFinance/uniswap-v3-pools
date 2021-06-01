@@ -165,7 +165,7 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
                     style={{ borderBottom: "1px dotted", cursor: "help" }}
                     title="liquidity gain + fees - gas cost"
                   >
-                    Return
+                    Net Return
                   </span>
                 </th>
                 <th>
