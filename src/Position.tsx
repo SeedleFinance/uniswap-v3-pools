@@ -203,6 +203,10 @@ function Position({
   }, [totalMintValue, totalTransactionCost, returnValue, convertEthToQuote]);
 
   const apr = useMemo(() => {
+    if (!transactions.length) {
+      return 0;
+    }
+
     const startDate = new Date(transactions[0].timestamp * 1000);
     const endDate = liquidity.isZero()
       ? new Date(transactions[transactions.length - 1].timestamp * 1000)
