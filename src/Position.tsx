@@ -198,7 +198,7 @@ function Position({
     ).toFixed(2);
   }, [totalMintValue, totalTransactionCost, returnValue]);
 
-  const apy = useMemo(() => {
+  const apr = useMemo(() => {
     const startDate = new Date(transactions[0].timestamp * 1000);
     const secondsSince = differenceInSeconds(new Date(), startDate);
     const yearInSeconds = 365 * 24 * 60 * 60;
@@ -302,8 +302,8 @@ function Position({
           </div>
         </td>
         <td>
-          <div className={apy < 0 ? "text-red-500" : "text-green-500"}>
-            {apy.toFixed(2)}%
+          <div className={apr < 0 ? "text-red-500" : "text-green-500"}>
+            {apr.toFixed(2)}%
           </div>
         </td>
 

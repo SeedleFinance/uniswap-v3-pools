@@ -173,7 +173,7 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
                     style={{ borderBottom: "1px dotted", cursor: "help" }}
                     title="Annual Percentage Return"
                   >
-                    APY
+                    APR
                   </span>
                 </th>
                 <th></th>
