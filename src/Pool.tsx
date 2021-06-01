@@ -168,6 +168,14 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
                     Return
                   </span>
                 </th>
+                <th>
+                  <span
+                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    title="Annual Percentage Return"
+                  >
+                    APY
+                  </span>
+                </th>
                 <th></th>
               </tr>
             </thead>

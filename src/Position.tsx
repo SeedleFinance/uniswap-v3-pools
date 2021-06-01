@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
+import differenceInSeconds from "date-fns/differenceInSeconds";
 import { BigNumber } from "@ethersproject/bignumber";
 import {
   WETH9,
@@ -192,10 +193,19 @@ function Position({
   const returnPercent = useMemo(() => {
     return (
       (parseFloat(returnValue.toSignificant(2)) /
-        parseFloat(totalMintValue.toSignificant(2))) *
+        parseFloat(totalMintValue.add(totalTransactionCost).toSignificant(2))) *
       100
     ).toFixed(2);
-  }, [totalMintValue, returnValue]);
+  }, [totalMintValue, totalTransactionCost, returnValue]);
+
+  const apy = useMemo(() => {
+    const startDate = new Date(transactions[0].timestamp * 1000);
+    const secondsSince = differenceInSeconds(new Date(), startDate);
+    const yearInSeconds = 365 * 24 * 60 * 60;
+    return (
+      (parseFloat(returnValue.toSignificant(2)) / secondsSince) * yearInSeconds
+    );
+  }, [returnValue, transactions]);
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -289,6 +299,11 @@ function Position({
             }
           >
             ${getUSDValue(returnValue)} ({returnPercent}%)
+          </div>
+        </td>
+        <td>
+          <div className={apy < 0 ? "text-red-500" : "text-green-500"}>
+            {apy.toFixed(2)}%
           </div>
         </td>
 
