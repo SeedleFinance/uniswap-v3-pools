@@ -1,11 +1,18 @@
 import React, { useMemo, useState } from "react";
+import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
-import { CurrencyAmount, Price, Token as UniToken } from "@uniswap/sdk-core";
+import {
+  WETH9,
+  ChainId,
+  CurrencyAmount,
+  Price,
+  Token as UniToken,
+} from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { usePosition } from "./hooks/usePosition";
 import { usePositionFees } from "./hooks/usePositionFees";
-import { useUSDConversion } from "./hooks/useUSDConversion";
+import { useUSDConversion, useEthToQuote } from "./hooks/useUSDConversion";
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 
@@ -43,7 +50,9 @@ function Position({
     tickUpper
   );
 
+  const { chainId } = useWeb3React();
   const getUSDValue = useUSDConversion(quoteToken);
+  const convertEthToQuote = useEthToQuote(quoteToken);
 
   const uncollectedFees = usePositionFees(pool, id);
 
@@ -97,13 +106,13 @@ function Position({
           .add(uncollectedFees[1]);
   }, [quoteToken, pool, uncollectedFees]);
 
-  const totalValue = useMemo(() => {
+  const totalCurrentValue = useMemo(() => {
     if (totalLiquidity === 0 || totalUncollectedFees === 0) {
-      return 0;
+      return CurrencyAmount.fromRawAmount(quoteToken, 0);
     }
 
     return totalLiquidity.add(totalUncollectedFees);
-  }, [totalLiquidity, totalUncollectedFees]);
+  }, [quoteToken, totalLiquidity, totalUncollectedFees]);
 
   const formattedRange = useMemo(() => {
     const prices = priceLower.lessThan(priceUpper)
@@ -124,6 +133,69 @@ function Position({
       liquidity,
     });
   }, [pool, tickLower, tickUpper, liquidity]);
+
+  const {
+    totalMintValue,
+    totalBurnValue,
+    totalCollectValue,
+    totalTransactionCost,
+  } = useMemo(() => {
+    let totalMintValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
+    let totalBurnValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
+    let totalCollectValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
+    let totalTransactionCost = CurrencyAmount.fromRawAmount(
+      WETH9[chainId as ChainId],
+      "0"
+    );
+
+    if (transactions.length && quoteToken && pool && chainId) {
+      transactions.forEach((tx) => {
+        const txValue = pool.token0.equals(quoteToken)
+          ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
+          : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
+        if (tx.type === "mint") {
+          totalMintValue = totalMintValue.add(txValue);
+        } else if (tx.type === "burn") {
+          totalBurnValue = totalBurnValue.add(txValue);
+        } else if (tx.type === "collect") {
+          totalCollectValue = totalCollectValue.add(txValue);
+        }
+
+        // add gas costs
+        totalTransactionCost = totalTransactionCost.add(tx.gas.costCurrency);
+      });
+    }
+
+    return {
+      totalMintValue,
+      totalBurnValue,
+      totalCollectValue,
+      totalTransactionCost,
+    };
+  }, [transactions, quoteToken, pool, chainId]);
+
+  const returnValue = useMemo(() => {
+    return totalCurrentValue
+      .add(totalBurnValue)
+      .add(totalCollectValue)
+      .subtract(totalMintValue)
+      .subtract(convertEthToQuote(totalTransactionCost));
+  }, [
+    totalMintValue,
+    totalBurnValue,
+    totalCollectValue,
+    totalTransactionCost,
+    totalCurrentValue,
+    convertEthToQuote,
+  ]);
+
+  const returnPercent = useMemo(() => {
+    return (
+      (parseFloat(returnValue.toSignificant(2)) /
+        parseFloat(totalMintValue.toSignificant(2))) *
+      100
+    ).toFixed(2);
+  }, [totalMintValue, returnValue]);
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -179,7 +251,7 @@ function Position({
         </td>
 
         <td>
-          <div>USD {getUSDValue(totalLiquidity)}</div>
+          <div>${getUSDValue(totalLiquidity)}</div>
         </td>
         <td>
           <div className="flex flex-col items-start justify-center">
@@ -189,7 +261,7 @@ function Position({
                 setExpandedUncollectedFees(!expandedUncollectedFees)
               }
             >
-              USD {getUSDValue(totalUncollectedFees)}
+              ${getUSDValue(totalUncollectedFees)}
             </button>
             {expandedUncollectedFees ? (
               <div className="flex flex-col text-sm">
@@ -208,8 +280,18 @@ function Position({
           </div>
         </td>
         <td>
-          <div>USD {getUSDValue(totalValue)}</div>
+          <div>${getUSDValue(totalCurrentValue)}</div>
         </td>
+        <td>
+          <div
+            className={
+              returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
+            }
+          >
+            ${getUSDValue(returnValue)} ({returnPercent}%)
+          </div>
+        </td>
+
         <td>
           <div className="flex my-2 justify-end">
             <button

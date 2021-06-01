@@ -1,7 +1,6 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useWeb3React } from "@web3-react/core";
-import { formatEther } from "@ethersproject/units";
 import { BigNumber } from "@ethersproject/bignumber";
 import {
   WETH9,
@@ -10,8 +9,6 @@ import {
   Token,
   Currency,
 } from "@uniswap/sdk-core";
-
-import { useUSDConversion } from "./useUSDConversion";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origin: String!, $poolAddress: String!) {
@@ -81,8 +78,7 @@ export interface FormattedPoolTransaction {
     price: BigNumber;
     used: BigNumber;
     cost: BigNumber;
-    costFormatted: string;
-    costUSD: string;
+    costCurrency: CurrencyAmount<Currency>;
   };
 }
 
@@ -92,8 +88,6 @@ export function useTransactions(
   token1: Token | null
 ) {
   const { account, chainId } = useWeb3React();
-
-  const getUSDValue = useUSDConversion(WETH9[chainId as ChainId]);
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
     variables: { origin: account, poolAddress },
@@ -110,12 +104,12 @@ export function useTransactions(
     const used = BigNumber.from(transaction.gasUsed); // Note: graph returns the gas limit instead of gas used
     const price = BigNumber.from(transaction.gasPrice);
     const cost = used.mul(price);
-    const costFormatted = formatEther(cost);
-    const costUSD = getUSDValue(
-      CurrencyAmount.fromRawAmount(WETH9[chainId as ChainId], cost.toString())
+    const costCurrency = CurrencyAmount.fromRawAmount(
+      WETH9[chainId as ChainId],
+      cost.toString()
     );
 
-    return { used, price, cost, costFormatted, costUSD };
+    return { used, price, cost, costCurrency };
   };
 
   const formatTx = (type: string) => {
@@ -177,8 +171,10 @@ export function useTransactions(
       tx.gas = {
         ...tx.gas,
         cost: BigNumber.from(0),
-        costFormatted: "0.00",
-        costUSD: "0.00",
+        costCurrency: CurrencyAmount.fromRawAmount(
+          WETH9[chainId as ChainId],
+          "0"
+        ),
       };
 
       // subtract the burn amount to get only the fees collected

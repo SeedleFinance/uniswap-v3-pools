@@ -160,6 +160,14 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
                 <th>Liquidity</th>
                 <th>Unclaimed fees</th>
                 <th>Total</th>
+                <th>
+                  <span
+                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    title="liquidity gain + fees - gas cost"
+                  >
+                    Return
+                  </span>
+                </th>
                 <th></th>
               </tr>
             </thead>
