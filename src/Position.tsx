@@ -199,17 +199,15 @@ function Position({
             .toSignificant(2)
         )) *
       100
-    ).toFixed(2);
-  }, [totalMintValue, totalTransactionCost, returnValue]);
+    );
+  }, [totalMintValue, totalTransactionCost, returnValue, convertEthToQuote]);
 
   const apr = useMemo(() => {
     const startDate = new Date(transactions[0].timestamp * 1000);
     const secondsSince = differenceInSeconds(new Date(), startDate);
     const yearInSeconds = 365 * 24 * 60 * 60;
-    return (
-      (parseFloat(returnValue.toSignificant(2)) / secondsSince) * yearInSeconds
-    );
-  }, [returnValue, transactions]);
+    return (returnPercent / secondsSince) * yearInSeconds;
+  }, [returnPercent, transactions]);
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -302,7 +300,7 @@ function Position({
               returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
             }
           >
-            ${getUSDValue(returnValue)} ({returnPercent}%)
+            ${getUSDValue(returnValue)} ({returnPercent.toFixed(2)}%)
           </div>
         </td>
         <td>
