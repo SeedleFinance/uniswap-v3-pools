@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import differenceInSeconds from "date-fns/differenceInSeconds";
+import formatDistance from "date-fns/formatDistance";
 import { BigNumber } from "@ethersproject/bignumber";
 import {
   WETH9,
@@ -122,6 +123,15 @@ function Position({
     const decimals = Math.min(quoteToken.decimals, 8);
     return prices.map((price) => price.toFixed(decimals)).join(" - ");
   }, [priceUpper, priceLower, quoteToken]);
+
+  const formattedAge = useMemo(() => {
+    const startDate = new Date(transactions[0].timestamp * 1000);
+    const endDate = liquidity.isZero()
+      ? new Date(transactions[transactions.length - 1].timestamp * 1000)
+      : new Date();
+
+    return formatDistance(endDate, startDate);
+  }, [liquidity, transactions]);
 
   const positionStatus = useMemo((): PositionStatus => {
     if (!pool) {
@@ -268,7 +278,9 @@ function Position({
             {position.amount1.toSignificant(4)}({percent1}%)
           </div>
         </td>
-
+        <td>
+          <div>{formattedAge}</div>
+        </td>
         <td>
           <div>${getUSDValue(totalLiquidity)}</div>
         </td>

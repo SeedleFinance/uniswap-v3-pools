@@ -157,8 +157,9 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
               <tr className="text-left">
                 <th>Range</th>
                 <th>Distribution</th>
+                <th>Age</th>
                 <th>Liquidity</th>
-                <th>Unclaimed fees</th>
+                <th>Uncl. fees</th>
                 <th>Total</th>
                 <th>
                   <span
