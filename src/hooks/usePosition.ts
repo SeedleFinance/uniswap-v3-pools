@@ -14,10 +14,12 @@ export interface PositionState {
   liquidity: BigNumber;
 }
 
-interface PoolState {
+export interface PoolState {
+  key: string;
   token0address: string;
   token1address: string;
   fee: number;
+  liquidity: BigNumber;
   positions: {
     id: BigNumber;
     tickLower: number;
@@ -85,17 +87,20 @@ export function usePositionsByPools(account: string | null | undefined) {
 
   const pools = useMemo(() => {
     if (!positions.length) {
-      return {};
+      return [];
     }
 
-    return positions.reduce(
+    const poolsUnsorted = positions.reduce(
       (accm: { [index: string]: PoolState }, pos: PositionState) => {
         const key = `${pos.token0address}-${pos.token1address}-${pos.fee}`;
         const currentPositions = accm[key] ? accm[key].positions : [];
+        const liquidity = accm[key] ? accm[key].liquidity : BigNumber.from(0);
         accm[key] = {
+          key,
           token0address: pos.token0address,
           token1address: pos.token1address,
           fee: pos.fee,
+          liquidity: liquidity.add(pos.liquidity),
           positions: [
             ...currentPositions,
             {
@@ -110,6 +115,11 @@ export function usePositionsByPools(account: string | null | undefined) {
       },
       {}
     );
+    return Object.keys(poolsUnsorted)
+      .sort((a, b) =>
+        poolsUnsorted[a].liquidity.gte(poolsUnsorted[b].liquidity) ? -1 : 1
+      )
+      .map((key) => poolsUnsorted[key]);
   }, [positions]);
 
   return pools;

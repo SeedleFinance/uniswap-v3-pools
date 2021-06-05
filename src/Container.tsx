@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 
-import { usePositionsByPools } from "./hooks/usePosition";
+import { PoolState, usePositionsByPools } from "./hooks/usePosition";
 
 import Pool from "./Pool";
 import Account from "./Account";
@@ -11,11 +11,20 @@ const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 });
 
-function Pools({ pools }: any) {
+function Pools({ pools }: { pools: PoolState[] }) {
+  if (!pools.length) {
+    return (
+      <div className="my-16 flex items-center justify-center">
+        <div className="text-center text-2xl text-gray-400">
+          Loading pools...
+        </div>
+      </div>
+    );
+  }
   return (
     <div>
-      {Object.keys(pools).map((key) => (
-        <Pool key={key} {...pools[key]} />
+      {pools.map((pool: PoolState) => (
+        <Pool {...pool} />
       ))}
     </div>
   );
