@@ -4,6 +4,7 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 
 import { PoolState, usePositionsByPools } from "./hooks/usePosition";
 
+import { PoolsProvider } from "./PoolsProvider";
 import Pool from "./Pool";
 import Account from "./Account";
 
@@ -40,34 +41,36 @@ function Container() {
 
   if (active) {
     return (
-      <div className="lg:container mx-auto pb-4">
-        <div className="w-full px-2 py-4 flex justify-end">
-          <Account address={account} />
-        </div>
-        <div>
-          <h2 className="text-5xl text-center font-bold text-red-600 m-5">
-            Uniswap V3 Pools
-          </h2>
-          <div>
-            <Pools pools={pools} />
+      <PoolsProvider account={account}>
+        <div className="lg:container mx-auto pb-4">
+          <div className="w-full px-2 py-4 flex justify-end">
+            <Account address={account} />
           </div>
-          <footer className="my-5 flex w-full justify-center">
-            <div className="text-sm">
-              Built by{" "}
-              <a className="text-blue-500" href="https://twitter.com/laktek">
-                @laktek
-              </a>{" "}
-              |{" "}
-              <a
-                className="text-blue-500"
-                href="https://github.com/laktek/uniswap-v3-pools"
-              >
-                Source
-              </a>
+          <div>
+            <h2 className="text-5xl text-center font-bold text-red-600 m-5">
+              Uniswap V3 Pools
+            </h2>
+            <div>
+              <Pools pools={pools} />
             </div>
-          </footer>
+            <footer className="my-5 flex w-full justify-center">
+              <div className="text-sm">
+                Built by{" "}
+                <a className="text-blue-500" href="https://twitter.com/laktek">
+                  @laktek
+                </a>{" "}
+                |{" "}
+                <a
+                  className="text-blue-500"
+                  href="https://github.com/laktek/uniswap-v3-pools"
+                >
+                  Source
+                </a>
+              </div>
+            </footer>
+          </div>
         </div>
-      </div>
+      </PoolsProvider>
     );
   }
 

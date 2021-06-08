@@ -82,6 +82,32 @@ export function useContract(
   }, [address, ABI, library, withSignerIfPossible, account]);
 }
 
+// returns null on errors
+export function useContractBulk(
+  addresses: (string | undefined)[],
+  ABI: any,
+  withSignerIfPossible = true
+): (Contract | null)[] {
+  const { library, account } = useWeb3React();
+
+  return useMemo(() => {
+    try {
+      return addresses.map((address) => {
+        if (!address || !ABI || !library) return null;
+        return getContract(
+          address,
+          ABI,
+          library,
+          withSignerIfPossible && account ? account : undefined
+        );
+      });
+    } catch (error) {
+      console.error("Failed to get contract", error);
+      return [];
+    }
+  }, [addresses, ABI, library, withSignerIfPossible, account]);
+}
+
 export function useV3NFTPositionManagerContract(): NonfungiblePositionManager | null {
   const { chainId } = useWeb3React();
   const address = chainId
@@ -118,4 +144,23 @@ export function usePoolContract(
       ? Pool.getAddress(token0, token1, fee)
       : undefined;
   return useContract(address, V3PoolABI, withSignerIfPossible);
+}
+
+interface PoolParams {
+  token0: Token | null;
+  token1: Token | null;
+  fee: number;
+}
+
+export function usePoolContracts(
+  pools: PoolParams[],
+  withSignerIfPossible?: boolean
+): (Contract | null)[] {
+  const addresses = pools.map(({ token0, token1, fee }) =>
+    token0 && token1 && !token0.equals(token1)
+      ? Pool.getAddress(token0, token1, fee)
+      : undefined
+  );
+
+  return useContractBulk(addresses, V3PoolABI, withSignerIfPossible);
 }

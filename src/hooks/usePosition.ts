@@ -28,6 +28,66 @@ export interface PoolState {
   }[];
 }
 
+export function useAllPositions(account: string | null | undefined) {
+  const contract = useV3NFTPositionManagerContract();
+  const [positions, setPositions] = useState<PositionState[]>([]);
+
+  useEffect(() => {
+    const collectPositions = async (
+      account: string,
+      balance: number
+    ): Promise<PositionState[]> => {
+      const results: PositionState[] = [];
+
+      const _collect = async (idx: number): Promise<PositionState[]> => {
+        if (contract && idx !== -1) {
+          const tokIdResult = await contract.functions.tokenOfOwnerByIndex(
+            account,
+            idx
+          );
+          const result = await contract.functions.positions(tokIdResult[0]);
+          const position = {
+            id: tokIdResult[0],
+            token0address: result[2],
+            token1address: result[3],
+            fee: result[4],
+            tickLower: result[5],
+            tickUpper: result[6],
+            liquidity: result[7],
+          };
+          results.push(position);
+          return _collect(idx - 1);
+        } else {
+          return results;
+        }
+      };
+
+      return _collect(balance - 1);
+    };
+
+    const _run = async () => {
+      if (!account || !contract) {
+        return;
+      }
+      const balance = await contract.balanceOf(account);
+      if (balance.isZero()) {
+        setPositions([]);
+        return;
+      }
+      const results = await collectPositions(account, balance.toNumber());
+      setPositions(results);
+    };
+
+    if (!account) {
+      return;
+    }
+
+    _run();
+  }, [account, contract]);
+
+  return positions;
+}
+
 export function usePositionsByPools(account: string | null | undefined) {
   const contract = useV3NFTPositionManagerContract();
   const [positions, setPositions] = useState<PositionState[]>([]);
@@ -115,6 +175,7 @@ export function usePositionsByPools(account: string | null | undefined) {
       },
       {}
     );
+
     return Object.keys(poolsUnsorted)
       .sort((a, b) =>
         poolsUnsorted[a].liquidity.gte(poolsUnsorted[b].liquidity) ? -1 : 1
