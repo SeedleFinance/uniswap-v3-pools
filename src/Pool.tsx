@@ -2,12 +2,10 @@ import React, { useMemo, useState } from "react";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
 import { ChainId, WETH9, Token as UniToken } from "@uniswap/sdk-core";
-import { tickToPrice } from "@uniswap/v3-sdk";
+import { tickToPrice, Pool as UniPool } from "@uniswap/v3-sdk";
 
 import { DAI, USDC, USDT, FEI, LUSD } from "./constants";
 
-import { useToken } from "./hooks/useToken";
-import { usePool } from "./hooks/usePool";
 import {
   useTransactions,
   FormattedPoolTransaction,
@@ -18,9 +16,8 @@ import Position from "./Position";
 import PositionStatuses from "./PositionStatuses";
 
 interface PoolProps {
-  token0address: string | undefined;
-  token1address: string | undefined;
-  fee: number;
+  address: string;
+  entity: UniPool;
   positions: {
     id: BigNumber;
     tickLower: number;
@@ -53,14 +50,12 @@ function getQuoteToken(
   return quote || token0;
 }
 
-function Pool({ token0address, token1address, fee, positions }: PoolProps) {
+function Pool({ address, entity, positions }: PoolProps) {
   const { chainId } = useWeb3React();
 
-  const token0 = useToken(token0address);
-  const token1 = useToken(token1address);
+  const { token0, token1 } = entity;
 
-  const { pool, poolAddress } = usePool(token0, token1, fee);
-  const transactions = useTransactions(poolAddress, token0, token1);
+  const transactions = useTransactions(address, token0, token1);
 
   const [showPositions, setShowPositions] = useState(false);
 
@@ -75,12 +70,12 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
   }, [chainId, token0, token1]);
 
   const poolPrice = useMemo(() => {
-    if (!baseToken || !pool) {
+    if (!baseToken || !entity) {
       return 0;
     }
 
-    return pool.priceOf(baseToken);
-  }, [baseToken, pool]);
+    return entity.priceOf(baseToken);
+  }, [baseToken, entity]);
 
   const positionsWithPricesAndTransactions = useMemo(() => {
     if (!positions.length || !baseToken || !quoteToken) {
@@ -106,7 +101,7 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
 
   const toggleShowPositions = () => setShowPositions(!showPositions);
 
-  if (!baseToken || !quoteToken || !chainId || !pool) {
+  if (!baseToken || !quoteToken || !chainId || !entity) {
     return (
       <div className="my-4 p-4 border rounded-md">
         <div className="text-gray-400">Loading...</div>
@@ -123,13 +118,13 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
             <span className="px-1">/</span>
             <Token name={quoteToken.name} symbol={quoteToken.symbol} />
             <span className="rounded-md text-xl text-gray-800 bg-gray-200 p-1">
-              {fee / 10000}%
+              {entity.fee / 10000}%
             </span>
           </button>
           {showPositions && (
             <a
               className="px-2"
-              href={`https://info.uniswap.org/#/pools/${poolAddress}`}
+              href={`https://info.uniswap.org/#/pools/${address}`}
             >
               ↗
             </a>
@@ -137,7 +132,7 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
         </div>
         <div className="flex flex-col items-center w-48">
           <PositionStatuses
-            tickCurrent={pool.tickCurrent}
+            tickCurrent={entity.tickCurrent}
             positions={positions}
             onClick={toggleShowPositions}
           />
@@ -184,7 +179,7 @@ function Pool({ token0address, token1address, fee, positions }: PoolProps) {
               {positionsWithPricesAndTransactions.map((position) => (
                 <Position
                   key={position.id.toString()}
-                  pool={pool}
+                  pool={entity}
                   quoteToken={quoteToken}
                   {...position}
                 />

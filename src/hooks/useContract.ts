@@ -89,7 +89,6 @@ export function useContractBulk(
   withSignerIfPossible = true
 ): (Contract | null)[] {
   const { library, account } = useWeb3React();
-
   return useMemo(() => {
     try {
       return addresses.map((address) => {
@@ -126,11 +125,25 @@ export function useTokenContract(
   return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible);
 }
 
+export function useTokenContracts(
+  addresses: string[],
+  withSignerIfPossible?: boolean
+): (Contract | null)[] {
+  return useContractBulk(addresses, ERC20_ABI, withSignerIfPossible);
+}
+
 export function useBytes32TokenContract(
   tokenAddress?: string,
   withSignerIfPossible?: boolean
 ): Contract | null {
   return useContract(tokenAddress, ERC20_BYTES32_ABI, withSignerIfPossible);
+}
+
+export function useBytes32TokenContracts(
+  addresses: string[],
+  withSignerIfPossible?: boolean
+): (Contract | null)[] {
+  return useContractBulk(addresses, ERC20_BYTES32_ABI, withSignerIfPossible);
 }
 
 export function usePoolContract(
@@ -146,7 +159,7 @@ export function usePoolContract(
   return useContract(address, V3PoolABI, withSignerIfPossible);
 }
 
-interface PoolParams {
+export interface PoolParams {
   token0: Token | null;
   token1: Token | null;
   fee: number;
