@@ -33,7 +33,6 @@ function RangeVisual({
   const scale = barWidth / (rangeEnd - rangeStart);
   const beforeRangeWidth = Math.abs((tickLower - rangeStart) * scale);
   const rangeWidth = Math.abs((tickUpper - tickLower) * scale);
-  const afterRangeWidth = Math.abs((rangeEnd - tickUpper) * scale);
   const currentTickDistance = Math.abs((tickCurrent - rangeStart) * scale);
 
   return (

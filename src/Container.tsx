@@ -2,9 +2,7 @@ import React, { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 
-import { PoolState, usePositionsByPools } from "./hooks/usePosition";
-
-import { PoolsProvider } from "./PoolsProvider";
+import { PoolsProvider, usePools, PoolState } from "./PoolsProvider";
 import Pool from "./Pool";
 import Account from "./Account";
 
@@ -12,7 +10,9 @@ const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 });
 
-function Pools({ pools }: { pools: PoolState[] }) {
+function Pools() {
+  const { pools } = usePools();
+
   if (!pools.length) {
     return (
       <div className="my-16 flex items-center justify-center">
@@ -24,8 +24,8 @@ function Pools({ pools }: { pools: PoolState[] }) {
   }
   return (
     <div>
-      {pools.map((pool: PoolState) => (
-        <Pool {...pool} />
+      {pools.map(({ address, entity }: PoolState) => (
+        <Pool address={address} entity={entity} positions={[]} />
       ))}
     </div>
   );
@@ -33,7 +33,6 @@ function Pools({ pools }: { pools: PoolState[] }) {
 
 function Container() {
   const { activate, active, account } = useWeb3React();
-  const pools = usePositionsByPools(account);
 
   useEffect(() => {
     activate(injected, (err) => console.error(err));
@@ -51,7 +50,7 @@ function Container() {
               Uniswap V3 Pools
             </h2>
             <div>
-              <Pools pools={pools} />
+              <Pools />
             </div>
             <footer className="my-5 flex w-full justify-center">
               <div className="text-sm">
