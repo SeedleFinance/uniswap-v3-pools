@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 
-import { PoolsProvider, usePools, PoolState } from "./PoolsProvider";
+import { PoolsProvider, usePools } from "./PoolsProvider";
+import { PoolState } from "./hooks/usePool";
 import Pool from "./Pool";
 import Account from "./Account";
 
@@ -24,9 +25,17 @@ function Pools() {
   }
   return (
     <div>
-      {pools.map(({ address, entity }: PoolState) => (
-        <Pool address={address} entity={entity} positions={[]} />
-      ))}
+      {pools.map(
+        ({ key, address, entity, liquidity, positions }: PoolState) => (
+          <Pool
+            key={key}
+            address={address}
+            entity={entity}
+            positions={positions}
+            liquidity={liquidity}
+          />
+        )
+      )}
     </div>
   );
 }

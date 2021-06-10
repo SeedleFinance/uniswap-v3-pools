@@ -14,7 +14,7 @@ export interface PositionState {
   liquidity: BigNumber;
 }
 
-export interface PoolState {
+interface PoolState {
   key: string;
   token0address: string;
   token1address: string;
@@ -28,7 +28,9 @@ export interface PoolState {
   }[];
 }
 
-export function useAllPositions(account: string | null | undefined) {
+export function useAllPositions(
+  account: string | null | undefined
+): PositionState[] {
   const contract = useV3NFTPositionManagerContract();
   const [positions, setPositions] = useState<PositionState[]>([]);
 
