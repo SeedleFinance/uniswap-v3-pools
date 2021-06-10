@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { compact } from "lodash";
+import { compact, isEqualWith } from "lodash";
 import { Pool } from "@uniswap/v3-sdk";
 import { Contract } from "@ethersproject/contracts";
 import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
@@ -81,7 +81,6 @@ export function usePoolsState(
 
   useEffect(() => {
     if (
-      pools.length ||
       !params.length ||
       !contracts.length ||
       !positionsByPool ||
@@ -99,28 +98,33 @@ export function usePoolsState(
       const sqrtPriceX96 = result[0];
       const tickCurrent = result[1];
 
-      const liquidityResult = await contract.functions.liquidity();
-      const liquidity = liquidityResult[0];
-
       const { token0, token1, fee } = params[idx];
       if (!token0 || !token1) {
         return null;
       }
       const key = `${token0.address}-${token1.address}-${fee}`;
 
+      const positions = positionsByPool[key];
+      const liquidity = positions.reduce(
+        (val: BigNumber, position: { liquidity: BigNumber }) => {
+          return val.add(position.liquidity);
+        },
+        BigNumber.from(0)
+      );
+
       return {
         key,
-        liquidity: BigNumber.from(0),
+        liquidity,
         address: contract.address.toLowerCase(),
         entity: new Pool(
           token0 as Token,
           token1 as Token,
           fee,
           sqrtPriceX96,
-          liquidity,
+          0,
           tickCurrent
         ),
-        positions: positionsByPool[key],
+        positions,
       };
     };
 
@@ -130,8 +134,22 @@ export function usePoolsState(
           callContract(contract, idx)
         )
       );
-      const newPoolsCompact = compact(newPools);
-      console.log("set pools");
+      const newPoolsCompact = compact(newPools).sort((a, b) =>
+        a.liquidity.gte(b.liquidity) ? -1 : 1
+      );
+      if (!newPoolsCompact.length) {
+        return;
+      }
+      if (
+        pools.length &&
+        isEqualWith(
+          newPoolsCompact,
+          pools,
+          (newPool, curPool) => newPool.key === curPool.key
+        )
+      ) {
+        return;
+      }
       setPools(newPoolsCompact);
     };
 
