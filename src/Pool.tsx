@@ -18,7 +18,8 @@ import PositionStatuses from "./PositionStatuses";
 interface PoolProps {
   address: string;
   entity: UniPool;
-  positions: {
+  liquidity: BigNumber;
+  positions?: {
     id: BigNumber;
     tickLower: number;
     tickUpper: number;
@@ -78,7 +79,7 @@ function Pool({ address, entity, positions }: PoolProps) {
   }, [baseToken, entity]);
 
   const positionsWithPricesAndTransactions = useMemo(() => {
-    if (!positions.length || !baseToken || !quoteToken) {
+    if (!positions || !positions.length || !baseToken || !quoteToken) {
       return [];
     }
 

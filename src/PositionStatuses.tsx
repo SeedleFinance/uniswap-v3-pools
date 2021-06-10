@@ -8,7 +8,7 @@ import {
 
 interface PositionStatusesProps {
   tickCurrent: number;
-  positions: PositionFields[];
+  positions: PositionFields[] | undefined;
   onClick: () => void;
 }
 
@@ -22,6 +22,10 @@ function PositionStatuses({
     [PositionStatus.InRange]: "text-green-500",
     [PositionStatus.OutRange]: "text-yellow-500",
   };
+  if (!positions) {
+    return null;
+  }
+
   return (
     <button className="flex justify-between text-2xl" onClick={onClick}>
       {positions.map((position) => (

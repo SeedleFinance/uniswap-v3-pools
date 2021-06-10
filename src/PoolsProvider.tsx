@@ -1,12 +1,10 @@
-import React, { ReactNode, useEffect, useState, useContext } from "react";
-import { uniq, compact } from "lodash";
-import { Contract } from "@ethersproject/contracts";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import React, { ReactNode, useContext, useMemo } from "react";
+import { uniq } from "lodash";
 
-import { useAllPositions } from "./hooks/usePosition";
+import { useAllPositions, PositionState } from "./hooks/usePosition";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
 import { useTokens } from "./hooks/useToken";
+import { usePoolsState, PoolState } from "./hooks/usePool";
 
 const PoolsContext = React.createContext({ pools: [] as PoolState[] });
 export const usePools = () => useContext(PoolsContext);
@@ -16,43 +14,42 @@ interface Props {
   account: string | null | undefined;
 }
 
-export interface PoolState {
-  address: string;
-  entity: Pool;
-}
-
 export const PoolsProvider = ({ account, children }: Props) => {
   const allPositions = useAllPositions(account);
 
-  const [poolParams, setPoolParams] = useState<PoolParams[]>([]);
-  const [tokenAddresses, setTokenAddresses] = useState<string[]>([]);
-  const tokens = useTokens(tokenAddresses);
-  const poolContracts = usePoolContracts(poolParams);
-
-  const [pools, setPools] = useState<PoolState[]>([]);
-
-  useEffect(() => {
+  const tokenAddresses = useMemo(() => {
     if (!allPositions.length) {
-      return;
+      return [];
     }
 
-    setTokenAddresses(
-      uniq(
-        allPositions.reduce((accm: string[], position: any) => {
-          return [...accm, position.token0address, position.token1address];
-        }, [])
-      )
+    return uniq(
+      allPositions.reduce((accm: string[], position: any) => {
+        return [...accm, position.token0address, position.token1address];
+      }, [])
     );
   }, [allPositions]);
 
-  useEffect(() => {
+  const tokens = useTokens(tokenAddresses);
+
+  const { poolParams, positionsByPool } = useMemo((): {
+    poolParams: PoolParams[];
+    positionsByPool: {
+      [key: string]: PositionState[];
+    };
+  } => {
     if (!allPositions.length && !tokens.length) {
-      return;
+      return { poolParams: [], positionsByPool: {} };
     }
 
-    const poolParams = allPositions.reduce(
+    const positionsByPool: { [key: string]: PositionState[] } = {};
+    const poolParamsObj = allPositions.reduce(
       (accm: { [index: string]: any }, position) => {
         const key = `${position.token0address}-${position.token1address}-${position.fee}`;
+
+        // add position to pool
+        const collection = positionsByPool[key] || [];
+        positionsByPool[key] = [...collection, position];
+
         accm[key] = {
           key,
           token0: tokens[position.token0address],
@@ -65,52 +62,12 @@ export const PoolsProvider = ({ account, children }: Props) => {
       {}
     );
 
-    setPoolParams(Object.values(poolParams));
+    return { poolParams: Object.values(poolParamsObj), positionsByPool };
   }, [allPositions, tokens]);
 
-  useEffect(() => {
-    if (!poolParams.length || !poolContracts.length) {
-      return;
-    }
+  const poolContracts = usePoolContracts(poolParams);
 
-    const callContract = async (contract: Contract | null, idx: number) => {
-      if (!contract) {
-        return null;
-      }
-
-      const result = await contract.functions.slot0();
-      const sqrtPriceX96 = result[0];
-      const tickCurrent = result[1];
-
-      const liquidityResult = await contract.functions.liquidity();
-      const liquidity = liquidityResult[0];
-
-      const { token0, token1, fee } = poolParams[idx];
-
-      return {
-        address: contract.address.toLowerCase(),
-        entity: new Pool(
-          token0 as Token,
-          token1 as Token,
-          fee,
-          sqrtPriceX96,
-          liquidity,
-          tickCurrent
-        ),
-      };
-    };
-
-    const collectPools = async () => {
-      const pools = await Promise.all(
-        poolContracts.map((contract: Contract | null, idx: number) =>
-          callContract(contract, idx)
-        )
-      );
-      setPools(compact(pools));
-    };
-
-    collectPools();
-  }, [poolContracts, poolParams]);
+  const pools = usePoolsState(poolContracts, poolParams, positionsByPool);
 
   return (
     <PoolsContext.Provider value={{ pools }}>{children}</PoolsContext.Provider>
