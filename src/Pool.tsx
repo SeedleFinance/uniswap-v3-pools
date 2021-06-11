@@ -165,7 +165,7 @@ function Pool({ address, entity, positions }: PoolProps) {
                     Net Return
                   </span>
                 </th>
-                <th>
+                <th className="pb-4">
                   <span
                     style={{ borderBottom: "1px dotted", cursor: "help" }}
                     title="Annual Percentage Return"
@@ -173,7 +173,7 @@ function Pool({ address, entity, positions }: PoolProps) {
                     APR
                   </span>
                 </th>
-                <th></th>
+                <th className="pb-4"></th>
               </tr>
             </thead>
             <tbody>
