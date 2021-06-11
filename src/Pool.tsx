@@ -148,16 +148,16 @@ function Pool({ address, entity, positions }: PoolProps) {
 
       {showPositions && (
         <>
-          <table className="table-auto border-separate w-full">
+          <table className="table-auto w-full">
             <thead>
               <tr className="text-left">
-                <th>Range</th>
-                <th>Distribution</th>
-                <th>Age</th>
-                <th>Liquidity</th>
-                <th>Uncl. fees</th>
-                <th>Total</th>
-                <th>
+                <th className="pb-4">Range</th>
+                <th className="pb-4">Distribution</th>
+                <th className="pb-4">Age</th>
+                <th className="pb-4">Liquidity</th>
+                <th className="pb-4">Uncl. fees</th>
+                <th className="pb-4">Total</th>
+                <th className="pb-4">
                   <span
                     style={{ borderBottom: "1px dotted", cursor: "help" }}
                     title="liquidity gain + fees - gas cost"
