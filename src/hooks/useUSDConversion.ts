@@ -26,13 +26,11 @@ export function useUSDConversion(quoteToken: Token | null) {
         : 0;
     return (val: CurrencyAmount<Token> | number) => {
       if (val === 0 || !quoteToken) {
-        return "0.00";
+        return 0.0;
       }
 
       if (quoteToken.equals(USDC)) {
-        return parseFloat(
-          (val as CurrencyAmount<Token>).toSignificant(15)
-        ).toFixed(2);
+        return parseFloat((val as CurrencyAmount<Token>).toSignificant(15));
       }
 
       return parseFloat(
@@ -40,7 +38,7 @@ export function useUSDConversion(quoteToken: Token | null) {
           .multiply(ratio)
           .divide(100)
           .toSignificant(15)
-      ).toFixed(2);
+      );
     };
   }, [quoteToken, pool]);
 }

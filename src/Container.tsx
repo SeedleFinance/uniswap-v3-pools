@@ -34,6 +34,7 @@ function Pools() {
           baseToken,
           rawLiquidity,
           currencyLiquidity,
+          poolUncollectedFees,
           positions,
         }: PoolState) => (
           <Pool
@@ -44,6 +45,7 @@ function Pools() {
             baseToken={baseToken}
             positions={positions}
             liquidity={currencyLiquidity}
+            poolUncollectedFees={poolUncollectedFees}
           />
         )
       )}

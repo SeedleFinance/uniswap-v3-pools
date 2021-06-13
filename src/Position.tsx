@@ -12,10 +12,10 @@ import {
 } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
 
-import { usePositionFees } from "./hooks/usePositionFees";
 import { useUSDConversion, useEthToQuote } from "./hooks/useUSDConversion";
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
+import { formatCurrency } from "./utils/numbers";
 
 import Transaction from "./Transaction";
 import Token from "./Token";
@@ -27,6 +27,8 @@ export interface PositionProps {
   quoteToken: UniToken;
   entity: UniPosition;
   positionLiquidity?: CurrencyAmount<UniToken>;
+  uncollectedFees: CurrencyAmount<UniToken>[];
+  positionUncollectedFees: CurrencyAmount<UniToken>;
   priceLower: Price<UniToken, UniToken>;
   priceUpper: Price<UniToken, UniToken>;
   transactions: any[];
@@ -38,6 +40,8 @@ function Position({
   quoteToken,
   entity,
   positionLiquidity,
+  uncollectedFees,
+  positionUncollectedFees,
   priceLower,
   priceUpper,
   transactions,
@@ -45,8 +49,6 @@ function Position({
   const { chainId } = useWeb3React();
   const getUSDValue = useUSDConversion(quoteToken);
   const convertEthToQuote = useEthToQuote(quoteToken);
-
-  const uncollectedFees = usePositionFees(pool, id);
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
@@ -74,32 +76,17 @@ function Position({
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
   }, [positionLiquidity, entity, pool, quoteToken]);
 
-  const totalUncollectedFees = useMemo(() => {
-    if (!quoteToken || !pool || !uncollectedFees[0] || !uncollectedFees[1]) {
-      return 0;
-    }
-    return pool.token0.equals(quoteToken)
-      ? pool
-          .priceOf(pool.token1)
-          .quote(uncollectedFees[1])
-          .add(uncollectedFees[0])
-      : pool
-          .priceOf(pool.token0)
-          .quote(uncollectedFees[0])
-          .add(uncollectedFees[1]);
-  }, [quoteToken, pool, uncollectedFees]);
-
   const totalCurrentValue = useMemo(() => {
     if (
       !positionLiquidity ||
       positionLiquidity.equalTo(0) ||
-      totalUncollectedFees === 0
+      positionUncollectedFees.equalTo(0)
     ) {
       return CurrencyAmount.fromRawAmount(quoteToken, 0);
     }
 
-    return positionLiquidity.add(totalUncollectedFees);
-  }, [quoteToken, positionLiquidity, totalUncollectedFees]);
+    return positionLiquidity.add(positionUncollectedFees);
+  }, [quoteToken, positionLiquidity, positionUncollectedFees]);
 
   const formattedRange = useMemo(() => {
     const prices = priceLower.lessThan(priceUpper)
@@ -263,7 +250,7 @@ function Position({
           <div>{formattedAge}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>${getUSDValue(positionLiquidity || 0)}</div>
+          <div>{formatCurrency(getUSDValue(positionLiquidity || 0))}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
           <div className="flex flex-col items-start justify-center">
@@ -273,7 +260,7 @@ function Position({
                 setExpandedUncollectedFees(!expandedUncollectedFees)
               }
             >
-              ${getUSDValue(totalUncollectedFees)}
+              {formatCurrency(getUSDValue(positionUncollectedFees))}
             </button>
             {expandedUncollectedFees ? (
               <div className="flex flex-col text-sm">
@@ -292,7 +279,7 @@ function Position({
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>${getUSDValue(totalCurrentValue)}</div>
+          <div>{formatCurrency(getUSDValue(totalCurrentValue))}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
           <div
@@ -300,7 +287,8 @@ function Position({
               returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
             }
           >
-            ${getUSDValue(returnValue)} ({returnPercent.toFixed(2)}%)
+            {formatCurrency(getUSDValue(returnValue))} (
+            {returnPercent.toFixed(2)}%)
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">

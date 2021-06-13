@@ -20,6 +20,8 @@ import {
   FormattedPoolTransaction,
 } from "./hooks/useTransactions";
 
+import { formatCurrency } from "./utils/numbers";
+
 import Token from "./Token";
 import Position from "./Position";
 import PositionStatuses from "./PositionStatuses";
@@ -30,15 +32,15 @@ interface PoolProps {
   quoteToken: UniToken | null;
   baseToken: UniToken | null;
   liquidity: CurrencyAmount<UniToken>;
+  poolUncollectedFees: CurrencyAmount<UniToken>;
   positions: {
     id: BigNumber;
     entity: UniPosition;
     priceLower?: Price<UniToken, UniToken>;
     priceUpper?: Price<UniToken, UniToken>;
     positionLiquidity?: CurrencyAmount<UniToken>;
-    uncollectedFees?:
-      | [CurrencyAmount<UniToken>, CurrencyAmount<UniToken>]
-      | [undefined, undefined];
+    uncollectedFees: CurrencyAmount<UniToken>[];
+    positionUncollectedFees: CurrencyAmount<UniToken>;
   }[];
 }
 
@@ -49,6 +51,7 @@ function Pool({
   baseToken,
   positions,
   liquidity,
+  poolUncollectedFees,
 }: PoolProps) {
   const { chainId } = useWeb3React();
 
@@ -66,6 +69,10 @@ function Pool({
 
     return entity.priceOf(baseToken);
   }, [baseToken, entity]);
+
+  const totalValue = useMemo(() => {
+    return getUSDValue(liquidity.add(poolUncollectedFees));
+  }, [liquidity, poolUncollectedFees, getUSDValue]);
 
   const positionsWithPricesAndTransactions = useMemo(() => {
     if (!positions || !positions.length || !baseToken || !quoteToken) {
@@ -134,20 +141,21 @@ function Pool({
             positions={positions.map(({ entity }) => entity)}
             onClick={toggleShowPositions}
           />
+
+          <div className="text-lg rounded-md text-gray-800">
+            {formatCurrency(totalValue)}{" "}
+          </div>
+        </div>
+      </div>
+
+      {showPositions && (
+        <div>
           <div className="text-lg rounded-md text-gray-800">
             {poolPrice.toFixed(6)}{" "}
             {quoteToken.equals(WETH9[chainId as ChainId])
               ? "ETH"
               : quoteToken.symbol}
           </div>
-          <div className="text-lg rounded-md text-gray-800">
-            ${getUSDValue(liquidity)}{" "}
-          </div>
-        </div>
-      </div>
-
-      {showPositions && (
-        <>
           <table className="table-auto w-full">
             <thead>
               <tr className="text-left">
@@ -187,7 +195,7 @@ function Pool({
               ))}
             </tbody>
           </table>
-        </>
+        </div>
       )}
     </div>
   );

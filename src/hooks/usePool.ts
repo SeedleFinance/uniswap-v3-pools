@@ -24,15 +24,15 @@ export interface PoolState {
   entity: Pool;
   rawLiquidity: BigNumber;
   currencyLiquidity: CurrencyAmount<Token>;
+  poolUncollectedFees: CurrencyAmount<Token>;
   positions: {
     id: BigNumber;
     entity: Position;
     priceLower?: Price<Token, Token>;
     priceUpper?: Price<Token, Token>;
     positionLiquidity?: CurrencyAmount<Token>;
-    uncollectedFees?:
-      | [CurrencyAmount<Token>, CurrencyAmount<Token>]
-      | [undefined, undefined];
+    uncollectedFees: CurrencyAmount<Token>[];
+    positionUncollectedFees: CurrencyAmount<Token>;
   }[];
 }
 
@@ -132,15 +132,21 @@ export function usePoolsState(
     ) => {
       let rawLiquidity = BigNumber.from(0);
       let currencyLiquidity = CurrencyAmount.fromRawAmount(quoteToken, 0);
+      let poolUncollectedFees = CurrencyAmount.fromRawAmount(quoteToken, 0);
 
       const enhanced = positions.map(
-        ({ id, liquidity, tickLower, tickUpper }: PositionState) => {
+        ({ id, liquidity, tickLower, tickUpper, fees }: PositionState) => {
           const entity = new Position({
             pool,
             liquidity: liquidity.toString(),
             tickLower,
             tickUpper,
           });
+
+          const uncollectedFees = [
+            CurrencyAmount.fromRawAmount(pool.token0, fees.amount0.toString()),
+            CurrencyAmount.fromRawAmount(pool.token1, fees.amount1.toString()),
+          ];
 
           // liquidity of the position in quote token
           const positionLiquidity = pool.token0.equals(quoteToken)
@@ -153,18 +159,33 @@ export function usePoolsState(
                 .quote(entity.amount0)
                 .add(entity.amount1);
 
-          currencyLiquidity = currencyLiquidity.add(positionLiquidity);
+          const positionUncollectedFees = pool.token0.equals(quoteToken)
+            ? pool
+                .priceOf(pool.token1)
+                .quote(uncollectedFees[1])
+                .add(uncollectedFees[0])
+            : pool
+                .priceOf(pool.token0)
+                .quote(uncollectedFees[0])
+                .add(uncollectedFees[1]);
+
           rawLiquidity = rawLiquidity.add(liquidity);
+          currencyLiquidity = currencyLiquidity.add(positionLiquidity);
+          poolUncollectedFees = poolUncollectedFees.add(
+            positionUncollectedFees
+          );
 
           return {
             id,
             entity,
             positionLiquidity,
+            uncollectedFees,
+            positionUncollectedFees,
           };
         }
       );
 
-      return { enhanced, currencyLiquidity, rawLiquidity };
+      return { enhanced, currencyLiquidity, rawLiquidity, poolUncollectedFees };
     };
 
     const callContract = async (contract: Contract | null, idx: number) => {
@@ -200,6 +221,7 @@ export function usePoolsState(
       const {
         rawLiquidity,
         currencyLiquidity,
+        poolUncollectedFees,
         enhanced: positions,
       } = enhancePositions(entity, quoteToken, positionsByPool[key]);
 
@@ -207,6 +229,7 @@ export function usePoolsState(
         key,
         rawLiquidity,
         currencyLiquidity,
+        poolUncollectedFees,
         quoteToken,
         baseToken,
         address: contract.address.toLowerCase(),
