@@ -1,10 +1,18 @@
 import React, { useMemo, useState } from "react";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
-import { ChainId, WETH9, Token as UniToken } from "@uniswap/sdk-core";
-import { tickToPrice, Pool as UniPool } from "@uniswap/v3-sdk";
-
-import { DAI, USDC, USDT, FEI, LUSD } from "./constants";
+import {
+  ChainId,
+  WETH9,
+  Token as UniToken,
+  Price,
+  CurrencyAmount,
+} from "@uniswap/sdk-core";
+import {
+  tickToPrice,
+  Pool as UniPool,
+  Position as UniPosition,
+} from "@uniswap/v3-sdk";
 
 import {
   useTransactions,
@@ -18,40 +26,29 @@ import PositionStatuses from "./PositionStatuses";
 interface PoolProps {
   address: string;
   entity: UniPool;
-  liquidity: BigNumber;
-  positions?: {
+  quoteToken: UniToken | null;
+  baseToken: UniToken | null;
+  liquidity: string;
+  positions: {
     id: BigNumber;
-    tickLower: number;
-    tickUpper: number;
-    liquidity: BigNumber;
+    entity: UniPosition;
+    priceLower?: Price<UniToken, UniToken>;
+    priceUpper?: Price<UniToken, UniToken>;
+    positionLiquidity?: CurrencyAmount<UniToken>;
+    uncollectedFees?:
+      | [CurrencyAmount<UniToken>, CurrencyAmount<UniToken>]
+      | [undefined, undefined];
   }[];
 }
 
-function getQuoteToken(
-  chainId: ChainId | undefined,
-  token0: UniToken | null,
-  token1: UniToken | null
-): UniToken | null {
-  if (!chainId || !token0 || !token1) {
-    return null;
-  }
-
-  const quoteCurrencies: UniToken[] = [
-    USDC,
-    USDT,
-    DAI,
-    FEI,
-    LUSD,
-    WETH9[chainId],
-  ];
-  const quote = quoteCurrencies.find(
-    (cur) => token0.equals(cur) || token1.equals(cur)
-  );
-  // if no matching quote currency found, use token0
-  return quote || token0;
-}
-
-function Pool({ address, entity, positions }: PoolProps) {
+function Pool({
+  address,
+  entity,
+  quoteToken,
+  baseToken,
+  positions,
+  liquidity,
+}: PoolProps) {
   const { chainId } = useWeb3React();
 
   const { token0, token1 } = entity;
@@ -59,16 +56,6 @@ function Pool({ address, entity, positions }: PoolProps) {
   const transactions = useTransactions(address, token0, token1);
 
   const [showPositions, setShowPositions] = useState(false);
-
-  const { baseToken, quoteToken } = useMemo(() => {
-    if (!chainId || !token0 || !token1) {
-      return { baseToken: null, quoteToken: null };
-    }
-
-    const quoteToken = getQuoteToken(chainId, token0, token1);
-    const baseToken = quoteToken && token0.equals(quoteToken) ? token1 : token0;
-    return { baseToken, quoteToken };
-  }, [chainId, token0, token1]);
 
   const poolPrice = useMemo(() => {
     if (!baseToken || !entity) {
@@ -84,8 +71,16 @@ function Pool({ address, entity, positions }: PoolProps) {
     }
 
     return positions.map((position) => {
-      const priceLower = tickToPrice(baseToken, quoteToken, position.tickLower);
-      const priceUpper = tickToPrice(baseToken, quoteToken, position.tickUpper);
+      const priceLower = tickToPrice(
+        baseToken,
+        quoteToken,
+        position.entity.tickLower
+      );
+      const priceUpper = tickToPrice(
+        baseToken,
+        quoteToken,
+        position.entity.tickUpper
+      );
 
       return {
         ...position,
@@ -93,8 +88,8 @@ function Pool({ address, entity, positions }: PoolProps) {
         priceUpper,
         transactions: transactions.filter(
           (tx: FormattedPoolTransaction) =>
-            tx.tickLower === position.tickLower &&
-            tx.tickUpper === position.tickUpper
+            tx.tickLower === position.entity.tickLower &&
+            tx.tickUpper === position.entity.tickUpper
         ),
       };
     });
@@ -134,11 +129,17 @@ function Pool({ address, entity, positions }: PoolProps) {
         <div className="flex flex-col items-center w-48">
           <PositionStatuses
             tickCurrent={entity.tickCurrent}
-            positions={positions}
+            positions={positions.map(({ entity }) => entity)}
             onClick={toggleShowPositions}
           />
           <div className="text-lg rounded-md text-gray-800">
             {poolPrice.toFixed(6)}{" "}
+            {quoteToken.equals(WETH9[chainId as ChainId])
+              ? "ETH"
+              : quoteToken.symbol}
+          </div>
+          <div className="text-lg rounded-md text-gray-800">
+            {liquidity}{" "}
             {quoteToken.equals(WETH9[chainId as ChainId])
               ? "ETH"
               : quoteToken.symbol}

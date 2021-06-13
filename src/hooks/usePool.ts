@@ -1,25 +1,35 @@
 import { useState, useEffect } from "react";
 import { compact, isEqualWith } from "lodash";
-import { Pool } from "@uniswap/v3-sdk";
+import { Position, Pool } from "@uniswap/v3-sdk";
 import { Contract } from "@ethersproject/contracts";
-import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
+import {
+  ChainId,
+  WETH9,
+  Token,
+  Price,
+  CurrencyAmount,
+} from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
+import { useWeb3React } from "@web3-react/core";
 
+import { DAI, USDC, USDT, FEI, LUSD } from "../constants";
 import { usePoolContract } from "./useContract";
+import { PositionState } from "./usePosition";
 
 export interface PoolState {
   key: string;
   address: string;
+  quoteToken: Token | null;
+  baseToken: Token | null;
   entity: Pool;
-  liquidity: BigNumber;
-  positions?: {
+  rawLiquidity: BigNumber;
+  currencyLiquidity: CurrencyAmount<Token>;
+  positions: {
     id: BigNumber;
-    tickLower: number;
-    tickUpper: number;
-    liquidity: BigNumber;
+    entity: Position;
     priceLower?: Price<Token, Token>;
     priceUpper?: Price<Token, Token>;
-    currentLiquidity?: Price<Token, Token>;
+    positionLiquidity?: CurrencyAmount<Token>;
     uncollectedFees?:
       | [CurrencyAmount<Token>, CurrencyAmount<Token>]
       | [undefined, undefined];
@@ -72,11 +82,37 @@ export function usePool(
   return { pool, poolAddress };
 }
 
+function getQuoteAndBaseToken(
+  chainId: ChainId | undefined,
+  token0: Token,
+  token1: Token
+): [Token, Token] {
+  let quote = token0;
+  let base = token1;
+
+  if (!chainId || !token0 || !token1) {
+    return [quote, base];
+  }
+
+  const quoteCurrencies: Token[] = [USDC, USDT, DAI, FEI, LUSD, WETH9[chainId]];
+
+  quoteCurrencies.some((cur) => {
+    if (token1.equals(cur)) {
+      quote = token1;
+      base = token0;
+      return true;
+    }
+    return false;
+  });
+  return [quote, base];
+}
+
 export function usePoolsState(
   contracts: (Contract | null)[],
   params: any[],
   positionsByPool: { [key: string]: any }
 ) {
+  const { chainId } = useWeb3React();
   const [pools, setPools] = useState<PoolState[]>([]);
 
   useEffect(() => {
@@ -88,6 +124,48 @@ export function usePoolsState(
     ) {
       return;
     }
+
+    const enhancePositions = (
+      pool: Pool,
+      quoteToken: Token,
+      positions: PositionState[]
+    ) => {
+      let rawLiquidity = BigNumber.from(0);
+      let currencyLiquidity = CurrencyAmount.fromRawAmount(quoteToken, 0);
+
+      const enhanced = positions.map(
+        ({ id, liquidity, tickLower, tickUpper }: PositionState) => {
+          const entity = new Position({
+            pool,
+            liquidity: liquidity.toString(),
+            tickLower,
+            tickUpper,
+          });
+
+          // liquidity of the position in quote token
+          const positionLiquidity = pool.token0.equals(quoteToken)
+            ? pool
+                .priceOf(pool.token1)
+                .quote(entity.amount1)
+                .add(entity.amount0)
+            : pool
+                .priceOf(pool.token0)
+                .quote(entity.amount0)
+                .add(entity.amount1);
+
+          currencyLiquidity = currencyLiquidity.add(positionLiquidity);
+          rawLiquidity = rawLiquidity.add(liquidity);
+
+          return {
+            id,
+            entity,
+            positionLiquidity,
+          };
+        }
+      );
+
+      return { enhanced, currencyLiquidity, rawLiquidity };
+    };
 
     const callContract = async (contract: Contract | null, idx: number) => {
       if (!contract) {
@@ -104,26 +182,35 @@ export function usePoolsState(
       }
       const key = `${token0.address}-${token1.address}-${fee}`;
 
-      const positions = positionsByPool[key];
-      const liquidity = positions.reduce(
-        (val: BigNumber, position: { liquidity: BigNumber }) => {
-          return val.add(position.liquidity);
-        },
-        BigNumber.from(0)
+      const entity = new Pool(
+        token0 as Token,
+        token1 as Token,
+        fee,
+        sqrtPriceX96,
+        0,
+        tickCurrent
       );
+
+      const [quoteToken, baseToken] = getQuoteAndBaseToken(
+        chainId,
+        token0,
+        token1
+      );
+
+      const {
+        rawLiquidity,
+        currencyLiquidity,
+        enhanced: positions,
+      } = enhancePositions(entity, quoteToken, positionsByPool[key]);
 
       return {
         key,
-        liquidity,
+        rawLiquidity,
+        currencyLiquidity,
+        quoteToken,
+        baseToken,
         address: contract.address.toLowerCase(),
-        entity: new Pool(
-          token0 as Token,
-          token1 as Token,
-          fee,
-          sqrtPriceX96,
-          0,
-          tickCurrent
-        ),
+        entity,
         positions,
       };
     };
@@ -135,7 +222,7 @@ export function usePoolsState(
         )
       );
       const newPoolsCompact = compact(newPools).sort((a, b) =>
-        a.liquidity.gte(b.liquidity) ? -1 : 1
+        a.rawLiquidity.gte(b.rawLiquidity) ? -1 : 1
       );
       if (!newPoolsCompact.length) {
         return;
@@ -154,7 +241,7 @@ export function usePoolsState(
     };
 
     collectPools();
-  }, [contracts, params, positionsByPool, pools]);
+  }, [contracts, params, positionsByPool, pools, chainId]);
 
   return pools;
 }

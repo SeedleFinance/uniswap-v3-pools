@@ -1,14 +1,11 @@
 import React from "react";
+import { Position } from "@uniswap/v3-sdk";
 
-import {
-  getPositionStatus,
-  PositionFields,
-  PositionStatus,
-} from "./utils/positionStatus";
+import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 
 interface PositionStatusesProps {
   tickCurrent: number;
-  positions: PositionFields[] | undefined;
+  positions: Position[] | undefined;
   onClick: () => void;
 }
 

@@ -1,10 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-
-export interface PositionFields {
-  tickLower: number;
-  tickUpper: number;
-  liquidity: BigNumber;
-}
+import { Position } from "@uniswap/v3-sdk";
 
 export enum PositionStatus {
   Inactive,
@@ -13,9 +8,9 @@ export enum PositionStatus {
 }
 export function getPositionStatus(
   tickCurrent: number,
-  position: PositionFields
+  position: Position
 ): PositionStatus {
-  if (position.liquidity.isZero()) {
+  if (BigNumber.from(position.liquidity.toString()).isZero()) {
     return PositionStatus.Inactive;
   } else {
     return position.tickLower < tickCurrent && tickCurrent < position.tickUpper

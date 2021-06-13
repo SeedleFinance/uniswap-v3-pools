@@ -10,9 +10,8 @@ import {
   Price,
   Token as UniToken,
 } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
 
-import { usePosition } from "./hooks/usePosition";
 import { usePositionFees } from "./hooks/usePositionFees";
 import { useUSDConversion, useEthToQuote } from "./hooks/useUSDConversion";
 
@@ -26,9 +25,7 @@ export interface PositionProps {
   id: BigNumber;
   pool: Pool;
   quoteToken: UniToken;
-  tickLower: number;
-  tickUpper: number;
-  liquidity: BigNumber;
+  entity: UniPosition;
   priceLower: Price<UniToken, UniToken>;
   priceUpper: Price<UniToken, UniToken>;
   transactions: any[];
@@ -38,20 +35,11 @@ function Position({
   id,
   pool,
   quoteToken,
-  tickLower,
-  tickUpper,
-  liquidity,
+  entity,
   priceLower,
   priceUpper,
   transactions,
 }: PositionProps) {
-  const position = usePosition(
-    pool,
-    liquidity.toString(),
-    tickLower,
-    tickUpper
-  );
-
   const { chainId } = useWeb3React();
   const getUSDValue = useUSDConversion(quoteToken);
   const convertEthToQuote = useEthToQuote(quoteToken);
@@ -59,13 +47,13 @@ function Position({
   const uncollectedFees = usePositionFees(pool, id);
 
   const totalLiquidity = useMemo(() => {
-    if (!quoteToken || !pool || !position) {
+    if (!quoteToken || !pool || !entity) {
       return 0;
     }
     return pool.token0.equals(quoteToken)
-      ? pool.priceOf(pool.token1).quote(position.amount1).add(position.amount0)
-      : pool.priceOf(pool.token0).quote(position.amount0).add(position.amount1);
-  }, [quoteToken, pool, position]);
+      ? pool.priceOf(pool.token1).quote(entity.amount1).add(entity.amount0)
+      : pool.priceOf(pool.token0).quote(entity.amount0).add(entity.amount1);
+  }, [quoteToken, pool, entity]);
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
@@ -74,15 +62,15 @@ function Position({
     if (
       !quoteToken ||
       !pool ||
-      !position ||
+      !entity ||
       totalLiquidity === 0 ||
       totalLiquidity.equalTo(0)
     ) {
       return { percent0: "0", percent1: "0" };
     }
     const [value0, value1] = pool.token0.equals(quoteToken)
-      ? [position.amount0, pool.priceOf(pool.token1).quote(position.amount1)]
-      : [pool.priceOf(pool.token0).quote(position.amount0), position.amount1];
+      ? [entity.amount0, pool.priceOf(pool.token1).quote(entity.amount1)]
+      : [pool.priceOf(pool.token0).quote(entity.amount0), entity.amount1];
     const calcPercent = (val: CurrencyAmount<UniToken>) =>
       (
         (parseFloat(val.toSignificant(15)) /
@@ -91,7 +79,7 @@ function Position({
       ).toFixed(2);
 
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
-  }, [totalLiquidity, position, pool, quoteToken]);
+  }, [totalLiquidity, entity, pool, quoteToken]);
 
   const totalUncollectedFees = useMemo(() => {
     if (!quoteToken || !pool || !uncollectedFees[0] || !uncollectedFees[1]) {
@@ -126,24 +114,20 @@ function Position({
 
   const formattedAge = useMemo(() => {
     const startDate = new Date(transactions[0].timestamp * 1000);
-    const endDate = liquidity.isZero()
+    const endDate = BigNumber.from(entity.liquidity.toString()).isZero()
       ? new Date(transactions[transactions.length - 1].timestamp * 1000)
       : new Date();
 
     return formatDistance(endDate, startDate);
-  }, [liquidity, transactions]);
+  }, [entity.liquidity, transactions]);
 
   const positionStatus = useMemo((): PositionStatus => {
     if (!pool) {
       return PositionStatus.Inactive;
     }
 
-    return getPositionStatus(pool.tickCurrent, {
-      tickUpper,
-      tickLower,
-      liquidity,
-    });
-  }, [pool, tickLower, tickUpper, liquidity]);
+    return getPositionStatus(pool.tickCurrent, entity);
+  }, [pool, entity]);
 
   const {
     totalMintValue,
@@ -218,13 +202,13 @@ function Position({
     }
 
     const startDate = new Date(transactions[0].timestamp * 1000);
-    const endDate = liquidity.isZero()
+    const endDate = BigNumber.from(entity.liquidity.toString()).isZero()
       ? new Date(transactions[transactions.length - 1].timestamp * 1000)
       : new Date();
     const secondsSince = differenceInSeconds(endDate, startDate);
     const yearInSeconds = 365 * 24 * 60 * 60;
     return (returnPercent / secondsSince) * yearInSeconds;
-  }, [returnPercent, transactions, liquidity]);
+  }, [returnPercent, transactions, entity.liquidity]);
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -244,7 +228,7 @@ function Position({
     return colors[positionStatus];
   };
 
-  if (!pool || !position) {
+  if (!pool || !entity) {
     return null;
   }
 
@@ -262,8 +246,8 @@ function Position({
           </div>
           <RangeVisual
             tickCurrent={pool.tickCurrent}
-            tickLower={tickLower}
-            tickUpper={tickUpper}
+            tickLower={entity.tickLower}
+            tickUpper={entity.tickUpper}
             tickSpacing={pool.tickSpacing}
             flip={pool.token0.equals(quoteToken)}
           />
@@ -271,11 +255,11 @@ function Position({
         <td className="border-t border-gray-200 py-4">
           <div>
             <Token symbol={pool.token0.symbol} />:{" "}
-            {position.amount0.toSignificant(4)}({percent0}%)
+            {entity.amount0.toSignificant(4)}({percent0}%)
           </div>
           <div>
             <Token symbol={pool.token1.symbol} />:{" "}
-            {position.amount1.toSignificant(4)}({percent1}%)
+            {entity.amount1.toSignificant(4)}({percent1}%)
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">

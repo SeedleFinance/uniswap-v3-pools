@@ -26,13 +26,24 @@ function Pools() {
   return (
     <div>
       {pools.map(
-        ({ key, address, entity, liquidity, positions }: PoolState) => (
+        ({
+          key,
+          address,
+          entity,
+          quoteToken,
+          baseToken,
+          rawLiquidity,
+          currencyLiquidity,
+          positions,
+        }: PoolState) => (
           <Pool
             key={key}
             address={address}
             entity={entity}
+            quoteToken={quoteToken}
+            baseToken={baseToken}
             positions={positions}
-            liquidity={liquidity}
+            liquidity={currencyLiquidity.toSignificant(15)}
           />
         )
       )}
