@@ -5,9 +5,11 @@ import { WETH9, ChainId, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { usePool } from "./usePool";
 import { USDC, DAI, USDT, LUSD } from "../constants";
 
-export function useUSDConversion(quoteToken: Token) {
+export function useUSDConversion(quoteToken: Token | null) {
   let fee = 0.3;
-  if (quoteToken.equals(DAI)) {
+  if (quoteToken === null) {
+    fee = 0;
+  } else if (quoteToken.equals(DAI)) {
     fee = 0.05;
   } else if (quoteToken.equals(USDT)) {
     fee = 0.05;
@@ -18,11 +20,12 @@ export function useUSDConversion(quoteToken: Token) {
   const { pool } = usePool(quoteToken, USDC, fee * 10000);
 
   return useMemo(() => {
-    const ratio = pool
-      ? parseFloat(pool.priceOf(quoteToken).toSignificant(2)) * 100
-      : 0;
+    const ratio =
+      pool && quoteToken
+        ? parseFloat(pool.priceOf(quoteToken).toSignificant(2)) * 100
+        : 0;
     return (val: CurrencyAmount<Token> | number) => {
-      if (val === 0) {
+      if (val === 0 || !quoteToken) {
         return "0.00";
       }
 

@@ -26,6 +26,7 @@ export interface PositionProps {
   pool: Pool;
   quoteToken: UniToken;
   entity: UniPosition;
+  positionLiquidity?: CurrencyAmount<UniToken>;
   priceLower: Price<UniToken, UniToken>;
   priceUpper: Price<UniToken, UniToken>;
   transactions: any[];
@@ -36,6 +37,7 @@ function Position({
   pool,
   quoteToken,
   entity,
+  positionLiquidity,
   priceLower,
   priceUpper,
   transactions,
@@ -46,15 +48,6 @@ function Position({
 
   const uncollectedFees = usePositionFees(pool, id);
 
-  const totalLiquidity = useMemo(() => {
-    if (!quoteToken || !pool || !entity) {
-      return 0;
-    }
-    return pool.token0.equals(quoteToken)
-      ? pool.priceOf(pool.token1).quote(entity.amount1).add(entity.amount0)
-      : pool.priceOf(pool.token0).quote(entity.amount0).add(entity.amount1);
-  }, [quoteToken, pool, entity]);
-
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
 
@@ -63,8 +56,8 @@ function Position({
       !quoteToken ||
       !pool ||
       !entity ||
-      totalLiquidity === 0 ||
-      totalLiquidity.equalTo(0)
+      !positionLiquidity ||
+      positionLiquidity.equalTo(0)
     ) {
       return { percent0: "0", percent1: "0" };
     }
@@ -74,12 +67,12 @@ function Position({
     const calcPercent = (val: CurrencyAmount<UniToken>) =>
       (
         (parseFloat(val.toSignificant(15)) /
-          parseFloat(totalLiquidity.toSignificant(15))) *
+          parseFloat(positionLiquidity.toSignificant(15))) *
         100
       ).toFixed(2);
 
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
-  }, [totalLiquidity, entity, pool, quoteToken]);
+  }, [positionLiquidity, entity, pool, quoteToken]);
 
   const totalUncollectedFees = useMemo(() => {
     if (!quoteToken || !pool || !uncollectedFees[0] || !uncollectedFees[1]) {
@@ -97,12 +90,16 @@ function Position({
   }, [quoteToken, pool, uncollectedFees]);
 
   const totalCurrentValue = useMemo(() => {
-    if (totalLiquidity === 0 || totalUncollectedFees === 0) {
+    if (
+      !positionLiquidity ||
+      positionLiquidity.equalTo(0) ||
+      totalUncollectedFees === 0
+    ) {
       return CurrencyAmount.fromRawAmount(quoteToken, 0);
     }
 
-    return totalLiquidity.add(totalUncollectedFees);
-  }, [quoteToken, totalLiquidity, totalUncollectedFees]);
+    return positionLiquidity.add(totalUncollectedFees);
+  }, [quoteToken, positionLiquidity, totalUncollectedFees]);
 
   const formattedRange = useMemo(() => {
     const prices = priceLower.lessThan(priceUpper)
@@ -266,7 +263,7 @@ function Position({
           <div>{formattedAge}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>${getUSDValue(totalLiquidity)}</div>
+          <div>${getUSDValue(positionLiquidity || 0)}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
           <div className="flex flex-col items-start justify-center">

@@ -14,6 +14,7 @@ import {
   Position as UniPosition,
 } from "@uniswap/v3-sdk";
 
+import { useUSDConversion } from "./hooks/useUSDConversion";
 import {
   useTransactions,
   FormattedPoolTransaction,
@@ -28,7 +29,7 @@ interface PoolProps {
   entity: UniPool;
   quoteToken: UniToken | null;
   baseToken: UniToken | null;
-  liquidity: string;
+  liquidity: CurrencyAmount<UniToken>;
   positions: {
     id: BigNumber;
     entity: UniPosition;
@@ -51,6 +52,7 @@ function Pool({
 }: PoolProps) {
   const { chainId } = useWeb3React();
 
+  const getUSDValue = useUSDConversion(quoteToken);
   const { token0, token1 } = entity;
 
   const transactions = useTransactions(address, token0, token1);
@@ -139,10 +141,7 @@ function Pool({
               : quoteToken.symbol}
           </div>
           <div className="text-lg rounded-md text-gray-800">
-            {liquidity}{" "}
-            {quoteToken.equals(WETH9[chainId as ChainId])
-              ? "ETH"
-              : quoteToken.symbol}
+            ${getUSDValue(liquidity)}{" "}
           </div>
         </div>
       </div>

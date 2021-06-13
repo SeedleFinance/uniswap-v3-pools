@@ -43,7 +43,7 @@ function Pools() {
             quoteToken={quoteToken}
             baseToken={baseToken}
             positions={positions}
-            liquidity={currencyLiquidity.toSignificant(15)}
+            liquidity={currencyLiquidity}
           />
         )
       )}
