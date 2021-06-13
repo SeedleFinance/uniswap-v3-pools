@@ -149,13 +149,29 @@ function Pool({
       </div>
 
       {showPositions && (
-        <div>
-          <div className="text-lg rounded-md text-gray-800">
-            {poolPrice.toFixed(6)}{" "}
-            {quoteToken.equals(WETH9[chainId as ChainId])
-              ? "ETH"
-              : quoteToken.symbol}
-          </div>
+        <>
+          <table className="table-auto w-1/2 mt-4 mb-8">
+            <thead>
+              <tr className="text-left">
+                <th className="pb-4">Current Price</th>
+                <th className="pb-4">Total Liquidity</th>
+                <th className="pb-4">Total Uncollected Fees</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  {poolPrice.toFixed(6)}{" "}
+                  {quoteToken.equals(WETH9[chainId as ChainId])
+                    ? "ETH"
+                    : quoteToken.symbol}
+                </td>
+                <td>{formatCurrency(getUSDValue(liquidity))}</td>
+                <td>{formatCurrency(getUSDValue(poolUncollectedFees))}</td>
+              </tr>
+            </tbody>
+          </table>
+
           <table className="table-auto w-full">
             <thead>
               <tr className="text-left">
@@ -195,7 +211,7 @@ function Pool({
               ))}
             </tbody>
           </table>
-        </div>
+        </>
       )}
     </div>
   );
