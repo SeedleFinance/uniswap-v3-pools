@@ -96,18 +96,19 @@ function getQuoteAndBaseToken(
 
   const quoteCurrencies: Token[] = [USDC, USDT, DAI, FEI, LUSD, WETH9[chainId]];
 
-  const validQuoteCurrency = quoteCurrencies.some((cur) => {
+  quoteCurrencies.some((cur) => {
     if (token0.equals(cur)) {
+      quote = token0;
+      base = token1;
       return true;
+    } else if (token1.equals(cur)) {
+      quote = token1;
+      base = token0;
     }
     return false;
   });
 
-  // if the quote currency is not a valid one, flip it.
-  if (validQuoteCurrency) {
-    return [quote, base];
-  }
-  return [base, quote];
+  return [quote, base];
 }
 
 export function usePoolsState(
