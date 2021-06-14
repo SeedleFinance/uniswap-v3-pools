@@ -2,13 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
-import {
-  WETH9,
-  ChainId,
-  CurrencyAmount,
-  Token,
-  Currency,
-} from "@uniswap/sdk-core";
+import { WETH9, ChainId, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origin: String!, $poolAddress: String!) {
@@ -72,13 +66,13 @@ export interface FormattedPoolTransaction {
   tickLower: number;
   tickUpper: number;
   timestamp: number;
-  amount0: CurrencyAmount<Currency>;
-  amount1: CurrencyAmount<Currency>;
+  amount0: CurrencyAmount<Token>;
+  amount1: CurrencyAmount<Token>;
   gas: {
     price: BigNumber;
     used: BigNumber;
     cost: BigNumber;
-    costCurrency: CurrencyAmount<Currency>;
+    costCurrency: CurrencyAmount<Token>;
   };
 }
 

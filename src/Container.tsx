@@ -44,6 +44,7 @@ function Pools() {
             quoteToken={quoteToken}
             baseToken={baseToken}
             positions={positions}
+            rawLiquidity={rawLiquidity}
             liquidity={currencyLiquidity}
             poolUncollectedFees={poolUncollectedFees}
           />

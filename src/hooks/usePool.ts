@@ -19,8 +19,8 @@ import { PositionState } from "./usePosition";
 export interface PoolState {
   key: string;
   address: string;
-  quoteToken: Token | null;
-  baseToken: Token | null;
+  quoteToken: Token;
+  baseToken: Token;
   entity: Pool;
   rawLiquidity: BigNumber;
   currencyLiquidity: CurrencyAmount<Token>;
