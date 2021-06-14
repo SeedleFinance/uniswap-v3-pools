@@ -104,6 +104,7 @@ function getQuoteAndBaseToken(
     } else if (token1.equals(cur)) {
       quote = token1;
       base = token0;
+      return true;
     }
     return false;
   });
