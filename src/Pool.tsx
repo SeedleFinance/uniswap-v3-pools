@@ -101,11 +101,8 @@ function Pool({
     totalValue
   );
 
-  const apr = useAPR(
-    transactions,
-    returnPercent,
-    BigNumber.from(entity.liquidity.toString())
-  );
+  const apr = useAPR(transactions, returnPercent, rawLiquidity);
+
   const positionsWithPricesAndTransactions = useMemo(() => {
     if (!positions || !positions.length || !baseToken || !quoteToken) {
       return [];

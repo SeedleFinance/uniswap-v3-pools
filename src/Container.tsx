@@ -69,9 +69,10 @@ function Container() {
             <Account address={account} />
           </div>
           <div>
-            <h2 className="text-5xl text-center font-bold text-red-600 m-5">
+            <h2 className="text-5xl text-center font-bold text-red-600 m-5 mb-8">
               Uniswap V3 Pools
             </h2>
+
             <div>
               <Pools />
             </div>

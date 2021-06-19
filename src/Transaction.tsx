@@ -11,6 +11,7 @@ import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
 import { useUSDConversion } from "./hooks/useUSDConversion";
+import { formatCurrency } from "./utils/numbers";
 import TokenSymbol from "./Token";
 
 export interface TransactionProps {
@@ -102,8 +103,8 @@ function Transaction({
           {percent1}%)
         </div>
       </td>
-      <td>${getUSDValue(totalLiquidity)}</td>
-      <td>${getGasUSDValue(gas.costCurrency)}</td>
+      <td>{formatCurrency(getUSDValue(totalLiquidity))}</td>
+      <td>{formatCurrency(getGasUSDValue(gas.costCurrency))}</td>
     </tr>
   );
 }
