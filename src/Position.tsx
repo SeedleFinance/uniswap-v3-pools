@@ -1,18 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
-import differenceInSeconds from "date-fns/differenceInSeconds";
 import formatDistance from "date-fns/formatDistance";
 import { BigNumber } from "@ethersproject/bignumber";
-import {
-  WETH9,
-  ChainId,
-  CurrencyAmount,
-  Price,
-  Token as UniToken,
-} from "@uniswap/sdk-core";
+import { CurrencyAmount, Price, Token as UniToken } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
 
-import { useUSDConversion, useEthToQuote } from "./hooks/useUSDConversion";
+import { useUSDConversion } from "./hooks/useUSDConversion";
+import {
+  useTransactionTotals,
+  useReturnValue,
+  useAPR,
+} from "./hooks/calculations";
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 import { formatCurrency } from "./utils/numbers";
@@ -46,9 +43,7 @@ function Position({
   priceUpper,
   transactions,
 }: PositionProps) {
-  const { chainId } = useWeb3React();
   const getUSDValue = useUSDConversion(quoteToken);
-  const convertEthToQuote = useEthToQuote(quoteToken);
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
@@ -118,81 +113,22 @@ function Position({
     totalBurnValue,
     totalCollectValue,
     totalTransactionCost,
-  } = useMemo(() => {
-    let totalMintValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
-    let totalBurnValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
-    let totalCollectValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
-    let totalTransactionCost = CurrencyAmount.fromRawAmount(
-      WETH9[chainId as ChainId],
-      "0"
-    );
+  } = useTransactionTotals(transactions, quoteToken, pool);
 
-    if (transactions.length && quoteToken && pool && chainId) {
-      transactions.forEach((tx) => {
-        const txValue = pool.token0.equals(quoteToken)
-          ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
-          : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
-        if (tx.type === "mint") {
-          totalMintValue = totalMintValue.add(txValue);
-        } else if (tx.type === "burn") {
-          totalBurnValue = totalBurnValue.add(txValue);
-        } else if (tx.type === "collect") {
-          totalCollectValue = totalCollectValue.add(txValue);
-        }
-
-        // add gas costs
-        totalTransactionCost = totalTransactionCost.add(tx.gas.costCurrency);
-      });
-    }
-
-    return {
-      totalMintValue,
-      totalBurnValue,
-      totalCollectValue,
-      totalTransactionCost,
-    };
-  }, [transactions, quoteToken, pool, chainId]);
-
-  const returnValue = useMemo(() => {
-    return totalCurrentValue
-      .add(totalBurnValue)
-      .add(totalCollectValue)
-      .subtract(totalMintValue)
-      .subtract(convertEthToQuote(totalTransactionCost));
-  }, [
+  const { returnValue, returnPercent } = useReturnValue(
+    quoteToken,
     totalMintValue,
     totalBurnValue,
     totalCollectValue,
     totalTransactionCost,
-    totalCurrentValue,
-    convertEthToQuote,
-  ]);
+    totalCurrentValue
+  );
 
-  const returnPercent = useMemo(() => {
-    return (
-      (parseFloat(returnValue.toSignificant(2)) /
-        parseFloat(
-          totalMintValue
-            .add(convertEthToQuote(totalTransactionCost))
-            .toSignificant(2)
-        )) *
-      100
-    );
-  }, [totalMintValue, totalTransactionCost, returnValue, convertEthToQuote]);
-
-  const apr = useMemo(() => {
-    if (!transactions.length) {
-      return 0;
-    }
-
-    const startDate = new Date(transactions[0].timestamp * 1000);
-    const endDate = BigNumber.from(entity.liquidity.toString()).isZero()
-      ? new Date(transactions[transactions.length - 1].timestamp * 1000)
-      : new Date();
-    const secondsSince = differenceInSeconds(endDate, startDate);
-    const yearInSeconds = 365 * 24 * 60 * 60;
-    return (returnPercent / secondsSince) * yearInSeconds;
-  }, [returnPercent, transactions, entity.liquidity]);
+  const apr = useAPR(
+    transactions,
+    returnPercent,
+    BigNumber.from(entity.liquidity.toString())
+  );
 
   const statusLabel = useMemo(() => {
     const labels = {
