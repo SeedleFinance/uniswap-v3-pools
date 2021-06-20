@@ -160,9 +160,12 @@ export function usePoolContract(
 }
 
 export interface PoolParams {
+  key: string;
   token0: Token | null;
   token1: Token | null;
   fee: number;
+  quoteToken?: Token;
+  baseToken?: Token;
 }
 
 export function usePoolContracts(
