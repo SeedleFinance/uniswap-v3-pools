@@ -2,17 +2,10 @@ import { useState, useEffect } from "react";
 import { compact, isEqualWith } from "lodash";
 import { Position, Pool } from "@uniswap/v3-sdk";
 import { Contract } from "@ethersproject/contracts";
-import {
-  ChainId,
-  WETH9,
-  Token,
-  Price,
-  CurrencyAmount,
-} from "@uniswap/sdk-core";
+import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
 
-import { DAI, USDC, USDT, FEI, LUSD } from "../constants";
 import { usePoolContract } from "./useContract";
 import { PositionState } from "./usePosition";
 
@@ -80,36 +73,6 @@ export function usePool(
   }, [contract, token0, token1, fee]);
 
   return { pool, poolAddress };
-}
-
-function getQuoteAndBaseToken(
-  chainId: ChainId | undefined,
-  token0: Token,
-  token1: Token
-): [Token, Token] {
-  let quote = token0;
-  let base = token1;
-
-  if (!chainId || !token0 || !token1) {
-    return [quote, base];
-  }
-
-  const quoteCurrencies: Token[] = [USDC, USDT, DAI, FEI, LUSD, WETH9[chainId]];
-
-  quoteCurrencies.some((cur) => {
-    if (token0.equals(cur)) {
-      quote = token0;
-      base = token1;
-      return true;
-    } else if (token1.equals(cur)) {
-      quote = token1;
-      base = token0;
-      return true;
-    }
-    return false;
-  });
-
-  return [quote, base];
 }
 
 export function usePoolsState(
@@ -202,7 +165,7 @@ export function usePoolsState(
       const sqrtPriceX96 = result[0];
       const tickCurrent = result[1];
 
-      const { token0, token1, fee } = params[idx];
+      const { token0, token1, fee, quoteToken, baseToken } = params[idx];
       if (!token0 || !token1) {
         return null;
       }
@@ -215,12 +178,6 @@ export function usePoolsState(
         sqrtPriceX96,
         0,
         tickCurrent
-      );
-
-      const [quoteToken, baseToken] = getQuoteAndBaseToken(
-        chainId,
-        token0,
-        token1
       );
 
       const {
