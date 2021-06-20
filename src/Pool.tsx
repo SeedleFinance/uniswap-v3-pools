@@ -147,11 +147,14 @@ function Pool({
     <div className="my-4 p-4 border rounded-md">
       <div className="flex justify-between">
         <div className="text-2xl text-gray-600 py-2 flex items-center">
-          <button className="focus:outline-none" onClick={toggleShowPositions}>
+          <button
+            className="focus:outline-none flex items-center p-1"
+            onClick={toggleShowPositions}
+          >
             <Token name={baseToken.name} symbol={baseToken.symbol} />
             <span className="px-1">/</span>
             <Token name={quoteToken.name} symbol={quoteToken.symbol} />
-            <span className="rounded-md text-xl text-gray-800 bg-gray-200 p-1">
+            <span className="rounded-md text-xl text-gray-800 bg-gray-200 ml-1 px-1">
               {entity.fee / 10000}%
             </span>
           </button>
