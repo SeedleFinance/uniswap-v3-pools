@@ -72,11 +72,7 @@ function Position({
   }, [positionLiquidity, entity, pool, quoteToken]);
 
   const totalCurrentValue = useMemo(() => {
-    if (
-      !positionLiquidity ||
-      positionLiquidity.equalTo(0) ||
-      positionUncollectedFees.equalTo(0)
-    ) {
+    if (!positionLiquidity || positionLiquidity.equalTo(0)) {
       return CurrencyAmount.fromRawAmount(quoteToken, 0);
     }
 
