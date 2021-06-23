@@ -72,6 +72,7 @@ function Pool({
   );
 
   const [showPositions, setShowPositions] = useState(false);
+  const [showClosedPositions, setShowClosedPositions] = useState(true);
 
   const poolPrice = useMemo(() => {
     if (!baseToken || !entity) {
@@ -108,7 +109,13 @@ function Pool({
       return [];
     }
 
-    return positions.map((position) => {
+    const filteredPositions = showClosedPositions
+      ? positions
+      : positions.filter(
+          (pos) => pos.positionLiquidity && !pos.positionLiquidity.equalTo(0)
+        );
+
+    return filteredPositions.map((position) => {
       const priceLower = tickToPrice(
         baseToken,
         quoteToken,
@@ -131,7 +138,7 @@ function Pool({
         ),
       };
     });
-  }, [positions, baseToken, quoteToken, transactions]);
+  }, [positions, baseToken, quoteToken, transactions, showClosedPositions]);
 
   const toggleShowPositions = () => setShowPositions(!showPositions);
 
@@ -262,6 +269,16 @@ function Pool({
               ))}
             </tbody>
           </table>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                onChange={() => setShowClosedPositions(!showClosedPositions)}
+                checked={showClosedPositions}
+              />
+              <span className="ml-1">Hide closed positions</span>
+            </label>
+          </div>
         </>
       )}
     </div>
