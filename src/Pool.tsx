@@ -269,16 +269,19 @@ function Pool({
               ))}
             </tbody>
           </table>
-          <div>
-            <label>
-              <input
-                type="checkbox"
-                onChange={() => setShowClosedPositions(!showClosedPositions)}
-                checked={showClosedPositions}
-              />
-              <span className="ml-1">Hide closed positions</span>
-            </label>
-          </div>
+
+          {positions.length > 1 && (
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  onChange={() => setShowClosedPositions(!showClosedPositions)}
+                  checked={!showClosedPositions}
+                />
+                <span className="ml-1">Hide closed positions</span>
+              </label>
+            </div>
+          )}
         </>
       )}
     </div>
