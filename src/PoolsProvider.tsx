@@ -7,6 +7,7 @@ import { useAllPositions, PositionState } from "./hooks/usePosition";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
 import { useTokens } from "./hooks/useToken";
 import { usePoolsState, PoolState } from "./hooks/usePool";
+import { usePriceQuoter } from "./hooks/usePriceQuoter";
 
 import { DAI, USDC, USDT, FEI } from "./constants";
 
@@ -112,6 +113,9 @@ export const PoolsProvider = ({ account, children }: Props) => {
   const poolContracts = usePoolContracts(poolParams);
 
   const pools = usePoolsState(poolContracts, poolParams, positionsByPool);
+
+  const amounts = usePriceQuoter([{ tokens: [USDC, DAI], fees: [500] }]);
+  console.log(amounts);
 
   return (
     <PoolsContext.Provider value={{ pools }}>{children}</PoolsContext.Provider>

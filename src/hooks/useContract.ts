@@ -8,13 +8,18 @@ import { ChainId, Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { abi as NFTPositionManagerABI } from "@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json";
+import { abi as QuoterV2ABI } from "@uniswap/v3-periphery/artifacts/contracts/lens/QuoterV2.sol/QuoterV2.json";
 import { abi as V3PoolABI } from "@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json";
 import ERC20_ABI from "../abis/erc20.json";
 import ERC20_BYTES32_ABI from "../abis/erc20_bytes32.json";
 
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../constants";
+import {
+  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
+  QUOTER_V2_ADDRESSES,
+} from "../constants";
 
 import { NonfungiblePositionManager } from "../types/v3/NonfungiblePositionManager";
+import { QuoterV2 } from "../types/v3/QuoterV2";
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -179,4 +184,16 @@ export function usePoolContracts(
   );
 
   return useContractBulk(addresses, V3PoolABI, withSignerIfPossible);
+}
+
+export function useQuoterV2Contract(
+  withSignerIfPossible?: boolean
+): QuoterV2 | null {
+  const { chainId } = useWeb3React();
+  const address = chainId ? QUOTER_V2_ADDRESSES[chainId as ChainId] : undefined;
+  return useContract(
+    address,
+    QuoterV2ABI,
+    withSignerIfPossible
+  ) as QuoterV2 | null;
 }
