@@ -27,20 +27,20 @@ function Pools() {
   }
   return (
     <div className="w-full">
-      <div className="flex flex-row justify-between w-1/2">
-        <div className="border rounded-md p-6">
+      <div className="flex flex-row justify-end">
+        <div className="border rounded-md p-6 mx-2">
           <div className="text-2xl text-gray-600 my-1 font-bold">
             {formatCurrency(totalLiquidity)}
           </div>
           <div className="text-md text-gray-500">Total Liquidity</div>
         </div>
-        <div className="border rounded-md p-6">
+        <div className="border rounded-md p-6 mx-2">
           <div className="text-2xl text-gray-600 my-1 font-bold">
             {formatCurrency(totalUncollectedFees)}
           </div>
           <div className="text-md text-gray-500">Total Uncollected Fees</div>
         </div>
-        <div className="border rounded-md p-6">
+        <div className="border rounded-md p-6 mx-2">
           <div className="text-2xl text-gray-800 my-1 font-bold">
             {formatCurrency(totalLiquidity + totalUncollectedFees)}
           </div>
