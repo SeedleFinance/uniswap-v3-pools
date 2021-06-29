@@ -7,12 +7,14 @@ import { PoolState } from "./hooks/usePool";
 import Pool from "./Pool";
 import Account from "./Account";
 
+import { formatCurrency } from "./utils/numbers";
+
 const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 });
 
 function Pools() {
-  const { pools } = usePools();
+  const { pools, totalLiquidity, totalUncollectedFees } = usePools();
 
   if (!pools.length) {
     return (
@@ -24,32 +26,54 @@ function Pools() {
     );
   }
   return (
-    <div>
-      {pools.map(
-        ({
-          key,
-          address,
-          entity,
-          quoteToken,
-          baseToken,
-          rawLiquidity,
-          currencyLiquidity,
-          poolUncollectedFees,
-          positions,
-        }: PoolState) => (
-          <Pool
-            key={key}
-            address={address}
-            entity={entity}
-            quoteToken={quoteToken}
-            baseToken={baseToken}
-            positions={positions}
-            rawLiquidity={rawLiquidity}
-            liquidity={currencyLiquidity}
-            poolUncollectedFees={poolUncollectedFees}
-          />
-        )
-      )}
+    <div className="w-full">
+      <div className="flex flex-row justify-between w-1/2">
+        <div className="border rounded-md p-6">
+          <div className="text-2xl text-gray-600 my-1 font-bold">
+            {formatCurrency(totalLiquidity)}
+          </div>
+          <div className="text-md text-gray-500">Total Liquidity</div>
+        </div>
+        <div className="border rounded-md p-6">
+          <div className="text-2xl text-gray-600 my-1 font-bold">
+            {formatCurrency(totalUncollectedFees)}
+          </div>
+          <div className="text-md text-gray-500">Total Uncollected Fees</div>
+        </div>
+        <div className="border rounded-md p-6">
+          <div className="text-2xl text-gray-800 my-1 font-bold">
+            {formatCurrency(totalLiquidity + totalUncollectedFees)}
+          </div>
+          <div className="text-md text-gray-500">Total Value</div>
+        </div>
+      </div>
+      <div className="w-full">
+        {pools.map(
+          ({
+            key,
+            address,
+            entity,
+            quoteToken,
+            baseToken,
+            rawLiquidity,
+            currencyLiquidity,
+            poolUncollectedFees,
+            positions,
+          }: PoolState) => (
+            <Pool
+              key={key}
+              address={address}
+              entity={entity}
+              quoteToken={quoteToken}
+              baseToken={baseToken}
+              positions={positions}
+              rawLiquidity={rawLiquidity}
+              liquidity={currencyLiquidity}
+              poolUncollectedFees={poolUncollectedFees}
+            />
+          )
+        )}
+      </div>
     </div>
   );
 }

@@ -180,7 +180,6 @@ function Pool({
             positions={positions.map(({ entity }) => entity)}
             onClick={toggleShowPositions}
           />
-
           <div className="text-lg rounded-md text-gray-800">
             {formatCurrency(getUSDValue(totalValue))}{" "}
           </div>

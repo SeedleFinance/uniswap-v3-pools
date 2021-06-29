@@ -7,10 +7,15 @@ import { useAllPositions, PositionState } from "./hooks/usePosition";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
 import { useTokens } from "./hooks/useToken";
 import { usePoolsState, PoolState } from "./hooks/usePool";
+import { useEthPrice } from "./hooks/useEthPrice";
 
 import { DAI, USDC, USDT, FEI } from "./constants";
 
-const PoolsContext = React.createContext({ pools: [] as PoolState[] });
+const PoolsContext = React.createContext({
+  pools: [] as PoolState[],
+  totalLiquidity: 0,
+  totalUncollectedFees: 0,
+});
 export const usePools = () => useContext(PoolsContext);
 
 interface Props {
@@ -50,6 +55,7 @@ function getQuoteAndBaseToken(
 
 export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
+  const ethPriceUSD = useEthPrice();
   const allPositions = useAllPositions(account);
 
   const tokenAddresses = useMemo(() => {
@@ -113,7 +119,35 @@ export const PoolsProvider = ({ account, children }: Props) => {
 
   const pools = usePoolsState(poolContracts, poolParams, positionsByPool);
 
+  // calculate total
+  const [totalLiquidity, totalUncollectedFees] = pools.reduce(
+    (accm, pool) => {
+      let totalLiquidity = 0;
+      let totalUncollectedFees = 0;
+      const { quoteToken, currencyLiquidity, poolUncollectedFees } = pool;
+      const liquidityFloat = parseFloat(currencyLiquidity.toSignificant(2));
+      const uncollectedFeesFloat = parseFloat(
+        poolUncollectedFees.toSignificant(2)
+      );
+
+      if (quoteToken.equals(WETH9[chainId as ChainId])) {
+        totalLiquidity = accm[0] + liquidityFloat * ethPriceUSD;
+        totalUncollectedFees = accm[1] + uncollectedFeesFloat * ethPriceUSD;
+      } else {
+        totalLiquidity = accm[0] + liquidityFloat;
+        totalUncollectedFees = accm[1] + uncollectedFeesFloat;
+      }
+
+      return [totalLiquidity, totalUncollectedFees];
+    },
+    [0, 0]
+  );
+
   return (
-    <PoolsContext.Provider value={{ pools }}>{children}</PoolsContext.Provider>
+    <PoolsContext.Provider
+      value={{ pools, totalLiquidity, totalUncollectedFees }}
+    >
+      {children}
+    </PoolsContext.Provider>
   );
 };
