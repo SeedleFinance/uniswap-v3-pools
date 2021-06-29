@@ -15,6 +15,7 @@ const PoolsContext = React.createContext({
   pools: [] as PoolState[],
   totalLiquidity: 0,
   totalUncollectedFees: 0,
+  ethPriceUSD: 0,
 });
 export const usePools = () => useContext(PoolsContext);
 
@@ -145,7 +146,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
 
   return (
     <PoolsContext.Provider
-      value={{ pools, totalLiquidity, totalUncollectedFees }}
+      value={{ pools, totalLiquidity, totalUncollectedFees, ethPriceUSD }}
     >
       {children}
     </PoolsContext.Provider>

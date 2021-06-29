@@ -4,7 +4,6 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token as UniToken } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
 
-import { useUSDConversion } from "./hooks/useUSDConversion";
 import {
   useTransactionTotals,
   useReturnValue,
@@ -28,6 +27,7 @@ export interface PositionProps {
   positionUncollectedFees: CurrencyAmount<UniToken>;
   priceLower: Price<UniToken, UniToken>;
   priceUpper: Price<UniToken, UniToken>;
+  getUSDValue: (val: CurrencyAmount<UniToken> | number) => number;
   transactions: any[];
 }
 
@@ -41,10 +41,9 @@ function Position({
   positionUncollectedFees,
   priceLower,
   priceUpper,
+  getUSDValue,
   transactions,
 }: PositionProps) {
-  const getUSDValue = useUSDConversion(quoteToken);
-
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
 
@@ -268,6 +267,7 @@ function Position({
                   key={tx.id}
                   pool={pool}
                   quoteToken={quoteToken}
+                  getUSDValue={getUSDValue}
                   {...tx}
                 />
               ))}

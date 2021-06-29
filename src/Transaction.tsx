@@ -1,16 +1,8 @@
 import React, { useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
-import {
-  WETH9,
-  ChainId,
-  Price,
-  Token,
-  CurrencyAmount,
-} from "@uniswap/sdk-core";
+import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
-import { useUSDConversion } from "./hooks/useUSDConversion";
 import { formatCurrency } from "./utils/numbers";
 import TokenSymbol from "./Token";
 
@@ -24,6 +16,7 @@ export interface TransactionProps {
   amount1: CurrencyAmount<Token>;
   priceLower: Price<Token, Token>;
   priceUpper: Price<Token, Token>;
+  getUSDValue: (val: CurrencyAmount<Token> | number) => number;
   gas: { costCurrency: CurrencyAmount<Token> };
 }
 
@@ -38,11 +31,8 @@ function Transaction({
   priceLower,
   priceUpper,
   gas,
+  getUSDValue,
 }: TransactionProps) {
-  const { chainId } = useWeb3React();
-  const getUSDValue = useUSDConversion(quoteToken);
-  const getGasUSDValue = useUSDConversion(WETH9[chainId as ChainId]);
-
   const totalLiquidity = useMemo(() => {
     if (!quoteToken || !pool) {
       return 0;
@@ -104,7 +94,7 @@ function Transaction({
         </div>
       </td>
       <td>{formatCurrency(getUSDValue(totalLiquidity))}</td>
-      <td>{formatCurrency(getGasUSDValue(gas.costCurrency))}</td>
+      <td>{formatCurrency(getUSDValue(gas.costCurrency))}</td>
     </tr>
   );
 }
