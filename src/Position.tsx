@@ -13,6 +13,7 @@ import {
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 import { formatCurrency } from "./utils/numbers";
 
+import { usePools } from "./PoolsProvider";
 import Transaction from "./Transaction";
 import Token from "./Token";
 import RangeVisual from "./RangeVisual";
@@ -27,7 +28,6 @@ export interface PositionProps {
   positionUncollectedFees: CurrencyAmount<UniToken>;
   priceLower: Price<UniToken, UniToken>;
   priceUpper: Price<UniToken, UniToken>;
-  getUSDValue: (val: CurrencyAmount<UniToken> | number) => number;
   transactions: any[];
 }
 
@@ -41,9 +41,10 @@ function Position({
   positionUncollectedFees,
   priceLower,
   priceUpper,
-  getUSDValue,
   transactions,
 }: PositionProps) {
+  const { getUSDValue } = usePools();
+
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
 
@@ -267,7 +268,6 @@ function Position({
                   key={tx.id}
                   pool={pool}
                   quoteToken={quoteToken}
-                  getUSDValue={getUSDValue}
                   {...tx}
                 />
               ))}

@@ -4,6 +4,7 @@ import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
 import { formatCurrency } from "./utils/numbers";
+import { usePools } from "./PoolsProvider";
 import TokenSymbol from "./Token";
 
 export interface TransactionProps {
@@ -16,7 +17,6 @@ export interface TransactionProps {
   amount1: CurrencyAmount<Token>;
   priceLower: Price<Token, Token>;
   priceUpper: Price<Token, Token>;
-  getUSDValue: (val: CurrencyAmount<Token> | number) => number;
   gas: { costCurrency: CurrencyAmount<Token> };
 }
 
@@ -31,8 +31,8 @@ function Transaction({
   priceLower,
   priceUpper,
   gas,
-  getUSDValue,
 }: TransactionProps) {
+  const { getUSDValue } = usePools();
   const totalLiquidity = useMemo(() => {
     if (!quoteToken || !pool) {
       return 0;

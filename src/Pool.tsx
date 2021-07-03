@@ -23,6 +23,7 @@ import {
   useReturnValue,
   useAPR,
 } from "./hooks/calculations";
+import { usePools } from "./PoolsProvider";
 
 import { formatCurrency } from "./utils/numbers";
 
@@ -38,7 +39,6 @@ interface PoolProps {
   rawLiquidity: BigNumber;
   liquidity: CurrencyAmount<UniToken>;
   poolUncollectedFees: CurrencyAmount<UniToken>;
-  ethPriceUSD: number;
   positions: {
     id: BigNumber;
     entity: UniPosition;
@@ -59,28 +59,9 @@ function Pool({
   liquidity,
   rawLiquidity,
   poolUncollectedFees,
-  ethPriceUSD,
 }: PoolProps) {
   const { chainId } = useWeb3React();
-
-  const getUSDValue = (val: CurrencyAmount<UniToken> | number) => {
-    if (val === 0) {
-      return 0;
-    }
-
-    const valFloat = parseFloat(
-      (val as CurrencyAmount<UniToken>).toSignificant(15)
-    );
-    if (
-      (val as CurrencyAmount<UniToken>).currency.equals(
-        WETH9[chainId as ChainId]
-      )
-    ) {
-      return valFloat * ethPriceUSD;
-    } else {
-      return valFloat;
-    }
-  };
+  const { getUSDValue } = usePools();
 
   const { token0, token1 } = entity;
 
@@ -282,7 +263,6 @@ function Pool({
                   key={position.id.toString()}
                   pool={entity}
                   quoteToken={quoteToken}
-                  getUSDValue={getUSDValue}
                   {...position}
                 />
               ))}

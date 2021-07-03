@@ -14,8 +14,7 @@ const injected = new InjectedConnector({
 });
 
 function Pools() {
-  const { pools, totalLiquidity, totalUncollectedFees, ethPriceUSD } =
-    usePools();
+  const { pools, totalLiquidity, totalUncollectedFees } = usePools();
 
   if (!pools.length) {
     return (
@@ -71,7 +70,6 @@ function Pools() {
               rawLiquidity={rawLiquidity}
               liquidity={currencyLiquidity}
               poolUncollectedFees={poolUncollectedFees}
-              ethPriceUSD={ethPriceUSD}
             />
           )
         )}

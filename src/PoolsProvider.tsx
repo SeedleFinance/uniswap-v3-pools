@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useMemo } from "react";
 import { uniq } from "lodash";
 import { useWeb3React } from "@web3-react/core";
-import { ChainId, WETH9, Token } from "@uniswap/sdk-core";
+import { ChainId, WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
 
 import { useAllPositions, PositionState } from "./hooks/usePosition";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
@@ -15,7 +15,9 @@ const PoolsContext = React.createContext({
   pools: [] as PoolState[],
   totalLiquidity: 0,
   totalUncollectedFees: 0,
-  ethPriceUSD: 0,
+  getUSDValue: (val: CurrencyAmount<Token> | number): number => {
+    return 0;
+  },
 });
 export const usePools = () => useContext(PoolsContext);
 
@@ -144,9 +146,26 @@ export const PoolsProvider = ({ account, children }: Props) => {
     [0, 0]
   );
 
+  const getUSDValue = (val: CurrencyAmount<Token> | number) => {
+    if (val === 0) {
+      return 0;
+    }
+
+    const valFloat = parseFloat(
+      (val as CurrencyAmount<Token>).toSignificant(15)
+    );
+    if (
+      (val as CurrencyAmount<Token>).currency.equals(WETH9[chainId as ChainId])
+    ) {
+      return valFloat * ethPriceUSD;
+    } else {
+      return valFloat;
+    }
+  };
+
   return (
     <PoolsContext.Provider
-      value={{ pools, totalLiquidity, totalUncollectedFees, ethPriceUSD }}
+      value={{ pools, totalLiquidity, totalUncollectedFees, getUSDValue }}
     >
       {children}
     </PoolsContext.Provider>
