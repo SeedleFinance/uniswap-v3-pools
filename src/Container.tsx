@@ -25,7 +25,7 @@ function Container() {
         <PoolsProvider account={account}>
           <div className="lg:container mx-auto pb-4">
             <div className="w-full px-2 py-4 flex justify-end">
-              <div className="w-48 flex justify-between">
+              <div className="w-52 flex justify-between">
                 <GlobalCurrencySelector />
                 <Account address={account} />
               </div>
