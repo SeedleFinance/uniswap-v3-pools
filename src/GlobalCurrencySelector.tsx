@@ -24,7 +24,8 @@ function GlobalCurrencySelector() {
         className="focus:outline-none"
         onClick={() => setSelectorExpanded(!selectorExpanded)}
       >
-        {globalCurrency.equals(eth) ? "ETH" : "USD"}
+        <span>{globalCurrency.equals(eth) ? "ETH" : "USD"}</span>
+        <span className="pl-1 text-gray-800 text-xl">▿</span>
       </button>
 
       {selectorExpanded && (
