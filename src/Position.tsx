@@ -127,7 +127,7 @@ function Position({
 
   const statusLabel = useMemo(() => {
     const labels = {
-      [PositionStatus.Inactive]: "Inactive",
+      [PositionStatus.Inactive]: "Closed",
       [PositionStatus.InRange]: "In Range",
       [PositionStatus.OutRange]: "Out of Range",
     };

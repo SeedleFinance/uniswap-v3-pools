@@ -29,7 +29,7 @@ function GlobalCurrencySelector() {
       </button>
 
       {selectorExpanded && (
-        <div className="absolute p-2 rounded-md border bg-white top-11 left-0">
+        <div className="absolute p-2 rounded-md border bg-white top-12 left-0">
           <button onClick={() => handleSelection(eth)}>ETH</button>
           <button onClick={() => handleSelection(usd)}>USD</button>
         </div>
