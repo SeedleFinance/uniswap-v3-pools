@@ -3,7 +3,6 @@ import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
-import { formatCurrency } from "./utils/numbers";
 import { usePools } from "./PoolsProvider";
 import TokenSymbol from "./Token";
 
@@ -32,7 +31,7 @@ function Transaction({
   priceUpper,
   gas,
 }: TransactionProps) {
-  const { getUSDValue } = usePools();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
   const totalLiquidity = useMemo(() => {
     if (!quoteToken || !pool) {
       return 0;
@@ -93,8 +92,12 @@ function Transaction({
           {percent1}%)
         </div>
       </td>
-      <td>{formatCurrency(getUSDValue(totalLiquidity))}</td>
-      <td>{formatCurrency(getUSDValue(gas.costCurrency))}</td>
+      <td>
+        {totalLiquidity !== 0
+          ? convertToGlobalFormatted(totalLiquidity)
+          : formatCurrencyWithSymbol(0)}
+      </td>
+      <td>{convertToGlobalFormatted(gas.costCurrency)}</td>
     </tr>
   );
 }

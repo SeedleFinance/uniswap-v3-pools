@@ -2,81 +2,15 @@ import React, { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 
-import { PoolsProvider, usePools } from "./PoolsProvider";
-import { PoolState } from "./hooks/usePool";
-import Pool from "./Pool";
+import { PoolsProvider } from "./PoolsProvider";
+import { GlobalCurrencyProvider } from "./GlobalCurrencyProvider";
+import Pools from "./Pools";
 import Account from "./Account";
-
-import { formatCurrency } from "./utils/numbers";
+import GlobalCurrencySelector from "./GlobalCurrencySelector";
 
 const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
 });
-
-function Pools() {
-  const { pools, totalLiquidity, totalUncollectedFees } = usePools();
-
-  if (!pools.length) {
-    return (
-      <div className="my-16 flex items-center justify-center">
-        <div className="text-center text-2xl text-gray-400">
-          Loading pools...
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="w-full">
-      <div className="flex flex-row justify-end">
-        <div className="border rounded-md p-6 mx-2">
-          <div className="text-2xl text-gray-600 my-1 font-bold">
-            {formatCurrency(totalLiquidity)}
-          </div>
-          <div className="text-md text-gray-500">Total Liquidity</div>
-        </div>
-        <div className="border rounded-md p-6 mx-2">
-          <div className="text-2xl text-gray-600 my-1 font-bold">
-            {formatCurrency(totalUncollectedFees)}
-          </div>
-          <div className="text-md text-gray-500">Total Uncollected Fees</div>
-        </div>
-        <div className="border rounded-md p-6 mx-2">
-          <div className="text-2xl text-gray-800 my-1 font-bold">
-            {formatCurrency(totalLiquidity + totalUncollectedFees)}
-          </div>
-          <div className="text-md text-gray-500">Total Value</div>
-        </div>
-      </div>
-      <div className="w-full">
-        {pools.map(
-          ({
-            key,
-            address,
-            entity,
-            quoteToken,
-            baseToken,
-            rawLiquidity,
-            currencyLiquidity,
-            poolUncollectedFees,
-            positions,
-          }: PoolState) => (
-            <Pool
-              key={key}
-              address={address}
-              entity={entity}
-              quoteToken={quoteToken}
-              baseToken={baseToken}
-              positions={positions}
-              rawLiquidity={rawLiquidity}
-              liquidity={currencyLiquidity}
-              poolUncollectedFees={poolUncollectedFees}
-            />
-          )
-        )}
-      </div>
-    </div>
-  );
-}
 
 function Container() {
   const { activate, active, account } = useWeb3React();
@@ -87,37 +21,45 @@ function Container() {
 
   if (active) {
     return (
-      <PoolsProvider account={account}>
-        <div className="lg:container mx-auto pb-4">
-          <div className="w-full px-2 py-4 flex justify-end">
-            <Account address={account} />
-          </div>
-          <div>
-            <h2 className="text-5xl text-center font-bold text-red-600 m-5 mb-8">
-              Uniswap V3 Pools
-            </h2>
-
-            <div>
-              <Pools />
-            </div>
-            <footer className="my-5 flex w-full justify-center">
-              <div className="text-sm">
-                Built by{" "}
-                <a className="text-blue-500" href="https://twitter.com/laktek">
-                  @laktek
-                </a>{" "}
-                |{" "}
-                <a
-                  className="text-blue-500"
-                  href="https://github.com/laktek/uniswap-v3-pools"
-                >
-                  Source
-                </a>
+      <GlobalCurrencyProvider>
+        <PoolsProvider account={account}>
+          <div className="lg:container mx-auto pb-4">
+            <div className="w-full px-2 py-4 flex justify-end">
+              <div className="w-48 flex justify-between">
+                <GlobalCurrencySelector />
+                <Account address={account} />
               </div>
-            </footer>
+            </div>
+            <div>
+              <h2 className="text-5xl text-center font-bold text-red-600 m-5 mb-8">
+                Uniswap V3 Pools
+              </h2>
+
+              <div>
+                <Pools />
+              </div>
+              <footer className="my-5 flex w-full justify-center">
+                <div className="text-sm">
+                  Built by{" "}
+                  <a
+                    className="text-blue-500"
+                    href="https://twitter.com/laktek"
+                  >
+                    @laktek
+                  </a>{" "}
+                  |{" "}
+                  <a
+                    className="text-blue-500"
+                    href="https://github.com/laktek/uniswap-v3-pools"
+                  >
+                    Source
+                  </a>
+                </div>
+              </footer>
+            </div>
           </div>
-        </div>
-      </PoolsProvider>
+        </PoolsProvider>
+      </GlobalCurrencyProvider>
     );
   }
 

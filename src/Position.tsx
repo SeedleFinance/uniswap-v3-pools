@@ -11,7 +11,6 @@ import {
 } from "./hooks/calculations";
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
-import { formatCurrency } from "./utils/numbers";
 
 import { usePools } from "./PoolsProvider";
 import Transaction from "./Transaction";
@@ -43,7 +42,7 @@ function Position({
   priceUpper,
   transactions,
 }: PositionProps) {
-  const { getUSDValue } = usePools();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
@@ -182,7 +181,11 @@ function Position({
           <div>{formattedAge}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>{formatCurrency(getUSDValue(positionLiquidity || 0))}</div>
+          <div>
+            {positionLiquidity
+              ? convertToGlobalFormatted(positionLiquidity)
+              : formatCurrencyWithSymbol(0)}
+          </div>
         </td>
         <td className="border-t border-gray-200 py-4">
           <div className="flex flex-col items-start justify-center">
@@ -192,7 +195,7 @@ function Position({
                 setExpandedUncollectedFees(!expandedUncollectedFees)
               }
             >
-              {formatCurrency(getUSDValue(positionUncollectedFees))}
+              {convertToGlobalFormatted(positionUncollectedFees)}
             </button>
             {expandedUncollectedFees ? (
               <div className="flex flex-col text-sm">
@@ -211,7 +214,7 @@ function Position({
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>{formatCurrency(getUSDValue(totalCurrentValue))}</div>
+          <div>{convertToGlobalFormatted(totalCurrentValue)}</div>
         </td>
         <td className="border-t border-gray-200 py-4">
           <div
@@ -219,8 +222,8 @@ function Position({
               returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
             }
           >
-            {formatCurrency(getUSDValue(returnValue))} (
-            {returnPercent.toFixed(2)}%)
+            {convertToGlobalFormatted(returnValue)} ({returnPercent.toFixed(2)}
+            %)
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">

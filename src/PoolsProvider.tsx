@@ -10,13 +10,21 @@ import { usePoolsState, PoolState } from "./hooks/usePool";
 import { useEthPrice } from "./hooks/useEthPrice";
 
 import { DAI, USDC, USDT, FEI } from "./constants";
+import { formatCurrency } from "./utils/numbers";
+import { useGlobalCurrency } from "./GlobalCurrencyProvider";
 
 const PoolsContext = React.createContext({
   pools: [] as PoolState[],
   totalLiquidity: 0,
   totalUncollectedFees: 0,
-  getUSDValue: (val: CurrencyAmount<Token> | number): number => {
+  convertToGlobal: (val: CurrencyAmount<Token>): number => {
     return 0;
+  },
+  convertToGlobalFormatted: (val: CurrencyAmount<Token>): string => {
+    return "$0";
+  },
+  formatCurrencyWithSymbol: (val: number): string => {
+    return "$0";
   },
 });
 export const usePools = () => useContext(PoolsContext);
@@ -60,6 +68,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
   const allPositions = useAllPositions(account);
+  const { globalCurrency } = useGlobalCurrency();
 
   const tokenAddresses = useMemo(() => {
     if (!allPositions.length) {
@@ -122,50 +131,74 @@ export const PoolsProvider = ({ account, children }: Props) => {
 
   const pools = usePoolsState(poolContracts, poolParams, positionsByPool);
 
+  const isStableCoin = (token: Token): boolean => {
+    if (token.equals(DAI)) {
+      return true;
+    } else if (token.equals(USDC)) {
+      return true;
+    } else if (token.equals(USDT)) {
+      return true;
+    } else if (token.equals(FEI)) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const convertToGlobal = (val: CurrencyAmount<Token>): number => {
+    const valFloat = parseFloat(val.toSignificant(15));
+    if (
+      val.currency.equals(globalCurrency) ||
+      (globalCurrency.equals(USDC) && isStableCoin(val.currency))
+    ) {
+      return valFloat;
+    }
+
+    if (globalCurrency.equals(WETH9[chainId as ChainId])) {
+      return valFloat / ethPriceUSD;
+    } else {
+      return valFloat * ethPriceUSD;
+    }
+  };
+
+  const formatCurrencyWithSymbol = (val: number): string => {
+    const currencySymbol = globalCurrency.equals(USDC) ? "$" : "Ξ";
+    return formatCurrency(val, currencySymbol);
+  };
+
+  const convertToGlobalFormatted = (val: CurrencyAmount<Token>): string => {
+    return formatCurrencyWithSymbol(convertToGlobal(val));
+  };
+
   // calculate total
   const [totalLiquidity, totalUncollectedFees] = pools.reduce(
     (accm, pool) => {
       let totalLiquidity = 0;
       let totalUncollectedFees = 0;
-      const { quoteToken, currencyLiquidity, poolUncollectedFees } = pool;
-      const liquidityFloat = parseFloat(currencyLiquidity.toSignificant(2));
-      const uncollectedFeesFloat = parseFloat(
-        poolUncollectedFees.toSignificant(2)
-      );
 
-      if (quoteToken.equals(WETH9[chainId as ChainId])) {
-        totalLiquidity = accm[0] + liquidityFloat * ethPriceUSD;
-        totalUncollectedFees = accm[1] + uncollectedFeesFloat * ethPriceUSD;
-      } else {
-        totalLiquidity = accm[0] + liquidityFloat;
-        totalUncollectedFees = accm[1] + uncollectedFeesFloat;
-      }
+      const { poolLiquidity, poolUncollectedFees } = pool;
+
+      const poolLiquidityInGlobal = convertToGlobal(poolLiquidity);
+      const uncollectedFeesInGlobal = convertToGlobal(poolUncollectedFees);
+
+      totalLiquidity = accm[0] + poolLiquidityInGlobal;
+      totalUncollectedFees = accm[1] + uncollectedFeesInGlobal;
 
       return [totalLiquidity, totalUncollectedFees];
     },
     [0, 0]
   );
 
-  const getUSDValue = (val: CurrencyAmount<Token> | number) => {
-    if (val === 0) {
-      return 0;
-    }
-
-    const valFloat = parseFloat(
-      (val as CurrencyAmount<Token>).toSignificant(15)
-    );
-    if (
-      (val as CurrencyAmount<Token>).currency.equals(WETH9[chainId as ChainId])
-    ) {
-      return valFloat * ethPriceUSD;
-    } else {
-      return valFloat;
-    }
-  };
-
   return (
     <PoolsContext.Provider
-      value={{ pools, totalLiquidity, totalUncollectedFees, getUSDValue }}
+      value={{
+        pools,
+        totalLiquidity,
+        totalUncollectedFees,
+        convertToGlobal,
+        convertToGlobalFormatted,
+        formatCurrencyWithSymbol,
+      }}
     >
       {children}
     </PoolsContext.Provider>

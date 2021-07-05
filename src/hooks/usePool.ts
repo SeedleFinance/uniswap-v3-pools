@@ -15,8 +15,8 @@ export interface PoolState {
   quoteToken: Token;
   baseToken: Token;
   entity: Pool;
-  rawLiquidity: BigNumber;
-  currencyLiquidity: CurrencyAmount<Token>;
+  poolLiquidity: CurrencyAmount<Token>;
+  rawPoolLiquidity: BigNumber;
   poolUncollectedFees: CurrencyAmount<Token>;
   positions: {
     id: BigNumber;
@@ -98,8 +98,8 @@ export function usePoolsState(
       quoteToken: Token,
       positions: PositionState[]
     ) => {
-      let rawLiquidity = BigNumber.from(0);
-      let currencyLiquidity = CurrencyAmount.fromRawAmount(quoteToken, 0);
+      let rawPoolLiquidity = BigNumber.from(0);
+      let poolLiquidity = CurrencyAmount.fromRawAmount(quoteToken, 0);
       let poolUncollectedFees = CurrencyAmount.fromRawAmount(quoteToken, 0);
 
       const enhanced = positions.map(
@@ -137,8 +137,8 @@ export function usePoolsState(
                 .quote(uncollectedFees[0])
                 .add(uncollectedFees[1]);
 
-          rawLiquidity = rawLiquidity.add(liquidity);
-          currencyLiquidity = currencyLiquidity.add(positionLiquidity);
+          rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
+          poolLiquidity = poolLiquidity.add(positionLiquidity);
           poolUncollectedFees = poolUncollectedFees.add(
             positionUncollectedFees
           );
@@ -153,7 +153,7 @@ export function usePoolsState(
         }
       );
 
-      return { enhanced, currencyLiquidity, rawLiquidity, poolUncollectedFees };
+      return { enhanced, poolLiquidity, rawPoolLiquidity, poolUncollectedFees };
     };
 
     const callContract = async (contract: Contract | null, idx: number) => {
@@ -181,16 +181,16 @@ export function usePoolsState(
       );
 
       const {
-        rawLiquidity,
-        currencyLiquidity,
+        rawPoolLiquidity,
+        poolLiquidity,
         poolUncollectedFees,
         enhanced: positions,
       } = enhancePositions(entity, quoteToken, positionsByPool[key]);
 
       return {
         key,
-        rawLiquidity,
-        currencyLiquidity,
+        rawPoolLiquidity,
+        poolLiquidity,
         poolUncollectedFees,
         quoteToken,
         baseToken,
@@ -207,7 +207,7 @@ export function usePoolsState(
         )
       );
       const newPoolsCompact = compact(newPools).sort((a, b) =>
-        a.rawLiquidity.gte(b.rawLiquidity) ? -1 : 1
+        a.rawPoolLiquidity.gte(b.rawPoolLiquidity) ? -1 : 1
       );
       if (!newPoolsCompact.length) {
         return;

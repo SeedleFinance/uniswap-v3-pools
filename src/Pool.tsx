@@ -25,8 +25,6 @@ import {
 } from "./hooks/calculations";
 import { usePools } from "./PoolsProvider";
 
-import { formatCurrency } from "./utils/numbers";
-
 import Token from "./Token";
 import Position from "./Position";
 import PositionStatuses from "./PositionStatuses";
@@ -36,7 +34,7 @@ interface PoolProps {
   entity: UniPool;
   quoteToken: UniToken;
   baseToken: UniToken;
-  rawLiquidity: BigNumber;
+  rawPoolLiquidity: BigNumber;
   liquidity: CurrencyAmount<UniToken>;
   poolUncollectedFees: CurrencyAmount<UniToken>;
   positions: {
@@ -57,11 +55,11 @@ function Pool({
   baseToken,
   positions,
   liquidity,
-  rawLiquidity,
+  rawPoolLiquidity,
   poolUncollectedFees,
 }: PoolProps) {
   const { chainId } = useWeb3React();
-  const { getUSDValue } = usePools();
+  const { convertToGlobalFormatted } = usePools();
 
   const { token0, token1 } = entity;
 
@@ -102,7 +100,7 @@ function Pool({
     totalValue
   );
 
-  const apr = useAPR(transactions, returnPercent, rawLiquidity);
+  const apr = useAPR(transactions, returnPercent, rawPoolLiquidity);
 
   const positionsWithPricesAndTransactions = useMemo(() => {
     if (!positions || !positions.length || !baseToken || !quoteToken) {
@@ -181,7 +179,7 @@ function Pool({
             onClick={toggleShowPositions}
           />
           <div className="text-lg rounded-md text-gray-800">
-            {formatCurrency(getUSDValue(totalValue))}{" "}
+            {convertToGlobalFormatted(totalValue)}{" "}
           </div>
         </div>
       </div>
@@ -206,8 +204,8 @@ function Pool({
                     ? "ETH"
                     : quoteToken.symbol}
                 </td>
-                <td>{formatCurrency(getUSDValue(liquidity))}</td>
-                <td>{formatCurrency(getUSDValue(poolUncollectedFees))}</td>
+                <td>{convertToGlobalFormatted(liquidity)}</td>
+                <td>{convertToGlobalFormatted(poolUncollectedFees)}</td>
                 <td>
                   <div
                     className={
@@ -216,7 +214,7 @@ function Pool({
                         : "text-green-500"
                     }
                   >
-                    {formatCurrency(getUSDValue(returnValue))} (
+                    {convertToGlobalFormatted(returnValue)} (
                     {returnPercent.toFixed(2)}%)
                   </div>
                 </td>
