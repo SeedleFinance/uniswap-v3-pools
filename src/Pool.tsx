@@ -111,6 +111,8 @@ function Pool({
     totalValue
   );
 
+  const totalFees = totalCollectValue.add(poolUncollectedFees);
+
   const apr = useAPR(transactions, returnPercent, rawPoolLiquidity);
 
   const positionsWithPricesAndTransactions = useMemo(() => {
@@ -202,7 +204,7 @@ function Pool({
               <tr className="text-left">
                 <th className="pb-4">Current Price</th>
                 <th className="pb-4">Total Liquidity</th>
-                <th className="pb-4">Total Uncollected Fees</th>
+                <th className="pb-4">Total Fees</th>
                 <th className="pb-4">Net Return</th>
                 <th className="pb-4">APR</th>
               </tr>
@@ -216,7 +218,10 @@ function Pool({
                     : quoteToken.symbol}
                 </td>
                 <td>{convertToGlobalFormatted(liquidity)}</td>
-                <td>{convertToGlobalFormatted(poolUncollectedFees)}</td>
+                <td>
+                  {convertToGlobalFormatted(totalFees)} (uncollected:{" "}
+                  {convertToGlobalFormatted(poolUncollectedFees)})
+                </td>
                 <td>
                   <div
                     className={
