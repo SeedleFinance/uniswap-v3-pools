@@ -49,11 +49,7 @@ interface NonfungibleTokenPositionDescriptorInterface
   ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
 
-  events: {
-    "UpdateTokenRatioPriority(address,int256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "UpdateTokenRatioPriority"): EventFragment;
+  events: {};
 }
 
 export class NonfungibleTokenPositionDescriptor extends BaseContract {
@@ -166,15 +162,7 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
     ): Promise<string>;
   };
 
-  filters: {
-    UpdateTokenRatioPriority(
-      token?: null,
-      priority?: null
-    ): TypedEventFilter<
-      [string, BigNumber],
-      { token: string; priority: BigNumber }
-    >;
-  };
+  filters: {};
 
   estimateGas: {
     WETH9(overrides?: CallOverrides): Promise<BigNumber>;
