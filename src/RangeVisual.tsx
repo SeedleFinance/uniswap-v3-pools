@@ -15,18 +15,25 @@ function RangeVisual({
   tickSpacing,
   flip,
 }: RangeVisualProps) {
-  const spacing = tickSpacing * 100;
   let spaceMultiplier = 10;
   if (tickSpacing === 200) {
     spaceMultiplier = 10;
   } else if (tickSpacing === 10) {
     spaceMultiplier = 2;
   }
-  let rangeStart = tickCurrent - spacing * spaceMultiplier;
-  let rangeEnd = tickCurrent + spacing * spaceMultiplier;
+  let rangeStart =
+    Math.min(tickCurrent, tickLower) - tickSpacing * spaceMultiplier;
+  let rangeEnd =
+    Math.max(tickCurrent, tickUpper) + tickSpacing * spaceMultiplier;
+
+  if (tickLower < tickCurrent && tickCurrent < tickUpper) {
+    rangeStart = tickLower - tickSpacing * spaceMultiplier;
+    rangeEnd = tickUpper + tickSpacing * spaceMultiplier;
+  }
 
   if (rangeStart > rangeEnd || flip) {
     [rangeStart, rangeEnd] = [rangeEnd, rangeStart];
+    [tickLower, tickUpper] = [tickUpper, tickLower];
   }
 
   const barWidth = 250;

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import formatDistance from "date-fns/formatDistance";
+import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token as UniToken } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
@@ -92,7 +92,7 @@ function Position({
       ? new Date(transactions[transactions.length - 1].timestamp * 1000)
       : new Date();
 
-    return formatDistance(endDate, startDate);
+    return formatDistanceStrict(endDate, startDate);
   }, [entity.liquidity, transactions]);
 
   const positionStatus = useMemo((): PositionStatus => {
