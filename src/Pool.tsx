@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { min, max } from "lodash";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
 import {
@@ -23,6 +24,7 @@ import {
   useReturnValue,
   useAPR,
 } from "./hooks/calculations";
+import { usePoolDayData } from "./hooks/usePoolDayData";
 import { usePools } from "./PoolsProvider";
 
 import Token from "./Token";
@@ -69,6 +71,15 @@ function Pool({
     token1
   );
 
+  const poolDayData = usePoolDayData(address);
+  const [minTickLast30, maxTickLast30] = useMemo(() => {
+    if (!poolDayData || !poolDayData.length) {
+      return [0, 0];
+    }
+    const ticksLast30 = poolDayData.map((data: { tick: number }) => data.tick);
+    return [min(ticksLast30), max(ticksLast30)];
+  }, [poolDayData]);
+
   const [showPositions, setShowPositions] = useState(false);
   const [showClosedPositions, setShowClosedPositions] = useState(true);
 
@@ -99,6 +110,8 @@ function Pool({
     totalTransactionCost,
     totalValue
   );
+
+  const totalFees = totalCollectValue.add(poolUncollectedFees);
 
   const apr = useAPR(transactions, returnPercent, rawPoolLiquidity);
 
@@ -191,7 +204,7 @@ function Pool({
               <tr className="text-left">
                 <th className="pb-4">Current Price</th>
                 <th className="pb-4">Total Liquidity</th>
-                <th className="pb-4">Total Uncollected Fees</th>
+                <th className="pb-4">Total Fees</th>
                 <th className="pb-4">Net Return</th>
                 <th className="pb-4">APR</th>
               </tr>
@@ -205,7 +218,10 @@ function Pool({
                     : quoteToken.symbol}
                 </td>
                 <td>{convertToGlobalFormatted(liquidity)}</td>
-                <td>{convertToGlobalFormatted(poolUncollectedFees)}</td>
+                <td>
+                  {convertToGlobalFormatted(totalFees)} (uncollected:{" "}
+                  {convertToGlobalFormatted(poolUncollectedFees)})
+                </td>
                 <td>
                   <div
                     className={
