@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { min, max } from "lodash";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
 import {
@@ -23,6 +24,7 @@ import {
   useReturnValue,
   useAPR,
 } from "./hooks/calculations";
+import { usePoolDayData } from "./hooks/usePoolDayData";
 import { usePools } from "./PoolsProvider";
 
 import Token from "./Token";
@@ -68,6 +70,15 @@ function Pool({
     token0,
     token1
   );
+
+  const poolDayData = usePoolDayData(address);
+  const [minTickLast30, maxTickLast30] = useMemo(() => {
+    if (!poolDayData || !poolDayData.length) {
+      return [0, 0];
+    }
+    const ticksLast30 = poolDayData.map((data: { tick: number }) => data.tick);
+    return [min(ticksLast30), max(ticksLast30)];
+  }, [poolDayData]);
 
   const [showPositions, setShowPositions] = useState(false);
   const [showClosedPositions, setShowClosedPositions] = useState(true);
