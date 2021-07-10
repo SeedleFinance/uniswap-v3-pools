@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { min, max } from "lodash";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
 import {
@@ -24,12 +23,14 @@ import {
   useReturnValue,
   useAPR,
 } from "./hooks/calculations";
-import { usePoolDayData } from "./hooks/usePoolDayData";
 import { usePools } from "./PoolsProvider";
 
 import Token from "./Token";
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
+import PriceChart from "./PriceChart";
+import ChevronDown from "./icons/ChevronDown";
+import ChevronUp from "./icons/ChevronUp";
 
 interface PoolProps {
   address: string;
@@ -71,20 +72,9 @@ function Pool({
     token1
   );
 
-  const poolDayData = usePoolDayData(address);
-  const [minTickLast30, maxTickLast30] = useMemo(() => {
-    if (!poolDayData || !poolDayData.length) {
-      return [0, 0];
-    }
-    const ticksLast30 = poolDayData.map((data: { tick: number }) => data.tick);
-    if (!ticksLast30.length) {
-      return [0, 0];
-    }
-    return [min(ticksLast30), max(ticksLast30)];
-  }, [poolDayData]);
-
   const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
+  const [showPriceChart, setShowPriceChart] = useState(false);
 
   const poolPrice = useMemo(() => {
     if (!baseToken || !entity) {
@@ -148,7 +138,6 @@ function Pool({
     });
   }, [positions, baseToken, quoteToken, transactions]);
 
-  const toggleShowPositions = () => setShowPositions(!showPositions);
   const toggleExpand = () => setExpanded(!expanded);
 
   if (!baseToken || !quoteToken || !chainId || !entity) {
@@ -197,7 +186,7 @@ function Pool({
 
       {expanded && (
         <>
-          <table className="table-auto w-3/4 mt-4 mb-12">
+          <table className="table-auto w-3/4 mt-4">
             <thead>
               <tr className="text-left">
                 <th className="pb-4">Current Price</th>
@@ -241,17 +230,58 @@ function Pool({
             </tbody>
           </table>
 
-          <div>
-            <button onClick={toggleShowPositions}>Positions</button>
-          </div>
+          <div className="flex flex-col my-4">
+            <div className="flex flex-col items-start mb-4">
+              <button
+                className="flex items-center focus:outline-none"
+                onClick={() => setShowPriceChart(!showPriceChart)}
+              >
+                <span className="text-lg text-gray-800 font-bold">
+                  Price (last 30 days)
+                </span>
+                <span className="mx-2">
+                  {showPriceChart ? (
+                    <ChevronUp className="h-4 w-4 stroke-2" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 stroke-2" />
+                  )}
+                </span>
+              </button>
+              {showPriceChart && (
+                <PriceChart
+                  address={address}
+                  baseToken={baseToken}
+                  quoteToken={quoteToken}
+                />
+              )}
+            </div>
 
-          {showPositions && (
-            <Positions
-              positions={positionsWithPricesAndTransactions}
-              pool={entity}
-              quoteToken={quoteToken}
-            />
-          )}
+            <div className="flex flex-col items-start mb-4">
+              <button
+                className="flex items-center focus:outline-none"
+                onClick={() => setShowPositions(!showPositions)}
+              >
+                <span className="text-lg text-gray-800 font-bold">
+                  Positions
+                </span>
+                <span className="mx-2">
+                  {showPositions ? (
+                    <ChevronUp className="h-4 w-4 stroke-2" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 stroke-2" />
+                  )}
+                </span>
+              </button>
+
+              {showPositions && (
+                <Positions
+                  positions={positionsWithPricesAndTransactions}
+                  pool={entity}
+                  quoteToken={quoteToken}
+                />
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>

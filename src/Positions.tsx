@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { Token } from "@uniswap/sdk-core";
-
 import { Pool } from "@uniswap/v3-sdk";
 
 import Position from "./Position";
@@ -25,7 +24,7 @@ function Positions({ positions, pool, quoteToken }: Props) {
   }, [showClosedPositions, positions]);
 
   return (
-    <>
+    <div className="w-full flex flex-col my-2 border rounded p-2">
       <table className="table-auto w-full">
         <thead>
           <tr className="text-left">
@@ -78,7 +77,7 @@ function Positions({ positions, pool, quoteToken }: Props) {
           </label>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

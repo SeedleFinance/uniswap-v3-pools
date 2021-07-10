@@ -25,7 +25,7 @@ export function usePoolDayData(poolAddress: string | null) {
 
   return data.pool.poolDayData.map(({ id, date, tick }: any) => ({
     id,
-    date,
+    date: parseInt(date, 10),
     tick: parseInt(tick, 10),
   }));
 }
