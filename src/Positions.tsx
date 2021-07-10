@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { Token } from "@uniswap/sdk-core";
-
 import { Pool } from "@uniswap/v3-sdk";
 
 import Position from "./Position";

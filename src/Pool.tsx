@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from "react";
-import { min, max } from "lodash";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
 import {
@@ -24,12 +23,12 @@ import {
   useReturnValue,
   useAPR,
 } from "./hooks/calculations";
-import { usePoolDayData } from "./hooks/usePoolDayData";
 import { usePools } from "./PoolsProvider";
 
 import Token from "./Token";
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
+import PriceChart from "./PriceChart";
 
 interface PoolProps {
   address: string;
@@ -71,20 +70,9 @@ function Pool({
     token1
   );
 
-  const poolDayData = usePoolDayData(address);
-  const [minTickLast30, maxTickLast30] = useMemo(() => {
-    if (!poolDayData || !poolDayData.length) {
-      return [0, 0];
-    }
-    const ticksLast30 = poolDayData.map((data: { tick: number }) => data.tick);
-    if (!ticksLast30.length) {
-      return [0, 0];
-    }
-    return [min(ticksLast30), max(ticksLast30)];
-  }, [poolDayData]);
-
   const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
+  const [showPriceChart, setShowPriceChart] = useState(false);
 
   const poolPrice = useMemo(() => {
     if (!baseToken || !entity) {
@@ -148,7 +136,6 @@ function Pool({
     });
   }, [positions, baseToken, quoteToken, transactions]);
 
-  const toggleShowPositions = () => setShowPositions(!showPositions);
   const toggleExpand = () => setExpanded(!expanded);
 
   if (!baseToken || !quoteToken || !chainId || !entity) {
@@ -241,17 +228,29 @@ function Pool({
             </tbody>
           </table>
 
-          <div>
-            <button onClick={toggleShowPositions}>Positions</button>
-          </div>
+          <div className="flex flex-col">
+            <button onClick={() => setShowPriceChart(!showPriceChart)}>
+              Price (last 30 days)
+            </button>
+            {showPriceChart && (
+              <PriceChart
+                address={address}
+                baseToken={baseToken}
+                quoteToken={quoteToken}
+              />
+            )}
+            <button onClick={() => setShowPositions(!showPositions)}>
+              Positions
+            </button>
 
-          {showPositions && (
-            <Positions
-              positions={positionsWithPricesAndTransactions}
-              pool={entity}
-              quoteToken={quoteToken}
-            />
-          )}
+            {showPositions && (
+              <Positions
+                positions={positionsWithPricesAndTransactions}
+                pool={entity}
+                quoteToken={quoteToken}
+              />
+            )}
+          </div>
         </>
       )}
     </div>
