@@ -28,7 +28,7 @@ import { usePoolDayData } from "./hooks/usePoolDayData";
 import { usePools } from "./PoolsProvider";
 
 import Token from "./Token";
-import Position from "./Position";
+import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
 
 interface PoolProps {
@@ -77,11 +77,14 @@ function Pool({
       return [0, 0];
     }
     const ticksLast30 = poolDayData.map((data: { tick: number }) => data.tick);
+    if (!ticksLast30.length) {
+      return [0, 0];
+    }
     return [min(ticksLast30), max(ticksLast30)];
   }, [poolDayData]);
 
+  const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
-  const [showClosedPositions, setShowClosedPositions] = useState(true);
 
   const poolPrice = useMemo(() => {
     if (!baseToken || !entity) {
@@ -120,13 +123,7 @@ function Pool({
       return [];
     }
 
-    const filteredPositions = showClosedPositions
-      ? positions
-      : positions.filter(
-          (pos) => pos.positionLiquidity && !pos.positionLiquidity.equalTo(0)
-        );
-
-    return filteredPositions.map((position) => {
+    return positions.map((position) => {
       const priceLower = tickToPrice(
         baseToken,
         quoteToken,
@@ -149,9 +146,10 @@ function Pool({
         ),
       };
     });
-  }, [positions, baseToken, quoteToken, transactions, showClosedPositions]);
+  }, [positions, baseToken, quoteToken, transactions]);
 
   const toggleShowPositions = () => setShowPositions(!showPositions);
+  const toggleExpand = () => setExpanded(!expanded);
 
   if (!baseToken || !quoteToken || !chainId || !entity) {
     return (
@@ -167,7 +165,7 @@ function Pool({
         <div className="text-2xl text-gray-600 py-2 flex items-center">
           <button
             className="focus:outline-none flex items-center p-1"
-            onClick={toggleShowPositions}
+            onClick={toggleExpand}
           >
             <Token name={baseToken.name} symbol={baseToken.symbol} />
             <span className="px-1">/</span>
@@ -176,7 +174,7 @@ function Pool({
               {entity.fee / 10000}%
             </span>
           </button>
-          {showPositions && (
+          {expanded && (
             <a
               className="px-2"
               href={`https://info.uniswap.org/#/pools/${address}`}
@@ -189,7 +187,7 @@ function Pool({
           <PositionStatuses
             tickCurrent={entity.tickCurrent}
             positions={positions.map(({ entity }) => entity)}
-            onClick={toggleShowPositions}
+            onClick={toggleExpand}
           />
           <div className="text-lg rounded-md text-gray-800">
             {convertToGlobalFormatted(totalValue)}{" "}
@@ -197,7 +195,7 @@ function Pool({
         </div>
       </div>
 
-      {showPositions && (
+      {expanded && (
         <>
           <table className="table-auto w-3/4 mt-4 mb-12">
             <thead>
@@ -219,7 +217,7 @@ function Pool({
                 </td>
                 <td>{convertToGlobalFormatted(liquidity)}</td>
                 <td>
-                  {convertToGlobalFormatted(totalFees)} (uncollected:{" "}
+                  {convertToGlobalFormatted(totalFees)} (uncl.{" "}
                   {convertToGlobalFormatted(poolUncollectedFees)})
                 </td>
                 <td>
@@ -243,57 +241,16 @@ function Pool({
             </tbody>
           </table>
 
-          <table className="table-auto w-full">
-            <thead>
-              <tr className="text-left">
-                <th className="pb-4">Range</th>
-                <th className="pb-4">Distribution</th>
-                <th className="pb-4">Age</th>
-                <th className="pb-4">Liquidity</th>
-                <th className="pb-4">Uncl. fees</th>
-                <th className="pb-4">Total</th>
-                <th className="pb-4">
-                  <span
-                    style={{ borderBottom: "1px dotted", cursor: "help" }}
-                    title="liquidity gain + fees - gas cost"
-                  >
-                    Net Return
-                  </span>
-                </th>
-                <th className="pb-4">
-                  <span
-                    style={{ borderBottom: "1px dotted", cursor: "help" }}
-                    title="Annual Percentage Return"
-                  >
-                    APR
-                  </span>
-                </th>
-                <th className="pb-4"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {positionsWithPricesAndTransactions.map((position) => (
-                <Position
-                  key={position.id.toString()}
-                  pool={entity}
-                  quoteToken={quoteToken}
-                  {...position}
-                />
-              ))}
-            </tbody>
-          </table>
+          <div>
+            <button onClick={toggleShowPositions}>Positions</button>
+          </div>
 
-          {positions.length > 1 && (
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  onChange={() => setShowClosedPositions(!showClosedPositions)}
-                  checked={!showClosedPositions}
-                />
-                <span className="ml-1">Hide closed positions</span>
-              </label>
-            </div>
+          {showPositions && (
+            <Positions
+              positions={positionsWithPricesAndTransactions}
+              pool={entity}
+              quoteToken={quoteToken}
+            />
           )}
         </>
       )}
