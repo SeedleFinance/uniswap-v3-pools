@@ -256,7 +256,7 @@ function Pool({
               )}
             </div>
 
-            <div className="flex flex-col items-start mb-4">
+            <div className="flex flex-col items-start">
               <button
                 className="flex items-center focus:outline-none"
                 onClick={() => setShowPositions(!showPositions)}
