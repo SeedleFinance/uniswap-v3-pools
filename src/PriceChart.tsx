@@ -98,23 +98,23 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
       <table className="m-2 w-1/2">
         <tbody>
           <tr>
-            <td>Min.</td>
+            <td className="text-gray-500">Min.</td>
             <td>{minPrice}</td>
           </tr>
           <tr>
-            <td>Max.</td>
+            <td className="text-gray-500">Max.</td>
             <td>{maxPrice}</td>
           </tr>
           <tr>
-            <td>Mean</td>
+            <td className="text-gray-500">Mean</td>
             <td>{meanPrice}</td>
           </tr>
           <tr>
-            <td>Standard deviation</td>
+            <td className="text-gray-500">Standard deviation</td>
             <td>{stdev}</td>
           </tr>
           <tr>
-            <td>Optimal range</td>
+            <td className="text-gray-500">Optimal range</td>
             <td>
               {meanPrice - stdev} - {meanPrice + stdev}
             </td>
