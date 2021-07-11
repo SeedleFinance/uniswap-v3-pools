@@ -107,16 +107,17 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           </tr>
           <tr>
             <td className="text-gray-500">Mean</td>
-            <td>{meanPrice}</td>
+            <td>{meanPrice.toFixed(8)}</td>
           </tr>
           <tr>
             <td className="text-gray-500">Standard deviation</td>
-            <td>{stdev}</td>
+            <td>{stdev.toFixed(8)}</td>
           </tr>
           <tr>
             <td className="text-gray-500">Optimal range</td>
             <td>
-              {meanPrice - stdev} - {meanPrice + stdev}
+              {(meanPrice - stdev).toFixed(8)} -{" "}
+              {(meanPrice + stdev).toFixed(8)}
             </td>
           </tr>
         </tbody>
