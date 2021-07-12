@@ -84,30 +84,6 @@ function Pool({
     return entity.priceOf(baseToken);
   }, [baseToken, entity]);
 
-  const totalValue = useMemo(() => {
-    return liquidity.add(poolUncollectedFees);
-  }, [liquidity, poolUncollectedFees]);
-
-  const {
-    totalMintValue,
-    totalBurnValue,
-    totalCollectValue,
-    totalTransactionCost,
-  } = useTransactionTotals(transactions, quoteToken, entity);
-
-  const { returnValue, returnPercent } = useReturnValue(
-    quoteToken,
-    totalMintValue,
-    totalBurnValue,
-    totalCollectValue,
-    totalTransactionCost,
-    totalValue
-  );
-
-  const totalFees = totalCollectValue.add(poolUncollectedFees);
-
-  const apr = useAPR(transactions, returnPercent, rawPoolLiquidity);
-
   const positionsWithPricesAndTransactions = useMemo(() => {
     if (!positions || !positions.length || !baseToken || !quoteToken) {
       return [];
@@ -137,6 +113,44 @@ function Pool({
       };
     });
   }, [positions, baseToken, quoteToken, transactions]);
+
+  const totalValue = useMemo(() => {
+    return liquidity.add(poolUncollectedFees);
+  }, [liquidity, poolUncollectedFees]);
+
+  // TODO: refactor how transactions are fetched (to account for closed positions)
+  const transactionsInPositions = useMemo(() => {
+    return positionsWithPricesAndTransactions.reduce(
+      (
+        txs: FormattedPoolTransaction[],
+        { transactions }: { transactions: FormattedPoolTransaction[] }
+      ) => {
+        txs.push(...transactions);
+        return txs;
+      },
+      []
+    );
+  }, [positionsWithPricesAndTransactions]);
+
+  const {
+    totalMintValue,
+    totalBurnValue,
+    totalCollectValue,
+    totalTransactionCost,
+  } = useTransactionTotals(transactionsInPositions, quoteToken, entity);
+
+  const { returnValue, returnPercent } = useReturnValue(
+    quoteToken,
+    totalMintValue,
+    totalBurnValue,
+    totalCollectValue,
+    totalTransactionCost,
+    totalValue
+  );
+
+  const totalFees = totalCollectValue.add(poolUncollectedFees);
+
+  const apr = useAPR(transactionsInPositions, returnPercent, rawPoolLiquidity);
 
   const toggleExpand = () => setExpanded(!expanded);
 

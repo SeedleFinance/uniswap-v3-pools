@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React from "react";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
@@ -11,18 +11,6 @@ interface Props {
 }
 
 function Positions({ positions, pool, quoteToken }: Props) {
-  const [showClosedPositions, setShowClosedPositions] = useState(true);
-
-  const filteredPositions = useMemo(() => {
-    if (showClosedPositions) {
-      return positions;
-    }
-
-    return positions.filter(
-      (pos) => pos.positionLiquidity && !pos.positionLiquidity.equalTo(0)
-    );
-  }, [showClosedPositions, positions]);
-
   return (
     <div className="w-full flex flex-col my-2 border rounded p-2">
       <table className="table-auto w-full">
@@ -54,7 +42,7 @@ function Positions({ positions, pool, quoteToken }: Props) {
           </tr>
         </thead>
         <tbody>
-          {filteredPositions.map((position) => (
+          {positions.map((position) => (
             <Position
               key={position.id.toString()}
               pool={pool}
@@ -64,19 +52,6 @@ function Positions({ positions, pool, quoteToken }: Props) {
           ))}
         </tbody>
       </table>
-
-      {positions.length > 1 && (
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              onChange={() => setShowClosedPositions(!showClosedPositions)}
-              checked={!showClosedPositions}
-            />
-            <span className="ml-1">Hide closed positions</span>
-          </label>
-        </div>
-      )}
     </div>
   );
 }
