@@ -35,17 +35,21 @@ export function useAllPositions(
             idx
           );
           const result = await contract.functions.positions(tokIdResult[0]);
+          const liquidity = result[7];
+
           let fees = { amount0: BigNumber.from(0), amount1: BigNumber.from(0) };
           try {
-            fees = await contract.callStatic.collect(
-              {
-                tokenId: tokIdResult[0],
-                recipient: account,
-                amount0Max: MAX_UINT128,
-                amount1Max: MAX_UINT128,
-              },
-              { from: account }
-            );
+            if (!liquidity.isZero()) {
+              fees = await contract.callStatic.collect(
+                {
+                  tokenId: tokIdResult[0],
+                  recipient: account,
+                  amount0Max: MAX_UINT128,
+                  amount1Max: MAX_UINT128,
+                },
+                { from: account }
+              );
+            }
           } catch (e) {
             console.error(e);
             fees = { amount0: BigNumber.from(0), amount1: BigNumber.from(0) };
@@ -58,9 +62,10 @@ export function useAllPositions(
             fee: result[4],
             tickLower: result[5],
             tickUpper: result[6],
-            liquidity: result[7],
+            liquidity,
             fees,
           };
+
           results.push(position);
           return _collect(idx - 1);
         } else {

@@ -12,6 +12,7 @@ import { useEthPrice } from "./hooks/useEthPrice";
 import { DAI, USDC, USDT, FEI } from "./constants";
 import { formatCurrency } from "./utils/numbers";
 import { useGlobalCurrency } from "./GlobalCurrencyProvider";
+import { useAppSettings } from "./AppSettingsProvider";
 
 const PoolsContext = React.createContext({
   pools: [] as PoolState[],
@@ -67,20 +68,27 @@ function getQuoteAndBaseToken(
 export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
+  const { filterClosed } = useAppSettings();
   const allPositions = useAllPositions(account);
+  const filteredPositions = useMemo(() => {
+    if (filterClosed) {
+      return allPositions.filter((position) => !position.liquidity.isZero());
+    }
+    return allPositions;
+  }, [allPositions, filterClosed]);
   const { globalCurrency } = useGlobalCurrency();
 
   const tokenAddresses = useMemo(() => {
-    if (!allPositions.length) {
+    if (!filteredPositions.length) {
       return [];
     }
 
     return uniq(
-      allPositions.reduce((accm: string[], position: any) => {
+      filteredPositions.reduce((accm: string[], position: any) => {
         return [...accm, position.token0address, position.token1address];
       }, [])
     );
-  }, [allPositions]);
+  }, [filteredPositions]);
 
   const tokens = useTokens(tokenAddresses);
 
@@ -90,12 +98,12 @@ export const PoolsProvider = ({ account, children }: Props) => {
       [key: string]: PositionState[];
     };
   } => {
-    if (!allPositions.length && !tokens.length) {
+    if (!filteredPositions.length && !tokens.length) {
       return { poolParams: [], positionsByPool: {} };
     }
 
     const positionsByPool: { [key: string]: PositionState[] } = {};
-    const poolParamsObj = allPositions.reduce(
+    const poolParamsObj = filteredPositions.reduce(
       (accm: { [index: string]: any }, position) => {
         const key = `${position.token0address}-${position.token1address}-${position.fee}`;
 
@@ -125,7 +133,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
     );
 
     return { poolParams: Object.values(poolParamsObj), positionsByPool };
-  }, [chainId, allPositions, tokens]);
+  }, [chainId, filteredPositions, tokens]);
 
   const poolContracts = usePoolContracts(poolParams);
 

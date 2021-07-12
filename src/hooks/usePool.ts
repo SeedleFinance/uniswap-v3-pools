@@ -213,7 +213,7 @@ export function usePoolsState(
         return;
       }
       if (
-        pools.length &&
+        newPoolsCompact.length === pools.length &&
         isEqualWith(
           newPoolsCompact,
           pools,
