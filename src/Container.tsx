@@ -7,7 +7,6 @@ import { AppSettingsProvider } from "./AppSettingsProvider";
 import Pools from "./Pools";
 import Account from "./Account";
 import GlobalCurrencySelector from "./GlobalCurrencySelector";
-import FilterClosedToggle from "./FilterClosedToggle";
 
 const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
@@ -38,9 +37,6 @@ function Container() {
 
               <div>
                 <Pools />
-                <div>
-                  <FilterClosedToggle />
-                </div>
               </div>
               <footer className="my-5 flex w-full justify-center">
                 <div className="text-sm">
