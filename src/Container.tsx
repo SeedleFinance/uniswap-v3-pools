@@ -3,8 +3,6 @@ import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 
 import { PoolsProvider } from "./PoolsProvider";
-import { GlobalCurrencyProvider } from "./GlobalCurrencyProvider";
-// TODO: move global currency provider to app settings
 import { AppSettingsProvider } from "./AppSettingsProvider";
 import Pools from "./Pools";
 import Account from "./Account";
@@ -24,50 +22,48 @@ function Container() {
 
   if (active) {
     return (
-      <GlobalCurrencyProvider>
-        <AppSettingsProvider>
-          <PoolsProvider account={account}>
-            <div className="lg:container mx-auto pb-4">
-              <div className="w-full px-2 py-4 flex justify-end">
-                <div className="w-52 flex justify-between">
-                  <GlobalCurrencySelector />
-                  <Account address={account} />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-5xl text-center font-bold text-red-600 m-5 mb-8">
-                  Uniswap V3 Pools
-                </h2>
-
-                <div>
-                  <Pools />
-                  <div>
-                    <FilterClosedToggle />
-                  </div>
-                </div>
-                <footer className="my-5 flex w-full justify-center">
-                  <div className="text-sm">
-                    Built by{" "}
-                    <a
-                      className="text-blue-500"
-                      href="https://twitter.com/laktek"
-                    >
-                      @laktek
-                    </a>{" "}
-                    |{" "}
-                    <a
-                      className="text-blue-500"
-                      href="https://github.com/laktek/uniswap-v3-pools"
-                    >
-                      Source
-                    </a>
-                  </div>
-                </footer>
+      <AppSettingsProvider>
+        <PoolsProvider account={account}>
+          <div className="lg:container mx-auto pb-4">
+            <div className="w-full px-2 py-4 flex justify-end">
+              <div className="w-52 flex justify-between">
+                <GlobalCurrencySelector />
+                <Account address={account} />
               </div>
             </div>
-          </PoolsProvider>
-        </AppSettingsProvider>
-      </GlobalCurrencyProvider>
+            <div>
+              <h2 className="text-5xl text-center font-bold text-red-600 m-5 mb-8">
+                Uniswap V3 Pools
+              </h2>
+
+              <div>
+                <Pools />
+                <div>
+                  <FilterClosedToggle />
+                </div>
+              </div>
+              <footer className="my-5 flex w-full justify-center">
+                <div className="text-sm">
+                  Built by{" "}
+                  <a
+                    className="text-blue-500"
+                    href="https://twitter.com/laktek"
+                  >
+                    @laktek
+                  </a>{" "}
+                  |{" "}
+                  <a
+                    className="text-blue-500"
+                    href="https://github.com/laktek/uniswap-v3-pools"
+                  >
+                    Source
+                  </a>
+                </div>
+              </footer>
+            </div>
+          </div>
+        </PoolsProvider>
+      </AppSettingsProvider>
     );
   }
 

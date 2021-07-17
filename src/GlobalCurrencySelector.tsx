@@ -3,11 +3,11 @@ import { useWeb3React } from "@web3-react/core";
 import { ChainId, WETH9, Token } from "@uniswap/sdk-core";
 
 import { USDC } from "./constants";
-import { useGlobalCurrency } from "./GlobalCurrencyProvider";
+import { useAppSettings } from "./AppSettingsProvider";
 
 function GlobalCurrencySelector() {
   const { chainId } = useWeb3React();
-  const { globalCurrency, setGlobalCurrency } = useGlobalCurrency();
+  const { globalCurrency, setGlobalCurrency } = useAppSettings();
   const [selectorExpanded, setSelectorExpanded] = useState(false);
 
   const eth = WETH9[chainId as ChainId];

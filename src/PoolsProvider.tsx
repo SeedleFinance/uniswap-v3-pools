@@ -11,7 +11,6 @@ import { useEthPrice } from "./hooks/useEthPrice";
 
 import { DAI, USDC, USDT, FEI } from "./constants";
 import { formatCurrency } from "./utils/numbers";
-import { useGlobalCurrency } from "./GlobalCurrencyProvider";
 import { useAppSettings } from "./AppSettingsProvider";
 
 const PoolsContext = React.createContext({
@@ -68,7 +67,7 @@ function getQuoteAndBaseToken(
 export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
-  const { filterClosed } = useAppSettings();
+  const { filterClosed, globalCurrency } = useAppSettings();
   const allPositions = useAllPositions(account);
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
@@ -76,7 +75,6 @@ export const PoolsProvider = ({ account, children }: Props) => {
     }
     return allPositions;
   }, [allPositions, filterClosed]);
-  const { globalCurrency } = useGlobalCurrency();
 
   const tokenAddresses = useMemo(() => {
     if (!filteredPositions.length) {
