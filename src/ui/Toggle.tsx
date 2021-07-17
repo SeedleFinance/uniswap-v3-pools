@@ -22,7 +22,11 @@ function Toggle({ label, onChange, checked }: Props) {
           onChange={() => onChange()}
           checked={checked}
         />
-        <div className="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+        <div
+          className={`w-10 h-4 rounded-full shadow-inner ${
+            checked ? "bg-green-400" : "bg-gray-400"
+          }`}
+        ></div>
         <div className="dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
       </div>
       <div className="ml-3 text-gray-700">{label}</div>
