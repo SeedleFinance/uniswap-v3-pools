@@ -4,6 +4,7 @@ import { usePools } from "./PoolsProvider";
 import { PoolState } from "./hooks/usePool";
 import Pool from "./Pool";
 import FilterClosedToggle from "./FilterClosedToggle";
+import DownloadCSV from "./DownloadCSV";
 
 function Pools() {
   const {
@@ -26,8 +27,9 @@ function Pools() {
   return (
     <div className="w-full">
       <div className="flex flex-row justify-between">
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-row items-center justify-between w-1/4">
           <FilterClosedToggle />
+          <DownloadCSV />
         </div>
         <div className="flex flex-row justify-end">
           <div className="border rounded-md p-6 mx-2">

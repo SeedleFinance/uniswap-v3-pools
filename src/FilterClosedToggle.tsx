@@ -6,7 +6,7 @@ import Toggle from "./ui/Toggle";
 function FilterClosedToggle() {
   const { filterClosed, setFilterClosed } = useAppSettings();
   return (
-    <div>
+    <div className="p-2 bg-gray-100 rounded">
       <Toggle
         label="Closed positions"
         onChange={() => setFilterClosed(!filterClosed)}
