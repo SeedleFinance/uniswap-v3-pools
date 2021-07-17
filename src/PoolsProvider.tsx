@@ -67,8 +67,9 @@ function getQuoteAndBaseToken(
 export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
-  const { filterClosed, globalCurrency } = useAppSettings();
+  const { filterClosed, globalCurrencyToken } = useAppSettings();
   const allPositions = useAllPositions(account);
+
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
       return allPositions.filter((position) => !position.liquidity.isZero());
@@ -77,16 +78,16 @@ export const PoolsProvider = ({ account, children }: Props) => {
   }, [allPositions, filterClosed]);
 
   const tokenAddresses = useMemo(() => {
-    if (!filteredPositions.length) {
+    if (!allPositions.length) {
       return [];
     }
 
     return uniq(
-      filteredPositions.reduce((accm: string[], position: any) => {
+      allPositions.reduce((accm: string[], position: any) => {
         return [...accm, position.token0address, position.token1address];
       }, [])
     );
-  }, [filteredPositions]);
+  }, [allPositions]);
 
   const tokens = useTokens(tokenAddresses);
 
@@ -154,13 +155,13 @@ export const PoolsProvider = ({ account, children }: Props) => {
   const convertToGlobal = (val: CurrencyAmount<Token>): number => {
     const valFloat = parseFloat(val.toSignificant(15));
     if (
-      val.currency.equals(globalCurrency) ||
-      (globalCurrency.equals(USDC) && isStableCoin(val.currency))
+      val.currency.equals(globalCurrencyToken) ||
+      (globalCurrencyToken.equals(USDC) && isStableCoin(val.currency))
     ) {
       return valFloat;
     }
 
-    if (globalCurrency.equals(WETH9[chainId as ChainId])) {
+    if (globalCurrencyToken.equals(WETH9[chainId as ChainId])) {
       return valFloat / ethPriceUSD;
     } else {
       return valFloat * ethPriceUSD;
@@ -168,7 +169,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
   };
 
   const formatCurrencyWithSymbol = (val: number): string => {
-    const currencySymbol = globalCurrency.equals(USDC) ? "$" : "Ξ";
+    const currencySymbol = globalCurrencyToken.equals(USDC) ? "$" : "Ξ";
     return formatCurrency(val, currencySymbol);
   };
 
