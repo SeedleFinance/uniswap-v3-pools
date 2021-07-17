@@ -24,35 +24,34 @@ function Container() {
       <AppSettingsProvider>
         <PoolsProvider account={account}>
           <div className="lg:container mx-auto pb-4">
-            <div className="w-full px-2 py-4 flex justify-end">
+            <div className="w-full px-2 py-4 my-4 flex justify-between">
+              <h2 className="flex items-baseline text-3xl font-bold text-gray-600">
+                <img src="icon32.png" className="mr-2" />
+                <span>Seedle</span>
+              </h2>
               <div className="w-52 flex justify-between">
                 <GlobalCurrencySelector />
                 <Account address={account} />
               </div>
             </div>
             <div>
-              <h2 className="text-5xl text-center font-bold text-red-600 m-5 mb-8">
-                Uniswap V3 Pools
-              </h2>
-
               <div>
                 <Pools />
               </div>
               <footer className="my-5 flex w-full justify-center">
                 <div className="text-sm">
-                  Built by{" "}
                   <a
                     className="text-blue-500"
-                    href="https://twitter.com/laktek"
+                    href="https://twitter.com/seedlefinance"
                   >
-                    @laktek
+                    Twitter
                   </a>{" "}
                   |{" "}
                   <a
                     className="text-blue-500"
                     href="https://github.com/laktek/uniswap-v3-pools"
                   >
-                    Source
+                    GitHub
                   </a>
                 </div>
               </footer>
