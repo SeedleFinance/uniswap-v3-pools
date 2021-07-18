@@ -51,3 +51,10 @@ export const LUSD = new Token(
   "LUSD",
   "LUSD Stablecoin"
 );
+export const PAX = new Token(
+  ChainId.MAINNET,
+  "0x8e870d67f660d95d5be530380d0ec0bd388289e1",
+  18,
+  "PAX",
+  "Paxos Standard"
+);

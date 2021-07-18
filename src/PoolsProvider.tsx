@@ -9,7 +9,7 @@ import { useTokens } from "./hooks/useToken";
 import { usePoolsState, PoolState } from "./hooks/usePool";
 import { useEthPrice } from "./hooks/useEthPrice";
 
-import { DAI, USDC, USDT, FEI } from "./constants";
+import { DAI, USDC, USDT, PAX, FEI } from "./constants";
 import { formatCurrency } from "./utils/numbers";
 import { useAppSettings } from "./AppSettingsProvider";
 
@@ -144,6 +144,8 @@ export const PoolsProvider = ({ account, children }: Props) => {
     } else if (token.equals(USDC)) {
       return true;
     } else if (token.equals(USDT)) {
+      return true;
+    } else if (token.equals(PAX)) {
       return true;
     } else if (token.equals(FEI)) {
       return true;
