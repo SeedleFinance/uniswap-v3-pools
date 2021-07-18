@@ -7,6 +7,7 @@ import { AppSettingsProvider } from "./AppSettingsProvider";
 import Pools from "./Pools";
 import Account from "./Account";
 import GlobalCurrencySelector from "./GlobalCurrencySelector";
+import Footer from "./Footer";
 
 const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42],
@@ -26,12 +27,14 @@ function Container() {
           <div className="lg:container mx-auto pb-4">
             <div className="w-full px-2 py-4 my-4 mb-4 flex justify-between">
               <h2 className="flex items-baseline text-3xl font-bold text-gray-600">
-                <img
-                  alt="Seedle logo - a seedling"
-                  src="icon32.png"
-                  className="mr-2"
-                />
-                <span>Seedle</span>
+                <a className="flex" href="https://www.seedle.finance">
+                  <img
+                    className="mr-2"
+                    alt="Seedle logo - a seedling"
+                    src="icon32.png"
+                  />
+                  <span>Seedle</span>
+                </a>
               </h2>
               <div className="w-52 flex justify-between">
                 <GlobalCurrencySelector />
@@ -42,23 +45,7 @@ function Container() {
               <div>
                 <Pools />
               </div>
-              <footer className="my-5 flex w-full justify-start">
-                <div className="text-sm">
-                  <a
-                    className="text-blue-500"
-                    href="https://twitter.com/seedlefinance"
-                  >
-                    Twitter
-                  </a>{" "}
-                  |{" "}
-                  <a
-                    className="text-blue-500"
-                    href="https://github.com/laktek/uniswap-v3-pools"
-                  >
-                    GitHub
-                  </a>
-                </div>
-              </footer>
+              <Footer />
             </div>
           </div>
         </PoolsProvider>
@@ -81,20 +68,7 @@ function Container() {
       <div className="text-center text-xl text-gray-600">
         Connect with Metamask to use the app.
       </div>
-      <footer className="my-5 flex justify-start">
-        <div className="text-sm">
-          <a className="text-blue-500" href="https://twitter.com/seedlefinance">
-            Twitter
-          </a>{" "}
-          |{" "}
-          <a
-            className="text-blue-500"
-            href="https://github.com/laktek/uniswap-v3-pools"
-          >
-            GitHub
-          </a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
