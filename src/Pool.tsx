@@ -31,6 +31,7 @@ import PositionStatuses from "./PositionStatuses";
 import PriceChart from "./PriceChart";
 import ChevronDown from "./icons/ChevronDown";
 import ChevronUp from "./icons/ChevronUp";
+import TokenLogo from "./ui/TokenLogo";
 
 interface PoolProps {
   address: string;
@@ -170,6 +171,10 @@ function Pool({
             className="focus:outline-none flex items-center p-1"
             onClick={toggleExpand}
           >
+            <div className="flex mr-4">
+              <TokenLogo name={baseToken.name} address={baseToken.address} />
+              <TokenLogo name={quoteToken.name} address={quoteToken.address} />
+            </div>
             <Token name={baseToken.name} symbol={baseToken.symbol} />
             <span className="px-1">/</span>
             <Token name={quoteToken.name} symbol={quoteToken.symbol} />
