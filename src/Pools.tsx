@@ -27,22 +27,17 @@ function Pools() {
   return (
     <div className="w-full">
       <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center w-1/2  pr-2">
-          <div className="flex flex-row w-1/5">
-            <div>
-              <button
-                className="bg-gradient-to-b from-green-400 to-green-600 text-white p-2 bg-gray-100 rounded focus:outline-none"
-                onClick={() => {}}
-              >
-                Add liquidity
-              </button>
-            </div>
+        <div className="flex flex-row items-center justify-between w-5/12  pr-24">
+          <div>
+            <button
+              className="bg-gradient-to-b from-green-400 to-green-600 text-white p-2 bg-gray-100 rounded focus:outline-none"
+              onClick={() => {}}
+            >
+              Add liquidity
+            </button>
           </div>
-
-          <div className="flex flex-row justify-between w-1/2">
-            <FilterClosedToggle />
-            <DownloadCSV />
-          </div>
+          <FilterClosedToggle />
+          <DownloadCSV />
         </div>
         <div className="flex flex-row justify-end">
           <div className="border rounded-md p-6 mx-2">
