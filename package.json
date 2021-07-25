@@ -33,6 +33,7 @@
     "postcss": "^7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "recharts": "^2.0.9",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
@@ -72,6 +73,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.170",
+    "@types/react-router-dom": "^5.1.8",
     "@types/use-persisted-state": "^0.3.0",
     "apollo": "^2.33.2"
   }

@@ -4,9 +4,9 @@ import { InjectedConnector } from "@web3-react/injected-connector";
 
 import { PoolsProvider } from "./PoolsProvider";
 import { AppSettingsProvider } from "./AppSettingsProvider";
-import Pools from "./Pools";
 import Account from "./Account";
 import GlobalCurrencySelector from "./GlobalCurrencySelector";
+import PageBody from "./PageBody";
 import Footer from "./Footer";
 
 const injected = new InjectedConnector({
@@ -43,7 +43,7 @@ function Container() {
             </div>
             <div>
               <div>
-                <Pools />
+                <PageBody />
               </div>
               <Footer />
             </div>
