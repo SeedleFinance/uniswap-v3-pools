@@ -4,7 +4,7 @@ import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
 import { usePools } from "./PoolsProvider";
-import TokenSymbol from "./Token";
+import TokenSymbol from "./ui/TokenLabel";
 
 export interface TransactionProps {
   id: string;

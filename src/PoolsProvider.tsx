@@ -11,6 +11,7 @@ import { useEthPrice } from "./hooks/useEthPrice";
 
 import { DAI, USDC, USDT, PAX, FEI } from "./constants";
 import { formatCurrency } from "./utils/numbers";
+import { getQuoteAndBaseToken } from "./utils/tokens";
 import { useAppSettings } from "./AppSettingsProvider";
 
 const PoolsContext = React.createContext({
@@ -32,36 +33,6 @@ export const usePools = () => useContext(PoolsContext);
 interface Props {
   children: ReactNode;
   account: string | null | undefined;
-}
-
-function getQuoteAndBaseToken(
-  chainId: ChainId | undefined,
-  token0: Token,
-  token1: Token
-): [Token, Token] {
-  let quote = token0;
-  let base = token1;
-
-  if (!chainId || !token0 || !token1) {
-    return [quote, base];
-  }
-
-  const quoteCurrencies: Token[] = [USDC, USDT, DAI, FEI, WETH9[chainId]];
-
-  quoteCurrencies.some((cur) => {
-    if (token0.equals(cur)) {
-      quote = token0;
-      base = token1;
-      return true;
-    } else if (token1.equals(cur)) {
-      quote = token1;
-      base = token0;
-      return true;
-    }
-    return false;
-  });
-
-  return [quote, base];
 }
 
 export const PoolsProvider = ({ account, children }: Props) => {

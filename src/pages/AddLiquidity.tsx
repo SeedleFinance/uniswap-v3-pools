@@ -1,5 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { usePools } from "../PoolsProvider";
+import { useAppSettings } from "../AppSettingsProvider";
+import { PoolState } from "../hooks/usePool";
+import PoolButton from "../ui/PoolButton";
+
+function NewPool() {
+  return <div>New pool</div>;
+}
+
+function ExistingPools() {
+  const { pools } = usePools();
+  const { filterClosed, setFilterClosed } = useAppSettings();
+
+  useEffect(() => {
+    const currentFilterClosed = filterClosed;
+    if (currentFilterClosed) {
+      setFilterClosed(false);
+    }
+
+    return function reset() {
+      if (currentFilterClosed) {
+        setFilterClosed(true);
+      }
+    };
+  }, []); // this should run only on mount/unmount
+
+  if (!pools.length) {
+    return <div>Loading pools...</div>;
+  }
+
+  return (
+    <div>
+      {pools.map(({ key, baseToken, quoteToken, entity }: PoolState) => (
+        <PoolButton
+          key={key}
+          baseToken={baseToken}
+          quoteToken={quoteToken}
+          fee={entity.fee / 10000}
+          onClick={() => {}}
+        />
+      ))}
+    </div>
+  );
+}
 
 function AddLiquidity() {
   const [selectedTab, setSelectedTab] = useState("new");
@@ -44,6 +89,10 @@ function AddLiquidity() {
           >
             Existing
           </button>
+        </div>
+
+        <div className="py-4 px-2">
+          {selectedTab === "new" ? <NewPool /> : <ExistingPools />}
         </div>
       </div>
     </div>

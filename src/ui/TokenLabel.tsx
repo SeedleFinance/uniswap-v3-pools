@@ -5,7 +5,7 @@ export interface TokenProps {
   symbol?: string | undefined;
 }
 
-function Token({ name, symbol }: TokenProps) {
+function TokenLabel({ name, symbol }: TokenProps) {
   const symbolOrName = symbol || name;
   return (
     <div className="inline">
@@ -16,4 +16,4 @@ function Token({ name, symbol }: TokenProps) {
   );
 }
 
-export default Token;
+export default TokenLabel;

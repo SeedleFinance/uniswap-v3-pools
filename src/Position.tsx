@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import { BigNumber } from "@ethersproject/bignumber";
-import { CurrencyAmount, Price, Token as UniToken } from "@uniswap/sdk-core";
+import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
 
 import {
@@ -14,19 +14,19 @@ import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 
 import { usePools } from "./PoolsProvider";
 import Transaction from "./Transaction";
-import Token from "./Token";
+import TokenLabel from "./ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
 
 export interface PositionProps {
   id: BigNumber;
   pool: Pool;
-  quoteToken: UniToken;
+  quoteToken: Token;
   entity: UniPosition;
-  positionLiquidity?: CurrencyAmount<UniToken>;
-  uncollectedFees: CurrencyAmount<UniToken>[];
-  positionUncollectedFees: CurrencyAmount<UniToken>;
-  priceLower: Price<UniToken, UniToken>;
-  priceUpper: Price<UniToken, UniToken>;
+  positionLiquidity?: CurrencyAmount<Token>;
+  uncollectedFees: CurrencyAmount<Token>[];
+  positionUncollectedFees: CurrencyAmount<Token>;
+  priceLower: Price<Token, Token>;
+  priceUpper: Price<Token, Token>;
   transactions: any[];
 }
 
@@ -60,7 +60,7 @@ function Position({
     const [value0, value1] = pool.token0.equals(quoteToken)
       ? [entity.amount0, pool.priceOf(pool.token1).quote(entity.amount1)]
       : [pool.priceOf(pool.token0).quote(entity.amount0), entity.amount1];
-    const calcPercent = (val: CurrencyAmount<UniToken>) =>
+    const calcPercent = (val: CurrencyAmount<Token>) =>
       (
         (parseFloat(val.toSignificant(15)) /
           parseFloat(positionLiquidity.toSignificant(15))) *
@@ -169,11 +169,11 @@ function Position({
         </td>
         <td className="border-t border-gray-200 py-4">
           <div>
-            <Token symbol={pool.token0.symbol} />:{" "}
+            <TokenLabel symbol={pool.token0.symbol} />:{" "}
             {entity.amount0.toSignificant(4)}({percent0}%)
           </div>
           <div>
-            <Token symbol={pool.token1.symbol} />:{" "}
+            <TokenLabel symbol={pool.token1.symbol} />:{" "}
             {entity.amount1.toSignificant(4)}({percent1}%)
           </div>
         </td>
@@ -201,11 +201,11 @@ function Position({
               <div className="flex flex-col text-sm">
                 <div>
                   {uncollectedFees[0]?.toFixed(6)}{" "}
-                  <Token symbol={pool.token0.symbol} />
+                  <TokenLabel symbol={pool.token0.symbol} />
                 </div>
                 <div>
                   {uncollectedFees[1]?.toFixed(6)}{" "}
-                  <Token symbol={pool.token1.symbol} />
+                  <TokenLabel symbol={pool.token1.symbol} />
                 </div>
               </div>
             ) : (

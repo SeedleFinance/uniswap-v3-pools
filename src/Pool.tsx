@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import {
   ChainId,
   WETH9,
-  Token as UniToken,
+  Token,
   Price,
   CurrencyAmount,
 } from "@uniswap/sdk-core";
@@ -25,30 +25,29 @@ import {
 } from "./hooks/calculations";
 import { usePools } from "./PoolsProvider";
 
-import Token from "./Token";
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
 import PriceChart from "./PriceChart";
 import ChevronDown from "./icons/ChevronDown";
 import ChevronUp from "./icons/ChevronUp";
-import TokenLogo from "./ui/TokenLogo";
+import PoolButton from "./ui/PoolButton";
 
 interface PoolProps {
   address: string;
   entity: UniPool;
-  quoteToken: UniToken;
-  baseToken: UniToken;
+  quoteToken: Token;
+  baseToken: Token;
   rawPoolLiquidity: BigNumber;
-  liquidity: CurrencyAmount<UniToken>;
-  poolUncollectedFees: CurrencyAmount<UniToken>;
+  liquidity: CurrencyAmount<Token>;
+  poolUncollectedFees: CurrencyAmount<Token>;
   positions: {
     id: BigNumber;
     entity: UniPosition;
-    priceLower?: Price<UniToken, UniToken>;
-    priceUpper?: Price<UniToken, UniToken>;
-    positionLiquidity?: CurrencyAmount<UniToken>;
-    uncollectedFees: CurrencyAmount<UniToken>[];
-    positionUncollectedFees: CurrencyAmount<UniToken>;
+    priceLower?: Price<Token, Token>;
+    priceUpper?: Price<Token, Token>;
+    positionLiquidity?: CurrencyAmount<Token>;
+    uncollectedFees: CurrencyAmount<Token>[];
+    positionUncollectedFees: CurrencyAmount<Token>;
   }[];
 }
 
@@ -167,21 +166,12 @@ function Pool({
     <div className="my-4 p-4 border rounded-md">
       <div className="flex justify-between">
         <div className="text-2xl text-gray-600 py-2 flex items-center">
-          <button
-            className="focus:outline-none flex items-center p-1"
+          <PoolButton
+            baseToken={baseToken}
+            quoteToken={quoteToken}
+            fee={entity.fee / 10000}
             onClick={toggleExpand}
-          >
-            <div className="flex mr-4">
-              <TokenLogo name={baseToken.name} address={baseToken.address} />
-              <TokenLogo name={quoteToken.name} address={quoteToken.address} />
-            </div>
-            <Token name={baseToken.name} symbol={baseToken.symbol} />
-            <span className="px-1">/</span>
-            <Token name={quoteToken.name} symbol={quoteToken.symbol} />
-            <span className="rounded-md text-xl text-gray-800 bg-gray-200 ml-1 px-1">
-              {entity.fee / 10000}%
-            </span>
-          </button>
+          />
           {expanded && (
             <a
               className="px-2"
