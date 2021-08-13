@@ -12,9 +12,6 @@ interface Props {
 }
 
 function PoolButton({ baseToken, quoteToken, fee, onClick }: Props) {
-  console.log(baseToken);
-  console.log(quoteToken);
-  console.log(fee);
   return (
     <button
       className="focus:outline-none flex items-center p-1"
@@ -24,10 +21,12 @@ function PoolButton({ baseToken, quoteToken, fee, onClick }: Props) {
         <TokenLogo name={baseToken.name} address={baseToken.address} />
         <TokenLogo name={quoteToken.name} address={quoteToken.address} />
       </div>
-      <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
-      <span className="px-1">/</span>
-      <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
-      <span className="rounded-md text-xl text-gray-800 bg-gray-200 ml-1 px-1">
+      <div>
+        <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+        <span className="px-1">/</span>
+        <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
+      </div>
+      <span className="rounded-md text-gray-800 bg-gray-200 ml-1 px-1">
         {fee}%
       </span>
     </button>

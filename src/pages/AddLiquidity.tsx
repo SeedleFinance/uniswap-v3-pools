@@ -32,15 +32,17 @@ function ExistingPools() {
   }
 
   return (
-    <div>
+    <div className="w-full flex flex-wrap">
       {pools.map(({ key, baseToken, quoteToken, entity }: PoolState) => (
-        <PoolButton
-          key={key}
-          baseToken={baseToken}
-          quoteToken={quoteToken}
-          fee={entity.fee / 10000}
-          onClick={() => {}}
-        />
+        <div className="w-96 border border-gray-400 rounded m-3 p-3 text-lg">
+          <PoolButton
+            key={key}
+            baseToken={baseToken}
+            quoteToken={quoteToken}
+            fee={entity.fee / 10000}
+            onClick={() => {}}
+          />
+        </div>
       ))}
     </div>
   );
