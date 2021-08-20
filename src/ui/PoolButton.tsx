@@ -7,7 +7,7 @@ import TokenLabel from "./TokenLabel";
 interface Props {
   baseToken: Token;
   quoteToken: Token;
-  fee: number;
+  fee?: number;
   onClick: () => void;
 }
 
@@ -26,9 +26,11 @@ function PoolButton({ baseToken, quoteToken, fee, onClick }: Props) {
         <span className="px-1">/</span>
         <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
       </div>
-      <span className="rounded-md text-gray-800 bg-gray-200 ml-1 px-1">
-        {fee}%
-      </span>
+      {fee && (
+        <span className="rounded-md text-gray-800 bg-gray-200 ml-1 px-1">
+          {fee}%
+        </span>
+      )}
     </button>
   );
 }

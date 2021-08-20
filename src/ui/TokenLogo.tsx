@@ -3,9 +3,10 @@ import React, { useRef } from "react";
 interface Props {
   name: string | undefined;
   address: string | undefined;
+  className?: string | undefined;
 }
 
-function TokenLogo({ name, address }: Props) {
+function TokenLogo({ name, address, className }: Props) {
   const imgEl = useRef<HTMLImageElement>(null);
   const showFallbackImage = () => {
     if (imgEl.current) {
@@ -20,7 +21,7 @@ function TokenLogo({ name, address }: Props) {
   return (
     <img
       ref={imgEl}
-      className="w-8 h-8 rounded-full bg-white text-sm"
+      className={`w-8 h-8 rounded-full bg-white text-sm ${className}`}
       alt={`${name} logo`}
       src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`}
       onError={() => showFallbackImage()}

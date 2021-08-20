@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import PoolsPage from "./pages/Pools";
-import AddLiquidityPage from "./pages/AddLiquidity";
+import AddLiquidityPage from "./pages/AddLiquidity/index";
 
 function PageBody() {
   // TODO: Add a Not found page
