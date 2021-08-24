@@ -1,9 +1,9 @@
-import { ChainId, WETH9, Token } from "@uniswap/sdk-core";
+import { WETH9, Token } from "@uniswap/sdk-core";
 
 import { DAI, USDC, USDT, PAX, FEI } from "../constants";
 
 export function getQuoteAndBaseToken(
-  chainId: ChainId | undefined,
+  chainId: number | undefined,
   token0: Token,
   token1: Token
 ): [Token, Token] {

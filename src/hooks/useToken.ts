@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { parseBytes32String } from "@ethersproject/strings";
-import { ChainId, Token, wrappedCurrency } from "@uniswap/sdk-core";
+import { Token, WETH9, Currency } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
 
 import {
@@ -9,6 +9,13 @@ import {
   useTokenContracts,
   useBytes32TokenContracts,
 } from "./useContract";
+
+function wrappedCurrency(currency: Currency, chainId: number) {
+  if (currency.isNative) {
+    return WETH9[chainId];
+  }
+  return currency;
+}
 
 export function useToken(address: string | undefined): Token | null {
   const { chainId } = useWeb3React();
@@ -39,7 +46,7 @@ export function useToken(address: string | undefined): Token | null {
       const decimals = await callContract("decimals");
 
       const token = new Token(
-        chainId as ChainId,
+        chainId as number,
         address,
         decimals,
         symbol,
@@ -93,7 +100,7 @@ export function useTokens(addresses: string[]): {
       const decimals = await callContract(idx, "decimals");
 
       const token = new Token(
-        chainId as ChainId,
+        chainId as number,
         address,
         decimals,
         symbol,

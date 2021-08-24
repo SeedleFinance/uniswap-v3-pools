@@ -1,13 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
-import {
-  ChainId,
-  WETH9,
-  Token,
-  Price,
-  CurrencyAmount,
-} from "@uniswap/sdk-core";
+import { WETH9, Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
 import {
   tickToPrice,
   Pool as UniPool,
@@ -209,7 +203,7 @@ function Pool({
               <tr>
                 <td>
                   {poolPrice.toFixed(6)}{" "}
-                  {quoteToken.equals(WETH9[chainId as ChainId])
+                  {quoteToken.equals(WETH9[chainId as number])
                     ? "ETH"
                     : quoteToken.symbol}
                 </td>

@@ -1,6 +1,6 @@
 import React, { ReactNode, useContext, useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { ChainId, WETH9, Token } from "@uniswap/sdk-core";
+import { WETH9, Token } from "@uniswap/sdk-core";
 import createPersistedState from "use-persisted-state";
 
 import { USDC } from "./constants";
@@ -23,7 +23,7 @@ export const AppSettingsProvider = ({ children }: Props) => {
   const globalCurrencyToken = useMemo(() => {
     const tokens: { [name: string]: Token } = {
       usd: USDC,
-      eth: WETH9[chainId as ChainId],
+      eth: WETH9[chainId as number],
     };
     return tokens[globalCurrency];
   }, [globalCurrency, chainId]);

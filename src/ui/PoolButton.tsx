@@ -9,12 +9,14 @@ interface Props {
   quoteToken: Token;
   fee?: number;
   onClick: () => void;
+  tabIndex?: number;
 }
 
-function PoolButton({ baseToken, quoteToken, fee, onClick }: Props) {
+function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex }: Props) {
   return (
     <button
       className="focus:outline-none flex items-center p-1"
+      tabIndex={tabIndex || 0}
       onClick={onClick}
     >
       <div className="flex mr-4">

@@ -4,7 +4,7 @@ import { Contract } from "@ethersproject/contracts";
 import { AddressZero } from "@ethersproject/constants";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { useWeb3React } from "@web3-react/core";
-import { ChainId, Token } from "@uniswap/sdk-core";
+import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { abi as NFTPositionManagerABI } from "@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json";
@@ -110,7 +110,7 @@ export function useContractBulk(
 export function useV3NFTPositionManagerContract(): NonfungiblePositionManager | null {
   const { chainId } = useWeb3React();
   const address = chainId
-    ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as ChainId]
+    ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
     : undefined;
   return useContract(
     address,

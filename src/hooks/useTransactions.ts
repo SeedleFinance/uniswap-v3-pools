@@ -2,7 +2,7 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
-import { WETH9, ChainId, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origin: String!, $poolAddress: String!) {
@@ -99,7 +99,7 @@ export function useTransactions(
     const price = BigNumber.from(transaction.gasPrice);
     const cost = used.mul(price);
     const costCurrency = CurrencyAmount.fromRawAmount(
-      WETH9[chainId as ChainId],
+      WETH9[chainId as number],
       cost.toString()
     );
 
@@ -166,7 +166,7 @@ export function useTransactions(
         ...tx.gas,
         cost: BigNumber.from(0),
         costCurrency: CurrencyAmount.fromRawAmount(
-          WETH9[chainId as ChainId],
+          WETH9[chainId as number],
           "0"
         ),
       };

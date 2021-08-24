@@ -95,6 +95,7 @@ function AddLiquidity() {
               quoteToken={selectedQuoteToken}
               pool={selectedPool}
               positions={selectedPositions}
+              onCancel={() => resetSelections()}
             />
           ) : selectedTab === "new" ? (
             <NewPool />

@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useMemo } from "react";
 import { uniq } from "lodash";
 import { useWeb3React } from "@web3-react/core";
-import { ChainId, WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
+import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
 
 import { useAllPositions, PositionState } from "./hooks/usePosition";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
@@ -134,7 +134,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
       return valFloat;
     }
 
-    if (globalCurrencyToken.equals(WETH9[chainId as ChainId])) {
+    if (globalCurrencyToken.equals(WETH9[chainId as number])) {
       return valFloat / ethPriceUSD;
     } else {
       return valFloat * ethPriceUSD;

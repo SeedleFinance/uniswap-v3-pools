@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
 import differenceInSeconds from "date-fns/differenceInSeconds";
 import { BigNumber } from "@ethersproject/bignumber";
-import { WETH9, ChainId, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { useEthToQuote } from "./useUSDConversion";
@@ -19,7 +19,7 @@ export function useTransactionTotals(
     let totalBurnValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
     let totalCollectValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
     let totalTransactionCost = CurrencyAmount.fromRawAmount(
-      WETH9[chainId as ChainId],
+      WETH9[chainId as number],
       "0"
     );
 
