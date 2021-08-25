@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import numbro from "numbro";
 import {
   Pool,
@@ -36,7 +36,7 @@ function FeeButton({ fee, selected, onClick, tabIndex }: FeeButtonProps) {
 
 interface RangeInputProps {
   label: string;
-  initInput: number;
+  initTick: number;
   baseToken: Token;
   quoteToken: Token;
   pool: Pool;
@@ -47,12 +47,26 @@ function RangeInput({
   label,
   baseToken,
   quoteToken,
-  initInput,
+  initTick,
   pool,
   tabIndex,
 }: RangeInputProps) {
-  const [input, setInput] = useState<string>((initInput || 0).toFixed(2));
-  const [tick, setTick] = useState<number>(TickMath.MIN_TICK);
+  const [input, setInput] = useState<string>("0.00");
+  const [tick, setTick] = useState<number>(initTick);
+
+  useEffect(() => {
+    console.log(tick);
+    const price = parseFloat(
+      tickToPrice(baseToken, quoteToken, tick).toSignificant(16)
+    );
+    const formattedInput = numbro(price).format({
+      mantissa: price > 0.01 ? 4 : 8,
+      optionalMantissa: true,
+      trimMantissa: true,
+    });
+
+    setInput(formattedInput);
+  }, [quoteToken, baseToken, tick]);
 
   const handleInput = (ev: { target: any }) => {
     const { value } = ev.target;
@@ -64,7 +78,7 @@ function RangeInput({
     setInput(value);
   };
 
-  const calculateTickAndPrice = () => {
+  const calculateTick = () => {
     const inputVal = parseFloat(input);
     if (inputVal === 0) {
       return;
@@ -72,35 +86,27 @@ function RangeInput({
 
     const price = new Price({
       baseAmount: CurrencyAmount.fromRawAmount(
-        quoteToken,
-        Math.ceil(1 * Math.pow(10, quoteToken.decimals))
+        baseToken,
+        Math.ceil(1 * Math.pow(10, baseToken.decimals))
       ),
       quoteAmount: CurrencyAmount.fromRawAmount(
-        baseToken,
-        Math.ceil(inputVal * Math.pow(10, baseToken.decimals))
+        quoteToken,
+        Math.ceil(inputVal * Math.pow(10, quoteToken.decimals))
       ),
     });
 
     const tickFromPrice = priceToClosestTick(price);
     const closestTick = nearestUsableTick(tickFromPrice, pool.tickSpacing);
-
-    const newPrice = parseFloat(
-      tickToPrice(quoteToken, baseToken, closestTick).toSignificant(16)
-    );
-    const formattedInput = numbro(newPrice).format({
-      mantissa: 4,
-      optionalMantissa: true,
-      trimMantissa: true,
-    });
-
-    console.log(closestTick);
     setTick(closestTick);
-    setInput(formattedInput);
   };
 
-  const decreaseValue = () => {};
+  const decreaseValue = () => {
+    setTick(tick - pool.tickSpacing);
+  };
 
-  const increaseValue = () => {};
+  const increaseValue = () => {
+    setTick(tick + pool.tickSpacing);
+  };
 
   return (
     <div className="px-3 py-2 mr-3 border rounded border-gray-400 flex flex-col items-center">
@@ -117,7 +123,7 @@ function RangeInput({
           className="w-36 p-2 text-xl focus:outline-none text-center"
           value={input}
           onChange={handleInput}
-          onBlur={calculateTickAndPrice}
+          onBlur={calculateTick}
           tabIndex={tabIndex}
           inputMode="decimal"
         />
@@ -184,6 +190,15 @@ function NewPosition({
     }
   }, [pool]);
 
+  const suggestedTicks = useMemo(() => {
+    if (!positions || !positions.length) {
+      return [TickMath.MIN_TICK, TickMath.MIN_TICK];
+    }
+    const position = positions[0];
+    const { tickLower, tickUpper } = position.entity;
+    return [tickLower, tickUpper];
+  }, [positions]);
+
   if (!pool || !baseToken || !quoteToken) {
     return null;
   }
@@ -231,7 +246,7 @@ function NewPosition({
         <div className="w-1/3 my-2 flex justify-between">
           <RangeInput
             label="Min"
-            initInput={0}
+            initTick={suggestedTicks[0]}
             baseToken={baseToken}
             quoteToken={quoteToken}
             pool={pool}
@@ -239,7 +254,7 @@ function NewPosition({
           />
           <RangeInput
             label="Max"
-            initInput={0}
+            initTick={suggestedTicks[1]}
             baseToken={baseToken}
             quoteToken={quoteToken}
             pool={pool}
