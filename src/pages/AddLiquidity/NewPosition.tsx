@@ -41,6 +41,7 @@ interface RangeInputProps {
   quoteToken: Token;
   pool: Pool;
   tabIndex?: number;
+  reverse: boolean;
 }
 
 function RangeInput({
@@ -50,12 +51,12 @@ function RangeInput({
   initTick,
   pool,
   tabIndex,
+  reverse,
 }: RangeInputProps) {
   const [input, setInput] = useState<string>("0.00");
   const [tick, setTick] = useState<number>(initTick);
 
   useEffect(() => {
-    console.log(tick);
     const price = parseFloat(
       tickToPrice(baseToken, quoteToken, tick).toSignificant(16)
     );
@@ -101,11 +102,11 @@ function RangeInput({
   };
 
   const decreaseValue = () => {
-    setTick(tick - pool.tickSpacing);
+    setTick(reverse ? tick + pool.tickSpacing : tick - pool.tickSpacing);
   };
 
   const increaseValue = () => {
-    setTick(tick + pool.tickSpacing);
+    setTick(reverse ? tick - pool.tickSpacing : tick + pool.tickSpacing);
   };
 
   return (
@@ -195,9 +196,14 @@ function NewPosition({
       return [TickMath.MIN_TICK, TickMath.MIN_TICK];
     }
     const position = positions[0];
-    const { tickLower, tickUpper } = position.entity;
-    return [tickLower, tickUpper];
-  }, [positions]);
+    const { tickLower, tickUpper, pool } = position.entity;
+    if (pool.token0.equals(baseToken)) {
+      return [tickLower, tickUpper];
+    }
+    return [tickUpper, tickLower];
+  }, [positions, baseToken]);
+
+  const rangeReverse = suggestedTicks[0] > suggestedTicks[1];
 
   if (!pool || !baseToken || !quoteToken) {
     return null;
@@ -251,6 +257,7 @@ function NewPosition({
             quoteToken={quoteToken}
             pool={pool}
             tabIndex={4}
+            reverse={rangeReverse}
           />
           <RangeInput
             label="Max"
@@ -259,6 +266,7 @@ function NewPosition({
             quoteToken={quoteToken}
             pool={pool}
             tabIndex={5}
+            reverse={rangeReverse}
           />
         </div>
       </div>
