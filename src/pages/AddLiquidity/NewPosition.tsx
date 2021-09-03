@@ -1,17 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import numbro from "numbro";
-import {
-  Pool,
-  TickMath,
-  tickToPrice,
-  priceToClosestTick,
-  nearestUsableTick,
-} from "@uniswap/v3-sdk";
-import { Price, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import JSBI from "jsbi";
+import { Pool, Position, TickMath } from "@uniswap/v3-sdk";
+import { Token, MaxUint256 } from "@uniswap/sdk-core";
 
 import PoolButton from "../../ui/PoolButton";
-import TokenLabel from "../../ui/TokenLabel";
-import TokenLogo from "../../ui/TokenLogo";
+
+import RangeInput from "./RangeInput";
+import DepositInput from "./DepositInput";
 
 interface FeeButtonProps {
   fee: number;
@@ -34,140 +29,6 @@ function FeeButton({ fee, selected, onClick, tabIndex }: FeeButtonProps) {
   );
 }
 
-interface RangeInputProps {
-  label: string;
-  initTick: number;
-  baseToken: Token;
-  quoteToken: Token;
-  pool: Pool;
-  tabIndex?: number;
-  reverse: boolean;
-}
-
-function RangeInput({
-  label,
-  baseToken,
-  quoteToken,
-  initTick,
-  pool,
-  tabIndex,
-  reverse,
-}: RangeInputProps) {
-  const [input, setInput] = useState<string>("0.00");
-  const [tick, setTick] = useState<number>(initTick);
-
-  useEffect(() => {
-    const price = parseFloat(
-      tickToPrice(baseToken, quoteToken, tick).toSignificant(16)
-    );
-    const formattedInput = numbro(price).format({
-      mantissa: price > 0.01 ? 4 : 8,
-      optionalMantissa: true,
-      trimMantissa: true,
-    });
-
-    setInput(formattedInput);
-  }, [quoteToken, baseToken, tick]);
-
-  const handleInput = (ev: { target: any }) => {
-    const { value } = ev.target;
-    if (value === "") {
-      setInput("0.00");
-      return;
-    }
-
-    setInput(value);
-  };
-
-  const calculateTick = () => {
-    const inputVal = parseFloat(input);
-    if (inputVal === 0) {
-      return;
-    }
-
-    const price = new Price({
-      baseAmount: CurrencyAmount.fromRawAmount(
-        baseToken,
-        Math.ceil(1 * Math.pow(10, baseToken.decimals))
-      ),
-      quoteAmount: CurrencyAmount.fromRawAmount(
-        quoteToken,
-        Math.ceil(inputVal * Math.pow(10, quoteToken.decimals))
-      ),
-    });
-
-    const tickFromPrice = priceToClosestTick(price);
-    const closestTick = nearestUsableTick(tickFromPrice, pool.tickSpacing);
-    setTick(closestTick);
-  };
-
-  const decreaseValue = () => {
-    setTick(reverse ? tick + pool.tickSpacing : tick - pool.tickSpacing);
-  };
-
-  const increaseValue = () => {
-    setTick(reverse ? tick - pool.tickSpacing : tick + pool.tickSpacing);
-  };
-
-  return (
-    <div className="px-3 py-2 mr-3 border rounded border-gray-400 flex flex-col items-center">
-      <div className="my-2 text-gray-600">{label}</div>
-      <div className="flex items-center">
-        <button
-          className="text-2xl px-2 focus:outline-none bg-gray-200 border rounded focus:border-gray-400"
-          tabIndex={tabIndex}
-          onClick={decreaseValue}
-        >
-          -
-        </button>
-        <input
-          className="w-36 p-2 text-xl focus:outline-none text-center"
-          value={input}
-          onChange={handleInput}
-          onBlur={calculateTick}
-          tabIndex={tabIndex}
-          inputMode="decimal"
-        />
-        <button
-          className="text-2xl px-2 focus:outline-none bg-gray-200 border rounded focus:border-gray-400"
-          tabIndex={tabIndex}
-          onClick={increaseValue}
-        >
-          +
-        </button>
-      </div>
-      <div className="my-2 text-gray-600">
-        <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
-        <span> per </span>
-        <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
-      </div>
-    </div>
-  );
-}
-
-interface DepositInputProps {
-  token: Token;
-  initValue: number;
-  tabIndex: number;
-}
-
-function DepositInput({ token, initValue, tabIndex }: DepositInputProps) {
-  return (
-    <div className="flex items-center border rounded p-2 my-2">
-      <div className="w-1/3 flex items-center p-1 justify-between bg-gray-100 border rounded">
-        <TokenLogo name={token.name} address={token.address} />
-        <TokenLabel name={token.name} symbol={token.symbol} />
-      </div>
-      <input
-        className="w-2/3 focus:outline-none text-2xl p-2 text-right"
-        type="text"
-        value={initValue}
-        tabIndex={tabIndex}
-      />
-    </div>
-  );
-}
-
 interface Props {
   baseToken: Token | null;
   quoteToken: Token | null;
@@ -184,12 +45,41 @@ function NewPosition({
   onCancel,
 }: Props) {
   const [fee, setFee] = useState<number>(0.3);
+  const [baseAmount, setBaseAmount] = useState<JSBI>(MaxUint256);
+  const [quoteAmount, setQuoteAmount] = useState<JSBI>(MaxUint256);
+
+  const [tickLower, setTickLower] = useState<number>(TickMath.MIN_TICK);
+  const [tickUpper, setTickUpper] = useState<number>(TickMath.MIN_TICK);
 
   useEffect(() => {
     if (pool) {
       setFee(pool.fee / 10000);
     }
   }, [pool]);
+
+  useEffect(() => {
+    if (!pool) {
+      return;
+    }
+
+    if (tickLower === TickMath.MIN_TICK || tickUpper === TickMath.MIN_TICK) {
+      return;
+    }
+
+    const pos = Position.fromAmounts({
+      pool,
+      tickLower,
+      tickUpper,
+      amount0: baseAmount,
+      amount1: quoteAmount,
+      useFullPrecision: false,
+    });
+    console.log(pos);
+    console.log(pos.amount0);
+    console.log(pos.amount1);
+    //setBaseAmount(amount0);
+    //setQuoteAmount(amount1);
+  }, [pool, tickLower, tickUpper, baseAmount, quoteAmount]);
 
   const suggestedTicks = useMemo(() => {
     if (!positions || !positions.length) {
@@ -204,6 +94,14 @@ function NewPosition({
   }, [positions, baseToken]);
 
   const rangeReverse = suggestedTicks[0] > suggestedTicks[1];
+
+  const baseDepositChange = (value: number) => {
+    setBaseAmount(JSBI.BigInt(value));
+  };
+
+  const quoteDepositChange = (value: number) => {
+    setQuoteAmount(JSBI.BigInt(value));
+  };
 
   if (!pool || !baseToken || !quoteToken) {
     return null;
@@ -255,18 +153,20 @@ function NewPosition({
             initTick={suggestedTicks[0]}
             baseToken={baseToken}
             quoteToken={quoteToken}
-            pool={pool}
+            tickSpacing={pool.tickSpacing}
             tabIndex={4}
             reverse={rangeReverse}
+            onChange={setTickLower}
           />
           <RangeInput
             label="Max"
             initTick={suggestedTicks[1]}
             baseToken={baseToken}
             quoteToken={quoteToken}
-            pool={pool}
+            tickSpacing={pool.tickSpacing}
             tabIndex={5}
             reverse={rangeReverse}
+            onChange={setTickUpper}
           />
         </div>
       </div>
@@ -274,8 +174,18 @@ function NewPosition({
       <div className="flex flex-col my-2">
         <div>Deposit</div>
         <div className="w-80 my-2">
-          <DepositInput token={baseToken} initValue={0} tabIndex={6} />
-          <DepositInput token={quoteToken} initValue={0} tabIndex={7} />
+          <DepositInput
+            token={baseToken}
+            value={0}
+            tabIndex={6}
+            onChange={baseDepositChange}
+          />
+          <DepositInput
+            token={quoteToken}
+            value={0}
+            tabIndex={7}
+            onChange={quoteDepositChange}
+          />
         </div>
       </div>
 
