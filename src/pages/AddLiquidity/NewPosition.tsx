@@ -45,8 +45,8 @@ function NewPosition({
   onCancel,
 }: Props) {
   const [fee, setFee] = useState<number>(0.3);
-  const [baseAmount, setBaseAmount] = useState<JSBI>(MaxUint256);
-  const [quoteAmount, setQuoteAmount] = useState<JSBI>(MaxUint256);
+  const [baseAmount, setBaseAmount] = useState<number>(0);
+  const [quoteAmount, setQuoteAmount] = useState<number>(0);
 
   const [tickLower, setTickLower] = useState<number>(TickMath.MIN_TICK);
   const [tickUpper, setTickUpper] = useState<number>(TickMath.MIN_TICK);
@@ -57,7 +57,7 @@ function NewPosition({
     }
   }, [pool]);
 
-  useEffect(() => {
+  const calculateBaseAndQuoteAmounts = (baseVal: number, quoteVal: number) => {
     if (!pool) {
       return;
     }
@@ -66,20 +66,31 @@ function NewPosition({
       return;
     }
 
+    if (baseVal === 0 && quoteVal === 0) {
+      return;
+    }
+
+    const amount0 =
+      baseVal === 0
+        ? MaxUint256
+        : JSBI.BigInt(baseVal * Math.pow(10, pool.token0.decimals));
+
+    const amount1 =
+      quoteVal === 0
+        ? MaxUint256
+        : JSBI.BigInt(quoteVal * Math.pow(10, pool.token1.decimals));
+
     const pos = Position.fromAmounts({
       pool,
       tickLower,
       tickUpper,
-      amount0: baseAmount,
-      amount1: quoteAmount,
+      amount0,
+      amount1,
       useFullPrecision: false,
     });
-    console.log(pos);
-    console.log(pos.amount0);
-    console.log(pos.amount1);
-    //setBaseAmount(amount0);
-    //setQuoteAmount(amount1);
-  }, [pool, tickLower, tickUpper, baseAmount, quoteAmount]);
+    setBaseAmount(parseFloat(pos.amount0.toSignificant(2)));
+    setQuoteAmount(parseFloat(pos.amount1.toSignificant(2)));
+  };
 
   const suggestedTicks = useMemo(() => {
     if (!positions || !positions.length) {
@@ -93,14 +104,19 @@ function NewPosition({
     return [tickUpper, tickLower];
   }, [positions, baseToken]);
 
+  useEffect(() => {
+    setTickLower(suggestedTicks[0]);
+    setTickUpper(suggestedTicks[1]);
+  }, [suggestedTicks]);
+
   const rangeReverse = suggestedTicks[0] > suggestedTicks[1];
 
   const baseDepositChange = (value: number) => {
-    setBaseAmount(JSBI.BigInt(value));
+    calculateBaseAndQuoteAmounts(value, 0);
   };
 
   const quoteDepositChange = (value: number) => {
-    setQuoteAmount(JSBI.BigInt(value));
+    calculateBaseAndQuoteAmounts(0, value);
   };
 
   if (!pool || !baseToken || !quoteToken) {
@@ -176,13 +192,13 @@ function NewPosition({
         <div className="w-80 my-2">
           <DepositInput
             token={baseToken}
-            value={0}
+            value={baseAmount}
             tabIndex={6}
             onChange={baseDepositChange}
           />
           <DepositInput
             token={quoteToken}
-            value={0}
+            value={quoteAmount}
             tabIndex={7}
             onChange={quoteDepositChange}
           />
