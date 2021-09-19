@@ -58,6 +58,11 @@ function positionFromAmounts(
   return [newVal0, newVal1];
 }
 
+function positionDistance(tickCurrent: number, position: { entity: Position }) {
+  const { tickLower, tickUpper } = position.entity;
+  return tickCurrent - (tickUpper - tickLower) / 2;
+}
+
 interface FeeButtonProps {
   fee: number;
   selected: boolean;
@@ -116,16 +121,23 @@ function NewPosition({
   }, [quoteToken, baseToken]);
 
   const suggestedTicks = useMemo(() => {
-    if (!positions || !positions.length) {
+    if (!pool || !positions || !positions.length) {
       return [TickMath.MIN_TICK, TickMath.MIN_TICK];
     }
-    const position = positions[0];
-    const { tickLower, tickUpper } = position.entity;
+    const { tickCurrent } = pool;
+    let sortedPositions = positions.sort((posA, posB) => {
+      const disA = positionDistance(tickCurrent, posA);
+      const disB = positionDistance(tickCurrent, posB);
+      return disA - disB;
+    });
+
+    const { tickLower, tickUpper } = sortedPositions[0].entity;
+
     if (rangeReverse) {
       return [tickUpper, tickLower];
     }
     return [tickLower, tickUpper];
-  }, [positions, rangeReverse]);
+  }, [pool, positions, rangeReverse]);
 
   useEffect(() => {
     setTickLower(suggestedTicks[0]);
