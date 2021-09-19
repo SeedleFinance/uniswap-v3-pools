@@ -14,20 +14,20 @@ export function getQuoteAndBaseToken(
     return [quote, base];
   }
 
-  const quoteCurrencies: Token[] = [USDC, USDT, DAI, FEI, PAX, WETH9[chainId]];
+  const baseCurrencies: Token[] = [USDC, USDT, DAI, FEI, PAX, WETH9[chainId]];
 
-  quoteCurrencies.some((cur) => {
+  for (let i = 0; i < baseCurrencies.length; i++) {
+    const cur = baseCurrencies[i];
     if (token0.equals(cur)) {
-      quote = token0;
-      base = token1;
-      return true;
-    } else if (token1.equals(cur)) {
-      quote = token1;
       base = token0;
-      return true;
+      quote = token1;
+      break;
+    } else if (token1.equals(cur)) {
+      base = token1;
+      quote = token0;
+      break;
     }
-    return false;
-  });
+  }
 
   return [quote, base];
 }

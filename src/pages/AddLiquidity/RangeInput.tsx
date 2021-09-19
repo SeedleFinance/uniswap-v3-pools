@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import numbro from "numbro";
 import {
   tickToPrice,
@@ -33,9 +33,13 @@ function RangeInput({
   const [input, setInput] = useState<string>("0.00");
   const [tick, setTick] = useState<number>(initTick);
 
+  const [token0, token1] = useMemo(() => {
+    return [baseToken, quoteToken];
+  }, [quoteToken, baseToken]);
+
   useEffect(() => {
     const price = parseFloat(
-      tickToPrice(baseToken, quoteToken, tick).toSignificant(16)
+      tickToPrice(token1, token0, tick).toSignificant(16)
     );
     const formattedInput = numbro(price).format({
       mantissa: price > 0.01 ? 4 : 8,
@@ -44,7 +48,7 @@ function RangeInput({
     });
 
     setInput(formattedInput);
-  }, [quoteToken, baseToken, tick]);
+  }, [token0, token1, tick]);
 
   const handleInput = (ev: { target: any }) => {
     const { value } = ev.target;
@@ -68,13 +72,13 @@ function RangeInput({
     }
 
     const price = new Price({
-      baseAmount: CurrencyAmount.fromRawAmount(
-        baseToken,
-        Math.ceil(1 * Math.pow(10, baseToken.decimals))
-      ),
       quoteAmount: CurrencyAmount.fromRawAmount(
-        quoteToken,
-        Math.ceil(inputVal * Math.pow(10, quoteToken.decimals))
+        token0,
+        Math.ceil(inputVal * Math.pow(10, token0.decimals))
+      ),
+      baseAmount: CurrencyAmount.fromRawAmount(
+        token1,
+        Math.ceil(1 * Math.pow(10, token1.decimals))
       ),
     });
 
@@ -121,9 +125,9 @@ function RangeInput({
         </button>
       </div>
       <div className="my-2 text-gray-600">
-        <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
-        <span> per </span>
         <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+        <span> per </span>
+        <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
       </div>
     </div>
   );

@@ -20,13 +20,13 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex }: Props) {
       onClick={onClick}
     >
       <div className="flex mr-4">
-        <TokenLogo name={baseToken.name} address={baseToken.address} />
         <TokenLogo name={quoteToken.name} address={quoteToken.address} />
+        <TokenLogo name={baseToken.name} address={baseToken.address} />
       </div>
       <div>
-        <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
-        <span className="px-1">/</span>
         <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
+        <span className="px-1">/</span>
+        <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
       </div>
       {fee && (
         <span className="rounded-md text-gray-800 bg-gray-200 ml-1 px-1">

@@ -9,23 +9,23 @@ import { useEthToQuote } from "./useUSDConversion";
 
 export function useTransactionTotals(
   transactions: any[],
-  quoteToken: Token,
+  baseToken: Token,
   pool: Pool
 ) {
   const { chainId } = useWeb3React();
 
   return useMemo(() => {
-    let totalMintValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
-    let totalBurnValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
-    let totalCollectValue = CurrencyAmount.fromRawAmount(quoteToken, 0);
+    let totalMintValue = CurrencyAmount.fromRawAmount(baseToken, 0);
+    let totalBurnValue = CurrencyAmount.fromRawAmount(baseToken, 0);
+    let totalCollectValue = CurrencyAmount.fromRawAmount(baseToken, 0);
     let totalTransactionCost = CurrencyAmount.fromRawAmount(
       WETH9[chainId as number],
       "0"
     );
 
-    if (transactions.length && quoteToken && pool && chainId) {
+    if (transactions.length && baseToken && pool && chainId) {
       transactions.forEach((tx) => {
-        const txValue = pool.token0.equals(quoteToken)
+        const txValue = pool.token0.equals(baseToken)
           ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
           : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
         if (tx.type === "mint") {
@@ -47,18 +47,18 @@ export function useTransactionTotals(
       totalCollectValue,
       totalTransactionCost,
     };
-  }, [transactions, quoteToken, pool, chainId]);
+  }, [transactions, baseToken, pool, chainId]);
 }
 
 export function useReturnValue(
-  quoteToken: Token,
+  baseToken: Token,
   totalMintValue: CurrencyAmount<Token>,
   totalBurnValue: CurrencyAmount<Token>,
   totalCollectValue: CurrencyAmount<Token>,
   totalTransactionCost: CurrencyAmount<Token>,
   totalCurrentValue: CurrencyAmount<Token>
 ) {
-  const convertEthToQuote = useEthToQuote(quoteToken);
+  const convertEthToQuote = useEthToQuote(baseToken);
 
   return useMemo(() => {
     const returnValue = totalCurrentValue

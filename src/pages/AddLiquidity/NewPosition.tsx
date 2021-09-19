@@ -8,6 +8,56 @@ import PoolButton from "../../ui/PoolButton";
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
 
+function positionFromAmounts(
+  {
+    pool,
+    tickLower,
+    tickUpper,
+    val0,
+    val1,
+  }: {
+    pool: Pool;
+    tickLower: number;
+    tickUpper: number;
+    val0: number;
+    val1: number;
+  },
+  reverse: boolean
+): [number, number] {
+  if (reverse) {
+    [tickLower, tickUpper] = [tickUpper, tickLower];
+    [val0, val1] = [val1, val0];
+  }
+
+  const amount0 =
+    val0 === 0
+      ? MaxUint256
+      : JSBI.BigInt(val0 * Math.pow(10, pool.token0.decimals));
+
+  const amount1 =
+    val1 === 0
+      ? MaxUint256
+      : JSBI.BigInt(val1 * Math.pow(10, pool.token1.decimals));
+
+  const pos = Position.fromAmounts({
+    pool,
+    tickLower,
+    tickUpper,
+    amount0,
+    amount1,
+    useFullPrecision: false,
+  });
+
+  let newVal0 = parseFloat(pos.amount0.toSignificant(2));
+  let newVal1 = parseFloat(pos.amount1.toSignificant(2));
+
+  if (reverse) {
+    [newVal0, newVal1] = [newVal1, newVal0];
+  }
+
+  return [newVal0, newVal1];
+}
+
 interface FeeButtonProps {
   fee: number;
   selected: boolean;
@@ -57,7 +107,32 @@ function NewPosition({
     }
   }, [pool]);
 
-  const calculateBaseAndQuoteAmounts = (baseVal: number, quoteVal: number) => {
+  const rangeReverse = useMemo(() => {
+    if (!quoteToken || !baseToken) {
+      return false;
+    }
+
+    return baseToken.sortsBefore(quoteToken);
+  }, [quoteToken, baseToken]);
+
+  const suggestedTicks = useMemo(() => {
+    if (!positions || !positions.length) {
+      return [TickMath.MIN_TICK, TickMath.MIN_TICK];
+    }
+    const position = positions[0];
+    const { tickLower, tickUpper } = position.entity;
+    if (rangeReverse) {
+      return [tickUpper, tickLower];
+    }
+    return [tickLower, tickUpper];
+  }, [positions, rangeReverse]);
+
+  useEffect(() => {
+    setTickLower(suggestedTicks[0]);
+    setTickUpper(suggestedTicks[1]);
+  }, [suggestedTicks]);
+
+  const calculateBaseAndQuoteAmounts = (val0: number, val1: number) => {
     if (!pool) {
       return;
     }
@@ -66,56 +141,30 @@ function NewPosition({
       return;
     }
 
-    if (baseVal === 0 && quoteVal === 0) {
+    if (val0 === 0 && val1 === 0) {
       return;
     }
 
-    const amount0 =
-      baseVal === 0
-        ? MaxUint256
-        : JSBI.BigInt(baseVal * Math.pow(10, pool.token0.decimals));
+    const [newQuoteAmount, newBaseAmount] = positionFromAmounts(
+      {
+        pool,
+        tickLower,
+        tickUpper,
+        val0,
+        val1,
+      },
+      rangeReverse
+    );
 
-    const amount1 =
-      quoteVal === 0
-        ? MaxUint256
-        : JSBI.BigInt(quoteVal * Math.pow(10, pool.token1.decimals));
-
-    const pos = Position.fromAmounts({
-      pool,
-      tickLower,
-      tickUpper,
-      amount0,
-      amount1,
-      useFullPrecision: false,
-    });
-    setBaseAmount(parseFloat(pos.amount0.toSignificant(2)));
-    setQuoteAmount(parseFloat(pos.amount1.toSignificant(2)));
-  };
-
-  const suggestedTicks = useMemo(() => {
-    if (!positions || !positions.length) {
-      return [TickMath.MIN_TICK, TickMath.MIN_TICK];
-    }
-    const position = positions[0];
-    const { tickLower, tickUpper, pool } = position.entity;
-    if (pool.token0.equals(baseToken)) {
-      return [tickLower, tickUpper];
-    }
-    return [tickUpper, tickLower];
-  }, [positions, baseToken]);
-
-  useEffect(() => {
-    setTickLower(suggestedTicks[0]);
-    setTickUpper(suggestedTicks[1]);
-  }, [suggestedTicks]);
-
-  const rangeReverse = suggestedTicks[0] > suggestedTicks[1];
-
-  const baseDepositChange = (value: number) => {
-    calculateBaseAndQuoteAmounts(value, 0);
+    setQuoteAmount(newQuoteAmount);
+    setBaseAmount(newBaseAmount);
   };
 
   const quoteDepositChange = (value: number) => {
+    calculateBaseAndQuoteAmounts(value, 0);
+  };
+
+  const baseDepositChange = (value: number) => {
     calculateBaseAndQuoteAmounts(0, value);
   };
 
@@ -191,16 +240,16 @@ function NewPosition({
         <div>Deposit</div>
         <div className="w-80 my-2">
           <DepositInput
-            token={baseToken}
-            value={baseAmount}
-            tabIndex={6}
-            onChange={baseDepositChange}
-          />
-          <DepositInput
             token={quoteToken}
             value={quoteAmount}
             tabIndex={7}
             onChange={quoteDepositChange}
+          />
+          <DepositInput
+            token={baseToken}
+            value={baseAmount}
+            tabIndex={6}
+            onChange={baseDepositChange}
           />
         </div>
       </div>

@@ -95,12 +95,12 @@ export function usePoolsState(
 
     const enhancePositions = (
       pool: Pool,
-      quoteToken: Token,
+      baseToken: Token,
       positions: PositionState[]
     ) => {
       let rawPoolLiquidity = BigNumber.from(0);
-      let poolLiquidity = CurrencyAmount.fromRawAmount(quoteToken, 0);
-      let poolUncollectedFees = CurrencyAmount.fromRawAmount(quoteToken, 0);
+      let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
+      let poolUncollectedFees = CurrencyAmount.fromRawAmount(baseToken, 0);
 
       const enhanced = positions.map(
         ({ id, liquidity, tickLower, tickUpper, fees }: PositionState) => {
@@ -117,7 +117,7 @@ export function usePoolsState(
           ];
 
           // liquidity of the position in quote token
-          const positionLiquidity = pool.token0.equals(quoteToken)
+          const positionLiquidity = pool.token0.equals(baseToken)
             ? pool
                 .priceOf(pool.token1)
                 .quote(entity.amount1)
@@ -127,7 +127,7 @@ export function usePoolsState(
                 .quote(entity.amount0)
                 .add(entity.amount1);
 
-          const positionUncollectedFees = pool.token0.equals(quoteToken)
+          const positionUncollectedFees = pool.token0.equals(baseToken)
             ? pool
                 .priceOf(pool.token1)
                 .quote(uncollectedFees[1])
@@ -185,7 +185,7 @@ export function usePoolsState(
         poolLiquidity,
         poolUncollectedFees,
         enhanced: positions,
-      } = enhancePositions(entity, quoteToken, positionsByPool[key]);
+      } = enhancePositions(entity, baseToken, positionsByPool[key]);
 
       return {
         key,

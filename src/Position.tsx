@@ -20,7 +20,7 @@ import RangeVisual from "./RangeVisual";
 export interface PositionProps {
   id: BigNumber;
   pool: Pool;
-  quoteToken: Token;
+  baseToken: Token;
   entity: UniPosition;
   positionLiquidity?: CurrencyAmount<Token>;
   uncollectedFees: CurrencyAmount<Token>[];
@@ -33,7 +33,7 @@ export interface PositionProps {
 function Position({
   id,
   pool,
-  quoteToken,
+  baseToken,
   entity,
   positionLiquidity,
   uncollectedFees,
@@ -49,7 +49,7 @@ function Position({
 
   const { percent0, percent1 } = useMemo(() => {
     if (
-      !quoteToken ||
+      !baseToken ||
       !pool ||
       !entity ||
       !positionLiquidity ||
@@ -57,7 +57,7 @@ function Position({
     ) {
       return { percent0: "0", percent1: "0" };
     }
-    const [value0, value1] = pool.token0.equals(quoteToken)
+    const [value0, value1] = pool.token0.equals(baseToken)
       ? [entity.amount0, pool.priceOf(pool.token1).quote(entity.amount1)]
       : [pool.priceOf(pool.token0).quote(entity.amount0), entity.amount1];
     const calcPercent = (val: CurrencyAmount<Token>) =>
@@ -68,23 +68,23 @@ function Position({
       ).toFixed(2);
 
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
-  }, [positionLiquidity, entity, pool, quoteToken]);
+  }, [positionLiquidity, entity, pool, baseToken]);
 
   const totalCurrentValue = useMemo(() => {
     if (!positionLiquidity || positionLiquidity.equalTo(0)) {
-      return CurrencyAmount.fromRawAmount(quoteToken, 0);
+      return CurrencyAmount.fromRawAmount(baseToken, 0);
     }
 
     return positionLiquidity.add(positionUncollectedFees);
-  }, [quoteToken, positionLiquidity, positionUncollectedFees]);
+  }, [baseToken, positionLiquidity, positionUncollectedFees]);
 
   const formattedRange = useMemo(() => {
     const prices = priceLower.lessThan(priceUpper)
       ? [priceLower, priceUpper]
       : [priceUpper, priceLower];
-    const decimals = Math.min(quoteToken.decimals, 8);
+    const decimals = Math.min(baseToken.decimals, 8);
     return prices.map((price) => price.toFixed(decimals)).join(" - ");
-  }, [priceUpper, priceLower, quoteToken]);
+  }, [priceUpper, priceLower, baseToken]);
 
   const formattedAge = useMemo(() => {
     const startDate = new Date(transactions[0].timestamp * 1000);
@@ -108,10 +108,10 @@ function Position({
     totalBurnValue,
     totalCollectValue,
     totalTransactionCost,
-  } = useTransactionTotals(transactions, quoteToken, pool);
+  } = useTransactionTotals(transactions, baseToken, pool);
 
   const { returnValue, returnPercent } = useReturnValue(
-    quoteToken,
+    baseToken,
     totalMintValue,
     totalBurnValue,
     totalCollectValue,
@@ -164,7 +164,7 @@ function Position({
             tickLower={entity.tickLower}
             tickUpper={entity.tickUpper}
             tickSpacing={pool.tickSpacing}
-            flip={pool.token0.equals(quoteToken)}
+            flip={pool.token0.equals(baseToken)}
           />
         </td>
         <td className="border-t border-gray-200 py-4">
@@ -270,7 +270,7 @@ function Position({
                 <Transaction
                   key={tx.id}
                   pool={pool}
-                  quoteToken={quoteToken}
+                  baseToken={baseToken}
                   {...tx}
                 />
               ))}

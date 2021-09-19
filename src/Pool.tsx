@@ -71,12 +71,12 @@ function Pool({
   const [showPriceChart, setShowPriceChart] = useState(false);
 
   const poolPrice = useMemo(() => {
-    if (!baseToken || !entity) {
+    if (!quoteToken || !entity) {
       return 0;
     }
 
-    return entity.priceOf(baseToken);
-  }, [baseToken, entity]);
+    return entity.priceOf(quoteToken);
+  }, [quoteToken, entity]);
 
   const positionsWithPricesAndTransactions = useMemo(() => {
     if (!positions || !positions.length || !baseToken || !quoteToken) {
@@ -85,13 +85,13 @@ function Pool({
 
     return positions.map((position) => {
       const priceLower = tickToPrice(
-        baseToken,
         quoteToken,
+        baseToken,
         position.entity.tickLower
       );
       const priceUpper = tickToPrice(
-        baseToken,
         quoteToken,
+        baseToken,
         position.entity.tickUpper
       );
 
@@ -131,10 +131,10 @@ function Pool({
     totalBurnValue,
     totalCollectValue,
     totalTransactionCost,
-  } = useTransactionTotals(transactionsInPositions, quoteToken, entity);
+  } = useTransactionTotals(transactionsInPositions, baseToken, entity);
 
   const { returnValue, returnPercent } = useReturnValue(
-    quoteToken,
+    baseToken,
     totalMintValue,
     totalBurnValue,
     totalCollectValue,
@@ -203,9 +203,9 @@ function Pool({
               <tr>
                 <td>
                   {poolPrice.toFixed(6)}{" "}
-                  {quoteToken.equals(WETH9[chainId as number])
+                  {baseToken.equals(WETH9[chainId as number])
                     ? "ETH"
-                    : quoteToken.symbol}
+                    : baseToken.symbol}
                 </td>
                 <td>{convertToGlobalFormatted(liquidity)}</td>
                 <td>
@@ -280,7 +280,7 @@ function Pool({
                 <Positions
                   positions={positionsWithPricesAndTransactions}
                   pool={entity}
-                  quoteToken={quoteToken}
+                  baseToken={baseToken}
                 />
               )}
             </div>
