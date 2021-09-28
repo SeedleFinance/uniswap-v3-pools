@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import numbro from "numbro";
 import { Token } from "@uniswap/sdk-core";
 
 import TokenLabel from "../../ui/TokenLabel";
 import TokenLogo from "../../ui/TokenLogo";
+import { formatInput } from "../../utils/numbers";
 
 interface DepositInputProps {
   token: Token;
@@ -14,14 +14,10 @@ interface DepositInputProps {
 
 function DepositInput({ token, value, tabIndex, onChange }: DepositInputProps) {
   const [input, setInput] = useState<string>("0.00");
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    const input = numbro(value).format({
-      mantissa: value > 0.01 ? 4 : 8,
-      optionalMantissa: true,
-      trimMantissa: true,
-    });
-
+    const input = formatInput(value);
     setInput(input);
   }, [value]);
 
@@ -33,8 +29,17 @@ function DepositInput({ token, value, tabIndex, onChange }: DepositInputProps) {
     }
 
     setInput(value);
-    const valueNum = parseFloat(value);
+    setDirty(true);
+  };
+
+  const handleBlur = () => {
+    if (!dirty) {
+      return;
+    }
+
+    const valueNum = parseFloat(input);
     if (!Number.isNaN(valueNum)) {
+      setDirty(false);
       onChange(valueNum);
     }
   };
@@ -51,6 +56,7 @@ function DepositInput({ token, value, tabIndex, onChange }: DepositInputProps) {
         value={input}
         tabIndex={tabIndex}
         onChange={handleInput}
+        onBlur={handleBlur}
       />
     </div>
   );

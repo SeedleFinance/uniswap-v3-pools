@@ -48,8 +48,8 @@ function positionFromAmounts(
     useFullPrecision: false,
   });
 
-  let newVal0 = parseFloat(pos.amount0.toSignificant(2));
-  let newVal1 = parseFloat(pos.amount1.toSignificant(2));
+  let newVal0 = parseFloat(pos.amount0.toSignificant(16));
+  let newVal1 = parseFloat(pos.amount1.toSignificant(16));
 
   if (reverse) {
     [newVal0, newVal1] = [newVal1, newVal0];
@@ -172,11 +172,23 @@ function NewPosition({
     setBaseAmount(newBaseAmount);
   };
 
+  const tickLowerChange = (value: number) => {
+    setTickLower(value);
+    calculateBaseAndQuoteAmounts(quoteAmount, baseAmount);
+  };
+
+  const tickUpperChange = (value: number) => {
+    setTickUpper(value);
+    calculateBaseAndQuoteAmounts(quoteAmount, baseAmount);
+  };
+
   const quoteDepositChange = (value: number) => {
+    setQuoteAmount(value);
     calculateBaseAndQuoteAmounts(value, 0);
   };
 
   const baseDepositChange = (value: number) => {
+    setBaseAmount(value);
     calculateBaseAndQuoteAmounts(0, value);
   };
 
@@ -233,7 +245,7 @@ function NewPosition({
             tickSpacing={pool.tickSpacing}
             tabIndex={4}
             reverse={rangeReverse}
-            onChange={setTickLower}
+            onChange={tickLowerChange}
           />
           <RangeInput
             label="Max"
@@ -243,7 +255,7 @@ function NewPosition({
             tickSpacing={pool.tickSpacing}
             tabIndex={5}
             reverse={rangeReverse}
-            onChange={setTickUpper}
+            onChange={tickUpperChange}
           />
         </div>
       </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from "react";
-import numbro from "numbro";
 import {
   tickToPrice,
   priceToClosestTick,
@@ -8,6 +7,7 @@ import {
 import { Price, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import TokenLabel from "../../ui/TokenLabel";
+import { formatInput } from "../../utils/numbers";
 
 interface RangeInputProps {
   label: string;
@@ -41,13 +41,8 @@ function RangeInput({
     const price = parseFloat(
       tickToPrice(token1, token0, tick).toSignificant(16)
     );
-    const formattedInput = numbro(price).format({
-      mantissa: price > 0.01 ? 4 : 8,
-      optionalMantissa: true,
-      trimMantissa: true,
-    });
 
-    setInput(formattedInput);
+    setInput(formatInput(price));
   }, [token0, token1, tick]);
 
   const handleInput = (ev: { target: any }) => {
