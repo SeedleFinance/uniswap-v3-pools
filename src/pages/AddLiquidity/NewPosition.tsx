@@ -266,12 +266,14 @@ function NewPosition({
           <DepositInput
             token={quoteToken}
             value={quoteAmount}
+            balance={"100"}
             tabIndex={7}
             onChange={quoteDepositChange}
           />
           <DepositInput
             token={baseToken}
             value={baseAmount}
+            balance={"0"}
             tabIndex={6}
             onChange={baseDepositChange}
           />
