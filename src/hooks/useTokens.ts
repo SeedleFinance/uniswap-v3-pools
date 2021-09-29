@@ -3,62 +3,13 @@ import { parseBytes32String } from "@ethersproject/strings";
 import { Token, WETH9, Currency } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
 
-import {
-  useTokenContract,
-  useBytes32TokenContract,
-  useTokenContracts,
-  useBytes32TokenContracts,
-} from "./useContract";
+import { useTokenContracts, useBytes32TokenContracts } from "./useContract";
 
 function wrappedCurrency(currency: Currency, chainId: number) {
   if (currency.isNative) {
     return WETH9[chainId];
   }
   return currency;
-}
-
-export function useToken(address: string | undefined): Token | null {
-  const { chainId } = useWeb3React();
-  const contract = useTokenContract(address);
-  const bytes32Contract = useBytes32TokenContract(address);
-
-  const [token, setToken] = useState<Token | null>(null);
-
-  useEffect(() => {
-    if (!address || !contract || !bytes32Contract) {
-      return;
-    }
-
-    const callContract = async (fn: string): Promise<any> => {
-      try {
-        const r = await contract.functions[fn]();
-        return r[0];
-      } catch (e) {
-        // try bytes32 value if name is empty
-        const r = await bytes32Contract.functions[fn]();
-        return parseBytes32String(r[0]);
-      }
-    };
-
-    const initToken = async () => {
-      const name = await callContract("name");
-      const symbol = await callContract("symbol");
-      const decimals = await callContract("decimals");
-
-      const token = new Token(
-        chainId as number,
-        address,
-        decimals,
-        symbol,
-        name
-      );
-      setToken(token);
-    };
-
-    initToken();
-  }, [address, contract, bytes32Contract, chainId]);
-
-  return token && chainId ? wrappedCurrency(token, chainId) : null;
 }
 
 export function useTokens(addresses: string[]): {

@@ -118,25 +118,11 @@ export function useV3NFTPositionManagerContract(): NonfungiblePositionManager | 
   ) as NonfungiblePositionManager | null;
 }
 
-export function useTokenContract(
-  tokenAddress?: string,
-  withSignerIfPossible?: boolean
-): Contract | null {
-  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible);
-}
-
 export function useTokenContracts(
   addresses: string[],
   withSignerIfPossible?: boolean
 ): (Contract | null)[] {
   return useContractBulk(addresses, ERC20_ABI, withSignerIfPossible);
-}
-
-export function useBytes32TokenContract(
-  tokenAddress?: string,
-  withSignerIfPossible?: boolean
-): Contract | null {
-  return useContract(tokenAddress, ERC20_BYTES32_ABI, withSignerIfPossible);
 }
 
 export function useBytes32TokenContracts(

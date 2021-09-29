@@ -5,7 +5,7 @@ import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
 
 import { useAllPositions, PositionState } from "./hooks/usePosition";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
-import { useTokens } from "./hooks/useToken";
+import { useTokens } from "./hooks/useTokens";
 import { usePoolsState, PoolState } from "./hooks/usePool";
 import { useEthPrice } from "./hooks/useEthPrice";
 
