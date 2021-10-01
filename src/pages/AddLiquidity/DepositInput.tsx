@@ -10,6 +10,7 @@ interface DepositInputProps {
   value: number;
   balance: string;
   tabIndex: number;
+  disabled: boolean;
   onChange: (value: number) => void;
 }
 
@@ -18,6 +19,7 @@ function DepositInput({
   value,
   balance,
   tabIndex,
+  disabled,
   onChange,
 }: DepositInputProps) {
   const inputEl = useRef<HTMLInputElement>(null);
@@ -69,7 +71,7 @@ function DepositInput({
   };
 
   return (
-    <div className="w-full flex flex-wrap items-start border rounded p-2 my-2">
+    <div className="w-full flex flex-wrap items-start border rounded p-2 my-2 relative">
       <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-gray-100 border rounded">
         <TokenLogo name={token.name} address={token.address} />
         <TokenLabel name={token.name} symbol={token.symbol} />
@@ -91,6 +93,14 @@ function DepositInput({
         </button>
         )
       </div>
+      {disabled && (
+        <div className="absolute w-full -m-2 py-4 px-2 h-full bg-white bg-opacity-90">
+          <div className="text-sm text-center">
+            The market price is outside your specified price range. Single-asset
+            deposit only.
+          </div>
+        </div>
+      )}
     </div>
   );
 }

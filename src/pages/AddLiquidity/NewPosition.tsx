@@ -96,6 +96,9 @@ function NewPosition({
   const [baseBalance, setBaseBalance] = useState<string>("0");
   const [quoteBalance, setQuoteBalance] = useState<string>("0");
 
+  const [baseTokenDisabled, setBaseTokenDisabled] = useState<boolean>(false);
+  const [quoteTokenDisabled, setQuoteTokenDisabled] = useState<boolean>(false);
+
   useEffect(() => {
     const _run = async () => {
       const [bal0, bal1] = await getTokenBalances();
@@ -142,6 +145,24 @@ function NewPosition({
     setTickLower(suggestedTicks[0]);
     setTickUpper(suggestedTicks[1]);
   }, [suggestedTicks]);
+
+  useEffect(() => {
+    if (!pool || !baseToken || !quoteToken) {
+      return;
+    }
+
+    const { tickCurrent } = pool;
+
+    const token0Disabled = tickCurrent > tickUpper;
+    const token1Disabled = tickCurrent < tickLower;
+
+    setBaseTokenDisabled(
+      pool.token0.equals(baseToken) ? token0Disabled : token1Disabled
+    );
+    setQuoteTokenDisabled(
+      pool.token1.equals(quoteToken) ? token1Disabled : token0Disabled
+    );
+  }, [pool, tickLower, tickUpper, baseToken, quoteToken]);
 
   const calculateBaseAndQuoteAmounts = (val0: number, val1: number) => {
     if (!pool) {
@@ -267,6 +288,7 @@ function NewPosition({
             value={quoteAmount}
             balance={quoteBalance}
             tabIndex={7}
+            disabled={quoteTokenDisabled}
             onChange={quoteDepositChange}
           />
           <DepositInput
@@ -274,6 +296,7 @@ function NewPosition({
             value={baseAmount}
             balance={baseBalance}
             tabIndex={6}
+            disabled={baseTokenDisabled}
             onChange={baseDepositChange}
           />
         </div>

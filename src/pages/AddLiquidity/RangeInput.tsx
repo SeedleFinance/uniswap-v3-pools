@@ -100,6 +100,7 @@ function RangeInput({
           className="text-2xl px-2 focus:outline-none bg-gray-200 border rounded focus:border-gray-400"
           tabIndex={tabIndex}
           onClick={decreaseValue}
+          onBlur={calculateTick}
         >
           -
         </button>
@@ -115,6 +116,7 @@ function RangeInput({
           className="text-2xl px-2 focus:outline-none bg-gray-200 border rounded focus:border-gray-400"
           tabIndex={tabIndex}
           onClick={increaseValue}
+          onBlur={calculateTick}
         >
           +
         </button>
