@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
 import JSBI from "jsbi";
+import { useWeb3React } from "@web3-react/core";
 import { Pool, Position, TickMath } from "@uniswap/v3-sdk";
 import { Token, MaxUint256 } from "@uniswap/sdk-core";
 
+import { useTokenBalances } from "../../hooks/useTokenBalances";
 import PoolButton from "../../ui/PoolButton";
 
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
+import FeeButton from "./FeeButton";
+
+import { formatInput } from "../../utils/numbers";
 
 function positionFromAmounts(
   {
@@ -63,30 +68,9 @@ function positionDistance(tickCurrent: number, position: { entity: Position }) {
   return tickCurrent - (tickUpper - tickLower) / 2;
 }
 
-interface FeeButtonProps {
-  fee: number;
-  selected: boolean;
-  onClick: () => void;
-  tabIndex?: number;
-}
-
-function FeeButton({ fee, selected, onClick, tabIndex }: FeeButtonProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={`p-2 my-1 mr-1 border rounded border-gray-400 focus:outline-none focus:border-gray-800 ${
-        selected ? "border-blue-400 bg-blue-100" : ""
-      }`}
-      tabIndex={tabIndex || 0}
-    >
-      {fee}%
-    </button>
-  );
-}
-
 interface Props {
-  baseToken: Token | null;
-  quoteToken: Token | null;
+  baseToken: Token;
+  quoteToken: Token;
   pool: Pool | null;
   positions: any[] | null;
   onCancel: () => void;
@@ -99,12 +83,27 @@ function NewPosition({
   positions,
   onCancel,
 }: Props) {
+  const { account } = useWeb3React();
+  const getTokenBalances = useTokenBalances([baseToken, quoteToken], account);
+
   const [fee, setFee] = useState<number>(0.3);
   const [baseAmount, setBaseAmount] = useState<number>(0);
   const [quoteAmount, setQuoteAmount] = useState<number>(0);
 
   const [tickLower, setTickLower] = useState<number>(TickMath.MIN_TICK);
   const [tickUpper, setTickUpper] = useState<number>(TickMath.MIN_TICK);
+
+  const [baseBalance, setBaseBalance] = useState<string>("0");
+  const [quoteBalance, setQuoteBalance] = useState<string>("0");
+
+  useEffect(() => {
+    const _run = async () => {
+      const [bal0, bal1] = await getTokenBalances();
+      setBaseBalance(formatInput(parseFloat(bal0)));
+      setQuoteBalance(formatInput(parseFloat(bal1)));
+    };
+    _run();
+  }, [getTokenBalances]);
 
   useEffect(() => {
     if (pool) {
@@ -266,14 +265,14 @@ function NewPosition({
           <DepositInput
             token={quoteToken}
             value={quoteAmount}
-            balance={"100"}
+            balance={quoteBalance}
             tabIndex={7}
             onChange={quoteDepositChange}
           />
           <DepositInput
             token={baseToken}
             value={baseAmount}
-            balance={"0"}
+            balance={baseBalance}
             tabIndex={6}
             onChange={baseDepositChange}
           />

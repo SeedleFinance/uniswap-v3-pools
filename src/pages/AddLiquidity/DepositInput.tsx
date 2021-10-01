@@ -84,7 +84,8 @@ function DepositInput({
         ref={inputEl}
       />
       <div className="w-full text-sm my-1">
-        Balance: {balance} {token.symbol} (
+        <span>Balance: {balance} </span>
+        <TokenLabel name={token.name} symbol={token.symbol} /> (
         <button className="text-blue-500" onClick={handleMaxBalance}>
           Max
         </button>

@@ -91,8 +91,8 @@ function AddLiquidity() {
         <div className="py-4 px-2">
           {selectedPool !== null ? (
             <NewPosition
-              baseToken={selectedBaseToken}
-              quoteToken={selectedQuoteToken}
+              baseToken={selectedBaseToken as Token}
+              quoteToken={selectedQuoteToken as Token}
               pool={selectedPool}
               positions={selectedPositions}
               onCancel={() => resetSelections()}
