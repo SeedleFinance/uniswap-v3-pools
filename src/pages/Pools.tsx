@@ -31,7 +31,7 @@ function Pools() {
         <div className="flex flex-row items-center justify-between w-5/12  pr-24">
           <div>
             <Link
-              to="/add-liquidity"
+              to="/add/new"
               className="block bg-gradient-to-b from-green-400 to-green-600 text-white p-2 bg-gray-100 rounded focus:outline-none"
             >
               Add liquidity

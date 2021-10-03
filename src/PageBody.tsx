@@ -9,8 +9,11 @@ function PageBody() {
   return (
     <Router>
       <Switch>
-        <Route path="/add-liquidity">
-          <AddLiquidityPage />
+        <Route path="/add/new">
+          <AddLiquidityPage tab="new" />
+        </Route>
+        <Route path="/add/existing">
+          <AddLiquidityPage tab="existing" />
         </Route>
         <Route path="/">
           <PoolsPage />

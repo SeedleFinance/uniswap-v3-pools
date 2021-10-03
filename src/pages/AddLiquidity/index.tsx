@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { Pool } from "@uniswap/v3-sdk";
 import { Token } from "@uniswap/sdk-core";
 
@@ -7,7 +7,13 @@ import NewPool from "./NewPool";
 import ExistingPools from "./ExistingPools";
 import NewPosition from "./NewPosition";
 
-function AddLiquidity() {
+interface Props {
+  tab: string;
+}
+
+function AddLiquidity({ tab }: Props) {
+  const history = useHistory();
+
   const [selectedTab, setSelectedTab] = useState("new");
   const [selectedBaseToken, setSelectedBaseToken] =
     useState<Token | null>(null);
@@ -16,6 +22,12 @@ function AddLiquidity() {
   const [selectedPool, setSelectedPool] = useState<Pool | null>(null);
   const [selectedPositions, setSelectedPositions] =
     useState<any[] | null>(null);
+
+  useEffect(() => {
+    if (tab !== "") {
+      setSelectedTab(tab);
+    }
+  }, [tab]);
 
   const resetSelections = () => {
     setSelectedBaseToken(null);
@@ -38,12 +50,12 @@ function AddLiquidity() {
 
   const handleNewTabClick = () => {
     resetSelections();
-    setSelectedTab("new");
+    history.push("/add/new");
   };
 
   const handleExistingTabClick = () => {
     resetSelections();
-    setSelectedTab("existing");
+    history.push("/add/existing");
   };
 
   return (
