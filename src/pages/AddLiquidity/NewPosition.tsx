@@ -7,6 +7,7 @@ import { Token, MaxUint256 } from "@uniswap/sdk-core";
 import { useTokenBalances } from "../../hooks/useTokenBalances";
 import { usePool } from "../../hooks/usePool";
 import PoolButton from "../../ui/PoolButton";
+import TokenLabel from "../../ui/TokenLabel";
 
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
@@ -267,7 +268,8 @@ function NewPosition({
       <div className="flex flex-col my-2 w-full">
         <div>Range</div>
         <div className="text-sm">
-          Current price: <span className="font-bold">{currentPrice}</span>
+          Current price: <span className="font-bold">{currentPrice}&nbsp;</span>
+          <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
         </div>
         <div className="w-1/3 my-2 flex justify-between">
           <RangeInput

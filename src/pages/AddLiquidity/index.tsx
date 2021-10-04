@@ -8,6 +8,7 @@ import NewPosition from "./NewPosition";
 
 interface Props {
   tab: string;
+  params?: any;
 }
 
 function AddLiquidity({ tab }: Props) {
@@ -45,6 +46,7 @@ function AddLiquidity({ tab }: Props) {
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(fee);
     setSelectedPositions(positions);
+    history.push(`/add/${quoteToken.symbol}/${baseToken.symbol}/${fee}`);
   };
 
   const handleNewTabClick = () => {
