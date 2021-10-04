@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Pool } from "@uniswap/v3-sdk";
 import { Token } from "@uniswap/sdk-core";
 
 import NewPool from "./NewPool";
@@ -19,7 +18,7 @@ function AddLiquidity({ tab }: Props) {
     useState<Token | null>(null);
   const [selectedQuoteToken, setSelectedQuoteToken] =
     useState<Token | null>(null);
-  const [selectedPool, setSelectedPool] = useState<Pool | null>(null);
+  const [selectedFee, setSelectedFee] = useState<number | null>(null);
   const [selectedPositions, setSelectedPositions] =
     useState<any[] | null>(null);
 
@@ -32,19 +31,19 @@ function AddLiquidity({ tab }: Props) {
   const resetSelections = () => {
     setSelectedBaseToken(null);
     setSelectedQuoteToken(null);
-    setSelectedPool(null);
+    setSelectedFee(null);
     setSelectedPositions(null);
   };
 
   const handleExistingPoolClick = (
     baseToken: Token,
     quoteToken: Token,
-    pool: Pool,
+    fee: number,
     positions: any[]
   ) => {
     setSelectedBaseToken(baseToken);
     setSelectedQuoteToken(quoteToken);
-    setSelectedPool(pool);
+    setSelectedFee(fee);
     setSelectedPositions(positions);
   };
 
@@ -101,11 +100,13 @@ function AddLiquidity({ tab }: Props) {
         </div>
 
         <div className="py-4 px-2">
-          {selectedPool !== null ? (
+          {selectedBaseToken !== null &&
+          selectedQuoteToken !== null &&
+          selectedFee != null ? (
             <NewPosition
               baseToken={selectedBaseToken as Token}
               quoteToken={selectedQuoteToken as Token}
-              pool={selectedPool}
+              initFee={selectedFee}
               positions={selectedPositions}
               onCancel={() => resetSelections()}
             />

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Pool } from "@uniswap/v3-sdk";
 import { Token } from "@uniswap/sdk-core";
 
 import { usePools } from "../../PoolsProvider";
@@ -11,7 +10,7 @@ interface Props {
   onPoolClick: (
     baseToken: Token,
     quoteToken: Token,
-    pool: Pool,
+    fee: number,
     positions: any[]
   ) => void;
 }
@@ -48,7 +47,7 @@ function ExistingPools({ onPoolClick }: Props) {
               quoteToken={quoteToken}
               fee={entity.fee / 10000}
               onClick={() =>
-                onPoolClick(baseToken, quoteToken, entity, positions)
+                onPoolClick(baseToken, quoteToken, entity.fee, positions)
               }
             />
           </div>

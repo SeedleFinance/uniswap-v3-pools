@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import JSBI from "jsbi";
 import { useWeb3React } from "@web3-react/core";
-import { Pool, Position, TickMath } from "@uniswap/v3-sdk";
+import { Pool, Position, TickMath, tickToPrice } from "@uniswap/v3-sdk";
 import { Token, MaxUint256 } from "@uniswap/sdk-core";
 
 import { useTokenBalances } from "../../hooks/useTokenBalances";
+import { usePool } from "../../hooks/usePool";
 import PoolButton from "../../ui/PoolButton";
 
 import RangeInput from "./RangeInput";
@@ -71,7 +72,7 @@ function positionDistance(tickCurrent: number, position: { entity: Position }) {
 interface Props {
   baseToken: Token;
   quoteToken: Token;
-  pool: Pool | null;
+  initFee: number;
   positions: any[] | null;
   onCancel: () => void;
 }
@@ -79,16 +80,18 @@ interface Props {
 function NewPosition({
   baseToken,
   quoteToken,
-  pool,
+  initFee,
   positions,
   onCancel,
 }: Props) {
   const { account } = useWeb3React();
   const getTokenBalances = useTokenBalances([baseToken, quoteToken], account);
 
-  const [fee, setFee] = useState<number>(0.3);
   const [baseAmount, setBaseAmount] = useState<number>(0);
   const [quoteAmount, setQuoteAmount] = useState<number>(0);
+  const [fee, setFee] = useState<number>(initFee);
+
+  const { pool } = usePool(baseToken, quoteToken, fee);
 
   const [tickLower, setTickLower] = useState<number>(TickMath.MIN_TICK);
   const [tickUpper, setTickUpper] = useState<number>(TickMath.MIN_TICK);
@@ -107,12 +110,6 @@ function NewPosition({
     };
     _run();
   }, [getTokenBalances]);
-
-  useEffect(() => {
-    if (pool) {
-      setFee(pool.fee / 10000);
-    }
-  }, [pool]);
 
   const rangeReverse = useMemo(() => {
     if (!quoteToken || !baseToken) {
@@ -212,12 +209,25 @@ function NewPosition({
     calculateBaseAndQuoteAmounts(0, value);
   };
 
+  const currentPrice = useMemo(() => {
+    if (!pool || !baseToken || !quoteToken) {
+      return 0;
+    }
+
+    const { tickCurrent } = pool;
+    const price = parseFloat(
+      tickToPrice(quoteToken, baseToken, tickCurrent).toSignificant(16)
+    );
+
+    return formatInput(price);
+  }, [pool, baseToken, quoteToken]);
+
   if (!pool || !baseToken || !quoteToken) {
     return null;
   }
 
   return (
-    <div>
+    <div className="w-1/2">
       <div className="flex flex-col my-2">
         <div>Pair</div>
         <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 bg-blue-100">
@@ -235,27 +245,30 @@ function NewPosition({
         <div className="w-48 my-2 flex justify-between">
           <FeeButton
             fee={0.05}
-            selected={fee === 0.05}
-            onClick={() => setFee(0.05)}
+            selected={fee === 500}
+            onClick={() => setFee(500)}
             tabIndex={1}
           />
           <FeeButton
             fee={0.3}
-            selected={fee === 0.3}
-            onClick={() => setFee(0.3)}
+            selected={fee === 3000}
+            onClick={() => setFee(3000)}
             tabIndex={2}
           />
           <FeeButton
             fee={1}
-            selected={fee === 1}
-            onClick={() => setFee(1)}
+            selected={fee === 10000}
+            onClick={() => setFee(10000)}
             tabIndex={3}
           />
         </div>
       </div>
 
-      <div className="flex flex-col my-2">
+      <div className="flex flex-col my-2 w-full">
         <div>Range</div>
+        <div className="text-sm">
+          Current price: <span className="font-bold">{currentPrice}</span>
+        </div>
         <div className="w-1/3 my-2 flex justify-between">
           <RangeInput
             label="Min"
