@@ -182,8 +182,13 @@ function NewPosition({
 
     const { tickCurrent } = pool;
 
-    const token0Disabled = tickCurrent > tickUpper;
-    const token1Disabled = tickCurrent < tickLower;
+    let [lower, upper] = [tickLower, tickUpper];
+    if (rangeReverse) {
+      [lower, upper] = [tickUpper, tickLower];
+    }
+
+    const token0Disabled = tickCurrent > upper;
+    const token1Disabled = tickCurrent < lower;
 
     setBaseTokenDisabled(
       pool.token0.equals(baseToken) ? token0Disabled : token1Disabled
@@ -191,7 +196,7 @@ function NewPosition({
     setQuoteTokenDisabled(
       pool.token1.equals(quoteToken) ? token1Disabled : token0Disabled
     );
-  }, [pool, tickLower, tickUpper, baseToken, quoteToken]);
+  }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse]);
 
   const calculateBaseAndQuoteAmounts = (val0: number, val1: number) => {
     if (!pool) {
