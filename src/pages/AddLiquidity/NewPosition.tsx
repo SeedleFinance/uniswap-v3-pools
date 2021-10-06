@@ -1,13 +1,22 @@
 import React, { useState, useEffect, useMemo } from "react";
 import JSBI from "jsbi";
 import { useWeb3React } from "@web3-react/core";
-import { Pool, Position, TickMath, tickToPrice } from "@uniswap/v3-sdk";
-import { Token, MaxUint256 } from "@uniswap/sdk-core";
+import {
+  Pool,
+  Position,
+  TickMath,
+  tickToPrice,
+  NonfungiblePositionManager,
+} from "@uniswap/v3-sdk";
+import { Token, MaxUint256, Percent, WETH9, Ether } from "@uniswap/sdk-core";
+import { BigNumber } from "@ethersproject/bignumber";
 
 import { useTokenBalances } from "../../hooks/useTokenBalances";
 import { usePool } from "../../hooks/usePool";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
+
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../../constants";
 
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
@@ -30,7 +39,7 @@ function positionFromAmounts(
     val1: number;
   },
   reverse: boolean
-): [number, number] {
+): Position {
   if (reverse) {
     [tickLower, tickUpper] = [tickUpper, tickLower];
     [val0, val1] = [val1, val0];
@@ -46,7 +55,7 @@ function positionFromAmounts(
       ? MaxUint256
       : JSBI.BigInt(val1 * Math.pow(10, pool.token1.decimals));
 
-  const pos = Position.fromAmounts({
+  return Position.fromAmounts({
     pool,
     tickLower,
     tickUpper,
@@ -54,6 +63,28 @@ function positionFromAmounts(
     amount1,
     useFullPrecision: false,
   });
+}
+
+function calculateNewAmounts(
+  {
+    pool,
+    tickLower,
+    tickUpper,
+    val0,
+    val1,
+  }: {
+    pool: Pool;
+    tickLower: number;
+    tickUpper: number;
+    val0: number;
+    val1: number;
+  },
+  reverse: boolean
+): [number, number] {
+  const pos = positionFromAmounts(
+    { pool, tickLower, tickUpper, val0, val1 },
+    reverse
+  );
 
   let newVal0 = parseFloat(pos.amount0.toSignificant(16));
   let newVal1 = parseFloat(pos.amount1.toSignificant(16));
@@ -85,7 +116,7 @@ function NewPosition({
   positions,
   onCancel,
 }: Props) {
-  const { account } = useWeb3React();
+  const { chainId, account, library } = useWeb3React();
   const getTokenBalances = useTokenBalances([baseToken, quoteToken], account);
 
   const [baseAmount, setBaseAmount] = useState<number>(0);
@@ -175,7 +206,7 @@ function NewPosition({
       return;
     }
 
-    const [newQuoteAmount, newBaseAmount] = positionFromAmounts(
+    const [newQuoteAmount, newBaseAmount] = calculateNewAmounts(
       {
         pool,
         tickLower,
@@ -226,6 +257,77 @@ function NewPosition({
   if (!pool || !baseToken || !quoteToken) {
     return null;
   }
+
+  const onAddLiquidity = async () => {
+    // see if the current tick range  and pool match an existing position,
+    // if match found, call increaseLiquidity
+    // otherwise call mint
+    let matchingPosition = null;
+    if (positions) {
+      matchingPosition = positions.find((position) => {
+        const { entity } = position;
+        if (
+          entity.pool.fee === fee &&
+          entity.tickLower === tickLower &&
+          entity.tickUpper === tickUpper
+        ) {
+          return true;
+        }
+        return false;
+      });
+    }
+
+    const newPosition = positionFromAmounts(
+      {
+        pool,
+        tickLower,
+        tickUpper,
+        val0: quoteAmount,
+        val1: baseAmount,
+      },
+      rangeReverse
+    );
+
+    const deadline = +new Date() + 120; // TODO: use current blockchain timestamp
+    const slippageTolerance = new Percent(5_000, 10_000);
+    const useNative =
+      pool.token0.equals(WETH9[chainId as number]) ||
+      pool.token1.equals(WETH9[chainId as number])
+        ? Ether.onChain(chainId as number)
+        : undefined;
+
+    const { calldata, value } = matchingPosition
+      ? NonfungiblePositionManager.addCallParameters(newPosition, {
+          tokenId: matchingPosition.id,
+          deadline,
+          slippageTolerance,
+          useNative,
+        })
+      : NonfungiblePositionManager.addCallParameters(newPosition, {
+          recipient: account as string,
+          deadline,
+          slippageTolerance,
+          useNative,
+        });
+
+    const tx = {
+      to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+      data: calldata,
+      value,
+    };
+
+    try {
+      const estimatedGas = await library.getSigner().estimateGas(tx);
+      library.getSigner().sendTransaction({
+        ...tx,
+        gasLimit: estimatedGas
+          .mul(BigNumber.from(10000 + 2000))
+          .div(BigNumber.from(10000)),
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <div className="w-1/2">
@@ -321,6 +423,7 @@ function NewPosition({
         <button
           className="p-2 focus:outline-none text-gray-500 border rounded border-gray-500 font-bold"
           tabIndex={8}
+          onClick={onAddLiquidity}
         >
           Add Liquidity
         </button>
