@@ -1,105 +1,36 @@
 import React, { useState, useEffect, useMemo } from "react";
-import JSBI from "jsbi";
 import { useWeb3React } from "@web3-react/core";
 import {
-  Pool,
-  Position,
   TickMath,
   tickToPrice,
   NonfungiblePositionManager,
 } from "@uniswap/v3-sdk";
-import { Token, MaxUint256, Percent, WETH9, Ether } from "@uniswap/sdk-core";
+import { Token, WETH9, Ether } from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
 
-import { useTokenBalances } from "../../hooks/useTokenBalances";
+import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
 
-import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../../constants";
+import {
+  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
+  DEFAULT_SLIPPAGE,
+  ZERO_PERCENT,
+} from "../../constants";
+
+import { formatInput } from "../../utils/numbers";
 
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
 import FeeButton from "./FeeButton";
-
-import { formatInput } from "../../utils/numbers";
-
-function positionFromAmounts(
-  {
-    pool,
-    tickLower,
-    tickUpper,
-    val0,
-    val1,
-  }: {
-    pool: Pool;
-    tickLower: number;
-    tickUpper: number;
-    val0: number;
-    val1: number;
-  },
-  reverse: boolean
-): Position {
-  if (reverse) {
-    [tickLower, tickUpper] = [tickUpper, tickLower];
-    [val0, val1] = [val1, val0];
-  }
-
-  const amount0 =
-    val0 === 0
-      ? MaxUint256
-      : JSBI.BigInt(val0 * Math.pow(10, pool.token0.decimals));
-
-  const amount1 =
-    val1 === 0
-      ? MaxUint256
-      : JSBI.BigInt(val1 * Math.pow(10, pool.token1.decimals));
-
-  return Position.fromAmounts({
-    pool,
-    tickLower,
-    tickUpper,
-    amount0,
-    amount1,
-    useFullPrecision: false,
-  });
-}
-
-function calculateNewAmounts(
-  {
-    pool,
-    tickLower,
-    tickUpper,
-    val0,
-    val1,
-  }: {
-    pool: Pool;
-    tickLower: number;
-    tickUpper: number;
-    val0: number;
-    val1: number;
-  },
-  reverse: boolean
-): [number, number] {
-  const pos = positionFromAmounts(
-    { pool, tickLower, tickUpper, val0, val1 },
-    reverse
-  );
-
-  let newVal0 = parseFloat(pos.amount0.toSignificant(16));
-  let newVal1 = parseFloat(pos.amount1.toSignificant(16));
-
-  if (reverse) {
-    [newVal0, newVal1] = [newVal1, newVal0];
-  }
-
-  return [newVal0, newVal1];
-}
-
-function positionDistance(tickCurrent: number, position: { entity: Position }) {
-  const { tickLower, tickUpper } = position.entity;
-  return tickCurrent - (tickUpper - tickLower) / 2;
-}
+import PrimaryButton from "./PrimaryButton";
+import {
+  positionFromAmounts,
+  calculateNewAmounts,
+  positionDistance,
+  tokenAmountNeedApproval,
+} from "./utils";
 
 interface Props {
   baseToken: Token;
@@ -117,7 +48,10 @@ function NewPosition({
   onCancel,
 }: Props) {
   const { chainId, account, library } = useWeb3React();
-  const getTokenBalances = useTokenBalances([baseToken, quoteToken], account);
+  const { getBalances, getAllowances, approveToken } = useTokenFunctions(
+    [baseToken, quoteToken],
+    account
+  );
 
   const [baseAmount, setBaseAmount] = useState<number>(0);
   const [quoteAmount, setQuoteAmount] = useState<number>(0);
@@ -134,14 +68,35 @@ function NewPosition({
   const [baseTokenDisabled, setBaseTokenDisabled] = useState<boolean>(false);
   const [quoteTokenDisabled, setQuoteTokenDisabled] = useState<boolean>(false);
 
+  const [baseTokenAllowance, setBaseTokenAllowance] = useState<BigNumber>(
+    BigNumber.from(0)
+  );
+  const [quoteTokenAllowance, setQuoteTokenAllowance] = useState<BigNumber>(
+    BigNumber.from(0)
+  );
+
   useEffect(() => {
     const _run = async () => {
-      const [bal0, bal1] = await getTokenBalances();
+      const [bal0, bal1] = await getBalances();
       setBaseBalance(formatInput(parseFloat(bal0)));
       setQuoteBalance(formatInput(parseFloat(bal1)));
     };
     _run();
-  }, [getTokenBalances]);
+  }, [getBalances]);
+
+  useEffect(() => {
+    if (!chainId || !getAllowances) {
+      return;
+    }
+
+    const _run = async () => {
+      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number];
+      const [val0, val1] = await getAllowances(spender);
+      setBaseTokenAllowance(val0);
+      setQuoteTokenAllowance(val1);
+    };
+    _run();
+  }, [getAllowances, chainId]);
 
   const rangeReverse = useMemo(() => {
     if (!quoteToken || !baseToken) {
@@ -197,6 +152,24 @@ function NewPosition({
       pool.token1.equals(quoteToken) ? token1Disabled : token0Disabled
     );
   }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse]);
+
+  const baseTokenNeedApproval = useMemo(() => {
+    return tokenAmountNeedApproval(
+      chainId as number,
+      baseToken,
+      baseTokenAllowance,
+      BigNumber.from(Math.ceil(baseAmount))
+    );
+  }, [chainId, baseToken, baseAmount, baseTokenAllowance]);
+
+  const quoteTokenNeedApproval = useMemo(() => {
+    return tokenAmountNeedApproval(
+      chainId as number,
+      quoteToken,
+      quoteTokenAllowance,
+      BigNumber.from(Math.ceil(quoteAmount))
+    );
+  }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance]);
 
   const calculateBaseAndQuoteAmounts = (val0: number, val1: number) => {
     if (!pool) {
@@ -294,7 +267,8 @@ function NewPosition({
     );
 
     const deadline = +new Date() + 120; // TODO: use current blockchain timestamp
-    const slippageTolerance = new Percent(5_000, 10_000);
+    const slippageTolerance =
+      baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
     const useNative =
       pool.token0.equals(WETH9[chainId as number]) ||
       pool.token1.equals(WETH9[chainId as number])
@@ -332,6 +306,10 @@ function NewPosition({
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const onApprove = (idx: number, amount: number) => {
+    approveToken(idx, amount);
   };
 
   return (
@@ -425,13 +403,18 @@ function NewPosition({
       </div>
 
       <div className="w-48 my-2 flex justify-between">
-        <button
-          className="p-2 focus:outline-none text-gray-500 border rounded border-gray-500 font-bold"
-          tabIndex={8}
-          onClick={onAddLiquidity}
-        >
-          Add Liquidity
-        </button>
+        {baseTokenNeedApproval ? (
+          <PrimaryButton onClick={() => onApprove(0, baseAmount)}>
+            Approve {baseToken.symbol}
+          </PrimaryButton>
+        ) : quoteTokenNeedApproval ? (
+          <PrimaryButton onClick={() => onApprove(1, quoteAmount)}>
+            Approve {quoteToken.symbol}
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton onClick={onAddLiquidity}>Add Liquidity</PrimaryButton>
+        )}
+
         <button onClick={onCancel} tabIndex={9}>
           Cancel
         </button>

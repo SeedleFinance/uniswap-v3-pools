@@ -31,7 +31,7 @@ function Container() {
                   <img
                     className="mr-2"
                     alt="Seedle logo - a seedling"
-                    src="icon32.png"
+                    src="/icon32.png"
                   />
                   <span>Seedle</span>
                 </a>

@@ -1,4 +1,4 @@
-import { Token } from "@uniswap/sdk-core";
+import { Token, Percent } from "@uniswap/sdk-core";
 
 function constructSameAddressMap(
   address: string
@@ -58,3 +58,6 @@ export const PAX = new Token(
   "PAX",
   "Paxos Standard"
 );
+
+export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
+export const ZERO_PERCENT = new Percent("0");
