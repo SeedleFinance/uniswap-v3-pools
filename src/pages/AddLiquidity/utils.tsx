@@ -78,9 +78,18 @@ export function calculateNewAmounts(
 export function positionDistance(
   tickCurrent: number,
   position: { entity: Position }
-) {
+): number {
   const { tickLower, tickUpper } = position.entity;
-  return tickCurrent - (tickUpper - tickLower) / 2;
+  if (tickLower <= tickCurrent && tickCurrent <= tickUpper) {
+    //within range
+    return Math.min(tickUpper - tickCurrent, tickCurrent - tickLower);
+  } else if (tickCurrent > tickUpper) {
+    // above range
+    return tickCurrent - tickUpper;
+  } else {
+    // below range
+    return tickLower - tickCurrent;
+  }
 }
 
 export function tokenAmountNeedApproval(
