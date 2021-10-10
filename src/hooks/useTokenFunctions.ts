@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from "react";
 import { parseBytes32String } from "@ethersproject/strings";
 import { formatUnits } from "@ethersproject/units";
-import { Token, WETH9, MaxUint256 } from "@uniswap/sdk-core";
+import { CurrencyAmount, Token, WETH9, MaxUint256 } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
 
@@ -37,7 +37,7 @@ export function useTokenFunctions(
   owner: string | null | undefined
 ): {
   getBalances: () => Promise<string[]>;
-  getAllowances: (spender: string) => Promise<BigNumber[]>;
+  getAllowances: (spender: string) => Promise<number[]>;
   approveToken: (idx: number, amount: number) => Promise<boolean>;
 } {
   const { chainId, library } = useWeb3React();
@@ -74,7 +74,7 @@ export function useTokenFunctions(
   }, [chainId, library, tokens, owner, contracts, bytes32Contracts]);
 
   const getAllowances = useCallback(
-    async (spender: string): Promise<BigNumber[]> => {
+    async (spender: string): Promise<number[]> => {
       if (
         !chainId ||
         !library ||
@@ -95,7 +95,12 @@ export function useTokenFunctions(
             "allowance",
             [owner, spender]
           );
-          return allowance;
+          return parseFloat(
+            CurrencyAmount.fromRawAmount(
+              token,
+              allowance.toString()
+            ).toSignificant(16)
+          );
         })
       );
     },

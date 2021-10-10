@@ -68,12 +68,8 @@ function NewPosition({
   const [baseTokenDisabled, setBaseTokenDisabled] = useState<boolean>(false);
   const [quoteTokenDisabled, setQuoteTokenDisabled] = useState<boolean>(false);
 
-  const [baseTokenAllowance, setBaseTokenAllowance] = useState<BigNumber>(
-    BigNumber.from(0)
-  );
-  const [quoteTokenAllowance, setQuoteTokenAllowance] = useState<BigNumber>(
-    BigNumber.from(0)
-  );
+  const [baseTokenAllowance, setBaseTokenAllowance] = useState<number>(0);
+  const [quoteTokenAllowance, setQuoteTokenAllowance] = useState<number>(0);
 
   useEffect(() => {
     const _run = async () => {
@@ -154,20 +150,28 @@ function NewPosition({
   }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse]);
 
   const baseTokenNeedApproval = useMemo(() => {
+    if (!chainId || !baseToken) {
+      return false;
+    }
+
     return tokenAmountNeedApproval(
       chainId as number,
       baseToken,
       baseTokenAllowance,
-      BigNumber.from(Math.ceil(baseAmount))
+      baseAmount
     );
   }, [chainId, baseToken, baseAmount, baseTokenAllowance]);
 
   const quoteTokenNeedApproval = useMemo(() => {
+    if (!chainId || !quoteToken) {
+      return false;
+    }
+
     return tokenAmountNeedApproval(
       chainId as number,
       quoteToken,
       quoteTokenAllowance,
-      BigNumber.from(Math.ceil(quoteAmount))
+      quoteAmount
     );
   }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance]);
 
@@ -266,7 +270,7 @@ function NewPosition({
       rangeReverse
     );
 
-    const deadline = +new Date() + 120; // TODO: use current blockchain timestamp
+    const deadline = +new Date() + 120 * 60; // TODO: use current blockchain timestamp
     const slippageTolerance =
       baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
     const useNative =

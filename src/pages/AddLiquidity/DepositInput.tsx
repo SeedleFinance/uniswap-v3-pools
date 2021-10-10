@@ -27,7 +27,7 @@ function DepositInput({
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
-    const input = formatInput(value);
+    const input = formatInput(value, false);
     setInput(input);
   }, [value]);
 

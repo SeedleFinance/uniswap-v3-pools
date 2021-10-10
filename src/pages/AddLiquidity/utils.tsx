@@ -1,7 +1,6 @@
 import JSBI from "jsbi";
 import { Pool, Position } from "@uniswap/v3-sdk";
-import { Token, MaxUint256, WETH9 } from "@uniswap/sdk-core";
-import { BigNumber } from "@ethersproject/bignumber";
+import { Token, CurrencyAmount, MaxUint256, WETH9 } from "@uniswap/sdk-core";
 
 export function positionFromAmounts(
   {
@@ -95,8 +94,8 @@ export function positionDistance(
 export function tokenAmountNeedApproval(
   chainId: number,
   token: Token,
-  allowance: BigNumber,
-  amount: BigNumber
+  allowance: number,
+  amount: number
 ): boolean {
   if (!token || !chainId) {
     return false;
@@ -105,5 +104,10 @@ export function tokenAmountNeedApproval(
   if (token.equals(WETH9[chainId])) {
     return false;
   }
-  return allowance.lt(amount);
+  const allowanceRaw = Math.floor(allowance * Math.pow(10, token.decimals));
+  const amountRaw = Math.ceil(amount * Math.pow(10, token.decimals));
+
+  return CurrencyAmount.fromRawAmount(token, allowanceRaw).lessThan(
+    CurrencyAmount.fromRawAmount(token, amountRaw)
+  );
 }
