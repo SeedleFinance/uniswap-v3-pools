@@ -12,6 +12,8 @@ import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
+import Alert, { AlertLevel } from "../../ui/Alert";
+import Modal from "../../ui/Modal";
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -70,6 +72,9 @@ function NewPosition({
 
   const [baseTokenAllowance, setBaseTokenAllowance] = useState<number>(0);
   const [quoteTokenAllowance, setQuoteTokenAllowance] = useState<number>(0);
+
+  const [transactionPending, setTransactionPending] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const _run = async () => {
@@ -241,6 +246,8 @@ function NewPosition({
   }
 
   const onAddLiquidity = async () => {
+    setTransactionPending(true);
+
     // see if the current tick range  and pool match an existing position,
     // if match found, call increaseLiquidity
     // otherwise call mint
@@ -301,19 +308,33 @@ function NewPosition({
 
     try {
       const estimatedGas = await library.getSigner().estimateGas(tx);
-      library.getSigner().sendTransaction({
+      const res = await library.getSigner().sendTransaction({
         ...tx,
         gasLimit: estimatedGas
           .mul(BigNumber.from(10000 + 2000))
           .div(BigNumber.from(10000)),
       });
+      console.log(res);
     } catch (e) {
       console.error(e);
+      if (e.error) {
+        setErrorMessage(
+          `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`
+        );
+      } else {
+        setErrorMessage(e);
+      }
+      setTransactionPending(false);
     }
   };
 
   const onApprove = (idx: number, amount: number) => {
+    setTransactionPending(true);
     approveToken(idx, amount);
+  };
+
+  const resetErrorMessage = () => {
+    setErrorMessage(null);
   };
 
   return (
@@ -408,20 +429,40 @@ function NewPosition({
 
       <div className="w-48 my-2 flex justify-between">
         {baseTokenNeedApproval ? (
-          <PrimaryButton onClick={() => onApprove(0, baseAmount)}>
+          <PrimaryButton
+            onClick={() => onApprove(0, baseAmount)}
+            pending={transactionPending}
+          >
             Approve {baseToken.symbol}
           </PrimaryButton>
         ) : quoteTokenNeedApproval ? (
-          <PrimaryButton onClick={() => onApprove(1, quoteAmount)}>
+          <PrimaryButton
+            onClick={() => onApprove(1, quoteAmount)}
+            pending={transactionPending}
+          >
             Approve {quoteToken.symbol}
           </PrimaryButton>
         ) : (
-          <PrimaryButton onClick={onAddLiquidity}>Add Liquidity</PrimaryButton>
+          <PrimaryButton onClick={onAddLiquidity} pending={transactionPending}>
+            Add Liquidity
+          </PrimaryButton>
         )}
 
         <button onClick={onCancel} tabIndex={9}>
           Cancel
         </button>
+
+        {errorMessage && (
+          <Alert level={AlertLevel.Error} onHide={resetErrorMessage}>
+            {errorMessage}
+          </Alert>
+        )}
+
+        {transactionPending && (
+          <Modal title="Transaction pending">
+            <div>Complete the transaction in the wallet.</div>
+          </Modal>
+        )}
       </div>
     </div>
   );

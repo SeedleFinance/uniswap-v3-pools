@@ -10,6 +10,9 @@
     "@ethersproject/providers": "^5.1.2",
     "@ethersproject/strings": "^5.1.0",
     "@ethersproject/units": "^5.2.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.15",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -35,6 +38,7 @@
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-transition-group": "^4.4.2",
     "recharts": "^2.0.9",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typechain": "^5.0.0",
@@ -74,6 +78,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.170",
     "@types/react-router-dom": "^5.1.8",
+    "@types/react-transition-group": "^4.4.3",
     "@types/use-persisted-state": "^0.3.0",
     "apollo": "^2.33.2"
   }
