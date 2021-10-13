@@ -4,6 +4,7 @@ interface Props {
   compact?: boolean;
   disabled?: boolean;
   className?: string;
+  tabIndex?: number;
   children: ReactNode;
   onClick: () => void;
   type?: "submit" | "button" | "reset";
@@ -15,6 +16,7 @@ export const UnstyledButton = ({
   disabled,
   children,
   className,
+  tabIndex,
   onClick,
   onMouseOver,
   onMouseOut,
@@ -22,9 +24,10 @@ export const UnstyledButton = ({
 }: Props) => {
   return (
     <button
-      className={`focus:outline-none appearance-none ${className}`}
+      className={`rounded-md focus:outline-none p-2 border border-transparent focus:border-dotted focus:border-gray-200 appearance-none ${className}`}
       disabled={disabled}
       type={type || "button"}
+      tabIndex={tabIndex}
       onClick={onClick}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
@@ -39,6 +42,7 @@ export const Button = ({
   children,
   className,
   onClick,
+  tabIndex,
   type = "submit",
   disabled = false,
 }: Props) => {
@@ -47,11 +51,12 @@ export const Button = ({
 
   return (
     <UnstyledButton
-      className={`rounded-md shadow-inner focus:shadow-md border border-solid border-gray-600 text-gray-900 ${sizing} ${disabledShade} ${
+      className={`rounded-md shadow-inner focus:shadow-md border border-solid border-gray-600 focus:border-gray-800 text-gray-900 ${sizing} ${disabledShade} ${
         className || ""
       }`}
       onClick={onClick}
       type={type}
+      tabIndex={tabIndex}
       disabled={disabled}
     >
       {children}

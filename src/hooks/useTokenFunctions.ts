@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from "react";
 import { parseBytes32String } from "@ethersproject/strings";
+import { TransactionResponse } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
 import { CurrencyAmount, Token, WETH9, MaxUint256 } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
@@ -38,7 +39,10 @@ export function useTokenFunctions(
 ): {
   getBalances: () => Promise<string[]>;
   getAllowances: (spender: string) => Promise<number[]>;
-  approveToken: (idx: number, amount: number) => Promise<boolean>;
+  approveToken: (
+    idx: number,
+    amount: number
+  ) => Promise<TransactionResponse | null>;
 } {
   const { chainId, library } = useWeb3React();
 
@@ -108,14 +112,17 @@ export function useTokenFunctions(
   );
 
   const approveToken = useCallback(
-    async (idx: number, amount: number) => {
+    async (
+      idx: number,
+      amount: number
+    ): Promise<TransactionResponse | null> => {
       if (!chainId || !library || !contracts || !owner) {
-        return false;
+        return null;
       }
 
       const contract = contracts[idx];
       if (!contract) {
-        return false;
+        return null;
       }
 
       const amountToApprove = BigNumber.from(Math.ceil(amount));
@@ -132,18 +139,11 @@ export function useTokenFunctions(
         useExact = true;
       }
 
-      try {
-        await contract.approve(owner, useExact ? amountToApprove : MaxUint256, {
-          gasLimit: estimatedGas
-            .mul(BigNumber.from(10000 + 2000))
-            .div(BigNumber.from(10000)),
-        });
-        return true;
-      } catch (e) {
-        console.error(e);
-      }
-
-      return false;
+      return contract.approve(owner, useExact ? amountToApprove : MaxUint256, {
+        gasLimit: estimatedGas
+          .mul(BigNumber.from(10000 + 2000))
+          .div(BigNumber.from(10000)),
+      });
     },
     [chainId, library, contracts, owner]
   );

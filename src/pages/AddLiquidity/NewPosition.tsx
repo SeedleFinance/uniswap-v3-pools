@@ -14,6 +14,7 @@ import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
 import Modal from "../../ui/Modal";
+import { Button, UnstyledButton } from "../../ui/Button";
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -26,7 +27,6 @@ import { formatInput } from "../../utils/numbers";
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
 import FeeButton from "./FeeButton";
-import PrimaryButton from "./PrimaryButton";
 import {
   positionFromAmounts,
   calculateNewAmounts,
@@ -248,65 +248,79 @@ function NewPosition({
   const onAddLiquidity = async () => {
     setTransactionPending(true);
 
-    // see if the current tick range  and pool match an existing position,
-    // if match found, call increaseLiquidity
-    // otherwise call mint
-    let matchingPosition = null;
-    if (positions) {
-      matchingPosition = positions.find((position) => {
-        const { entity } = position;
-        if (
-          entity.pool.fee === fee &&
-          entity.tickLower === tickLower &&
-          entity.tickUpper === tickUpper
-        ) {
-          return true;
-        }
-        return false;
-      });
-    }
-
-    const newPosition = positionFromAmounts(
-      {
-        pool,
-        tickLower,
-        tickUpper,
-        val0: quoteAmount,
-        val1: baseAmount,
-      },
-      rangeReverse
-    );
-
-    const deadline = +new Date() + 120 * 60; // TODO: use current blockchain timestamp
-    const slippageTolerance =
-      baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
-    const useNative =
-      pool.token0.equals(WETH9[chainId as number]) ||
-      pool.token1.equals(WETH9[chainId as number])
-        ? Ether.onChain(chainId as number)
-        : undefined;
-
-    const { calldata, value } = matchingPosition
-      ? NonfungiblePositionManager.addCallParameters(newPosition, {
-          tokenId: matchingPosition.id,
-          deadline,
-          slippageTolerance,
-          useNative,
-        })
-      : NonfungiblePositionManager.addCallParameters(newPosition, {
-          recipient: account as string,
-          deadline,
-          slippageTolerance,
-          useNative,
-        });
-
-    const tx = {
-      to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-      data: calldata,
-      value,
-    };
-
     try {
+      if (quoteAmount > 0 && quoteAmount > parseFloat(quoteBalance)) {
+        throw new Error(
+          `You don't have enough ${quoteToken.symbol} to complete the transaction`
+        );
+      }
+
+      if (baseAmount > 0 && baseAmount > parseFloat(baseBalance)) {
+        throw new Error(
+          `You don't have enough ${baseToken.symbol} to complete the transaction`
+        );
+      }
+
+      // see if the current tick range  and pool match an existing position,
+      // if match found, call increaseLiquidity
+      // otherwise call mint
+      let matchingPosition = null;
+      if (positions) {
+        matchingPosition = positions.find((position) => {
+          const { entity } = position;
+          if (
+            entity.pool.fee === fee &&
+            entity.tickLower === tickLower &&
+            entity.tickUpper === tickUpper
+          ) {
+            return true;
+          }
+          return false;
+        });
+      }
+
+      const newPosition = positionFromAmounts(
+        {
+          pool,
+          tickLower,
+          tickUpper,
+          val0: quoteAmount,
+          val1: baseAmount,
+        },
+        rangeReverse
+      );
+
+      const deadline = +new Date() + 120 * 60; // TODO: use current blockchain timestamp
+      const slippageTolerance =
+        baseTokenDisabled || quoteTokenDisabled
+          ? ZERO_PERCENT
+          : DEFAULT_SLIPPAGE;
+      const useNative =
+        pool.token0.equals(WETH9[chainId as number]) ||
+        pool.token1.equals(WETH9[chainId as number])
+          ? Ether.onChain(chainId as number)
+          : undefined;
+
+      const { calldata, value } = matchingPosition
+        ? NonfungiblePositionManager.addCallParameters(newPosition, {
+            tokenId: matchingPosition.id,
+            deadline,
+            slippageTolerance,
+            useNative,
+          })
+        : NonfungiblePositionManager.addCallParameters(newPosition, {
+            recipient: account as string,
+            deadline,
+            slippageTolerance,
+            useNative,
+          });
+
+      const tx = {
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        data: calldata,
+        value,
+      };
+
       const estimatedGas = await library.getSigner().estimateGas(tx);
       const res = await library.getSigner().sendTransaction({
         ...tx,
@@ -314,7 +328,7 @@ function NewPosition({
           .mul(BigNumber.from(10000 + 2000))
           .div(BigNumber.from(10000)),
       });
-      console.log(res);
+      setTransactionPending(false);
     } catch (e) {
       console.error(e);
       if (e.error) {
@@ -322,15 +336,28 @@ function NewPosition({
           `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`
         );
       } else {
-        setErrorMessage(e);
+        setErrorMessage(e.toString());
       }
       setTransactionPending(false);
     }
   };
 
-  const onApprove = (idx: number, amount: number) => {
+  const onApprove = async (idx: number, amount: number) => {
     setTransactionPending(true);
-    approveToken(idx, amount);
+    try {
+      const res = await approveToken(idx, amount);
+      setTransactionPending(false);
+    } catch (e) {
+      console.error(e);
+      if (e.error) {
+        setErrorMessage(
+          `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`
+        );
+      } else {
+        setErrorMessage(e.toString());
+      }
+      setTransactionPending(false);
+    }
   };
 
   const resetErrorMessage = () => {
@@ -412,7 +439,7 @@ function NewPosition({
             token={quoteToken}
             value={quoteAmount}
             balance={quoteBalance}
-            tabIndex={7}
+            tabIndex={6}
             disabled={quoteTokenDisabled}
             onChange={quoteDepositChange}
           />
@@ -420,7 +447,7 @@ function NewPosition({
             token={baseToken}
             value={baseAmount}
             balance={baseBalance}
-            tabIndex={6}
+            tabIndex={7}
             disabled={baseTokenDisabled}
             onChange={baseDepositChange}
           />
@@ -429,28 +456,37 @@ function NewPosition({
 
       <div className="w-48 my-2 flex justify-between">
         {baseTokenNeedApproval ? (
-          <PrimaryButton
+          <Button
             onClick={() => onApprove(0, baseAmount)}
-            pending={transactionPending}
+            disabled={transactionPending}
+            tabIndex={8}
+            compact={true}
           >
             Approve {baseToken.symbol}
-          </PrimaryButton>
+          </Button>
         ) : quoteTokenNeedApproval ? (
-          <PrimaryButton
+          <Button
             onClick={() => onApprove(1, quoteAmount)}
-            pending={transactionPending}
+            disabled={transactionPending}
+            tabIndex={8}
+            compact={true}
           >
             Approve {quoteToken.symbol}
-          </PrimaryButton>
+          </Button>
         ) : (
-          <PrimaryButton onClick={onAddLiquidity} pending={transactionPending}>
+          <Button
+            onClick={onAddLiquidity}
+            disabled={transactionPending}
+            tabIndex={8}
+            compact={true}
+          >
             Add Liquidity
-          </PrimaryButton>
+          </Button>
         )}
 
-        <button onClick={onCancel} tabIndex={9}>
+        <UnstyledButton onClick={onCancel} tabIndex={9}>
           Cancel
-        </button>
+        </UnstyledButton>
 
         {errorMessage && (
           <Alert level={AlertLevel.Error} onHide={resetErrorMessage}>
@@ -460,7 +496,7 @@ function NewPosition({
 
         {transactionPending && (
           <Modal title="Transaction pending">
-            <div>Complete the transaction in the wallet.</div>
+            <div>Complete the transaction in your wallet.</div>
           </Modal>
         )}
       </div>

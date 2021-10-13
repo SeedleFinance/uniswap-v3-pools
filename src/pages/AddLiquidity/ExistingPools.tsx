@@ -40,9 +40,11 @@ function ExistingPools({ onPoolClick }: Props) {
     <div className="w-full flex flex-wrap">
       {pools.map(
         ({ key, baseToken, quoteToken, entity, positions }: PoolState) => (
-          <div className="w-80 border border-gray-400 rounded my-3 mr-3 p-3 text-lg">
+          <div
+            key={key}
+            className="w-80 border border-gray-400 rounded my-3 mr-3 p-3 text-lg"
+          >
             <PoolButton
-              key={key}
               baseToken={baseToken}
               quoteToken={quoteToken}
               fee={entity.fee / 10000}
