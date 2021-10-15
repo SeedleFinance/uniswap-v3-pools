@@ -15,8 +15,8 @@ function PageBody() {
         <Route path="/add/existing">
           <AddLiquidityPage tab="existing" />
         </Route>
-        <Route path="/add/:quoteToken/:baseToken/:fee">
-          <AddLiquidityPage tab="existing" />
+        <Route path="/add/:quoteTokenSymbol/:baseTokenSymbol/:fee">
+          <AddLiquidityPage tab="new" />
         </Route>
 
         <Route path="/">

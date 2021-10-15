@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useWeb3React } from "@web3-react/core";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Token } from "@uniswap/sdk-core";
 
 import NewPool from "./NewPool";
@@ -8,12 +9,22 @@ import NewPosition from "./NewPosition";
 
 interface Props {
   tab: string;
-  params?: any;
+}
+
+interface TokenListItem {
+  chainId: number;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
 }
 
 function AddLiquidity({ tab }: Props) {
+  const { chainId } = useWeb3React();
   const history = useHistory();
+  const { baseTokenSymbol, quoteTokenSymbol, fee } = useParams<any>();
 
+  const [tokens, setTokens] = useState<TokenListItem[]>([]);
   const [selectedTab, setSelectedTab] = useState("new");
   const [selectedBaseToken, setSelectedBaseToken] =
     useState<Token | null>(null);
@@ -24,10 +35,54 @@ function AddLiquidity({ tab }: Props) {
     useState<any[] | null>(null);
 
   useEffect(() => {
+    const loadTokens = async () => {
+      const res = await fetch("https://tokens.coingecko.com/uniswap/all.json");
+      if (!res.ok) {
+        setTokens([]);
+        return;
+      }
+
+      const json = await res.json();
+      setTokens(json.tokens);
+    };
+
+    loadTokens();
+  }, []);
+
+  useEffect(() => {
     if (tab !== "") {
       setSelectedTab(tab);
     }
   }, [tab]);
+
+  useEffect(() => {
+    if (!chainId || !tokens || !baseTokenSymbol || !quoteTokenSymbol || !fee) {
+      return;
+    }
+    const matches = tokens.filter(
+      (token: TokenListItem) =>
+        token.chainId === chainId &&
+        (token.symbol === baseTokenSymbol || token.symbol === quoteTokenSymbol)
+    );
+
+    // invalid tokens
+    if (matches.length !== 2) {
+      return;
+    }
+
+    const toToken = ({ address, decimals, symbol, name }: TokenListItem) => {
+      return new Token(chainId as number, address, decimals, symbol, name);
+    };
+
+    const [baseToken, quoteToken] =
+      matches[0].symbol === baseTokenSymbol
+        ? [toToken(matches[0]), toToken(matches[1])]
+        : [toToken(matches[1]), toToken(matches[0])];
+
+    setSelectedBaseToken(baseToken);
+    setSelectedQuoteToken(quoteToken);
+    setSelectedFee(parseInt(fee, 10));
+  }, [chainId, tokens, baseTokenSymbol, quoteTokenSymbol, fee]);
 
   const resetSelections = () => {
     setSelectedBaseToken(null);
