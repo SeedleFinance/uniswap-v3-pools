@@ -108,17 +108,26 @@ function NewPosition({
   }, [quoteToken, baseToken]);
 
   const suggestedTicks = useMemo(() => {
-    if (!pool || !positions || !positions.length) {
-      return [TickMath.MIN_TICK, TickMath.MIN_TICK];
+    let tickLower = TickMath.MIN_TICK;
+    let tickUpper = TickMath.MIN_TICK;
+    if (!pool) {
+      return [tickLower, tickUpper];
     }
-    const { tickCurrent } = pool;
-    let sortedPositions = positions.sort((posA, posB) => {
-      const disA = positionDistance(tickCurrent, posA);
-      const disB = positionDistance(tickCurrent, posB);
-      return disA - disB;
-    });
 
-    const { tickLower, tickUpper } = sortedPositions[0].entity;
+    const { tickCurrent, tickSpacing } = pool;
+    if (!positions || !positions.length) {
+      tickLower = tickCurrent - 10 * tickSpacing;
+      tickUpper = tickCurrent + 10 * tickSpacing;
+    } else {
+      let sortedPositions = positions.sort((posA, posB) => {
+        const disA = positionDistance(tickCurrent, posA);
+        const disB = positionDistance(tickCurrent, posB);
+        return disA - disB;
+      });
+
+      tickLower = sortedPositions[0].entity.tickLower;
+      tickUpper = sortedPositions[0].entity.tickUpper;
+    }
 
     if (rangeReverse) {
       return [tickUpper, tickLower];

@@ -7,16 +7,11 @@ import NewPool from "./NewPool";
 import ExistingPools from "./ExistingPools";
 import NewPosition from "./NewPosition";
 
+import { getQuoteAndBaseToken } from "../../utils/tokens";
+import { loadTokens, findTokens, TokenListItem } from "./utils";
+
 interface Props {
   tab: string;
-}
-
-interface TokenListItem {
-  chainId: number;
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
 }
 
 function AddLiquidity({ tab }: Props) {
@@ -35,18 +30,12 @@ function AddLiquidity({ tab }: Props) {
     useState<any[] | null>(null);
 
   useEffect(() => {
-    const loadTokens = async () => {
-      const res = await fetch("https://tokens.coingecko.com/uniswap/all.json");
-      if (!res.ok) {
-        setTokens([]);
-        return;
-      }
-
-      const json = await res.json();
-      setTokens(json.tokens);
+    const _run = async () => {
+      const results = await loadTokens();
+      setTokens(results);
     };
 
-    loadTokens();
+    _run();
   }, []);
 
   useEffect(() => {
@@ -59,11 +48,16 @@ function AddLiquidity({ tab }: Props) {
     if (!chainId || !tokens || !baseTokenSymbol || !quoteTokenSymbol || !fee) {
       return;
     }
-    const matches = tokens.filter(
-      (token: TokenListItem) =>
-        token.chainId === chainId &&
-        (token.symbol === baseTokenSymbol || token.symbol === quoteTokenSymbol)
-    );
+
+    const matches = findTokens(chainId as number, tokens, [
+      baseTokenSymbol,
+      quoteTokenSymbol,
+    ]);
+    // const matches = tokens.filter(
+    //   (token: TokenListItem) =>
+    //     token.chainId === chainId &&
+    //     (token.symbol === baseTokenSymbol || token.symbol === quoteTokenSymbol)
+    // );
 
     // invalid tokens
     if (matches.length !== 2) {
@@ -74,10 +68,11 @@ function AddLiquidity({ tab }: Props) {
       return new Token(chainId as number, address, decimals, symbol, name);
     };
 
-    const [baseToken, quoteToken] =
-      matches[0].symbol === baseTokenSymbol
-        ? [toToken(matches[0]), toToken(matches[1])]
-        : [toToken(matches[1]), toToken(matches[0])];
+    const [quoteToken, baseToken] = getQuoteAndBaseToken(
+      chainId as number,
+      toToken(matches[0]),
+      toToken(matches[1])
+    );
 
     setSelectedBaseToken(baseToken);
     setSelectedQuoteToken(quoteToken);

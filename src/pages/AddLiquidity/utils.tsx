@@ -111,3 +111,41 @@ export function tokenAmountNeedApproval(
     CurrencyAmount.fromRawAmount(token, amountRaw)
   );
 }
+
+export interface TokenListItem {
+  chainId: number;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+}
+
+export async function loadTokens() {
+  const res = await fetch("https://tokens.coingecko.com/uniswap/all.json");
+  if (!res.ok) {
+    return [];
+  }
+
+  const json = await res.json();
+  return json.tokens;
+}
+
+export function findTokens(
+  chainId: number,
+  tokens: TokenListItem[],
+  symbols: string[]
+) {
+  const symbolsFormatted = symbols.map((symbol) => {
+    const s = symbol.toUpperCase();
+    if (s === "ETH") {
+      return "WETH";
+    }
+    return s;
+  });
+  const matches = tokens.filter(
+    (token: TokenListItem) =>
+      token.chainId === chainId && symbolsFormatted.includes(token.symbol)
+  );
+
+  return matches;
+}
