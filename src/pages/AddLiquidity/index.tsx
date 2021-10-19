@@ -53,11 +53,6 @@ function AddLiquidity({ tab }: Props) {
       baseTokenSymbol,
       quoteTokenSymbol,
     ]);
-    // const matches = tokens.filter(
-    //   (token: TokenListItem) =>
-    //     token.chainId === chainId &&
-    //     (token.symbol === baseTokenSymbol || token.symbol === quoteTokenSymbol)
-    // );
 
     // invalid tokens
     if (matches.length !== 2) {

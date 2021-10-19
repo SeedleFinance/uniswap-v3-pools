@@ -116,8 +116,12 @@ function NewPosition({
 
     const { tickCurrent, tickSpacing } = pool;
     if (!positions || !positions.length) {
-      tickLower = tickCurrent - 10 * tickSpacing;
-      tickUpper = tickCurrent + 10 * tickSpacing;
+      tickLower =
+        Math.round((tickCurrent - 10 * tickSpacing) / tickSpacing) *
+        tickSpacing;
+      tickUpper =
+        Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) *
+        tickSpacing;
     } else {
       let sortedPositions = positions.sort((posA, posB) => {
         const disA = positionDistance(tickCurrent, posA);
