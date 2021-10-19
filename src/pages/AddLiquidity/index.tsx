@@ -30,13 +30,17 @@ function AddLiquidity({ tab }: Props) {
     useState<any[] | null>(null);
 
   useEffect(() => {
+    if (!chainId) {
+      return;
+    }
+
     const _run = async () => {
-      const results = await loadTokens();
+      const results = await loadTokens(chainId as number);
       setTokens(results);
     };
 
     _run();
-  }, []);
+  }, [chainId]);
 
   useEffect(() => {
     if (tab !== "") {

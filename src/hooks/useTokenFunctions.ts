@@ -41,6 +41,7 @@ export function useTokenFunctions(
   getAllowances: (spender: string) => Promise<number[]>;
   approveToken: (
     idx: number,
+    spender: string,
     amount: number
   ) => Promise<TransactionResponse | null>;
 } {
@@ -114,9 +115,10 @@ export function useTokenFunctions(
   const approveToken = useCallback(
     async (
       idx: number,
+      spender: string,
       amount: number
     ): Promise<TransactionResponse | null> => {
-      if (!chainId || !library || !contracts || !owner) {
+      if (!chainId || !library || !contracts || !tokens) {
         return null;
       }
 
@@ -125,27 +127,34 @@ export function useTokenFunctions(
         return null;
       }
 
-      const amountToApprove = BigNumber.from(Math.ceil(amount));
+      const amountToApprove = CurrencyAmount.fromRawAmount(
+        tokens[idx],
+        Math.ceil(amount * Math.pow(10, tokens[idx].decimals))
+      ).quotient.toString();
       let estimatedGas = BigNumber.from(0);
       let useExact = false;
       try {
-        estimatedGas = await contract.estimateGas.approve(owner, MaxUint256);
+        estimatedGas = await contract.estimateGas.approve(spender, MaxUint256);
       } catch (e) {
         // fallback for tokens who restrict approval amounts
         estimatedGas = await contract.estimateGas.approve(
-          owner,
+          spender,
           amountToApprove
         );
         useExact = true;
       }
 
-      return contract.approve(owner, useExact ? amountToApprove : MaxUint256, {
-        gasLimit: estimatedGas
-          .mul(BigNumber.from(10000 + 2000))
-          .div(BigNumber.from(10000)),
-      });
+      return contract.approve(
+        spender,
+        useExact ? amountToApprove : MaxUint256,
+        {
+          gasLimit: estimatedGas
+            .mul(BigNumber.from(10000 + 2000))
+            .div(BigNumber.from(10000)),
+        }
+      );
     },
-    [chainId, library, contracts, owner]
+    [chainId, library, contracts, tokens]
   );
 
   return { getBalances, getAllowances, approveToken };

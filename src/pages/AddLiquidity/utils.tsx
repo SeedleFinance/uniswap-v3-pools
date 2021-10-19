@@ -120,7 +120,26 @@ export interface TokenListItem {
   decimals: number;
 }
 
-export async function loadTokens() {
+export async function loadTokens(chainId: number) {
+  if (chainId === 3) {
+    return [
+      {
+        address: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+        chainId: 3,
+        name: "Wrapped Ether",
+        symbol: "WETH",
+        decimals: 18,
+      },
+      {
+        address: "0xaD6D458402F60fD3Bd25163575031ACDce07538D",
+        chainId: 3,
+        name: "Dai Stablecoin",
+        symbol: "DAI",
+        decimals: 18,
+      },
+    ];
+  }
+
   const res = await fetch("https://tokens.coingecko.com/uniswap/all.json");
   if (!res.ok) {
     return [];

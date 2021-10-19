@@ -74,7 +74,9 @@ function NewPosition({
   const [quoteTokenAllowance, setQuoteTokenAllowance] = useState<number>(0);
 
   const [transactionPending, setTransactionPending] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
+  const [alert, setAlert] =
+    useState<{ message: string; level: AlertLevel } | null>(null);
 
   useEffect(() => {
     const _run = async () => {
@@ -341,15 +343,27 @@ function NewPosition({
           .mul(BigNumber.from(10000 + 2000))
           .div(BigNumber.from(10000)),
       });
-      setTransactionPending(false);
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: "Liquidity added to the pool.",
+          level: AlertLevel.Success,
+        });
+        setTransactionPending(false);
+      }
     } catch (e) {
       console.error(e);
       if (e.error) {
-        setErrorMessage(
-          `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`
-        );
+        setAlert({
+          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+          level: AlertLevel.Error,
+        });
       } else {
-        setErrorMessage(e.toString());
+        setAlert({
+          message: e.toString(),
+          level: AlertLevel.Error,
+        });
       }
       setTransactionPending(false);
     }
@@ -358,23 +372,36 @@ function NewPosition({
   const onApprove = async (idx: number, amount: number) => {
     setTransactionPending(true);
     try {
-      const res = await approveToken(idx, amount);
-      setTransactionPending(false);
+      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number];
+      const res = await approveToken(idx, spender, amount);
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: "Token approval confirmed.",
+          level: AlertLevel.Success,
+        });
+        setTransactionPending(false);
+      }
     } catch (e) {
       console.error(e);
       if (e.error) {
-        setErrorMessage(
-          `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`
-        );
+        setAlert({
+          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+          level: AlertLevel.Error,
+        });
       } else {
-        setErrorMessage(e.toString());
+        setAlert({
+          message: e.toString(),
+          level: AlertLevel.Error,
+        });
       }
       setTransactionPending(false);
     }
   };
 
-  const resetErrorMessage = () => {
-    setErrorMessage(null);
+  const resetAlert = () => {
+    setAlert(null);
   };
 
   return (
@@ -501,15 +528,34 @@ function NewPosition({
           Cancel
         </UnstyledButton>
 
-        {errorMessage && (
-          <Alert level={AlertLevel.Error} onHide={resetErrorMessage}>
-            {errorMessage}
+        {alert && (
+          <Alert level={alert.level} onHide={resetAlert}>
+            {alert.message}
           </Alert>
         )}
 
         {transactionPending && (
-          <Modal title="Transaction pending">
-            <div>Complete the transaction in your wallet.</div>
+          <Modal
+            title={
+              transactionHash
+                ? "Complete Transaction"
+                : "Waiting for confirmation"
+            }
+          >
+            {transactionHash ? (
+              <div>
+                Waiting for transaction to be confirmed. Check status on{" "}
+                <a
+                  className="text-blue-500"
+                  target="_blank"
+                  href={`https://etherscan.io/tx/${transactionHash}`}
+                >
+                  Etherscan
+                </a>
+              </div>
+            ) : (
+              <div>Complete the transaction in your wallet.</div>
+            )}
           </Modal>
         )}
       </div>
