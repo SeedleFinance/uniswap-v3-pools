@@ -351,6 +351,7 @@ function NewPosition({
           level: AlertLevel.Success,
         });
         setTransactionPending(false);
+        setTransactionHash(null);
       }
     } catch (e) {
       console.error(e);
@@ -366,6 +367,7 @@ function NewPosition({
         });
       }
       setTransactionPending(false);
+      setTransactionHash(null);
     }
   };
 
@@ -382,6 +384,7 @@ function NewPosition({
           level: AlertLevel.Success,
         });
         setTransactionPending(false);
+        setTransactionHash(null);
       }
     } catch (e) {
       console.error(e);
@@ -397,6 +400,7 @@ function NewPosition({
         });
       }
       setTransactionPending(false);
+      setTransactionHash(null);
     }
   };
 
