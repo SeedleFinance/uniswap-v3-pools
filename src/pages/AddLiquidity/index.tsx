@@ -6,6 +6,7 @@ import { Token } from "@uniswap/sdk-core";
 import NewPool from "./NewPool";
 import ExistingPools from "./ExistingPools";
 import NewPosition from "./NewPosition";
+import SearchInput from "./SearchInput";
 
 import { getQuoteAndBaseToken } from "../../utils/tokens";
 import { loadTokens, findTokens, TokenListItem } from "./utils";
@@ -28,6 +29,7 @@ function AddLiquidity({ tab }: Props) {
   const [selectedFee, setSelectedFee] = useState<number | null>(null);
   const [selectedPositions, setSelectedPositions] =
     useState<any[] | null>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
 
   useEffect(() => {
     if (!chainId) {
@@ -108,6 +110,11 @@ function AddLiquidity({ tab }: Props) {
     history.push("/add/existing");
   };
 
+  const handleCancelNewPosition = () => {
+    resetSelections();
+    history.push("/add/new");
+  };
+
   return (
     <div className="w-full flex flex-col">
       <div className="py-4 mb-4 flex items-center text-2xl w-2/12">
@@ -121,11 +128,7 @@ function AddLiquidity({ tab }: Props) {
       </div>
 
       <div className="w-1/2">
-        <input
-          className="w-full rounded border border-gray-200 p-2 focus:outline-none focus:border-gray-500"
-          type="text"
-          placeholder="Search by tokens"
-        />
+        <SearchInput onChange={setSearchInput} />
       </div>
 
       <div className="w-full py-4 my-4">
@@ -159,12 +162,15 @@ function AddLiquidity({ tab }: Props) {
               quoteToken={selectedQuoteToken as Token}
               initFee={selectedFee}
               positions={selectedPositions}
-              onCancel={() => resetSelections()}
+              onCancel={handleCancelNewPosition}
             />
           ) : selectedTab === "new" ? (
             <NewPool />
           ) : (
-            <ExistingPools onPoolClick={handleExistingPoolClick} />
+            <ExistingPools
+              onPoolClick={handleExistingPoolClick}
+              filter={searchInput}
+            />
           )}
         </div>
       </div>

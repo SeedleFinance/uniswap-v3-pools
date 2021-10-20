@@ -548,6 +548,7 @@ function NewPosition({
                 <a
                   className="text-blue-500"
                   target="_blank"
+                  rel="noreferrer"
                   href={`https://etherscan.io/tx/${transactionHash}`}
                 >
                   Etherscan

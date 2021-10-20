@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Token } from "@uniswap/sdk-core";
 
 import { usePools } from "../../PoolsProvider";
@@ -6,7 +6,10 @@ import { useAppSettings } from "../../AppSettingsProvider";
 import { PoolState } from "../../hooks/usePool";
 import PoolButton from "../../ui/PoolButton";
 
+import stringDistance from "../../utils/levenshtein";
+
 interface Props {
+  filter: string;
   onPoolClick: (
     baseToken: Token,
     quoteToken: Token,
@@ -15,7 +18,7 @@ interface Props {
   ) => void;
 }
 
-function ExistingPools({ onPoolClick }: Props) {
+function ExistingPools({ onPoolClick, filter }: Props) {
   const { pools } = usePools();
   const { filterClosed, setFilterClosed } = useAppSettings();
 
@@ -32,13 +35,42 @@ function ExistingPools({ onPoolClick }: Props) {
     };
   }, []); // this should run only on mount/unmount
 
+  const filteredPools = useMemo(() => {
+    if (filter.length < 2) {
+      return pools;
+    }
+
+    if (!pools.length) {
+      return pools;
+    }
+
+    return pools.filter(({ baseToken, quoteToken }: PoolState) => {
+      if (!baseToken.symbol || !quoteToken.symbol) {
+        return false;
+      }
+
+      const a = baseToken.symbol.toLowerCase();
+      const b = quoteToken.symbol.toLowerCase();
+      const c = filter.toLowerCase();
+      if (a.includes(c) || stringDistance(a, c) < 3) {
+        return true;
+      }
+
+      if (b.includes(c) || stringDistance(b, c) < 3) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [pools, filter]);
+
   if (!pools.length) {
     return <div>Loading pools...</div>;
   }
 
   return (
     <div className="w-full flex flex-wrap">
-      {pools.map(
+      {filteredPools.map(
         ({ key, baseToken, quoteToken, entity, positions }: PoolState) => (
           <div
             key={key}
