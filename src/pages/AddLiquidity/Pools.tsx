@@ -25,17 +25,6 @@ function Pools({ pools, onPoolClick, filter }: Props) {
       return pools;
     }
 
-    const stringDistances = pools.map(({ baseToken, quoteToken }) => {
-      const c = filter.toLowerCase();
-      const a = stringDistance(baseToken.symbol!.toLowerCase(), c);
-
-      const b = stringDistance(quoteToken.symbol!.toLowerCase(), c);
-
-      return { baseToken, quoteToken, distance: a + b / 2 };
-    });
-
-    console.log(stringDistances);
-
     return pools.filter(({ baseToken, quoteToken }: PoolState) => {
       const a0 = baseToken.name!.toLowerCase();
       const a1 = baseToken.symbol!.toLowerCase();
