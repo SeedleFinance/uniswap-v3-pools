@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useRef } from "react";
+import { debounce } from "lodash";
 
 interface Props {
   onChange: (value: string) => void;
 }
 
 function SearchInput({ onChange }: Props) {
+  const debouncedOnChange = useRef(debounce(onChange, 500)).current;
+
   const handleInput = (ev: { target: any }) => {
     const { value } = ev.target;
-    onChange(value);
+    debouncedOnChange(value);
   };
 
   return (

@@ -3,7 +3,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { Token } from "@uniswap/sdk-core";
 
-import NewPool from "./NewPool";
+import NewPools from "./NewPools";
 import ExistingPools from "./ExistingPools";
 import NewPosition from "./NewPosition";
 import SearchInput from "./SearchInput";
@@ -165,7 +165,7 @@ function AddLiquidity({ tab }: Props) {
               onCancel={handleCancelNewPosition}
             />
           ) : selectedTab === "new" ? (
-            <NewPool />
+            <NewPools onPoolClick={() => {}} filter={searchInput} />
           ) : (
             <ExistingPools
               onPoolClick={handleExistingPoolClick}
