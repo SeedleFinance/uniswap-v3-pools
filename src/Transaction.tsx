@@ -4,12 +4,12 @@ import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
 import { usePools } from "./PoolsProvider";
-import TokenSymbol from "./Token";
+import TokenSymbol from "./ui/TokenLabel";
 
 export interface TransactionProps {
   id: string;
   pool: Pool;
-  quoteToken: Token;
+  baseToken: Token;
   timestamp: number;
   type: string;
   amount0: CurrencyAmount<Token>;
@@ -22,7 +22,7 @@ export interface TransactionProps {
 function Transaction({
   id,
   pool,
-  quoteToken,
+  baseToken,
   timestamp,
   type,
   amount0,
@@ -33,24 +33,24 @@ function Transaction({
 }: TransactionProps) {
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
   const totalLiquidity = useMemo(() => {
-    if (!quoteToken || !pool) {
+    if (!baseToken || !pool) {
       return 0;
     }
-    return pool.token0.equals(quoteToken)
+    return pool.token0.equals(baseToken)
       ? pool.priceOf(pool.token1).quote(amount1).add(amount0)
       : pool.priceOf(pool.token0).quote(amount0).add(amount1);
-  }, [quoteToken, pool, amount0, amount1]);
+  }, [baseToken, pool, amount0, amount1]);
 
   const { percent0, percent1 } = useMemo(() => {
     if (
-      !quoteToken ||
+      !baseToken ||
       !pool ||
       totalLiquidity === 0 ||
       totalLiquidity.equalTo(0)
     ) {
       return { percent0: "0", percent1: "0" };
     }
-    const [value0, value1] = pool.token0.equals(quoteToken)
+    const [value0, value1] = pool.token0.equals(baseToken)
       ? [amount0, pool.priceOf(pool.token1).quote(amount1)]
       : [pool.priceOf(pool.token0).quote(amount0), amount1];
     const calcPercent = (val: CurrencyAmount<Token>) =>
@@ -61,7 +61,7 @@ function Transaction({
       ).toFixed(2);
 
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
-  }, [totalLiquidity, pool, quoteToken, amount0, amount1]);
+  }, [totalLiquidity, pool, baseToken, amount0, amount1]);
 
   const getTypeLabel = (type: string) => {
     switch (type) {

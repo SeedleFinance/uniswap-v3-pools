@@ -12,3 +12,12 @@ export function formatCurrency(num: number, symbol?: string) {
     },
   });
 }
+
+export function formatInput(input: number, rounding: boolean = true) {
+  return numbro(input).format({
+    mantissa: input > 0.01 ? 4 : 8,
+    optionalMantissa: true,
+    trimMantissa: true,
+    roundingFunction: rounding ? Math.floor : (val: number) => val,
+  });
+}

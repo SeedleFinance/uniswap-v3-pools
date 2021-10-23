@@ -33,7 +33,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
       .map(({ date, tick }: { date: number; tick: number }) => ({
         date: format(new Date(date * 1000), "dd.MMM"),
         price: parseFloat(
-          tickToPrice(baseToken, quoteToken, tick).toSignificant(8)
+          tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
         ),
       }))
       .reverse();

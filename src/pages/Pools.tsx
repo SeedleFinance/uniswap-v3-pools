@@ -1,10 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-import { usePools } from "./PoolsProvider";
-import { PoolState } from "./hooks/usePool";
-import Pool from "./Pool";
-import FilterClosedToggle from "./FilterClosedToggle";
-import DownloadCSV from "./DownloadCSV";
+import { usePools } from "../PoolsProvider";
+import { PoolState } from "../hooks/usePool";
+import Pool from "../Pool";
+import FilterClosedToggle from "../FilterClosedToggle";
+import DownloadCSV from "../DownloadCSV";
 
 function Pools() {
   const {
@@ -27,7 +28,15 @@ function Pools() {
   return (
     <div className="w-full">
       <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center justify-between w-1/4">
+        <div className="flex flex-row items-center justify-between w-5/12  pr-24">
+          <div>
+            <Link
+              to="/add/new"
+              className="block bg-gradient-to-b from-green-400 to-green-600 text-white p-2 bg-gray-100 rounded focus:outline-none"
+            >
+              Add liquidity
+            </Link>
+          </div>
           <FilterClosedToggle />
           <DownloadCSV />
         </div>

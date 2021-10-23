@@ -7,10 +7,10 @@ import Position from "./Position";
 interface Props {
   positions: any[];
   pool: Pool;
-  quoteToken: Token;
+  baseToken: Token;
 }
 
-function Positions({ positions, pool, quoteToken }: Props) {
+function Positions({ positions, pool, baseToken }: Props) {
   return (
     <div className="w-full flex flex-col my-2 border rounded p-2">
       <table className="table-auto w-full">
@@ -46,7 +46,7 @@ function Positions({ positions, pool, quoteToken }: Props) {
             <Position
               key={position.id.toString()}
               pool={pool}
-              quoteToken={quoteToken}
+              baseToken={baseToken}
               {...position}
             />
           ))}

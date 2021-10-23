@@ -2,11 +2,11 @@ import React, { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 
-import { PoolsProvider } from "./PoolsProvider";
 import { AppSettingsProvider } from "./AppSettingsProvider";
-import Pools from "./Pools";
+import { PoolsProvider } from "./PoolsProvider";
 import Account from "./Account";
 import GlobalCurrencySelector from "./GlobalCurrencySelector";
+import PageBody from "./PageBody";
 import Footer from "./Footer";
 
 const injected = new InjectedConnector({
@@ -31,7 +31,7 @@ function Container() {
                   <img
                     className="mr-2"
                     alt="Seedle logo - a seedling"
-                    src="icon32.png"
+                    src="/icon32.png"
                   />
                   <span>Seedle</span>
                 </a>
@@ -43,7 +43,7 @@ function Container() {
             </div>
             <div>
               <div>
-                <Pools />
+                <PageBody />
               </div>
               <Footer />
             </div>
@@ -58,7 +58,7 @@ function Container() {
       <h2 className="flex flex-col items-center text-3xl font-bold text-gray-600 my-16">
         <img
           alt="Seedle logo - a seedling"
-          src="icon128.png"
+          src="/icon128.png"
           className="my-4"
         />
         <div className="text-6xl text-gray-800 mb-4">Seedle</div>

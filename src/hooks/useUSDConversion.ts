@@ -1,35 +1,35 @@
 import { useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { WETH9, ChainId, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { usePool } from "./usePool";
 import { USDC, DAI, USDT, LUSD } from "../constants";
 
-export function useUSDConversion(quoteToken: Token | null) {
+export function useUSDConversion(baseToken: Token | null) {
   let fee = 0.3;
-  if (quoteToken === null) {
+  if (baseToken === null) {
     fee = 0;
-  } else if (quoteToken.equals(DAI)) {
+  } else if (baseToken.equals(DAI)) {
     fee = 0.05;
-  } else if (quoteToken.equals(USDT)) {
+  } else if (baseToken.equals(USDT)) {
     fee = 0.05;
-  } else if (quoteToken.equals(LUSD)) {
+  } else if (baseToken.equals(LUSD)) {
     fee = 0.05;
   }
 
-  const { pool } = usePool(quoteToken, USDC, fee * 10000);
+  const { pool } = usePool(baseToken, USDC, fee * 10000);
 
   return useMemo(() => {
     const ratio =
-      pool && quoteToken
-        ? parseFloat(pool.priceOf(quoteToken).toSignificant(2)) * 100
+      pool && baseToken
+        ? parseFloat(pool.priceOf(baseToken).toSignificant(2)) * 100
         : 0;
     return (val: CurrencyAmount<Token> | number) => {
-      if (val === 0 || !quoteToken) {
+      if (val === 0 || !baseToken) {
         return 0.0;
       }
 
-      if (quoteToken.equals(USDC)) {
+      if (baseToken.equals(USDC)) {
         return parseFloat((val as CurrencyAmount<Token>).toSignificant(15));
       }
 
@@ -40,26 +40,26 @@ export function useUSDConversion(quoteToken: Token | null) {
           .toSignificant(15)
       );
     };
-  }, [quoteToken, pool]);
+  }, [baseToken, pool]);
 }
 
-export function useEthToQuote(quoteToken: Token) {
+export function useEthToQuote(baseToken: Token) {
   let fee = 0.3;
   const { chainId } = useWeb3React();
-  const weth = WETH9[chainId as ChainId];
-  const { pool } = usePool(quoteToken, weth, fee * 10000);
+  const weth = WETH9[chainId as number];
+  const { pool } = usePool(baseToken, weth, fee * 10000);
 
   return useMemo(() => {
     return (val: CurrencyAmount<Token>) => {
-      if (quoteToken.equals(weth)) {
+      if (baseToken.equals(weth)) {
         return val;
       }
 
       if (!pool) {
-        return CurrencyAmount.fromRawAmount(quoteToken, 0);
+        return CurrencyAmount.fromRawAmount(baseToken, 0);
       }
 
       return pool.priceOf(weth).quote(val);
     };
-  }, [quoteToken, pool, weth]);
+  }, [baseToken, pool, weth]);
 }
