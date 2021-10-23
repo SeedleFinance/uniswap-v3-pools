@@ -3,6 +3,8 @@ import gql from "graphql-tag";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
+import { getQuoteAndBaseToken } from "../utils/tokens";
+
 const QUERY_TOP_POOLS = gql`
   query top_pools($date: Int!) {
     poolDayDatas(
@@ -70,7 +72,13 @@ export function useTopPools(chainId: number | undefined, date: number) {
     const key = `${token0.address}-${token1.address}-${entity.fee}`;
     const address = Pool.getAddress(token0, token1, entity.fee);
 
-    return { key, entity, address, quoteToken: token0, baseToken: token1 };
+    const [quoteToken, baseToken] = getQuoteAndBaseToken(
+      chainId,
+      token0,
+      token1
+    );
+
+    return { key, entity, address, quoteToken, baseToken };
   });
   return results;
 }

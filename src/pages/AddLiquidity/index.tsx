@@ -87,7 +87,7 @@ function AddLiquidity({ tab }: Props) {
     setSelectedPositions(null);
   };
 
-  const handleExistingPoolClick = (
+  const handlePoolClick = (
     baseToken: Token,
     quoteToken: Token,
     fee: number,
@@ -165,12 +165,9 @@ function AddLiquidity({ tab }: Props) {
               onCancel={handleCancelNewPosition}
             />
           ) : selectedTab === "new" ? (
-            <NewPools onPoolClick={() => {}} filter={searchInput} />
+            <NewPools onPoolClick={handlePoolClick} filter={searchInput} />
           ) : (
-            <ExistingPools
-              onPoolClick={handleExistingPoolClick}
-              filter={searchInput}
-            />
+            <ExistingPools onPoolClick={handlePoolClick} filter={searchInput} />
           )}
         </div>
       </div>
