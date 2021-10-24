@@ -31,6 +31,7 @@ function ExistingPools({ onPoolClick, filter }: Props) {
         setFilterClosed(true);
       }
     };
+    // eslint-disable-next-line
   }, []); // this should run only on mount/unmount
 
   return <Pools pools={pools} filter={filter} onPoolClick={onPoolClick} />;
