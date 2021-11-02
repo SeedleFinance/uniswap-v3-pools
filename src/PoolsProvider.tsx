@@ -1,11 +1,10 @@
 import React, { ReactNode, useContext, useMemo } from "react";
-import { uniq } from "lodash";
 import { useWeb3React } from "@web3-react/core";
 import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
+import { Pool } from "@uniswap/v3-sdk";
 
-import { useAllPositions, PositionState } from "./hooks/usePosition";
+import { useQueryPositions, PositionState } from "./hooks/useQueryPositions";
 import { usePoolContracts, PoolParams } from "./hooks/useContract";
-import { useTokens } from "./hooks/useTokens";
 import { usePoolsState, PoolState } from "./hooks/usePool";
 import { useEthPrice } from "./hooks/useEthPrice";
 
@@ -39,7 +38,10 @@ export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
   const { filterClosed, globalCurrencyToken } = useAppSettings();
-  const allPositions = useAllPositions(account);
+  //const allPositions = useAllPositions(account);
+  const allPositions = useQueryPositions(chainId as number, [
+    account as string,
+  ]);
 
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
@@ -48,45 +50,35 @@ export const PoolsProvider = ({ account, children }: Props) => {
     return allPositions;
   }, [allPositions, filterClosed]);
 
-  const tokenAddresses = useMemo(() => {
-    if (!allPositions.length) {
-      return [];
-    }
-
-    return uniq(
-      allPositions.reduce((accm: string[], position: any) => {
-        return [...accm, position.token0address, position.token1address];
-      }, [])
-    );
-  }, [allPositions]);
-
-  const tokens = useTokens(tokenAddresses);
-
   const { poolParams, positionsByPool } = useMemo((): {
     poolParams: PoolParams[];
     positionsByPool: {
       [key: string]: PositionState[];
     };
   } => {
-    if (!filteredPositions.length && !tokens.length) {
+    if (!filteredPositions.length) {
       return { poolParams: [], positionsByPool: {} };
     }
 
     const positionsByPool: { [key: string]: PositionState[] } = {};
     const poolParamsObj = filteredPositions.reduce(
       (accm: { [index: string]: any }, position) => {
-        const key = `${position.token0address}-${position.token1address}-${position.fee}`;
-
-        // add position to pool
-        const collection = positionsByPool[key] || [];
-        positionsByPool[key] = [...collection, position];
-
-        const token0 = tokens[position.token0address];
-        const token1 = tokens[position.token1address];
+        const token0 = position.token0;
+        const token1 = position.token1;
         const [quoteToken, baseToken] =
           token0 && token1
             ? getQuoteAndBaseToken(chainId, token0, token1)
             : [token0, token1];
+
+        const key = Pool.getAddress(
+          token0 as Token,
+          token1 as Token,
+          position.fee
+        );
+
+        // add position to pool
+        const collection = positionsByPool[key] || [];
+        positionsByPool[key] = [...collection, position];
 
         accm[key] = {
           key,
@@ -103,7 +95,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
     );
 
     return { poolParams: Object.values(poolParamsObj), positionsByPool };
-  }, [chainId, filteredPositions, tokens]);
+  }, [chainId, filteredPositions]);
 
   const poolContracts = usePoolContracts(poolParams);
 

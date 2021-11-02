@@ -169,7 +169,7 @@ export function usePoolsState(
       if (!token0 || !token1) {
         return null;
       }
-      const key = `${token0.address}-${token1.address}-${fee}`;
+      const key = Pool.getAddress(token0, token1, fee);
 
       const entity = new Pool(
         token0 as Token,
