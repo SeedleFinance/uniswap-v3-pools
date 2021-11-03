@@ -542,8 +542,8 @@ function NewPosition({
           <Modal
             title={
               transactionHash
-                ? "Complete Transaction"
-                : "Waiting for confirmation"
+                ? "Waiting for confirmation"
+                : "Complete Transaction"
             }
           >
             {transactionHash ? (
