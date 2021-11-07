@@ -155,14 +155,8 @@ export interface PoolParams {
 }
 
 export function usePoolContracts(
-  pools: PoolParams[],
+  addresses: string[],
   withSignerIfPossible?: boolean
 ): (Contract | null)[] {
-  const addresses = pools.map(({ token0, token1, fee }) =>
-    token0 && token1 && !token0.equals(token1)
-      ? Pool.getAddress(token0, token1, fee)
-      : undefined
-  );
-
   return useContractBulk(addresses, V3PoolABI, withSignerIfPossible);
 }

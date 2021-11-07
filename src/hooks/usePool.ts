@@ -5,9 +5,13 @@ import { Contract } from "@ethersproject/contracts";
 import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { useWeb3React } from "@web3-react/core";
+import { tickToPrice } from "@uniswap/v3-sdk";
 
 import { usePoolContract } from "./useContract";
-import { PositionState } from "./usePosition";
+import { PositionState } from "./useQueryPositions";
+import { getQuoteAndBaseToken } from "../utils/tokens";
+import { multiplyIn256 } from "../utils/numbers";
+import { Q128 } from "../constants";
 
 export interface PoolState {
   key: string;
@@ -77,7 +81,6 @@ export function usePool(
 
 export function usePoolsState(
   contracts: (Contract | null)[],
-  params: any[],
   positionsByPool: { [key: string]: any }
 ) {
   const { chainId } = useWeb3React();
@@ -85,7 +88,6 @@ export function usePoolsState(
 
   useEffect(() => {
     if (
-      !params.length ||
       !contracts.length ||
       !positionsByPool ||
       !Object.keys(positionsByPool).length
@@ -93,140 +95,306 @@ export function usePoolsState(
       return;
     }
 
-    const enhancePositions = (
-      pool: Pool,
-      baseToken: Token,
-      positions: PositionState[]
+    // const enhancePositions = (
+    //   pool: Pool,
+    //   baseToken: Token,
+    //   positions: PositionState[]
+    // ) => {
+    //   let rawPoolLiquidity = BigNumber.from(0);
+    //   let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
+    //   let poolUncollectedFees = CurrencyAmount.fromRawAmount(baseToken, 0);
+
+    //   const enhanced = positions.map(
+    //     ({ id, liquidity, tickLower, tickUpper, fees }: PositionState) => {
+    //       const entity = new Position({
+    //         pool,
+    //         liquidity: liquidity.toString(),
+    //         tickLower,
+    //         tickUpper,
+    //       });
+
+    //       const uncollectedFees = [
+    //         CurrencyAmount.fromRawAmount(pool.token0, fees.amount0.toString()),
+    //         CurrencyAmount.fromRawAmount(pool.token1, fees.amount1.toString()),
+    //       ];
+
+    //       // liquidity of the position in quote token
+    //       const positionLiquidity = pool.token0.equals(baseToken)
+    //         ? pool
+    //             .priceOf(pool.token1)
+    //             .quote(entity.amount1)
+    //             .add(entity.amount0)
+    //         : pool
+    //             .priceOf(pool.token0)
+    //             .quote(entity.amount0)
+    //             .add(entity.amount1);
+
+    //       const positionUncollectedFees = pool.token0.equals(baseToken)
+    //         ? pool
+    //             .priceOf(pool.token1)
+    //             .quote(uncollectedFees[1])
+    //             .add(uncollectedFees[0])
+    //         : pool
+    //             .priceOf(pool.token0)
+    //             .quote(uncollectedFees[0])
+    //             .add(uncollectedFees[1]);
+
+    //       rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
+    //       poolLiquidity = poolLiquidity.add(positionLiquidity);
+    //       poolUncollectedFees = poolUncollectedFees.add(
+    //         positionUncollectedFees
+    //       );
+
+    //       return {
+    //         id,
+    //         entity,
+    //         positionLiquidity,
+    //         uncollectedFees,
+    //         positionUncollectedFees,
+    //       };
+    //     }
+    //   );
+
+    //   return { enhanced, poolLiquidity, rawPoolLiquidity, poolUncollectedFees };
+    // };
+
+    // const callContract = async (contract: Contract | null, idx: number) => {
+    //   if (!contract) {
+    //     return null;
+    //   }
+
+    //   const result = await contract.functions.slot0();
+    //   const sqrtPriceX96 = result[0];
+    //   const tickCurrent = result[1];
+
+    //   const { token0, token1, fee, quoteToken, baseToken } = params[idx];
+    //   if (!token0 || !token1) {
+    //     return null;
+    //   }
+    //   const key = Pool.getAddress(token0, token1, fee);
+
+    //   const entity = new Pool(
+    //     token0 as Token,
+    //     token1 as Token,
+    //     fee,
+    //     sqrtPriceX96,
+    //     0,
+    //     tickCurrent
+    //   );
+
+    //   const {
+    //     rawPoolLiquidity,
+    //     poolLiquidity,
+    //     poolUncollectedFees,
+    //     enhanced: positions,
+    //   } = enhancePositions(entity, baseToken, positionsByPool[key]);
+
+    //   return {
+    //     key,
+    //     rawPoolLiquidity,
+    //     poolLiquidity,
+    //     poolUncollectedFees,
+    //     quoteToken,
+    //     baseToken,
+    //     address: contract.address.toLowerCase(),
+    //     entity,
+    //     positions,
+    //   };
+    // };
+    //
+
+    const getUncollectedFees = async (
+      contract: Contract | null,
+      tickLower: number,
+      tickUpper: number,
+      liquidity: BigNumber,
+      token0: Token,
+      token1: Token,
+      feeGrowthInside0LastX128: BigNumber,
+      feeGrowthInside1LastX128: BigNumber
     ) => {
+      if (!contract) {
+        return [];
+      }
+
+      const result = await contract.functions.slot0();
+      const tickCurrent = result[1];
+      const feeGrowthGlobal0X128 = await contract.feeGrowthGlobal0X128();
+      const feeGrowthGlobal1X128 = await contract.feeGrowthGlobal1X128();
+
+      const tickUpperResult = await contract.functions.ticks(tickUpper);
+
+      let fa0, fa1;
+      if (tickCurrent < tickUpper) {
+        fa0 = tickUpperResult[2];
+        fa1 = tickUpperResult[3];
+      } else {
+        fa0 = feeGrowthGlobal0X128.sub(tickUpperResult[2]);
+        fa1 = feeGrowthGlobal1X128.sub(tickUpperResult[3]);
+      }
+
+      const tickLowerResult = await contract.functions.ticks(tickLower);
+
+      let fb0, fb1;
+      if (tickCurrent >= tickLower) {
+        fb0 = tickLowerResult[2];
+        fb1 = tickLowerResult[3];
+      } else {
+        fb0 = feeGrowthGlobal0X128.sub(tickLowerResult[2]);
+        fb1 = feeGrowthGlobal1X128.sub(tickLowerResult[3]);
+      }
+
+      const fr0 = feeGrowthGlobal0X128.sub(fb0).sub(fa0);
+      const fr1 = feeGrowthGlobal1X128.sub(fb1).sub(fa1);
+
+      let amount0 = multiplyIn256(
+        fr0.sub(feeGrowthInside0LastX128),
+        liquidity
+      ).div(Q128);
+      let amount1 = multiplyIn256(
+        fr1.sub(feeGrowthInside1LastX128),
+        liquidity
+      ).div(Q128);
+
+      return [
+        CurrencyAmount.fromRawAmount(token0, amount0.toString()),
+        CurrencyAmount.fromRawAmount(token1, amount1.toString()),
+      ];
+    };
+
+    const enhancePosition = async (
+      contract: Contract | null,
+      baseToken: Token,
+      quoteToken: Token,
+      {
+        id,
+        pool,
+        liquidity,
+        tickLower,
+        tickUpper,
+        feeGrowthInside0LastX128,
+        feeGrowthInside1LastX128,
+      }: PositionState
+    ) => {
+      const entity = new Position({
+        pool,
+        liquidity: liquidity.toString(),
+        tickLower,
+        tickUpper,
+      });
+
+      const priceLower = tickToPrice(quoteToken, baseToken, tickLower);
+      const priceUpper = tickToPrice(quoteToken, baseToken, tickUpper);
+
+      const positionLiquidity = pool.token0.equals(baseToken)
+        ? pool.priceOf(pool.token1).quote(entity.amount1).add(entity.amount0)
+        : pool.priceOf(pool.token0).quote(entity.amount0).add(entity.amount1);
+
+      const uncollectedFees = await getUncollectedFees(
+        contract,
+        tickLower,
+        tickUpper,
+        liquidity,
+        pool.token0,
+        pool.token1,
+        feeGrowthInside0LastX128,
+        feeGrowthInside1LastX128
+      );
+
+      const positionUncollectedFees = pool.token0.equals(baseToken)
+        ? pool
+            .priceOf(pool.token1)
+            .quote(uncollectedFees[1])
+            .add(uncollectedFees[0])
+        : pool
+            .priceOf(pool.token0)
+            .quote(uncollectedFees[0])
+            .add(uncollectedFees[1]);
+
+      return {
+        id: id,
+        entity,
+        priceLower,
+        priceUpper,
+        liquidity,
+        positionLiquidity,
+        uncollectedFees,
+        positionUncollectedFees,
+      };
+    };
+
+    const getPool = async (contract: Contract | null, idx: number) => {
+      if (!contract) {
+        return null;
+      }
+
+      const positions = Object.values(positionsByPool)[idx];
+      const { pool } = positions[0];
+
+      const address = contract.address.toLowerCase();
+
+      const [quoteToken, baseToken] = getQuoteAndBaseToken(
+        chainId,
+        pool.token0,
+        pool.token1
+      );
+
       let rawPoolLiquidity = BigNumber.from(0);
       let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
       let poolUncollectedFees = CurrencyAmount.fromRawAmount(baseToken, 0);
 
-      const enhanced = positions.map(
-        ({ id, liquidity, tickLower, tickUpper, fees }: PositionState) => {
-          const entity = new Position({
-            pool,
-            liquidity: liquidity.toString(),
-            tickLower,
-            tickUpper,
-          });
+      const enhancedPositions = await Promise.all<any>(
+        positions.map((position: any) =>
+          enhancePosition(contract, baseToken, quoteToken, position)
+        )
+      );
 
-          const uncollectedFees = [
-            CurrencyAmount.fromRawAmount(pool.token0, fees.amount0.toString()),
-            CurrencyAmount.fromRawAmount(pool.token1, fees.amount1.toString()),
-          ];
-
-          // liquidity of the position in quote token
-          const positionLiquidity = pool.token0.equals(baseToken)
-            ? pool
-                .priceOf(pool.token1)
-                .quote(entity.amount1)
-                .add(entity.amount0)
-            : pool
-                .priceOf(pool.token0)
-                .quote(entity.amount0)
-                .add(entity.amount1);
-
-          const positionUncollectedFees = pool.token0.equals(baseToken)
-            ? pool
-                .priceOf(pool.token1)
-                .quote(uncollectedFees[1])
-                .add(uncollectedFees[0])
-            : pool
-                .priceOf(pool.token0)
-                .quote(uncollectedFees[0])
-                .add(uncollectedFees[1]);
-
+      enhancedPositions.forEach(
+        ({ liquidity, positionLiquidity, positionUncollectedFees }) => {
           rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
           poolLiquidity = poolLiquidity.add(positionLiquidity);
           poolUncollectedFees = poolUncollectedFees.add(
             positionUncollectedFees
           );
-
-          return {
-            id,
-            entity,
-            positionLiquidity,
-            uncollectedFees,
-            positionUncollectedFees,
-          };
         }
       );
 
-      return { enhanced, poolLiquidity, rawPoolLiquidity, poolUncollectedFees };
-    };
-
-    const callContract = async (contract: Contract | null, idx: number) => {
-      if (!contract) {
-        return null;
-      }
-
-      const result = await contract.functions.slot0();
-      const sqrtPriceX96 = result[0];
-      const tickCurrent = result[1];
-
-      const { token0, token1, fee, quoteToken, baseToken } = params[idx];
-      if (!token0 || !token1) {
-        return null;
-      }
-      const key = Pool.getAddress(token0, token1, fee);
-
-      const entity = new Pool(
-        token0 as Token,
-        token1 as Token,
-        fee,
-        sqrtPriceX96,
-        0,
-        tickCurrent
-      );
-
-      const {
-        rawPoolLiquidity,
-        poolLiquidity,
-        poolUncollectedFees,
-        enhanced: positions,
-      } = enhancePositions(entity, baseToken, positionsByPool[key]);
-
       return {
-        key,
+        key: address,
+        address,
         rawPoolLiquidity,
         poolLiquidity,
         poolUncollectedFees,
         quoteToken,
         baseToken,
-        address: contract.address.toLowerCase(),
-        entity,
-        positions,
+        entity: pool,
+        positions: enhancedPositions,
       };
     };
 
-    const collectPools = async () => {
-      const newPools = await Promise.all(
+    const initPools = async () => {
+      let results = await Promise.all(
         contracts.map((contract: Contract | null, idx: number) =>
-          callContract(contract, idx)
+          getPool(contract, idx)
         )
       );
-      const newPoolsCompact = compact(newPools).sort((a, b) =>
-        a.rawPoolLiquidity.gte(b.rawPoolLiquidity) ? -1 : 1
-      );
-      if (!newPoolsCompact.length) {
-        return;
-      }
+      results = compact(results);
+
       if (
-        newPoolsCompact.length === pools.length &&
+        results.length === pools.length &&
         isEqualWith(
-          newPoolsCompact,
+          results,
           pools,
           (newPool, curPool) => newPool.key === curPool.key
         )
       ) {
         return;
       }
-      setPools(newPoolsCompact);
+      setPools(compact(results));
     };
 
-    collectPools();
-  }, [contracts, params, positionsByPool, pools, chainId]);
+    initPools();
+  }, [contracts, pools, positionsByPool, chainId]);
 
   return pools;
 }

@@ -1,4 +1,5 @@
 import { Token, Percent } from "@uniswap/sdk-core";
+import { BigNumber } from "@ethersproject/bignumber";
 
 function constructSameAddressMap(
   address: string
@@ -61,3 +62,4 @@ export const PAX = new Token(
 
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
 export const ZERO_PERCENT = new Percent("0");
+export const Q128 = BigNumber.from(2).pow(128);

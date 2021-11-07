@@ -2,13 +2,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import JSBI from "jsbi";
 import { BigNumber } from "@ethersproject/bignumber";
-import { Token, MaxUint256 } from "@uniswap/sdk-core";
-
-const Q128 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(128));
-function multiplyIn256(a: JSBI, b: JSBI): JSBI {
-  const c = JSBI.multiply(a, b);
-  return JSBI.bitwiseAnd(c, MaxUint256);
-}
+import { Token } from "@uniswap/sdk-core";
+import { Pool } from "@uniswap/v3-sdk";
 
 const QUERY_POSITIONS = gql`
   query positionsByOwner($accounts: [String]!) {
@@ -29,6 +24,8 @@ const QUERY_POSITIONS = gql`
       pool {
         feeTier
         tick
+        sqrtPrice
+        liquidity
         feeGrowthGlobal0X128
         feeGrowthGlobal1X128
       }
@@ -57,7 +54,9 @@ export interface PositionState {
   tickLower: number;
   tickUpper: number;
   liquidity: BigNumber;
-  fees: { amount0: BigNumber; amount1: BigNumber };
+  pool: Pool;
+  feeGrowthInside0LastX128: BigNumber;
+  feeGrowthInside1LastX128: BigNumber;
 }
 
 export function useQueryPositions(
@@ -93,62 +92,28 @@ export function useQueryPositions(
     const fee = parseInt(position.pool.feeTier, 10);
     const tickLower = parseInt(position.tickLower.tickIdx, 10);
     const tickUpper = parseInt(position.tickUpper.tickIdx, 10);
-    const liquidity = JSBI.BigInt(position.liquidity);
-    const currentTick = parseInt(position.pool.tick, 10);
-
-    const feeGrowthGlobal0X128 = JSBI.BigInt(
-      position.pool.feeGrowthGlobal0X128
+    const liquidity = BigNumber.from(position.liquidity);
+    const feeGrowthInside0LastX128 = BigNumber.from(
+      position.feeGrowthInside0LastX128
     );
-    const feeGrowthGlobal1X128 = JSBI.BigInt(
-      position.pool.feeGrowthGlobal1X128
+    const feeGrowthInside1LastX128 = BigNumber.from(
+      position.feeGrowthInside1LastX128
     );
+    const sqrtPriceX96 = JSBI.BigInt(position.pool.sqrtPrice);
+    const tickCurrent = parseInt(position.pool.tick, 10);
 
-    let fa0, fa1;
-    if (currentTick < tickUpper) {
-      fa0 = JSBI.BigInt(position.tickUpper.feeGrowthOutside0X128);
-      fa1 = JSBI.BigInt(position.tickUpper.feeGrowthOutside1X128);
-    } else {
-      fa0 = JSBI.subtract(
-        feeGrowthGlobal0X128,
-        JSBI.BigInt(position.tickUpper.feeGrowthOutside0X128)
-      );
-      fa1 = JSBI.subtract(
-        feeGrowthGlobal1X128,
-        JSBI.BigInt(position.tickUpper.feeGrowthOutside1X128)
-      );
+    if (Number.isNaN(tickCurrent)) {
+      return null;
     }
 
-    let fb0, fb1;
-    if (currentTick >= tickLower) {
-      fb0 = JSBI.BigInt(position.tickLower.feeGrowthOutside0X128);
-      fb1 = JSBI.BigInt(position.tickLower.feeGrowthOutside1X128);
-    } else {
-      fb0 = JSBI.subtract(
-        feeGrowthGlobal0X128,
-        JSBI.BigInt(position.tickLower.feeGrowthOutside0X128)
-      );
-      fb1 = JSBI.subtract(
-        feeGrowthGlobal1X128,
-        JSBI.BigInt(position.tickLower.feeGrowthOutside1X128)
-      );
-    }
-
-    const fr0 = JSBI.subtract(JSBI.subtract(feeGrowthGlobal0X128, fb0), fa0);
-    const fr1 = JSBI.subtract(JSBI.subtract(feeGrowthGlobal1X128, fb1), fa1);
-
-    const feeGrowthInside0Last = JSBI.BigInt(position.feeGrowthInside0LastX128);
-    const feeGrowthInside1Last = JSBI.BigInt(position.feeGrowthInside1LastX128);
-
-    let amount0 = JSBI.divide(
-      multiplyIn256(JSBI.subtract(fr0, feeGrowthInside0Last), liquidity),
-      Q128
+    const pool = new Pool(
+      token0 as Token,
+      token1 as Token,
+      fee,
+      sqrtPriceX96,
+      0,
+      tickCurrent
     );
-    let amount1 = JSBI.divide(
-      multiplyIn256(JSBI.subtract(fr1, feeGrowthInside1Last), liquidity),
-      Q128
-    );
-
-    const fees = { amount0, amount1 };
 
     return {
       id,
@@ -157,8 +122,10 @@ export function useQueryPositions(
       fee,
       tickLower,
       tickUpper,
-      liquidity: BigNumber.from(liquidity.toString()),
-      fees,
+      liquidity,
+      feeGrowthInside0LastX128,
+      feeGrowthInside1LastX128,
+      pool,
     };
   });
 }
