@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import { usePools } from "../PoolsProvider";
-import { PoolState } from "../hooks/usePool";
+import { PoolState } from "../hooks/usePoolsState";
 import Pool from "../Pool";
 import FilterClosedToggle from "../FilterClosedToggle";
 import DownloadCSV from "../DownloadCSV";

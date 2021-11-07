@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import JSBI from "jsbi";
 import gql from "graphql-tag";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
@@ -65,8 +66,8 @@ export function useTopPools(chainId: number | undefined, date: number) {
       token0,
       token1,
       parseInt(pool.feeTier, 10),
-      parseInt(pool.sqrtPrice, 10),
-      parseInt(pool.liquidity, 10),
+      JSBI.BigInt(pool.sqrtPrice),
+      JSBI.BigInt(pool.liquidity),
       parseInt(pool.tick, 10)
     );
     const key = `${token0.address}-${token1.address}-${entity.fee}`;

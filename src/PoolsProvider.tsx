@@ -5,7 +5,7 @@ import { Pool } from "@uniswap/v3-sdk";
 
 import { useQueryPositions, PositionState } from "./hooks/useQueryPositions";
 import { usePoolContracts } from "./hooks/useContract";
-import { usePoolsState, PoolState } from "./hooks/usePool";
+import { usePoolsState, PoolState } from "./hooks/usePoolsState";
 import { useEthPrice } from "./hooks/useEthPrice";
 
 import { DAI, USDC, USDT, PAX, FEI } from "./constants";
@@ -33,13 +33,6 @@ interface Props {
   account: string | null | undefined;
 }
 
-// get all positions for given addresses from Graph protocol
-// group them by pool
-// fetch pool contracts
-// get tick data from pool contracts for each position
-// return pools
-//
-
 export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
@@ -66,6 +59,10 @@ export const PoolsProvider = ({ account, children }: Props) => {
     const positionsByPool: { [key: string]: PositionState[] } = {};
 
     filteredPositions.forEach((position) => {
+      if (!position) {
+        return;
+      }
+
       const { token0, token1 } = position;
       const key = Pool.getAddress(
         token0 as Token,
@@ -83,7 +80,6 @@ export const PoolsProvider = ({ account, children }: Props) => {
 
   const poolContracts = usePoolContracts(Object.keys(positionsByPool));
   const pools: PoolState[] = usePoolsState(poolContracts, positionsByPool);
-  console.log(pools);
 
   const isStableCoin = (token: Token): boolean => {
     if (token.equals(DAI)) {
@@ -126,6 +122,13 @@ export const PoolsProvider = ({ account, children }: Props) => {
     return formatCurrencyWithSymbol(convertToGlobal(val));
   };
 
+  // sort pools by liquidity
+  const sortedPools = pools.sort((a, b) => {
+    const aLiq = convertToGlobal(a.poolLiquidity);
+    const bLiq = convertToGlobal(b.poolLiquidity);
+    return bLiq - aLiq;
+  });
+
   // calculate total
   const [totalLiquidity, totalUncollectedFees] = pools.reduce(
     (accm, pool) => {
@@ -148,7 +151,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
   return (
     <PoolsContext.Provider
       value={{
-        pools,
+        pools: sortedPools,
         totalLiquidity,
         totalUncollectedFees,
         convertToGlobal,
