@@ -37,8 +37,15 @@ export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
   const { filterClosed, globalCurrencyToken } = useAppSettings();
+
+  const { location } = window;
+  const searchParams = new URLSearchParams(location.search);
+  const additionalAddresses = searchParams.getAll("addr");
+  const noWallet = searchParams.has("nw");
+
   const allPositions = useQueryPositions(chainId as number, [
-    account as string,
+    noWallet ? "" : (account as string),
+    ...additionalAddresses,
   ]);
 
   const filteredPositions = useMemo(() => {
