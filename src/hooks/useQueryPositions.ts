@@ -25,19 +25,12 @@ const QUERY_POSITIONS = gql`
         feeTier
         tick
         sqrtPrice
-        liquidity
-        feeGrowthGlobal0X128
-        feeGrowthGlobal1X128
       }
       tickLower {
         tickIdx
-        feeGrowthOutside0X128
-        feeGrowthOutside1X128
       }
       tickUpper {
         tickIdx
-        feeGrowthOutside0X128
-        feeGrowthOutside1X128
       }
       liquidity
       feeGrowthInside0LastX128
