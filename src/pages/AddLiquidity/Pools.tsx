@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Token } from "@uniswap/sdk-core";
 
-import { PoolState } from "../../hooks/usePool";
+import { PoolState } from "../../hooks/usePoolsState";
 import PoolButton from "../../ui/PoolButton";
 
 interface Props {

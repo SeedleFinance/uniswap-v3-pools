@@ -1,17 +1,15 @@
 import React, { ReactNode, useContext, useMemo } from "react";
-import { uniq } from "lodash";
 import { useWeb3React } from "@web3-react/core";
 import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
+import { Pool } from "@uniswap/v3-sdk";
 
-import { useAllPositions, PositionState } from "./hooks/usePosition";
-import { usePoolContracts, PoolParams } from "./hooks/useContract";
-import { useTokens } from "./hooks/useTokens";
-import { usePoolsState, PoolState } from "./hooks/usePool";
+import { useQueryPositions, PositionState } from "./hooks/useQueryPositions";
+import { usePoolContracts } from "./hooks/useContract";
+import { usePoolsState, PoolState } from "./hooks/usePoolsState";
 import { useEthPrice } from "./hooks/useEthPrice";
 
 import { DAI, USDC, USDT, PAX, FEI } from "./constants";
 import { formatCurrency } from "./utils/numbers";
-import { getQuoteAndBaseToken } from "./utils/tokens";
 import { useAppSettings } from "./AppSettingsProvider";
 
 const PoolsContext = React.createContext({
@@ -39,75 +37,49 @@ export const PoolsProvider = ({ account, children }: Props) => {
   const { chainId } = useWeb3React();
   const ethPriceUSD = useEthPrice();
   const { filterClosed, globalCurrencyToken } = useAppSettings();
-  const allPositions = useAllPositions(account);
+  const allPositions = useQueryPositions(chainId as number, [
+    account as string,
+  ]);
 
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
-      return allPositions.filter((position) => !position.liquidity.isZero());
+      return allPositions.filter(
+        (position) => position && !position.liquidity.isZero()
+      );
     }
     return allPositions;
   }, [allPositions, filterClosed]);
 
-  const tokenAddresses = useMemo(() => {
-    if (!allPositions.length) {
-      return [];
-    }
-
-    return uniq(
-      allPositions.reduce((accm: string[], position: any) => {
-        return [...accm, position.token0address, position.token1address];
-      }, [])
-    );
-  }, [allPositions]);
-
-  const tokens = useTokens(tokenAddresses);
-
-  const { poolParams, positionsByPool } = useMemo((): {
-    poolParams: PoolParams[];
-    positionsByPool: {
-      [key: string]: PositionState[];
-    };
+  const positionsByPool = useMemo((): {
+    [key: string]: PositionState[];
   } => {
-    if (!filteredPositions.length && !tokens.length) {
-      return { poolParams: [], positionsByPool: {} };
+    if (!filteredPositions.length) {
+      return {};
     }
-
     const positionsByPool: { [key: string]: PositionState[] } = {};
-    const poolParamsObj = filteredPositions.reduce(
-      (accm: { [index: string]: any }, position) => {
-        const key = `${position.token0address}-${position.token1address}-${position.fee}`;
 
-        // add position to pool
-        const collection = positionsByPool[key] || [];
-        positionsByPool[key] = [...collection, position];
+    filteredPositions.forEach((position) => {
+      if (!position) {
+        return;
+      }
 
-        const token0 = tokens[position.token0address];
-        const token1 = tokens[position.token1address];
-        const [quoteToken, baseToken] =
-          token0 && token1
-            ? getQuoteAndBaseToken(chainId, token0, token1)
-            : [token0, token1];
+      const { token0, token1 } = position;
+      const key = Pool.getAddress(
+        token0 as Token,
+        token1 as Token,
+        position.fee
+      );
 
-        accm[key] = {
-          key,
-          token0,
-          token1,
-          fee: position.fee,
-          quoteToken,
-          baseToken,
-        };
+      const collection = positionsByPool[key] || [];
+      collection.push(position);
+      positionsByPool[key] = collection;
+    });
 
-        return accm;
-      },
-      {}
-    );
+    return positionsByPool;
+  }, [filteredPositions]);
 
-    return { poolParams: Object.values(poolParamsObj), positionsByPool };
-  }, [chainId, filteredPositions, tokens]);
-
-  const poolContracts = usePoolContracts(poolParams);
-
-  const pools = usePoolsState(poolContracts, poolParams, positionsByPool);
+  const poolContracts = usePoolContracts(Object.keys(positionsByPool));
+  const pools: PoolState[] = usePoolsState(poolContracts, positionsByPool);
 
   const isStableCoin = (token: Token): boolean => {
     if (token.equals(DAI)) {
@@ -150,6 +122,13 @@ export const PoolsProvider = ({ account, children }: Props) => {
     return formatCurrencyWithSymbol(convertToGlobal(val));
   };
 
+  // sort pools by liquidity
+  const sortedPools = pools.sort((a, b) => {
+    const aLiq = convertToGlobal(a.poolLiquidity);
+    const bLiq = convertToGlobal(b.poolLiquidity);
+    return bLiq - aLiq;
+  });
+
   // calculate total
   const [totalLiquidity, totalUncollectedFees] = pools.reduce(
     (accm, pool) => {
@@ -172,7 +151,7 @@ export const PoolsProvider = ({ account, children }: Props) => {
   return (
     <PoolsContext.Provider
       value={{
-        pools,
+        pools: sortedPools,
         totalLiquidity,
         totalUncollectedFees,
         convertToGlobal,
