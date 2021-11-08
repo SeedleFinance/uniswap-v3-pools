@@ -104,6 +104,11 @@ export function tokenAmountNeedApproval(
   if (token.equals(WETH9[chainId])) {
     return false;
   }
+
+  if (isNaN(allowance) || isNaN(amount)) {
+    return false;
+  }
+
   const allowanceRaw = Math.floor(allowance * Math.pow(10, token.decimals));
   const amountRaw = Math.ceil(amount * Math.pow(10, token.decimals));
 

@@ -33,7 +33,7 @@ function Landing() {
         />
         <div className="text-6xl text-gray-800 mb-4">Seedle</div>
         <div className="text-2xl text-gray-400 text-center">
-          Track the performance of Uniswap V3 Positions
+          Track performance of Uniswap V3 Positions
         </div>
       </h2>
 

@@ -17,6 +17,10 @@ export function formatCurrency(num: number, symbol?: string) {
 }
 
 export function formatInput(input: number, rounding: boolean = true) {
+  if (isNaN(input)) {
+    return "0";
+  }
+
   return numbro(input).format({
     mantissa: input > 0.01 ? 4 : 8,
     optionalMantissa: true,
