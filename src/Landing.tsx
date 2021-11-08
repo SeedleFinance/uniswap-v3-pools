@@ -4,18 +4,22 @@ import Footer from "./Footer";
 import { Button } from "./ui/Button";
 
 function Landing() {
-  const [address, setAddress] = useState("");
+  const [addresses, setAddresses] = useState<string[]>([]);
 
   const handleInput = (ev: { target: any }) => {
     const { value } = ev.target;
-    setAddress(value);
+    const parts = value.split(" ");
+    setAddresses(parts);
   };
 
   const handleSubmit = (ev: any) => {
     ev.preventDefault();
 
     const url = new URL(window.location.href);
-    url.search = `?addr=${address}`;
+
+    const parts = addresses.slice(0, 10).map((address) => `addr=${address}`);
+    url.search = `?${parts.join("&")}`;
+
     window.location.href = url.href;
   };
 
@@ -41,11 +45,16 @@ function Landing() {
           className="text-xl text-gray-800 p-2 border rounded-md mx-2 w-4/5 focus:outline-none focus:border-gray-800"
           type="text"
           placeholder="Enter an Ethereum address or ENS name"
-          value={address}
+          value={addresses.join(" ")}
           onChange={handleInput}
         />
         <Button onClick={handleSubmit}>Go</Button>
       </form>
+      {addresses.length > 0 && (
+        <div className="mb-4 text-sm text-center text-gray-500">
+          Tip: You can enter multiple addresses separated by spaces
+        </div>
+      )}
 
       <div className="text-center text-md text-gray-600">
         Or connect your Metamask wallet.
