@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { BigNumber } from "@ethersproject/bignumber";
-import { useWeb3React } from "@web3-react/core";
 import { WETH9, Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
 import {
   tickToPrice,
@@ -8,6 +7,7 @@ import {
   Position as UniPosition,
 } from "@uniswap/v3-sdk";
 
+import { useChainId } from "./hooks/useChainId";
 import {
   useTransactions,
   FormattedPoolTransaction,
@@ -55,7 +55,7 @@ function Pool({
   rawPoolLiquidity,
   poolUncollectedFees,
 }: PoolProps) {
-  const { chainId } = useWeb3React();
+  const chainId = useChainId();
   const { convertToGlobalFormatted } = usePools();
 
   const { token0, token1 } = entity;

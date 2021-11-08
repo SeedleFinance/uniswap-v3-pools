@@ -7,6 +7,7 @@ import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
 
 import { useTokenContracts, useBytes32TokenContracts } from "./useContract";
+import { useChainId } from "./useChainId";
 
 const callContract = async (
   contracts: any[],
@@ -45,7 +46,8 @@ export function useTokenFunctions(
     amount: number
   ) => Promise<TransactionResponse | null>;
 } {
-  const { chainId, library } = useWeb3React();
+  const chainId = useChainId();
+  const { library } = useWeb3React();
 
   const addresses = useMemo(
     () => tokens.map((token) => token.address),

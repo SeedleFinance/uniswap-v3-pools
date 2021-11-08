@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { compact, isEqualWith } from "lodash";
-import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
 import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
 import { Position, Pool, tickToPrice } from "@uniswap/v3-sdk";
 
 import { PositionState } from "./useQueryPositions";
+import { useChainId } from "./useChainId";
 import { Q128 } from "../constants";
 import { getQuoteAndBaseToken } from "../utils/tokens";
 import { multiplyIn256 } from "../utils/numbers";
@@ -35,7 +35,7 @@ export function usePoolsState(
   contracts: (Contract | null)[],
   positionsByPool: { [key: string]: any }
 ) {
-  const { chainId } = useWeb3React();
+  const chainId = useChainId();
   const [pools, setPools] = useState<PoolState[]>([]);
 
   useEffect(() => {

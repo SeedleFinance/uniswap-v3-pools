@@ -1,18 +1,18 @@
 import { useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import differenceInSeconds from "date-fns/differenceInSeconds";
 import { BigNumber } from "@ethersproject/bignumber";
 import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { useEthToQuote } from "./useUSDConversion";
+import { useChainId } from "./useChainId";
 
 export function useTransactionTotals(
   transactions: any[],
   baseToken: Token,
   pool: Pool
 ) {
-  const { chainId } = useWeb3React();
+  const chainId = useChainId();
 
   return useMemo(() => {
     let totalMintValue = CurrencyAmount.fromRawAmount(baseToken, 0);

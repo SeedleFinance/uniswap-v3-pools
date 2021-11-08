@@ -1,12 +1,13 @@
 import React, { ReactNode, useContext, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
+import { useChainId } from "./hooks/useChainId";
 import { useQueryPositions, PositionState } from "./hooks/useQueryPositions";
 import { usePoolContracts } from "./hooks/useContract";
 import { usePoolsState, PoolState } from "./hooks/usePoolsState";
 import { useEthPrice } from "./hooks/useEthPrice";
+import { useAddresses } from "./hooks/useAddresses";
 
 import { DAI, USDC, USDT, PAX, FEI } from "./constants";
 import { formatCurrency } from "./utils/numbers";
@@ -30,16 +31,15 @@ export const usePools = () => useContext(PoolsContext);
 
 interface Props {
   children: ReactNode;
-  account: string | null | undefined;
 }
 
-export const PoolsProvider = ({ account, children }: Props) => {
-  const { chainId } = useWeb3React();
+export const PoolsProvider = ({ children }: Props) => {
+  const chainId = useChainId();
   const ethPriceUSD = useEthPrice();
   const { filterClosed, globalCurrencyToken } = useAppSettings();
-  const allPositions = useQueryPositions(chainId as number, [
-    account as string,
-  ]);
+  const addresses = useAddresses();
+
+  const allPositions = useQueryPositions(chainId as number, addresses);
 
   const filteredPositions = useMemo(() => {
     if (filterClosed) {

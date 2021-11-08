@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { usePool } from "./usePool";
+import { useChainId } from "./useChainId";
 import { USDC, DAI, USDT, LUSD } from "../constants";
 
 export function useUSDConversion(baseToken: Token | null) {
@@ -45,7 +45,7 @@ export function useUSDConversion(baseToken: Token | null) {
 
 export function useEthToQuote(baseToken: Token) {
   let fee = 0.3;
-  const { chainId } = useWeb3React();
+  const chainId = useChainId();
   const weth = WETH9[chainId as number];
   const { pool } = usePool(baseToken, weth, fee * 10000);
 

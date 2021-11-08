@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { InjectedConnector } from "@web3-react/injected-connector";
 
 import { AppSettingsProvider } from "./AppSettingsProvider";
 import { PoolsProvider } from "./PoolsProvider";
@@ -9,21 +8,32 @@ import GlobalCurrencySelector from "./GlobalCurrencySelector";
 import PageBody from "./PageBody";
 import Footer from "./Footer";
 
-const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42],
-});
+import { injectedConnector, networkConnector } from "./utils/connectors";
 
 function Container() {
   const { activate, active, account } = useWeb3React();
+  const [triedInject, setTriedInject] = useState<boolean>(false);
 
   useEffect(() => {
-    activate(injected, (err) => console.error(err));
-  }, [activate]);
+    if (!active && !triedInject) {
+      activate(injectedConnector, (err) => {
+        setTriedInject(true);
+      });
+    }
+  }, [activate, active, triedInject]);
+
+  useEffect(() => {
+    if (!active && triedInject) {
+      activate(networkConnector, (err) => {
+        console.error(err);
+      });
+    }
+  }, [activate, active, triedInject]);
 
   if (active) {
     return (
       <AppSettingsProvider>
-        <PoolsProvider account={account}>
+        <PoolsProvider>
           <div className="lg:container mx-auto pb-4">
             <div className="w-full px-2 py-4 my-4 mb-4 flex justify-between">
               <h2 className="flex items-baseline text-3xl font-bold text-gray-600">

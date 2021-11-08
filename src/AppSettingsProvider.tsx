@@ -1,8 +1,8 @@
 import React, { ReactNode, useContext, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import { WETH9, Token } from "@uniswap/sdk-core";
 import createPersistedState from "use-persisted-state";
 
+import { useChainId } from "./hooks/useChainId";
 import { USDC } from "./constants";
 
 const AppSettingsContext = React.createContext(null as any);
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const AppSettingsProvider = ({ children }: Props) => {
-  const { chainId } = useWeb3React();
+  const chainId = useChainId();
   const [filterClosed, setFilterClosed] = useFilterClosedState(false);
   const [globalCurrency, setGlobalCurrency] = useGlobalCurrencyState("usd");
 
