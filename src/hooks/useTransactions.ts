@@ -1,12 +1,14 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
-import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
 import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
+import { useAddresses } from "./useAddresses";
+import { useChainId } from "./useChainId";
+
 const QUERY_MINTS_BURNS = gql`
-  query mints_burns($origin: String!, $poolAddress: String!) {
-    mints(where: { origin: $origin, pool: $poolAddress }) {
+  query mints_burns($origins: [String]!, $poolAddress: String!) {
+    mints(where: { origin_in: $origins, pool: $poolAddress }) {
       tickLower
       tickUpper
       timestamp
@@ -19,7 +21,7 @@ const QUERY_MINTS_BURNS = gql`
       }
     }
 
-    burns(where: { origin: $origin, pool: $poolAddress }) {
+    burns(where: { origin_in: $origins, pool: $poolAddress }) {
       tickLower
       tickUpper
       timestamp
@@ -81,10 +83,11 @@ export function useTransactions(
   token0: Token | null,
   token1: Token | null
 ) {
-  const { account, chainId } = useWeb3React();
+  const chainId = useChainId();
+  const addresses = useAddresses();
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
-    variables: { origin: account, poolAddress },
+    variables: { origins: addresses, poolAddress },
     fetchPolicy: "network-only",
   });
 
