@@ -6,7 +6,7 @@ interface Props {
   className?: string;
   tabIndex?: number;
   children: ReactNode;
-  onClick: () => void;
+  onClick: (ev: any) => void;
   type?: "submit" | "button" | "reset";
   onMouseOver?: () => void;
   onMouseOut?: () => void;
