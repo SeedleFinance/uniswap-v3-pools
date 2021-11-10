@@ -55,18 +55,22 @@ export interface PositionState {
 export function useQueryPositions(
   chainId: number,
   accounts: string[]
-): PositionState[] {
+): { loading: boolean; positionStates: PositionState[] } {
   const { loading, error, data } = useQuery(QUERY_POSITIONS, {
     variables: { accounts },
     fetchPolicy: "network-only",
   });
 
-  if (loading || error || !data) {
-    return [];
+  if (loading) {
+    return { loading: true, positionStates: [] };
+  }
+
+  if (error || !data) {
+    return { loading: false, positionStates: [] };
   }
 
   const { positions } = data;
-  return positions.map((position: any) => {
+  const positionStates = positions.map((position: any) => {
     const id = BigNumber.from(position.id);
     const token0 = new Token(
       chainId,
@@ -121,4 +125,6 @@ export function useQueryPositions(
       pool,
     };
   });
+
+  return { loading: false, positionStates: positionStates };
 }

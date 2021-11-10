@@ -9,13 +9,15 @@ import DownloadCSV from "../DownloadCSV";
 
 function Pools() {
   const {
+    loading,
+    empty,
     pools,
     totalLiquidity,
     totalUncollectedFees,
     formatCurrencyWithSymbol,
   } = usePools();
 
-  if (!pools.length) {
+  if (loading) {
     return (
       <div className="my-16 flex items-center justify-center">
         <div className="text-center text-2xl text-gray-400">
@@ -62,29 +64,43 @@ function Pools() {
         </div>
       </div>
       <div className="w-full">
-        {pools.map(
-          ({
-            key,
-            address,
-            entity,
-            quoteToken,
-            baseToken,
-            rawPoolLiquidity,
-            poolLiquidity,
-            poolUncollectedFees,
-            positions,
-          }: PoolState) => (
-            <Pool
-              key={key}
-              address={address}
-              entity={entity}
-              quoteToken={quoteToken}
-              baseToken={baseToken}
-              positions={positions}
-              rawPoolLiquidity={rawPoolLiquidity}
-              liquidity={poolLiquidity}
-              poolUncollectedFees={poolUncollectedFees}
-            />
+        {empty ? (
+          <>
+            <div className="text-center text-2xl text-gray-600 m-8">
+              This address do not have any Uniswap LP positions.
+            </div>
+            <Link
+              to="/add/new"
+              className="block text-center text-xl text-blue-500 m-8"
+            >
+              Add Liquidity
+            </Link>
+          </>
+        ) : (
+          pools.map(
+            ({
+              key,
+              address,
+              entity,
+              quoteToken,
+              baseToken,
+              rawPoolLiquidity,
+              poolLiquidity,
+              poolUncollectedFees,
+              positions,
+            }: PoolState) => (
+              <Pool
+                key={key}
+                address={address}
+                entity={entity}
+                quoteToken={quoteToken}
+                baseToken={baseToken}
+                positions={positions}
+                rawPoolLiquidity={rawPoolLiquidity}
+                liquidity={poolLiquidity}
+                poolUncollectedFees={poolUncollectedFees}
+              />
+            )
           )
         )}
       </div>
