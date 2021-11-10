@@ -223,7 +223,6 @@ export function usePoolsState(
         )
       );
       results = compact(results);
-
       if (
         results.length === pools.length &&
         isEqualWith(

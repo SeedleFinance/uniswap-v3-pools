@@ -4,8 +4,9 @@ function Footer() {
   return (
     <footer className="my-5 flex w-full justify-center">
       <div className="text-sm">
-        <a className="text-blue-500" href="https://twitter.com/seedlefinance">
-          Twitter
+        Built by{" "}
+        <a className="text-blue-500" href="https://twitter.com/laktek">
+          laktek.eth
         </a>{" "}
         |{" "}
         <a

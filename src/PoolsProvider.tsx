@@ -26,6 +26,8 @@ const PoolsContext = React.createContext({
   formatCurrencyWithSymbol: (val: number): string => {
     return "$0";
   },
+  loading: true,
+  empty: false,
 });
 export const usePools = () => useContext(PoolsContext);
 
@@ -39,7 +41,8 @@ export const PoolsProvider = ({ children }: Props) => {
   const { filterClosed, globalCurrencyToken } = useAppSettings();
   const addresses = useAddresses();
 
-  const allPositions = useQueryPositions(chainId as number, addresses);
+  const { loading: loadingPositions, positionStates: allPositions } =
+    useQueryPositions(chainId as number, addresses);
 
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
@@ -79,7 +82,12 @@ export const PoolsProvider = ({ children }: Props) => {
   }, [filteredPositions]);
 
   const poolContracts = usePoolContracts(Object.keys(positionsByPool));
-  const pools: PoolState[] = usePoolsState(poolContracts, positionsByPool);
+  const pools = usePoolsState(poolContracts, positionsByPool);
+
+  const empty = useMemo(
+    () => !loadingPositions && !allPositions.length,
+    [loadingPositions, allPositions]
+  );
 
   const isStableCoin = (token: Token): boolean => {
     if (token.equals(DAI)) {
@@ -157,6 +165,8 @@ export const PoolsProvider = ({ children }: Props) => {
         convertToGlobal,
         convertToGlobalFormatted,
         formatCurrencyWithSymbol,
+        empty,
+        loading: loadingPositions,
       }}
     >
       {children}
