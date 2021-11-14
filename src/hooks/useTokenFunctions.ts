@@ -25,7 +25,7 @@ const callContract = async (
     return r[0];
   } catch (e) {
     const bc = bytes32Contracts[idx];
-    if (!bc) {
+    if (!bc || !bc.functions[fn]) {
       return null;
     }
     // try bytes32 value if name is empty
@@ -92,7 +92,6 @@ export function useTokenFunctions(
       ) {
         return [];
       }
-
       return await Promise.all(
         tokens.map(async (token: Token, idx: number) => {
           const allowance = await callContract(

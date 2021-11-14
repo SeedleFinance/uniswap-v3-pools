@@ -90,11 +90,11 @@ export const PoolsProvider = ({ children }: Props) => {
   );
 
   const isStableCoin = (token: Token): boolean => {
-    if (token.equals(DAI)) {
+    if (token.equals(DAI[chainId as number])) {
       return true;
-    } else if (token.equals(USDC)) {
+    } else if (token.equals(USDC[chainId as number])) {
       return true;
-    } else if (token.equals(USDT)) {
+    } else if (token.equals(USDT[chainId as number])) {
       return true;
     } else if (token.equals(PAX)) {
       return true;

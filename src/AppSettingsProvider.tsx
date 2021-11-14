@@ -22,7 +22,7 @@ export const AppSettingsProvider = ({ children }: Props) => {
 
   const globalCurrencyToken = useMemo(() => {
     const tokens: { [name: string]: Token } = {
-      usd: USDC,
+      usd: USDC[chainId as number],
       eth: WETH9[chainId as number],
     };
     return tokens[globalCurrency];

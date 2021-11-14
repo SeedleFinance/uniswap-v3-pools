@@ -14,7 +14,14 @@ export function getQuoteAndBaseToken(
     return [quote, base];
   }
 
-  const baseCurrencies: Token[] = [USDC, USDT, DAI, FEI, PAX, WETH9[chainId]];
+  const baseCurrencies: Token[] = [
+    USDC[chainId as number],
+    USDT[chainId as number],
+    DAI[chainId as number],
+    FEI,
+    PAX,
+    WETH9[chainId],
+  ];
 
   for (let i = 0; i < baseCurrencies.length; i++) {
     const cur = baseCurrencies[i];

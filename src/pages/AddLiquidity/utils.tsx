@@ -145,7 +145,12 @@ export async function loadTokens(chainId: number) {
     ];
   }
 
-  const res = await fetch("https://tokens.coingecko.com/uniswap/all.json");
+  const tokenURLs: { [key: number]: string } = {
+    1: "https://tokens.coingecko.com/uniswap/all.json",
+    10: "https://static.optimism.io/optimism.tokenlist.json",
+  };
+
+  const res = await fetch(tokenURLs[chainId]);
   if (!res.ok) {
     return [];
   }
@@ -170,6 +175,18 @@ export function findTokens(
     (token: TokenListItem) =>
       token.chainId === chainId && symbolsFormatted.includes(token.symbol)
   );
+
+  // Optimism WETH
+  if (chainId === 10 && symbolsFormatted.includes("WETH")) {
+    const weth = {
+      address: "0x4200000000000000000000000000000000000006",
+      chainId: 10,
+      name: "Wrapped Ether",
+      symbol: "WETH",
+      decimals: 18,
+    };
+    matches.push(weth);
+  }
 
   return matches;
 }

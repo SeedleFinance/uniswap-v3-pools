@@ -7,17 +7,19 @@ import { USDC, DAI, USDT, LUSD } from "../constants";
 
 export function useUSDConversion(baseToken: Token | null) {
   let fee = 0.3;
+  const chainId = useChainId();
   if (baseToken === null) {
     fee = 0;
-  } else if (baseToken.equals(DAI)) {
+  } else if (baseToken.equals(DAI[chainId as number])) {
     fee = 0.05;
-  } else if (baseToken.equals(USDT)) {
+  } else if (baseToken.equals(USDT[chainId as number])) {
     fee = 0.05;
   } else if (baseToken.equals(LUSD)) {
     fee = 0.05;
   }
 
-  const { pool } = usePool(baseToken, USDC, fee * 10000);
+  const usdc = USDC[chainId as number];
+  const { pool } = usePool(baseToken, usdc, fee * 10000);
 
   return useMemo(() => {
     const ratio =
@@ -29,7 +31,7 @@ export function useUSDConversion(baseToken: Token | null) {
         return 0.0;
       }
 
-      if (baseToken.equals(USDC)) {
+      if (baseToken.equals(usdc)) {
         return parseFloat((val as CurrencyAmount<Token>).toSignificant(15));
       }
 
@@ -40,7 +42,7 @@ export function useUSDConversion(baseToken: Token | null) {
           .toSignificant(15)
       );
     };
-  }, [baseToken, pool]);
+  }, [baseToken, pool, usdc]);
 }
 
 export function useEthToQuote(baseToken: Token) {
