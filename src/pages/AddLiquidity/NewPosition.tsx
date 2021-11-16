@@ -424,24 +424,30 @@ function NewPosition({
 
       <div className="flex flex-col my-2">
         <div>Fee tier</div>
-        <div className="w-48 my-2 flex justify-between">
+        <div className="w-64 my-2 flex justify-between">
+          <FeeButton
+            fee={0.01}
+            selected={fee === 100}
+            onClick={() => setFee(100)}
+            tabIndex={1}
+          />
           <FeeButton
             fee={0.05}
             selected={fee === 500}
             onClick={() => setFee(500)}
-            tabIndex={1}
+            tabIndex={2}
           />
           <FeeButton
             fee={0.3}
             selected={fee === 3000}
             onClick={() => setFee(3000)}
-            tabIndex={2}
+            tabIndex={3}
           />
           <FeeButton
             fee={1}
             selected={fee === 10000}
             onClick={() => setFee(10000)}
-            tabIndex={3}
+            tabIndex={4}
           />
         </div>
       </div>
