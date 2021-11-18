@@ -30,6 +30,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
     }
 
     return poolDayData
+      .filter(({ tick }: { tick: number }) => !Number.isNaN(tick))
       .map(({ date, tick }: { date: number; tick: number }) => ({
         date: format(new Date(date * 1000), "dd.MMM"),
         price: parseFloat(
