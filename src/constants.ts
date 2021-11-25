@@ -34,6 +34,13 @@ export const DAI: { [key: number]: Token } = {
     "DAI",
     "Dai Stablecoin"
   ),
+  42161: new Token(
+    42161,
+    "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    18,
+    "DAI",
+    "Dai Stablecoin"
+  ),
 };
 
 export const USDC: { [key: number]: Token } = {
@@ -52,6 +59,13 @@ export const USDC: { [key: number]: Token } = {
     "USDC",
     "USD//C"
   ),
+  42161: new Token(
+    42161,
+    "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+    6,
+    "USDC",
+    "USD Coin (Arb1)"
+  ),
 };
 
 export const USDT: { [key: number]: Token } = {
@@ -65,6 +79,13 @@ export const USDT: { [key: number]: Token } = {
   10: new Token(
     10,
     "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+    6,
+    "USDT",
+    "Tether USD"
+  ),
+  42161: new Token(
+    42161,
+    "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9",
     6,
     "USDT",
     "Tether USD"
@@ -98,3 +119,9 @@ export const PAX = new Token(
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
 export const ZERO_PERCENT = new Percent("0");
 export const Q128 = BigNumber.from(2).pow(128);
+
+export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
+  1: "https://etherscan.io/tx/",
+  10: "https://optimistic.etherscan.io/tx/",
+  42161: "https://arbiscan.io/tx/",
+};

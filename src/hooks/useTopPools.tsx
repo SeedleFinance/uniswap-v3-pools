@@ -46,40 +46,42 @@ export function useTopPools(chainId: number | undefined, date: number) {
     return [];
   }
 
-  const results = data.poolDayDatas.map(({ pool }: any) => {
-    const token0 = new Token(
-      chainId as number,
-      pool.token0.id,
-      parseInt(pool.token0.decimals, 10),
-      pool.token0.symbol,
-      pool.token0.name
-    );
-    const token1 = new Token(
-      chainId as number,
-      pool.token1.id,
-      parseInt(pool.token1.decimals, 10),
-      pool.token1.symbol,
-      pool.token1.name
-    );
+  const results = data.poolDayDatas
+    .filter(({ pool }: any) => !!pool.tick)
+    .map(({ pool }: any) => {
+      const token0 = new Token(
+        chainId as number,
+        pool.token0.id,
+        parseInt(pool.token0.decimals, 10),
+        pool.token0.symbol,
+        pool.token0.name
+      );
+      const token1 = new Token(
+        chainId as number,
+        pool.token1.id,
+        parseInt(pool.token1.decimals, 10),
+        pool.token1.symbol,
+        pool.token1.name
+      );
 
-    const entity = new Pool(
-      token0,
-      token1,
-      parseInt(pool.feeTier, 10),
-      JSBI.BigInt(pool.sqrtPrice),
-      JSBI.BigInt(pool.liquidity),
-      parseInt(pool.tick, 10)
-    );
-    const key = `${token0.address}-${token1.address}-${entity.fee}`;
-    const address = Pool.getAddress(token0, token1, entity.fee);
+      const entity = new Pool(
+        token0,
+        token1,
+        parseInt(pool.feeTier, 10),
+        JSBI.BigInt(pool.sqrtPrice),
+        JSBI.BigInt(pool.liquidity),
+        parseInt(pool.tick, 10)
+      );
+      const key = `${token0.address}-${token1.address}-${entity.fee}`;
+      const address = Pool.getAddress(token0, token1, entity.fee);
 
-    const [quoteToken, baseToken] = getQuoteAndBaseToken(
-      chainId,
-      token0,
-      token1
-    );
+      const [quoteToken, baseToken] = getQuoteAndBaseToken(
+        chainId,
+        token0,
+        token1
+      );
 
-    return { key, entity, address, quoteToken, baseToken };
-  });
+      return { key, entity, address, quoteToken, baseToken };
+    });
   return results;
 }

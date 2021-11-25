@@ -20,6 +20,7 @@ import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
   DEFAULT_SLIPPAGE,
   ZERO_PERCENT,
+  BLOCK_EXPLORER_URL,
 } from "../../constants";
 
 import { formatInput } from "../../utils/numbers";
@@ -559,7 +560,9 @@ function NewPosition({
                   className="text-blue-500"
                   target="_blank"
                   rel="noreferrer"
-                  href={`https://etherscan.io/tx/${transactionHash}`}
+                  href={`${
+                    BLOCK_EXPLORER_URL[chainId as number]
+                  }${transactionHash}`}
                 >
                   Etherscan
                 </a>

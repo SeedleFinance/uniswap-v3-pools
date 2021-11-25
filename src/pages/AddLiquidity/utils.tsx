@@ -148,6 +148,7 @@ export async function loadTokens(chainId: number) {
   const tokenURLs: { [key: number]: string } = {
     1: "https://tokens.coingecko.com/uniswap/all.json",
     10: "https://static.optimism.io/optimism.tokenlist.json",
+    42161: "https://bridge.arbitrum.io/token-list-42161.json",
   };
 
   const res = await fetch(tokenURLs[chainId]);

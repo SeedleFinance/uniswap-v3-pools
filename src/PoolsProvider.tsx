@@ -109,7 +109,8 @@ export const PoolsProvider = ({ children }: Props) => {
     const valFloat = parseFloat(val.toSignificant(15));
     if (
       val.currency.equals(globalCurrencyToken) ||
-      (globalCurrencyToken.equals(USDC) && isStableCoin(val.currency))
+      (globalCurrencyToken.equals(USDC[chainId as number]) &&
+        isStableCoin(val.currency))
     ) {
       return valFloat;
     }
@@ -122,7 +123,9 @@ export const PoolsProvider = ({ children }: Props) => {
   };
 
   const formatCurrencyWithSymbol = (val: number): string => {
-    const currencySymbol = globalCurrencyToken.equals(USDC) ? "$" : "Ξ";
+    const currencySymbol = globalCurrencyToken.equals(USDC[chainId as number])
+      ? "$"
+      : "Ξ";
     return formatCurrency(val, currencySymbol);
   };
 

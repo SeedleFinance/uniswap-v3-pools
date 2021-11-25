@@ -4,7 +4,10 @@ import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
 import { usePools } from "./PoolsProvider";
+import { useChainId } from "./hooks/useChainId";
 import TokenSymbol from "./ui/TokenLabel";
+
+import { BLOCK_EXPLORER_URL } from "./constants";
 
 export interface TransactionProps {
   id: string;
@@ -31,6 +34,7 @@ function Transaction({
   priceUpper,
   gas,
 }: TransactionProps) {
+  const chainId = useChainId();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
   const totalLiquidity = useMemo(() => {
     if (!baseToken || !pool) {
@@ -77,7 +81,10 @@ function Transaction({
   return (
     <tr className="">
       <td>
-        <a href={`https://etherscan.io/tx/${id}`} className="text-blue-500">
+        <a
+          href={`${BLOCK_EXPLORER_URL[chainId as number]}${id}`}
+          className="text-blue-500"
+        >
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
