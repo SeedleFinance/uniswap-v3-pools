@@ -26,12 +26,12 @@ export function positionFromAmounts(
   const amount0 =
     val0 === 0
       ? MaxUint256
-      : JSBI.BigInt(val0 * Math.pow(10, pool.token0.decimals));
+      : JSBI.BigInt(Math.floor(val0 * Math.pow(10, pool.token0.decimals)));
 
   const amount1 =
     val1 === 0
       ? MaxUint256
-      : JSBI.BigInt(val1 * Math.pow(10, pool.token1.decimals));
+      : JSBI.BigInt(Math.floor(val1 * Math.pow(10, pool.token1.decimals)));
 
   return Position.fromAmounts({
     pool,
