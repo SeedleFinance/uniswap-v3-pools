@@ -80,7 +80,7 @@ function Container() {
                   <span>Seedle</span>
                 </a>
               </h2>
-              <div className="w-52 flex justify-between">
+              <div className="w-60 flex justify-between">
                 <GlobalCurrencySelector />
                 <Account address={account} />
               </div>

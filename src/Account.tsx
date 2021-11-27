@@ -8,7 +8,7 @@ interface AccountProps {
 }
 
 function Account({ address }: AccountProps) {
-  const { activate } = useWeb3React();
+  const { chainId, activate } = useWeb3React();
 
   const truncatedAddress = useMemo(() => {
     if (!address || !address.length) {
@@ -23,6 +23,20 @@ function Account({ address }: AccountProps) {
     });
   };
 
+  const chainName = useMemo(() => {
+    if (!chainId) {
+      return "unknown";
+    }
+
+    const chains: { [key: number]: string } = {
+      1: "ethereum",
+      10: "optimism",
+      42161: "arbitrum",
+    };
+
+    return chains[chainId as number] || "unknown";
+  }, [chainId]);
+
   if (!address || !address.length) {
     return (
       <button
@@ -35,9 +49,22 @@ function Account({ address }: AccountProps) {
   }
 
   return (
-    <div className="p-2 rounded-md border">
-      <a href={`https://etherscan.io/address/${address}`}>{truncatedAddress}</a>
-    </div>
+    <>
+      <div className="p-2 rounded-md border flex items-center">
+        <img
+          className={`w-6 h-6 mr-1 rounded-full bg-white text-sm`}
+          alt={`${chainName} logo`}
+          src={
+            chainName !== "unknown"
+              ? `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${chainName}/info/logo.png`
+              : "/missing-icon.svg"
+          }
+        />
+        <a href={`https://etherscan.io/address/${address}`}>
+          {truncatedAddress}
+        </a>
+      </div>
+    </>
   );
 }
 
