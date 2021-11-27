@@ -34,7 +34,7 @@ export const arbitrumClient = new ApolloClient({
 });
 
 export const optimismClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-optimism-dev",
+  uri: "https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-optimism",
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
