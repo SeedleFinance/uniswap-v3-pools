@@ -24,7 +24,7 @@ function PositionStatuses({
   }
 
   return (
-    <button className="flex justify-between text-2xl" onClick={onClick}>
+    <button className="flex flex-wrap text-2xl" onClick={onClick}>
       {positions.map((position) => (
         <div
           className={`${
