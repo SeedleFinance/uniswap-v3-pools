@@ -1,6 +1,8 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
+import { getClient } from "../apollo/client";
+
 const QUERY_POOL_DAY_DATA = gql`
   query pool_day_data($poolAddress: String!) {
     pool(id: $poolAddress) {
@@ -13,10 +15,11 @@ const QUERY_POOL_DAY_DATA = gql`
   }
 `;
 
-export function usePoolDayData(poolAddress: string | null) {
+export function usePoolDayData(poolAddress: string | null, chainId: number) {
   const { loading, error, data } = useQuery(QUERY_POOL_DAY_DATA, {
     variables: { poolAddress },
     fetchPolicy: "network-only",
+    client: getClient(chainId),
   });
 
   if (loading || error || !data) {

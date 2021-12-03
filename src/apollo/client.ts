@@ -44,6 +44,16 @@ export const optimismClient = new ApolloClient({
   },
 });
 
+export function getClient(chainId: number) {
+  const clients: { [key: number]: any } = {
+    1: mainnetClient,
+    10: optimismClient,
+    42161: arbitrumClient,
+  };
+
+  return clients[chainId] || mainnetClient;
+}
+
 export const healthClient = new ApolloClient({
   uri: "https://api.thegraph.com/index-node/graphql",
   cache: new InMemoryCache(),

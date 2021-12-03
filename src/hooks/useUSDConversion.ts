@@ -2,12 +2,11 @@ import { useMemo } from "react";
 import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { usePool } from "./usePool";
-import { useChainId } from "./useChainId";
 import { USDC, DAI, USDT, LUSD } from "../constants";
 
 export function useUSDConversion(baseToken: Token | null) {
   let fee = 0.3;
-  const chainId = useChainId();
+  const chainId = baseToken ? baseToken.chainId : 1;
   if (baseToken === null) {
     fee = 0;
   } else if (baseToken.equals(DAI[chainId as number])) {
@@ -47,8 +46,7 @@ export function useUSDConversion(baseToken: Token | null) {
 
 export function useEthToQuote(baseToken: Token) {
   let fee = 0.3;
-  const chainId = useChainId();
-  const weth = WETH9[chainId as number];
+  const weth = WETH9[baseToken.chainId];
   const { pool } = usePool(baseToken, weth, fee * 10000);
 
   return useMemo(() => {

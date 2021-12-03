@@ -5,6 +5,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
+import { getClient } from "../apollo/client";
+
 const QUERY_POSITIONS = gql`
   query positionsByOwner($accounts: [String]!) {
     positions(where: { owner_in: $accounts }) {
@@ -59,6 +61,7 @@ export function useQueryPositions(
   const { loading, error, data } = useQuery(QUERY_POSITIONS, {
     variables: { accounts },
     fetchPolicy: "network-only",
+    client: getClient(chainId),
   });
 
   if (loading) {

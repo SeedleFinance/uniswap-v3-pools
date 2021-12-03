@@ -1,8 +1,7 @@
-import React, { ReactNode, useContext, useMemo } from "react";
+import React, { ReactNode, useContext, useCallback } from "react";
 import { WETH9, Token } from "@uniswap/sdk-core";
 import createPersistedState from "use-persisted-state";
 
-import { useChainId } from "./hooks/useChainId";
 import { USDC } from "./constants";
 
 const AppSettingsContext = React.createContext(null as any);
@@ -16,17 +15,19 @@ interface Props {
 }
 
 export const AppSettingsProvider = ({ children }: Props) => {
-  const chainId = useChainId();
   const [filterClosed, setFilterClosed] = useFilterClosedState(false);
   const [globalCurrency, setGlobalCurrency] = useGlobalCurrencyState("usd");
 
-  const globalCurrencyToken = useMemo(() => {
-    const tokens: { [name: string]: Token } = {
-      usd: USDC[chainId as number],
-      eth: WETH9[chainId as number],
-    };
-    return tokens[globalCurrency];
-  }, [globalCurrency, chainId]);
+  const getGlobalCurrencyToken = useCallback(
+    (chainId: number) => {
+      const tokens: { [name: string]: Token } = {
+        usd: USDC[chainId],
+        eth: WETH9[chainId],
+      };
+      return tokens[globalCurrency] || tokens["usd"];
+    },
+    [globalCurrency]
+  );
 
   return (
     <AppSettingsContext.Provider
@@ -34,7 +35,7 @@ export const AppSettingsProvider = ({ children }: Props) => {
         filterClosed,
         setFilterClosed,
         globalCurrency,
-        globalCurrencyToken,
+        getGlobalCurrencyToken,
         setGlobalCurrency,
       }}
     >

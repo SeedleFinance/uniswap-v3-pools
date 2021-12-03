@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { useAddresses } from "./useAddresses";
-import { useChainId } from "./useChainId";
+import { getClient } from "../apollo/client";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origins: [String]!, $poolAddress: String!) {
@@ -83,12 +83,13 @@ export function useTransactions(
   token0: Token | null,
   token1: Token | null
 ) {
-  const chainId = useChainId();
+  const chainId = token0 ? token0.chainId : 1;
   const addresses = useAddresses();
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
     variables: { origins: addresses, poolAddress },
     fetchPolicy: "network-only",
+    client: getClient(chainId),
   });
 
   const collectData = useCollects(data ? data.burns : []);
@@ -102,7 +103,7 @@ export function useTransactions(
     const price = BigNumber.from(transaction.gasPrice);
     const cost = used.mul(price);
     const costCurrency = CurrencyAmount.fromRawAmount(
-      WETH9[chainId as number],
+      WETH9[token0.chainId],
       cost.toString()
     );
 
@@ -168,10 +169,7 @@ export function useTransactions(
       tx.gas = {
         ...tx.gas,
         cost: BigNumber.from(0),
-        costCurrency: CurrencyAmount.fromRawAmount(
-          WETH9[chainId as number],
-          "0"
-        ),
+        costCurrency: CurrencyAmount.fromRawAmount(WETH9[token0.chainId], "0"),
       };
 
       // subtract the burn amount to get only the fees collected

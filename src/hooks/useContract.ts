@@ -62,9 +62,11 @@ export function getContract(
 export function useContract(
   address: string | undefined,
   ABI: any,
-  withSignerIfPossible = true
+  withSignerIfPossible = true,
+  providerLibrary?: Web3Provider
 ): Contract | null {
-  const { library, account } = useWeb3React();
+  const { library: injectedLibrary, account } = useWeb3React("injected");
+  const library = providerLibrary || injectedLibrary;
 
   return useMemo(() => {
     if (!address || !ABI || !library) return null;
@@ -86,9 +88,11 @@ export function useContract(
 export function useContractBulk(
   addresses: (string | undefined)[],
   ABI: any,
-  withSignerIfPossible = true
+  withSignerIfPossible = true,
+  providerLibrary?: Web3Provider
 ): (Contract | null)[] {
-  const { library, account } = useWeb3React();
+  const { library: injectedLibrary, account } = useWeb3React("injected");
+  const library = providerLibrary || injectedLibrary;
   return useMemo(() => {
     try {
       return addresses.map((address) => {
@@ -136,13 +140,14 @@ export function usePoolContract(
   token0: Token | null,
   token1: Token | null,
   fee: number,
+  providerLibrary?: Web3Provider,
   withSignerIfPossible?: boolean
 ): Contract | null {
   const address =
     token0 && token1 && !token0.equals(token1)
       ? Pool.getAddress(token0, token1, fee)
       : undefined;
-  return useContract(address, V3PoolABI, withSignerIfPossible);
+  return useContract(address, V3PoolABI, withSignerIfPossible, providerLibrary);
 }
 
 export interface PoolParams {
@@ -156,7 +161,13 @@ export interface PoolParams {
 
 export function usePoolContracts(
   addresses: string[],
+  providerLibrary?: Web3Provider,
   withSignerIfPossible?: boolean
 ): (Contract | null)[] {
-  return useContractBulk(addresses, V3PoolABI, withSignerIfPossible);
+  return useContractBulk(
+    addresses,
+    V3PoolABI,
+    withSignerIfPossible,
+    providerLibrary
+  );
 }

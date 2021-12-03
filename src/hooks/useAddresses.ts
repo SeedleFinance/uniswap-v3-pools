@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 
 export function useAddresses() {
-  const { account, library } = useWeb3React();
+  const { library } = useWeb3React("mainnet");
+  const { account } = useWeb3React("injected");
   const [addresses, setAddresses] = useState<string[]>([]);
 
   useEffect(() => {

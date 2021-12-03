@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePools } from "./PoolsProvider";
+import { usePools } from "./CombinedPoolsProvider";
 
 function DownloadCSV() {
   const { pools } = usePools();

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import { usePools } from "../PoolsProvider";
+import { usePools } from "../CombinedPoolsProvider";
 import { PoolState } from "../hooks/usePoolsState";
 import Pool from "../Pool";
 import FilterClosedToggle from "../FilterClosedToggle";
@@ -45,19 +45,22 @@ function Pools() {
         <div className="flex flex-row justify-end">
           <div className="border rounded-md p-6 mx-2">
             <div className="text-2xl text-gray-600 my-1 font-bold">
-              {formatCurrencyWithSymbol(totalLiquidity)}
+              {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
             <div className="text-md text-gray-500">Total Liquidity</div>
           </div>
           <div className="border rounded-md p-6 mx-2">
             <div className="text-2xl text-gray-600 my-1 font-bold">
-              {formatCurrencyWithSymbol(totalUncollectedFees)}
+              {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
             <div className="text-md text-gray-500">Total Uncollected Fees</div>
           </div>
           <div className="border rounded-md p-6 mx-2">
             <div className="text-2xl text-gray-800 my-1 font-bold">
-              {formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees)}
+              {formatCurrencyWithSymbol(
+                totalLiquidity + totalUncollectedFees,
+                1
+              )}
             </div>
             <div className="text-md text-gray-500">Total Value</div>
           </div>

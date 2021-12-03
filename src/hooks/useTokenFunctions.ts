@@ -7,7 +7,6 @@ import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
 
 import { useTokenContracts, useBytes32TokenContracts } from "./useContract";
-import { useChainId } from "./useChainId";
 
 const callContract = async (
   contracts: any[],
@@ -46,7 +45,6 @@ export function useTokenFunctions(
     amount: number
   ) => Promise<TransactionResponse | null>;
 } {
-  const chainId = useChainId();
   const { library } = useWeb3React();
 
   const addresses = useMemo(
@@ -58,7 +56,6 @@ export function useTokenFunctions(
 
   const getBalances = useCallback(async (): Promise<string[]> => {
     if (
-      !chainId ||
       !library ||
       !tokens.length ||
       !owner ||
@@ -70,7 +67,7 @@ export function useTokenFunctions(
 
     return await Promise.all(
       tokens.map(async (token: Token, idx: number) => {
-        const balance = token.equals(WETH9[chainId])
+        const balance = token.equals(WETH9[token.chainId])
           ? await library.getBalance(owner)
           : await callContract(contracts, bytes32Contracts, idx, "balanceOf", [
               owner,
@@ -78,12 +75,11 @@ export function useTokenFunctions(
         return formatUnits(balance, token.decimals);
       })
     );
-  }, [chainId, library, tokens, owner, contracts, bytes32Contracts]);
+  }, [library, tokens, owner, contracts, bytes32Contracts]);
 
   const getAllowances = useCallback(
     async (spender: string): Promise<number[]> => {
       if (
-        !chainId ||
         !library ||
         !tokens.length ||
         !owner ||
@@ -110,7 +106,7 @@ export function useTokenFunctions(
         })
       );
     },
-    [chainId, library, tokens, owner, contracts, bytes32Contracts]
+    [library, tokens, owner, contracts, bytes32Contracts]
   );
 
   const approveToken = useCallback(
@@ -119,7 +115,7 @@ export function useTokenFunctions(
       spender: string,
       amount: number
     ): Promise<TransactionResponse | null> => {
-      if (!chainId || !library || !contracts || !tokens) {
+      if (!library || !contracts || !tokens) {
         return null;
       }
 
@@ -155,7 +151,7 @@ export function useTokenFunctions(
         }
       );
     },
-    [chainId, library, contracts, tokens]
+    [library, contracts, tokens]
   );
 
   return { getBalances, getAllowances, approveToken };

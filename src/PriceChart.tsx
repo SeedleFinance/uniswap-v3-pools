@@ -22,7 +22,7 @@ interface Props {
 }
 
 function PriceChart({ address, quoteToken, baseToken }: Props) {
-  const poolDayData = usePoolDayData(address);
+  const poolDayData = usePoolDayData(address, baseToken.chainId);
 
   const priceData = useMemo(() => {
     if (!baseToken || !quoteToken) {

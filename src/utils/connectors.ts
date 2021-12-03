@@ -7,9 +7,18 @@ export const injectedConnector = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42, 10, 42161],
 });
 
-export const networkConnector = new NetworkConnector({
-  urls: {
-    1: rpcUrl,
-  },
-  defaultChainId: 1,
-});
+const optiUrl =
+  "https://opt-mainnet.g.alchemy.com/v2/ttmmWYRIVUD0PQdugBEx0DrlTEZWe875";
+
+const arbUrl =
+  "https://arb-mainnet.g.alchemy.com/v2/NWcnXFqOG71YPZkuE1irr-grCof6fKhF";
+
+export const getNetworkConnector = () =>
+  new NetworkConnector({
+    urls: {
+      1: rpcUrl,
+      10: optiUrl,
+      42161: arbUrl,
+    },
+    defaultChainId: 1,
+  });

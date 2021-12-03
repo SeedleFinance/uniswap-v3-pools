@@ -5,14 +5,13 @@ import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { useEthToQuote } from "./useUSDConversion";
-import { useChainId } from "./useChainId";
 
 export function useTransactionTotals(
   transactions: any[],
   baseToken: Token,
   pool: Pool
 ) {
-  const chainId = useChainId();
+  const chainId = baseToken.chainId;
 
   return useMemo(() => {
     let totalMintValue = CurrencyAmount.fromRawAmount(baseToken, 0);

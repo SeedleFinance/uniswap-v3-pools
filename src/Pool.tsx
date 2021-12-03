@@ -7,7 +7,6 @@ import {
   Position as UniPosition,
 } from "@uniswap/v3-sdk";
 
-import { useChainId } from "./hooks/useChainId";
 import {
   useTransactions,
   FormattedPoolTransaction,
@@ -17,7 +16,7 @@ import {
   useReturnValue,
   useAPR,
 } from "./hooks/calculations";
-import { usePools } from "./PoolsProvider";
+import { usePools } from "./CombinedPoolsProvider";
 
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
@@ -55,7 +54,6 @@ function Pool({
   rawPoolLiquidity,
   poolUncollectedFees,
 }: PoolProps) {
-  const chainId = useChainId();
   const { convertToGlobalFormatted } = usePools();
 
   const { token0, token1 } = entity;
@@ -148,7 +146,7 @@ function Pool({
 
   const toggleExpand = () => setExpanded(!expanded);
 
-  if (!baseToken || !quoteToken || !chainId || !entity) {
+  if (!baseToken || !quoteToken || !entity) {
     return (
       <div className="my-4 p-4 border rounded-md">
         <div className="text-gray-400">Loading...</div>
@@ -203,7 +201,7 @@ function Pool({
               <tr>
                 <td>
                   {poolPrice.toFixed(6)}{" "}
-                  {baseToken.equals(WETH9[chainId as number])
+                  {baseToken.equals(WETH9[baseToken.chainId])
                     ? "ETH"
                     : baseToken.symbol}
                 </td>

@@ -12,7 +12,7 @@ import {
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 
-import { usePools } from "./PoolsProvider";
+import { usePools } from "./CombinedPoolsProvider";
 import Transaction from "./Transaction";
 import TokenLabel from "./ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
@@ -184,7 +184,7 @@ function Position({
           <div>
             {positionLiquidity
               ? convertToGlobalFormatted(positionLiquidity)
-              : formatCurrencyWithSymbol(0)}
+              : formatCurrencyWithSymbol(0, 1)}
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">

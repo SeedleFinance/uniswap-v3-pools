@@ -3,8 +3,7 @@ import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
-import { usePools } from "./PoolsProvider";
-import { useChainId } from "./hooks/useChainId";
+import { usePools } from "./CombinedPoolsProvider";
 import TokenSymbol from "./ui/TokenLabel";
 
 import { BLOCK_EXPLORER_URL } from "./constants";
@@ -34,7 +33,6 @@ function Transaction({
   priceUpper,
   gas,
 }: TransactionProps) {
-  const chainId = useChainId();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
   const totalLiquidity = useMemo(() => {
     if (!baseToken || !pool) {
@@ -82,7 +80,7 @@ function Transaction({
     <tr className="">
       <td>
         <a
-          href={`${BLOCK_EXPLORER_URL[chainId as number]}${id}`}
+          href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}${id}`}
           className="text-blue-500"
         >
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
@@ -102,7 +100,7 @@ function Transaction({
       <td>
         {totalLiquidity !== 0
           ? convertToGlobalFormatted(totalLiquidity)
-          : formatCurrencyWithSymbol(0)}
+          : formatCurrencyWithSymbol(0, 1)}
       </td>
       <td>{convertToGlobalFormatted(gas.costCurrency)}</td>
     </tr>
