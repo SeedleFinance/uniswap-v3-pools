@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
+import { getNetworkConnector } from "../utils/connectors";
 
 export function useAddresses() {
-  const { library } = useWeb3React("mainnet");
+  const { library, active, activate } = useWeb3React("mainnet");
   const { account } = useWeb3React("injected");
   const [addresses, setAddresses] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!active) {
+      const networkConnector = getNetworkConnector();
+      networkConnector.changeChainId(1);
+
+      activate(networkConnector, (err) => {
+        console.error(err);
+      });
+    }
+  }, [activate, active]);
 
   useEffect(() => {
     const fetchAddresses = async () => {

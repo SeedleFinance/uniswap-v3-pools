@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useWeb3React } from "@web3-react/core";
 
 import { AppSettingsProvider } from "./AppSettingsProvider";
@@ -10,33 +10,14 @@ import Footer from "./Footer";
 import Landing from "./Landing";
 
 import { useAddresses } from "./hooks/useAddresses";
-import { injectedConnector } from "./utils/connectors";
 
 function Container() {
+  const addresses = useAddresses();
   const { account } = useWeb3React("injected");
-  //const [injectFailed, setInjectFailed] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   if (!active && !injectFailed) {
-  //     activate(injectedConnector, (err) => {
-  //       setInjectFailed(true);
-  //     });
-  //   }
-  // }, [activate, active, injectFailed]);
-
-  // useEffect(() => {
-  //   if (!active) {
-  //     activate(networkConnector, (err) => {
-  //       console.error(err);
-  //     });
-  //   }
-  // }, [activate, active]);
-
-  // const addresses = useAddresses();
-
-  // if (!addresses.length) {
-  //   return <Landing />;
-  // }
+  if (!addresses.length) {
+    return <Landing />;
+  }
 
   return (
     <AppSettingsProvider>
