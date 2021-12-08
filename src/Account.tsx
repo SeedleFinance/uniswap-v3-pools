@@ -8,7 +8,7 @@ interface AccountProps {
 }
 
 function Account({ address }: AccountProps) {
-  const { chainId, activate } = useWeb3React();
+  const { chainId, activate } = useWeb3React("injected");
 
   const truncatedAddress = useMemo(() => {
     if (!address || !address.length) {
