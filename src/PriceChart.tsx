@@ -84,7 +84,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           <YAxis
             width={100}
             mirror={true}
-            domain={[minPrice * 0.7, maxPrice * 1.3]}
+            domain={[minPrice - minPrice * 0.1, maxPrice + maxPrice * 0.1]}
           />
           <Tooltip />
           <Legend />
