@@ -10,6 +10,7 @@ interface Props {
   fee?: number;
   onClick: () => void;
   tabIndex?: number;
+  showNetwork?: boolean;
 }
 
 function getChainNameAndColor(chainId: number) {
@@ -22,7 +23,14 @@ function getChainNameAndColor(chainId: number) {
   return chains[chainId] || chains[1];
 }
 
-function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex }: Props) {
+function PoolButton({
+  baseToken,
+  quoteToken,
+  fee,
+  onClick,
+  tabIndex,
+  showNetwork,
+}: Props) {
   const [chainName, chainColor] = getChainNameAndColor(baseToken.chainId);
   return (
     <button
@@ -40,11 +48,13 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex }: Props) {
           <span className="px-1">/</span>
           <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
         </div>
-        <div
-          className={`rounded-md text-sm text-gray-800 mt-2 px-1 ${chainColor}`}
-        >
-          {chainName}
-        </div>
+        {showNetwork && (
+          <div
+            className={`rounded-md text-sm text-gray-800 mt-2 px-1 ${chainColor}`}
+          >
+            {chainName}
+          </div>
+        )}
       </div>
       {fee && (
         <span className="rounded-md text-gray-800 bg-gray-200 ml-1 px-1">

@@ -5,6 +5,7 @@ import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { getQuoteAndBaseToken } from "../utils/tokens";
+import { getClient } from "../apollo/client";
 
 const QUERY_TOP_POOLS = gql`
   query top_pools($date: Int!) {
@@ -36,10 +37,11 @@ const QUERY_TOP_POOLS = gql`
   }
 `;
 
-export function useTopPools(chainId: number | undefined, date: number) {
+export function useTopPools(chainId: number, date: number) {
   const { loading, error, data } = useQuery(QUERY_TOP_POOLS, {
     variables: { date },
     fetchPolicy: "network-only",
+    client: getClient(chainId),
   });
 
   if (loading || error || !data) {

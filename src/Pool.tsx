@@ -162,6 +162,7 @@ function Pool({
             baseToken={baseToken}
             quoteToken={quoteToken}
             fee={entity.fee / 10000}
+            showNetwork={true}
             onClick={toggleExpand}
           />
           {expanded && (

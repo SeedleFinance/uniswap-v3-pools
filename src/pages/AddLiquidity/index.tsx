@@ -9,6 +9,7 @@ import NewPosition from "./NewPosition";
 import SearchInput from "./SearchInput";
 
 import { getQuoteAndBaseToken } from "../../utils/tokens";
+import { injectedConnector } from "../../utils/connectors";
 import { loadTokens, findTokens, TokenListItem } from "./utils";
 
 interface Props {
@@ -16,9 +17,17 @@ interface Props {
 }
 
 function AddLiquidity({ tab }: Props) {
-  const { chainId } = useWeb3React();
+  const { chainId, active, activate } = useWeb3React("injected");
   const history = useHistory();
   const { baseTokenSymbol, quoteTokenSymbol, fee } = useParams<any>();
+
+  useEffect(() => {
+    if (!active) {
+      activate(injectedConnector, (err) => {
+        console.error(err);
+      });
+    }
+  }, [activate, active]);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
   const [selectedTab, setSelectedTab] = useState("new");
