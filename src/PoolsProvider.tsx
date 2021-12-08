@@ -82,7 +82,7 @@ export const PoolsProvider = ({ children }: Props) => {
   }, [filteredPositions]);
 
   const poolContracts = usePoolContracts(Object.keys(positionsByPool));
-  const pools = usePoolsState(poolContracts, positionsByPool);
+  const pools = usePoolsState(poolContracts, positionsByPool) || [];
 
   const empty = useMemo(
     () => !loadingPositions && !allPositions.length,

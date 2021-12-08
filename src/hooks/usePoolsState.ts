@@ -34,7 +34,7 @@ export function usePoolsState(
   contracts: (Contract | null)[],
   positionsByPool: { [key: string]: any }
 ) {
-  const [pools, setPools] = useState<PoolState[]>([]);
+  const [pools, setPools] = useState<PoolState[] | null>(null);
 
   useEffect(() => {
     if (
@@ -222,6 +222,7 @@ export function usePoolsState(
       );
       results = compact(results);
       if (
+        pools !== null &&
         results.length === pools.length &&
         isEqualWith(
           results,

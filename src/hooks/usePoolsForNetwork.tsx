@@ -27,10 +27,8 @@ export function usePoolsForNetwork(chainId: number) {
 
   const addresses = useAddresses();
 
-  const { loading, positionStates: allPositions } = useQueryPositions(
-    chainId as number,
-    addresses
-  );
+  const { loading: queryLoading, positionStates: allPositions } =
+    useQueryPositions(chainId as number, addresses);
 
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
@@ -69,8 +67,10 @@ export function usePoolsForNetwork(chainId: number) {
     return positionsByPool;
   }, [filteredPositions]);
 
-  const poolContracts = usePoolContracts(Object.keys(positionsByPool), library);
+  const poolKeys = Object.keys(positionsByPool);
+  const poolContracts = usePoolContracts(poolKeys, library);
   const pools = usePoolsState(poolContracts, positionsByPool);
+  const poolsLoading = poolKeys.length > 0 && pools === null;
 
-  return { loading, pools };
+  return { loading: queryLoading || poolsLoading, pools: pools || [] };
 }
