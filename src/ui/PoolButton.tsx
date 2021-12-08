@@ -12,10 +12,21 @@ interface Props {
   tabIndex?: number;
 }
 
+function getChainNameAndColor(chainId: number) {
+  const chains: { [id: number]: string[] } = {
+    1: ["Mainnet", "bg-gray-200"],
+    10: ["Optimism", "bg-red-200"],
+    42161: ["Arbitrum", "bg-blue-200"],
+  };
+
+  return chains[chainId] || chains[1];
+}
+
 function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex }: Props) {
+  const [chainName, chainColor] = getChainNameAndColor(baseToken.chainId);
   return (
     <button
-      className="focus:outline-none flex items-center p-1"
+      className="focus:outline-none flex items-start p-1"
       tabIndex={tabIndex || 0}
       onClick={onClick}
     >
@@ -23,10 +34,17 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex }: Props) {
         <TokenLogo name={quoteToken.name} address={quoteToken.address} />
         <TokenLogo name={baseToken.name} address={baseToken.address} />
       </div>
-      <div>
-        <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
-        <span className="px-1">/</span>
-        <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+      <div className="flex flex-col mx-2">
+        <div>
+          <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
+          <span className="px-1">/</span>
+          <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+        </div>
+        <div
+          className={`rounded-md text-sm text-gray-800 mt-2 px-1 ${chainColor}`}
+        >
+          {chainName}
+        </div>
       </div>
       {fee && (
         <span className="rounded-md text-gray-800 bg-gray-200 ml-1 px-1">
