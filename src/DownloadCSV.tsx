@@ -22,6 +22,7 @@ function DownloadCSV() {
       .map(({ positions }) =>
         positions.map((pos) => ({
           id: pos.id,
+          chainId: pos.entity.pool.token0.chainId,
           token0: pos.entity.pool.token0.symbol,
           token1: pos.entity.pool.token1.symbol,
           feeTier: pos.entity.pool.fee,
