@@ -45,7 +45,7 @@ export function useTokenFunctions(
     amount: number
   ) => Promise<TransactionResponse | null>;
 } {
-  const { library } = useWeb3React();
+  const { library } = useWeb3React("injected");
 
   const addresses = useMemo(
     () => tokens.map((token) => token.address),

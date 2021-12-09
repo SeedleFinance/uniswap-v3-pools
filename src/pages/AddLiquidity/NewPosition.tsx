@@ -50,7 +50,7 @@ function NewPosition({
   positions,
   onCancel,
 }: Props) {
-  const { chainId, account, library } = useWeb3React();
+  const { chainId, account, library } = useWeb3React("injected");
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
     [baseToken, quoteToken],
     account
