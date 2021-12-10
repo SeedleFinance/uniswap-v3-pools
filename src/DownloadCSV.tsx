@@ -8,6 +8,7 @@ function DownloadCSV() {
   const prepareCSV = () => {
     const cols = [
       '"Id"',
+      "ChainID",
       '"Token 0"',
       '"Token 1"',
       '"Fee tier"',
