@@ -105,3 +105,118 @@ export function useAPR(
     return (returnPercent / secondsSince) * yearInSeconds;
   }, [returnPercent, transactions, liquidity]);
 }
+
+function calcLiquidity(
+  pool: Pool,
+  baseToken: Token,
+  amount0: CurrencyAmount<Token>,
+  amount1: CurrencyAmount<Token>
+) {
+  return pool.token0.equals(baseToken)
+    ? pool.priceOf(pool.token1).quote(amount1).add(amount0)
+    : pool.priceOf(pool.token0).quote(amount0).add(amount1);
+}
+
+function calcPeriodYield(
+  fees: CurrencyAmount<Token>,
+  liquidity: CurrencyAmount<Token>,
+  periodStart: Date,
+  periodEnd: Date
+) {
+  const zeroAmount = CurrencyAmount.fromRawAmount(liquidity.currency, 0);
+  if (liquidity.equalTo(zeroAmount)) {
+    return zeroAmount;
+  }
+  const periodYield = fees.divide(liquidity).multiply(liquidity.decimalScale);
+  const secondsSince = differenceInSeconds(periodEnd, periodStart);
+  return periodYield.divide(secondsSince);
+}
+
+export function useFeeAPY(
+  pool: Pool,
+  baseToken: Token,
+  uncollectedFees: CurrencyAmount<Token>[],
+  transactions: any
+) {
+  return useMemo(() => {
+    if (!transactions.length) {
+      return 0;
+    }
+
+    const periodYieldsPerSecond = [];
+    const zeroAmount = CurrencyAmount.fromRawAmount(baseToken, 0);
+    let periodLiquidityAdded = zeroAmount;
+    let periodLiquidityRemoved = zeroAmount;
+    let periodStart = new Date();
+
+    transactions.forEach(
+      ({
+        type,
+        amount0,
+        amount1,
+        timestamp,
+      }: {
+        type: string;
+        amount0: CurrencyAmount<Token>;
+        amount1: CurrencyAmount<Token>;
+        timestamp: number;
+      }) => {
+        let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
+        console.log(liquidity.toSignificant(18));
+        if (type === "mint") {
+          if (periodLiquidityAdded.equalTo(zeroAmount)) {
+            periodStart = new Date(timestamp * 1000);
+          }
+          periodLiquidityAdded = periodLiquidityAdded.add(liquidity);
+        } else if (type === "burn") {
+          periodLiquidityRemoved = periodLiquidityRemoved.add(liquidity);
+        } else if (type === "collect") {
+          const periodEnd = new Date(timestamp * 1000);
+          const periodYield = calcPeriodYield(
+            liquidity,
+            periodLiquidityAdded,
+            periodStart,
+            periodEnd
+          );
+          periodYieldsPerSecond.push(periodYield);
+
+          // reset period
+          periodLiquidityAdded = periodLiquidityAdded.subtract(
+            periodLiquidityRemoved
+          );
+          periodStart = periodEnd;
+        }
+      }
+    );
+
+    // calculate uncollected fee yield
+    const totalUncollectedFees = calcLiquidity(
+      pool,
+      baseToken,
+      uncollectedFees[0],
+      uncollectedFees[1]
+    );
+    if (!totalUncollectedFees.equalTo(zeroAmount)) {
+      const uncollectedYield = calcPeriodYield(
+        totalUncollectedFees,
+        periodLiquidityAdded,
+        periodStart,
+        new Date()
+      );
+      periodYieldsPerSecond.push(uncollectedYield);
+    }
+
+    let totalYield = CurrencyAmount.fromRawAmount(baseToken, 0);
+    periodYieldsPerSecond.forEach((y) => (totalYield = totalYield.add(y)));
+
+    if (!periodYieldsPerSecond.length) {
+      return zeroAmount;
+    }
+
+    const yearInSeconds = 365 * 24 * 60 * 60;
+    return totalYield
+      .divide(periodYieldsPerSecond.length)
+      .multiply(yearInSeconds)
+      .multiply(100);
+  }, [transactions, pool, baseToken, uncollectedFees]);
+}

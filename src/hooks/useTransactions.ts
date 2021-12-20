@@ -92,7 +92,7 @@ export function useTransactions(
     client: getClient(chainId),
   });
 
-  const collectData = useCollects(data ? data.burns : []);
+  const collectData = useCollects(chainId, data ? data.burns : []);
 
   if (loading || error || !data || !token0 || !token1) {
     return [];
@@ -188,11 +188,12 @@ export function useTransactions(
     );
 }
 
-export function useCollects(burns: any[]) {
+export function useCollects(chainId: number, burns: any[]) {
   const ids = burns.map(({ transaction }) => transaction.id);
   const { loading, error, data } = useQuery(QUERY_COLLECTS, {
     variables: { ids },
     fetchPolicy: "network-only",
+    client: getClient(chainId),
   });
 
   if (loading || error || !data) {

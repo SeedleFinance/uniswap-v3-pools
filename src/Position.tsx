@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import formatDistanceStrict from "date-fns/formatDistanceStrict";
+//import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
@@ -8,6 +8,7 @@ import {
   useTransactionTotals,
   useReturnValue,
   useAPR,
+  useFeeAPY,
 } from "./hooks/calculations";
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
@@ -86,14 +87,14 @@ function Position({
     return prices.map((price) => price.toFixed(decimals)).join(" - ");
   }, [priceUpper, priceLower, baseToken]);
 
-  const formattedAge = useMemo(() => {
-    const startDate = new Date(transactions[0].timestamp * 1000);
-    const endDate = BigNumber.from(entity.liquidity.toString()).isZero()
-      ? new Date(transactions[transactions.length - 1].timestamp * 1000)
-      : new Date();
+  // const formattedAge = useMemo(() => {
+  //   const startDate = new Date(transactions[0].timestamp * 1000);
+  //   const endDate = BigNumber.from(entity.liquidity.toString()).isZero()
+  //     ? new Date(transactions[transactions.length - 1].timestamp * 1000)
+  //     : new Date();
 
-    return formatDistanceStrict(endDate, startDate);
-  }, [entity.liquidity, transactions]);
+  //   return formatDistanceStrict(endDate, startDate);
+  // }, [entity.liquidity, transactions]);
 
   const positionStatus = useMemo((): PositionStatus => {
     if (!pool) {
@@ -124,6 +125,8 @@ function Position({
     returnPercent,
     BigNumber.from(entity.liquidity.toString())
   );
+
+  const feeAPY = useFeeAPY(pool, baseToken, uncollectedFees, transactions);
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -178,9 +181,6 @@ function Position({
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>{formattedAge}</div>
-        </td>
-        <td className="border-t border-gray-200 py-4">
           <div>
             {positionLiquidity
               ? convertToGlobalFormatted(positionLiquidity)
@@ -214,16 +214,18 @@ function Position({
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">
-          <div>{convertToGlobalFormatted(totalCurrentValue)}</div>
+          <div className={feeAPY < 0 ? "text-red-500" : "text-green-500"}>
+            {feeAPY.toFixed(2)}%
+          </div>
         </td>
+
         <td className="border-t border-gray-200 py-4">
           <div
             className={
               returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
             }
           >
-            {convertToGlobalFormatted(returnValue)} ({returnPercent.toFixed(2)}
-            %)
+            {convertToGlobalFormatted(returnValue)}
           </div>
         </td>
         <td className="border-t border-gray-200 py-4">

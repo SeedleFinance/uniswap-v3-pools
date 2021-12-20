@@ -195,7 +195,7 @@ function Pool({
                 <th className="pb-4">Total Liquidity</th>
                 <th className="pb-4">Total Fees</th>
                 <th className="pb-4">Net Return</th>
-                <th className="pb-4">APY</th>
+                <th className="pb-4">Net APY</th>
               </tr>
             </thead>
             <tbody>

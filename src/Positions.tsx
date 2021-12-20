@@ -18,10 +18,16 @@ function Positions({ positions, pool, baseToken }: Props) {
           <tr className="text-left">
             <th className="pb-4">Range</th>
             <th className="pb-4">Distribution</th>
-            <th className="pb-4">Age</th>
             <th className="pb-4">Liquidity</th>
             <th className="pb-4">Uncl. fees</th>
-            <th className="pb-4">Total</th>
+            <th className="pb-4">
+              <span
+                style={{ borderBottom: "1px dotted", cursor: "help" }}
+                title="annualized fees earned over liquidity"
+              >
+                Fee APY
+              </span>
+            </th>
             <th className="pb-4">
               <span
                 style={{ borderBottom: "1px dotted", cursor: "help" }}
@@ -33,9 +39,9 @@ function Positions({ positions, pool, baseToken }: Props) {
             <th className="pb-4">
               <span
                 style={{ borderBottom: "1px dotted", cursor: "help" }}
-                title="Annual Percentage Return"
+                title="Net Annual Percentage Yield"
               >
-                APR
+                Net APY
               </span>
             </th>
             <th className="pb-4"></th>
