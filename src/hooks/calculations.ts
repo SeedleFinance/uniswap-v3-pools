@@ -187,6 +187,7 @@ export function useFeeAPY(
           periodLiquidityAdded = periodLiquidityAdded.subtract(
             periodLiquidityRemoved
           );
+          periodLiquidityRemoved = zeroAmount;
           periodStart = periodEnd;
         }
       }

@@ -202,9 +202,30 @@ function Pool({
                 <th className="pb-4">Current Price</th>
                 <th className="pb-4">Total Liquidity</th>
                 <th className="pb-4">Total Fees</th>
-                <th className="pb-4">Fee APY</th>
-                <th className="pb-4">Net Return</th>
-                <th className="pb-4">Net APY</th>
+                <th className="pb-4">
+                  <span
+                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    title="annualized fees earned over liquidity"
+                  >
+                    Fee APY
+                  </span>
+                </th>
+                <th className="pb-4">
+                  <span
+                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    title="liquidity gain + fees - gas cost"
+                  >
+                    Net Return
+                  </span>
+                </th>
+                <th className="pb-4">
+                  <span
+                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    title="Net Annual Percentage Yield"
+                  >
+                    Net APY
+                  </span>
+                </th>
               </tr>
             </thead>
             <tbody>
