@@ -128,7 +128,10 @@ function calcPeriodYield(
     return zeroAmount;
   }
   const periodYield = fees.divide(liquidity).multiply(liquidity.decimalScale);
-  const secondsSince = differenceInSeconds(periodEnd, periodStart);
+  let secondsSince = differenceInSeconds(periodEnd, periodStart);
+  if (secondsSince === 0) {
+    return zeroAmount;
+  }
   return periodYield.divide(secondsSince);
 }
 
@@ -139,12 +142,13 @@ export function useFeeAPY(
   transactions: any
 ) {
   return useMemo(() => {
+    const zeroAmount = CurrencyAmount.fromRawAmount(baseToken, 0);
+
     if (!transactions.length) {
-      return 0;
+      return zeroAmount;
     }
 
     const periodYieldsPerSecond = [];
-    const zeroAmount = CurrencyAmount.fromRawAmount(baseToken, 0);
     let periodLiquidityAdded = zeroAmount;
     let periodLiquidityRemoved = zeroAmount;
     let periodStart = new Date();
@@ -162,7 +166,6 @@ export function useFeeAPY(
         timestamp: number;
       }) => {
         let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
-        console.log(liquidity.toSignificant(18));
         if (type === "mint") {
           if (periodLiquidityAdded.equalTo(zeroAmount)) {
             periodStart = new Date(timestamp * 1000);
@@ -190,12 +193,10 @@ export function useFeeAPY(
     );
 
     // calculate uncollected fee yield
-    const totalUncollectedFees = calcLiquidity(
-      pool,
-      baseToken,
-      uncollectedFees[0],
-      uncollectedFees[1]
-    );
+    const totalUncollectedFees =
+      uncollectedFees.length > 1
+        ? calcLiquidity(pool, baseToken, uncollectedFees[0], uncollectedFees[1])
+        : uncollectedFees[0];
     if (!totalUncollectedFees.equalTo(zeroAmount)) {
       const uncollectedYield = calcPeriodYield(
         totalUncollectedFees,
@@ -214,9 +215,12 @@ export function useFeeAPY(
     }
 
     const yearInSeconds = 365 * 24 * 60 * 60;
-    return totalYield
-      .divide(periodYieldsPerSecond.length)
-      .multiply(yearInSeconds)
-      .multiply(100);
+    return parseFloat(
+      totalYield
+        .divide(periodYieldsPerSecond.length)
+        .multiply(yearInSeconds)
+        .multiply(100)
+        .toFixed(2)
+    );
   }, [transactions, pool, baseToken, uncollectedFees]);
 }

@@ -15,6 +15,7 @@ import {
   useTransactionTotals,
   useReturnValue,
   useAPR,
+  useFeeAPY,
 } from "./hooks/calculations";
 import { usePools } from "./CombinedPoolsProvider";
 
@@ -144,6 +145,13 @@ function Pool({
 
   const apr = useAPR(transactionsInPositions, returnPercent, rawPoolLiquidity);
 
+  const feeAPY = useFeeAPY(
+    entity,
+    baseToken,
+    [poolUncollectedFees],
+    transactionsInPositions
+  );
+
   const toggleExpand = () => setExpanded(!expanded);
 
   if (!baseToken || !quoteToken || !entity) {
@@ -194,6 +202,7 @@ function Pool({
                 <th className="pb-4">Current Price</th>
                 <th className="pb-4">Total Liquidity</th>
                 <th className="pb-4">Total Fees</th>
+                <th className="pb-4">Fee APY</th>
                 <th className="pb-4">Net Return</th>
                 <th className="pb-4">Net APY</th>
               </tr>
@@ -211,6 +220,14 @@ function Pool({
                   {convertToGlobalFormatted(totalFees)} (uncl.{" "}
                   {convertToGlobalFormatted(poolUncollectedFees)})
                 </td>
+                <td>
+                  <div
+                    className={feeAPY < 0 ? "text-red-500" : "text-green-500"}
+                  >
+                    {feeAPY.toFixed(2)}%
+                  </div>
+                </td>
+
                 <td>
                   <div
                     className={
