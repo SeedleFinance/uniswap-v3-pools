@@ -1,10 +1,11 @@
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { BigNumber } from "@ethersproject/bignumber";
-import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { useAddresses } from "./useAddresses";
 import { getClient } from "../apollo/client";
+import { WETH9 } from "../constants";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origins: [String]!, $poolAddress: String!) {

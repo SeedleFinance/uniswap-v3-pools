@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import differenceInSeconds from "date-fns/differenceInSeconds";
 import { BigNumber } from "@ethersproject/bignumber";
-import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { useEthToQuote } from "./useUSDConversion";
+import { WETH9 } from "../constants";
 
 export function useTransactionTotals(
   transactions: any[],

@@ -1,11 +1,11 @@
 import React, { ReactNode, useContext, useMemo } from "react";
-import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount } from "@uniswap/sdk-core";
 
 import { PoolState } from "./hooks/usePoolsState";
 import { useEthPrice } from "./hooks/useEthPrice";
 import { usePoolsForNetwork } from "./hooks/usePoolsForNetwork";
 
-import { DAI, USDC, USDT, PAX, FEI } from "./constants";
+import { DAI, USDC, USDT, PAX, FEI, WETH9 } from "./constants";
 import { formatCurrency } from "./utils/numbers";
 import { useAppSettings } from "./AppSettingsProvider";
 
@@ -41,14 +41,24 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     usePoolsForNetwork(10);
   const { loading: arbitrumLoading, pools: arbitrumPools } =
     usePoolsForNetwork(42161);
+  const { loading: polygonLoading, pools: polygonPools } =
+    usePoolsForNetwork(137);
 
   const loading = useMemo(() => {
-    return mainnetLoading || optimismLoading || arbitrumLoading;
-  }, [mainnetLoading, optimismLoading, arbitrumLoading]);
+    return (
+      mainnetLoading || optimismLoading || arbitrumLoading || polygonLoading
+    );
+  }, [mainnetLoading, optimismLoading, arbitrumLoading, polygonLoading]);
 
   const pools = useMemo(() => {
-    return [...mainnetPools, ...arbitrumPools, ...optimismPools];
-  }, [mainnetPools, arbitrumPools, optimismPools]);
+    console.log(polygonPools);
+    return [
+      ...mainnetPools,
+      ...arbitrumPools,
+      ...optimismPools,
+      ...polygonPools,
+    ];
+  }, [mainnetPools, arbitrumPools, optimismPools, polygonPools]);
 
   const empty = useMemo(() => !loading && !pools.length, [loading, pools]);
 

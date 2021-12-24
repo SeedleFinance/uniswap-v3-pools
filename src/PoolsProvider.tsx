@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useMemo } from "react";
-import { WETH9, Token, CurrencyAmount } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
 import { useChainId } from "./hooks/useChainId";
@@ -9,7 +9,7 @@ import { usePoolsState, PoolState } from "./hooks/usePoolsState";
 import { useEthPrice } from "./hooks/useEthPrice";
 import { useAddresses } from "./hooks/useAddresses";
 
-import { DAI, USDC, USDT, PAX, FEI } from "./constants";
+import { DAI, USDC, USDT, PAX, FEI, WETH9 } from "./constants";
 import { formatCurrency } from "./utils/numbers";
 import { useAppSettings } from "./AppSettingsProvider";
 

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { BigNumber } from "@ethersproject/bignumber";
-import { WETH9, Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
+import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
 import {
   tickToPrice,
   Pool as UniPool,
@@ -18,6 +18,7 @@ import {
   useFeeAPY,
 } from "./hooks/calculations";
 import { usePools } from "./CombinedPoolsProvider";
+import { WETH9 } from "./constants";
 
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
@@ -165,7 +166,7 @@ function Pool({
   return (
     <div className="my-4 p-4 border rounded-md">
       <div className="flex justify-between">
-        <div className="text-2xl text-gray-600 py-2 flex items-center">
+        <div className="text-2xl text-gray-600 py-2 flex items-baseline">
           <PoolButton
             baseToken={baseToken}
             quoteToken={quoteToken}

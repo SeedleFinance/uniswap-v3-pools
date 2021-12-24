@@ -12,6 +12,7 @@ function constructSameAddressMap(
     42: address,
     10: address,
     42161: address,
+    137: address,
   };
 }
 
@@ -41,6 +42,13 @@ export const DAI: { [key: number]: Token } = {
     "DAI",
     "Dai Stablecoin"
   ),
+  137: new Token(
+    137,
+    "0x8f3cf7ad23cd3cadbd9735aff958023239c6a063",
+    18,
+    "DAI",
+    "Dai Stablecoin (POS)"
+  ),
 };
 
 export const USDC: { [key: number]: Token } = {
@@ -66,6 +74,13 @@ export const USDC: { [key: number]: Token } = {
     "USDC",
     "USD Coin (Arb1)"
   ),
+  137: new Token(
+    137,
+    "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+    6,
+    "USDC",
+    "USD Coin (PoS)"
+  ),
 };
 
 export const USDT: { [key: number]: Token } = {
@@ -89,6 +104,13 @@ export const USDT: { [key: number]: Token } = {
     6,
     "USDT",
     "Tether USD"
+  ),
+  137: new Token(
+    137,
+    "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+    6,
+    "USDT",
+    "(PoS) Tether USD"
   ),
 };
 
@@ -116,6 +138,82 @@ export const PAX = new Token(
   "Paxos Standard"
 );
 
+export const WETH9: { [chainId: number]: Token } = {
+  1: new Token(
+    1,
+    "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+  3: new Token(
+    3,
+    "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+  4: new Token(
+    4,
+    "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+  5: new Token(
+    5,
+    "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+  42: new Token(
+    42,
+    "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+
+  10: new Token(
+    10,
+    "0x4200000000000000000000000000000000000006",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+  69: new Token(
+    69,
+    "0x4200000000000000000000000000000000000006",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+
+  42161: new Token(
+    42161,
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+  421611: new Token(
+    421611,
+    "0xB47e6A5f8b33b3F17603C83a0535A9dcD7E32681",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+
+  137: new Token(
+    137,
+    "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+};
+
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
 export const ZERO_PERCENT = new Percent("0");
 export const Q128 = BigNumber.from(2).pow(128);
@@ -124,4 +222,5 @@ export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
   1: "https://etherscan.io/tx/",
   10: "https://optimistic.etherscan.io/tx/",
   42161: "https://arbiscan.io/tx/",
+  137: "https://polygonscan.com/tx/",
 };

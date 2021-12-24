@@ -1,6 +1,8 @@
 import JSBI from "jsbi";
 import { Pool, Position } from "@uniswap/v3-sdk";
-import { Token, CurrencyAmount, MaxUint256, WETH9 } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount, MaxUint256 } from "@uniswap/sdk-core";
+
+import { WETH9 } from "../../constants";
 
 export function positionFromAmounts(
   {
@@ -101,7 +103,7 @@ export function tokenAmountNeedApproval(
     return false;
   }
 
-  if (token.equals(WETH9[chainId])) {
+  if (token.equals(WETH9[chainId]) && token.chainId !== 137) {
     return false;
   }
 
@@ -149,6 +151,7 @@ export async function loadTokens(chainId: number) {
     1: "https://tokens.coingecko.com/uniswap/all.json",
     10: "https://static.optimism.io/optimism.tokenlist.json",
     42161: "https://bridge.arbitrum.io/token-list-42161.json",
+    137: "https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json",
   };
 
   const res = await fetch(tokenURLs[chainId]);

@@ -5,7 +5,7 @@ import {
   tickToPrice,
   NonfungiblePositionManager,
 } from "@uniswap/v3-sdk";
-import { Token, WETH9, Ether } from "@uniswap/sdk-core";
+import { Token, Ether } from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
@@ -15,6 +15,7 @@ import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
 import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
+import { WETH9 } from "../../constants";
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -314,7 +315,9 @@ function NewPosition({
       const useNative =
         pool.token0.equals(WETH9[chainId as number]) ||
         pool.token1.equals(WETH9[chainId as number])
-          ? Ether.onChain(chainId as number)
+          ? pool.token0.chainId !== 137
+            ? Ether.onChain(chainId as number)
+            : undefined
           : undefined;
 
       const { calldata, value } = matchingPosition

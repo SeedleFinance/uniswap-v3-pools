@@ -1,8 +1,8 @@
 import { useMemo } from "react";
-import { WETH9, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { usePool } from "./usePool";
-import { USDC, DAI, USDT, LUSD } from "../constants";
+import { USDC, DAI, USDT, LUSD, WETH9 } from "../constants";
 
 export function useUSDConversion(baseToken: Token | null) {
   let fee = 0.3;

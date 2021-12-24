@@ -2,11 +2,12 @@ import { useMemo, useCallback } from "react";
 import { parseBytes32String } from "@ethersproject/strings";
 import { TransactionResponse } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
-import { CurrencyAmount, Token, WETH9, MaxUint256 } from "@uniswap/sdk-core";
+import { CurrencyAmount, Token, MaxUint256 } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
 
 import { useTokenContracts, useBytes32TokenContracts } from "./useContract";
+import { WETH9 } from "../constants";
 
 const callContract = async (
   contracts: any[],
@@ -67,11 +68,16 @@ export function useTokenFunctions(
 
     return await Promise.all(
       tokens.map(async (token: Token, idx: number) => {
-        const balance = token.equals(WETH9[token.chainId])
-          ? await library.getBalance(owner)
-          : await callContract(contracts, bytes32Contracts, idx, "balanceOf", [
-              owner,
-            ]);
+        const balance =
+          token.equals(WETH9[token.chainId]) && token.chainId !== 137
+            ? await library.getBalance(owner)
+            : await callContract(
+                contracts,
+                bytes32Contracts,
+                idx,
+                "balanceOf",
+                [owner]
+              );
         return formatUnits(balance, token.decimals);
       })
     );
@@ -97,6 +103,9 @@ export function useTokenFunctions(
             "allowance",
             [owner, spender]
           );
+          if (allowance === null) {
+            return 0;
+          }
           return parseFloat(
             CurrencyAmount.fromRawAmount(
               token,

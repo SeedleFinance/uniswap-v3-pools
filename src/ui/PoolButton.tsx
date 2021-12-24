@@ -18,6 +18,7 @@ function getChainNameAndColor(chainId: number) {
     1: ["Mainnet", "bg-gray-200"],
     10: ["Optimism", "bg-red-200"],
     42161: ["Arbitrum", "bg-blue-200"],
+    137: ["Polygon", "bg-indigo-300"],
   };
 
   return chains[chainId] || chains[1];

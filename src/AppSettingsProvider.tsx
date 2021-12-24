@@ -1,8 +1,8 @@
 import React, { ReactNode, useContext, useCallback } from "react";
-import { WETH9, Token } from "@uniswap/sdk-core";
+import { Token } from "@uniswap/sdk-core";
 import createPersistedState from "use-persisted-state";
 
-import { USDC } from "./constants";
+import { USDC, WETH9 } from "./constants";
 
 const AppSettingsContext = React.createContext(null as any);
 export const useAppSettings = () => useContext(AppSettingsContext);

@@ -44,11 +44,23 @@ export const optimismClient = new ApolloClient({
   },
 });
 
+export const polygonClient = new ApolloClient({
+  uri: "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
+  cache: new InMemoryCache(),
+  queryDeduplication: false,
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "cache-and-network",
+    },
+  },
+});
+
 export function getClient(chainId: number) {
   const clients: { [key: number]: any } = {
     1: mainnetClient,
     10: optimismClient,
     42161: arbitrumClient,
+    137: polygonClient,
   };
 
   return clients[chainId] || mainnetClient;

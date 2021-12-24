@@ -32,6 +32,7 @@ function Account({ address }: AccountProps) {
       1: "ethereum",
       10: "optimism",
       42161: "arbitrum",
+      137: "polygon",
     };
 
     return chains[chainId as number] || "unknown";

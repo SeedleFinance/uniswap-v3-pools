@@ -8,6 +8,7 @@ function getLibrary(provider: any) {
 const MainnetProvider = createWeb3ReactRoot("mainnet");
 const OptimismProvider = createWeb3ReactRoot("optimism");
 const ArbitrumProvider = createWeb3ReactRoot("arbitrum");
+const PolygonProvider = createWeb3ReactRoot("polygon");
 const InjectWalletProvider = createWeb3ReactRoot("injected");
 
 interface Props {
@@ -19,9 +20,11 @@ function Provider({ children }: Props) {
     <MainnetProvider getLibrary={getLibrary}>
       <OptimismProvider getLibrary={getLibrary}>
         <ArbitrumProvider getLibrary={getLibrary}>
-          <InjectWalletProvider getLibrary={getLibrary}>
-            {children}
-          </InjectWalletProvider>
+          <PolygonProvider getLibrary={getLibrary}>
+            <InjectWalletProvider getLibrary={getLibrary}>
+              {children}
+            </InjectWalletProvider>
+          </PolygonProvider>
         </ArbitrumProvider>
       </OptimismProvider>
     </MainnetProvider>

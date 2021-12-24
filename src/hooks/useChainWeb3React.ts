@@ -4,6 +4,7 @@ const chains: { [id: number]: string } = {
   1: "mainnet",
   10: "optimism",
   42161: "arbitrum",
+  137: "polygon",
 };
 
 export function useChainWeb3React(chainId: number) {
