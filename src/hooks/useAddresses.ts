@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { getNetworkConnector } from "../utils/connectors";
+import { getNetworkConnector, injectedConnector } from "../utils/connectors";
 
 export function useAddresses() {
   const { library, active, activate } = useWeb3React("mainnet");
-  const { account } = useWeb3React("injected");
+  const {
+    account,
+    active: injectedActive,
+    activate: activateInjected,
+  } = useWeb3React("injected");
   const [addresses, setAddresses] = useState<string[]>([]);
 
   useEffect(() => {
@@ -17,6 +21,15 @@ export function useAddresses() {
       });
     }
   }, [activate, active]);
+
+  useEffect(() => {
+    if (!injectedActive) {
+      activateInjected(injectedConnector, (err) => {
+        // ignore error
+        //console.error(err);
+      });
+    }
+  }, [activateInjected, injectedActive]);
 
   useEffect(() => {
     const fetchAddresses = async () => {
