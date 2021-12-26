@@ -15,10 +15,10 @@ interface Props {
 
 function getChainNameAndColor(chainId: number) {
   const chains: { [id: number]: string[] } = {
-    1: ["Mainnet", "bg-gray-200"],
-    10: ["Optimism", "bg-red-200"],
-    42161: ["Arbitrum", "bg-blue-200"],
-    137: ["Polygon", "bg-indigo-300"],
+    1: ["Mainnet", "bg-gray-200", "ethereum"],
+    10: ["Optimism", "bg-red-200", "optimism"],
+    42161: ["Arbitrum", "bg-blue-200", "arbitrum"],
+    137: ["Polygon", "bg-indigo-300", "polygon"],
   };
 
   return chains[chainId] || chains[1];
@@ -32,7 +32,9 @@ function PoolButton({
   tabIndex,
   showNetwork,
 }: Props) {
-  const [chainName, chainColor] = getChainNameAndColor(baseToken.chainId);
+  const [chainName, chainColor, chainLogoName] = getChainNameAndColor(
+    baseToken.chainId
+  );
   return (
     <button
       className="focus:outline-none flex items-start p-1"
@@ -40,8 +42,16 @@ function PoolButton({
       onClick={onClick}
     >
       <div className="flex mr-4">
-        <TokenLogo name={quoteToken.name} address={quoteToken.address} />
-        <TokenLogo name={baseToken.name} address={baseToken.address} />
+        <TokenLogo
+          chain={chainLogoName}
+          name={quoteToken.name}
+          address={quoteToken.address}
+        />
+        <TokenLogo
+          chain={chainLogoName}
+          name={baseToken.name}
+          address={baseToken.address}
+        />
       </div>
       <div className="flex flex-col mx-2">
         <div>
