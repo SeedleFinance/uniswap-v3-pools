@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useWeb3React } from "@web3-react/core";
 
+import { injectedConnector } from "./utils/connectors";
 import Footer from "./Footer";
 import { Button } from "./ui/Button";
 
 function Landing() {
+  const { activate } = useWeb3React("injected");
   const [addresses, setAddresses] = useState<string[]>([]);
 
   const handleInput = (ev: { target: any }) => {
@@ -21,6 +24,12 @@ function Landing() {
     url.search = `?${parts.join("&")}`;
 
     window.location.href = url.href;
+  };
+
+  const handleConnectWallet = () => {
+    activate(injectedConnector, (err) => {
+      console.error(err);
+    });
   };
 
   return (
@@ -56,9 +65,12 @@ function Landing() {
         </div>
       )}
 
-      <div className="text-center text-md text-gray-600">
+      <button
+        className="text-center text-md text-gray-600"
+        onClick={handleConnectWallet}
+      >
         Or connect your Metamask wallet.
-      </div>
+      </button>
       <Footer />
     </div>
   );
