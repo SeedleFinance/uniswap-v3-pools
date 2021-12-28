@@ -4,6 +4,7 @@ import { Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { PoolState } from "./hooks/usePoolsState";
 import { useEthPrice } from "./hooks/useEthPrice";
 import { usePoolsForNetwork } from "./hooks/usePoolsForNetwork";
+import { usePerpV2 } from "./hooks/usePerpV2";
 
 import { DAI, USDC, USDT, PAX, FEI, WETH9 } from "./constants";
 import { formatCurrency } from "./utils/numbers";
@@ -43,12 +44,23 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     usePoolsForNetwork(42161);
   const { loading: polygonLoading, pools: polygonPools } =
     usePoolsForNetwork(137);
+  const { loading: perpLoading, pools: perpPools } = usePerpV2(10);
 
   const loading = useMemo(() => {
     return (
-      mainnetLoading || optimismLoading || arbitrumLoading || polygonLoading
+      mainnetLoading ||
+      optimismLoading ||
+      arbitrumLoading ||
+      polygonLoading ||
+      perpLoading
     );
-  }, [mainnetLoading, optimismLoading, arbitrumLoading, polygonLoading]);
+  }, [
+    mainnetLoading,
+    optimismLoading,
+    arbitrumLoading,
+    polygonLoading,
+    perpLoading,
+  ]);
 
   const pools = useMemo(() => {
     return [

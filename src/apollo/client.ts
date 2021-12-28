@@ -55,6 +55,17 @@ export const polygonClient = new ApolloClient({
   },
 });
 
+export const perpOptimClient = new ApolloClient({
+  uri: "https://api.thegraph.com/subgraphs/name/perpetual-protocol/perpetual-v2-optimism",
+  cache: new InMemoryCache(),
+  queryDeduplication: false,
+  defaultOptions: {
+    watchQuery: {
+      fetchPolicy: "cache-and-network",
+    },
+  },
+});
+
 export function getClient(chainId: number) {
   const clients: { [key: number]: any } = {
     1: mainnetClient,
@@ -64,6 +75,14 @@ export function getClient(chainId: number) {
   };
 
   return clients[chainId] || mainnetClient;
+}
+
+export function getPerpClient(chainId: number) {
+  const clients: { [key: number]: any } = {
+    10: perpOptimClient,
+  };
+
+  return clients[chainId] || perpOptimClient;
 }
 
 export const healthClient = new ApolloClient({
