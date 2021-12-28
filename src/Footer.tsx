@@ -9,6 +9,10 @@ function Footer() {
           laktek.eth
         </a>{" "}
         |{" "}
+        <a className="text-blue-500" href="https://twitter.com/seedleFinance">
+          Twitter
+        </a>{" "}
+        |{" "}
         <a
           className="text-blue-500"
           href="https://github.com/laktek/uniswap-v3-pools"
