@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
 
 import { injectedConnector } from "./utils/connectors";
+import { BLOCK_EXPLORER_URL } from "./constants";
 
 interface AccountProps {
   address: string | null | undefined;
@@ -61,7 +62,7 @@ function Account({ address }: AccountProps) {
               : "/missing-icon.svg"
           }
         />
-        <a href={`https://etherscan.io/address/${address}`}>
+        <a href={`${BLOCK_EXPLORER_URL[chainId as number]}/address/${address}`}>
           {truncatedAddress}
         </a>
       </div>

@@ -219,8 +219,8 @@ export const ZERO_PERCENT = new Percent("0");
 export const Q128 = BigNumber.from(2).pow(128);
 
 export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
-  1: "https://etherscan.io/tx/",
-  10: "https://optimistic.etherscan.io/tx/",
-  42161: "https://arbiscan.io/tx/",
-  137: "https://polygonscan.com/tx/",
+  1: "https://etherscan.io",
+  10: "https://optimistic.etherscan.io",
+  42161: "https://arbiscan.io",
+  137: "https://polygonscan.com",
 };

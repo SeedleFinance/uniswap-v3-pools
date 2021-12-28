@@ -565,7 +565,7 @@ function NewPosition({
                   rel="noreferrer"
                   href={`${
                     BLOCK_EXPLORER_URL[chainId as number]
-                  }${transactionHash}`}
+                  }/tx/${transactionHash}`}
                 >
                   Etherscan
                 </a>

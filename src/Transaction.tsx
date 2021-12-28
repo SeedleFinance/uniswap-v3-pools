@@ -80,7 +80,7 @@ function Transaction({
     <tr className="">
       <td>
         <a
-          href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}${id}`}
+          href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${id}`}
           className="text-blue-500"
         >
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
