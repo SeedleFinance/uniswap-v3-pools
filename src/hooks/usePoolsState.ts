@@ -221,6 +221,7 @@ export function usePoolsState(
         )
       );
       results = compact(results);
+
       if (
         pools !== null &&
         results.length === pools.length &&

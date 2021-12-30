@@ -1,4 +1,5 @@
-import { useQuery } from "@apollo/client";
+import { useEffect } from "react";
+import { useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 const QUERY_ETH_PRICE = gql`
@@ -10,11 +11,18 @@ const QUERY_ETH_PRICE = gql`
 `;
 
 export function useEthPrice(): number {
-  const { loading, error, data } = useQuery(QUERY_ETH_PRICE, {
-    fetchPolicy: "network-only",
-  });
+  const [queryEthPrice, { loading, error, data }] = useLazyQuery(
+    QUERY_ETH_PRICE,
+    {
+      fetchPolicy: "network-only",
+    }
+  );
 
-  if (loading || error) {
+  useEffect(() => {
+    queryEthPrice();
+  }, []);
+
+  if (loading || error || !data) {
     return 0;
   }
 

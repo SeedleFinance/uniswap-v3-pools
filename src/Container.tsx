@@ -1,19 +1,16 @@
 import React from "react";
-import { useWeb3React } from "@web3-react/core";
 
 import { AppSettingsProvider } from "./AppSettingsProvider";
 import { CombinedPoolsProvider } from "./CombinedPoolsProvider";
+import { useAddress } from "./AddressProvider";
 import Account from "./Account";
 import GlobalCurrencySelector from "./GlobalCurrencySelector";
 import PageBody from "./PageBody";
 import Footer from "./Footer";
 import Landing from "./Landing";
 
-import { useAddresses } from "./hooks/useAddresses";
-
 function Container() {
-  const addresses = useAddresses();
-  const { account } = useWeb3React("injected");
+  const { addresses, injectedAddress } = useAddress();
 
   if (!addresses.length) {
     return <Landing />;
@@ -35,7 +32,7 @@ function Container() {
           </h2>
           <div className="w-60 flex justify-between">
             <GlobalCurrencySelector />
-            <Account address={account} />
+            <Account address={injectedAddress} />
           </div>
         </div>
         <div>

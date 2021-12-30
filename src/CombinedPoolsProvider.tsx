@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useMemo } from "react";
+import React, { ReactNode, useContext, useMemo, useCallback } from "react";
 import { Token, CurrencyAmount } from "@uniswap/sdk-core";
 
 import { PoolState } from "./hooks/usePoolsState";
@@ -51,7 +51,6 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
   }, [mainnetLoading, optimismLoading, arbitrumLoading, polygonLoading]);
 
   const pools = useMemo(() => {
-    console.log(polygonPools);
     return [
       ...mainnetPools,
       ...arbitrumPools,
@@ -78,59 +77,81 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     return false;
   };
 
-  const convertToGlobal = (val: CurrencyAmount<Token>): number => {
-    const valFloat = parseFloat(val.toSignificant(15));
-    const globalCurrencyToken = getGlobalCurrencyToken(val.currency.chainId);
-    if (
-      val.currency.equals(globalCurrencyToken) ||
-      (globalCurrencyToken.equals(USDC[val.currency.chainId]) &&
-        isStableCoin(val.currency))
-    ) {
-      return valFloat;
-    }
+  const convertToGlobal = useCallback(
+    (val: CurrencyAmount<Token>): number => {
+      const valFloat = parseFloat(val.toSignificant(15));
+      const globalCurrencyToken = getGlobalCurrencyToken(val.currency.chainId);
+      if (
+        val.currency.equals(globalCurrencyToken) ||
+        (globalCurrencyToken.equals(USDC[val.currency.chainId]) &&
+          isStableCoin(val.currency))
+      ) {
+        return valFloat;
+      }
 
-    if (globalCurrencyToken.equals(WETH9[val.currency.chainId])) {
-      return valFloat / ethPriceUSD;
-    } else {
-      return valFloat * ethPriceUSD;
-    }
-  };
+      if (globalCurrencyToken.equals(WETH9[val.currency.chainId])) {
+        return valFloat / ethPriceUSD;
+      } else {
+        return valFloat * ethPriceUSD;
+      }
+    },
+    [getGlobalCurrencyToken, ethPriceUSD]
+  );
 
-  const formatCurrencyWithSymbol = (val: number, chainId: number): string => {
-    const currencySymbol = getGlobalCurrencyToken(chainId).equals(USDC[chainId])
-      ? "$"
-      : "Ξ";
-    return formatCurrency(val, currencySymbol);
-  };
+  const formatCurrencyWithSymbol = useCallback(
+    (val: number, chainId: number): string => {
+      const currencySymbol = getGlobalCurrencyToken(chainId).equals(
+        USDC[chainId]
+      )
+        ? "$"
+        : "Ξ";
+      return formatCurrency(val, currencySymbol);
+    },
+    [getGlobalCurrencyToken]
+  );
 
-  const convertToGlobalFormatted = (val: CurrencyAmount<Token>): string => {
-    return formatCurrencyWithSymbol(convertToGlobal(val), val.currency.chainId);
-  };
+  const convertToGlobalFormatted = useCallback(
+    (val: CurrencyAmount<Token>): string => {
+      return formatCurrencyWithSymbol(
+        convertToGlobal(val),
+        val.currency.chainId
+      );
+    },
+    [formatCurrencyWithSymbol, convertToGlobal]
+  );
 
   // sort pools by liquidity
-  const sortedPools = pools.sort((a, b) => {
-    const aLiq = convertToGlobal(a.poolLiquidity);
-    const bLiq = convertToGlobal(b.poolLiquidity);
-    return bLiq - aLiq;
-  });
+  const sortedPools = useMemo(
+    () =>
+      pools.sort((a, b) => {
+        const aLiq = convertToGlobal(a.poolLiquidity);
+        const bLiq = convertToGlobal(b.poolLiquidity);
+        return bLiq - aLiq;
+      }),
+    [pools, convertToGlobal]
+  );
 
   // calculate total
-  const [totalLiquidity, totalUncollectedFees] = pools.reduce(
-    (accm, pool) => {
-      let totalLiquidity = 0;
-      let totalUncollectedFees = 0;
+  const [totalLiquidity, totalUncollectedFees] = useMemo(
+    () =>
+      pools.reduce(
+        (accm, pool) => {
+          let totalLiquidity = 0;
+          let totalUncollectedFees = 0;
 
-      const { poolLiquidity, poolUncollectedFees } = pool;
+          const { poolLiquidity, poolUncollectedFees } = pool;
 
-      const poolLiquidityInGlobal = convertToGlobal(poolLiquidity);
-      const uncollectedFeesInGlobal = convertToGlobal(poolUncollectedFees);
+          const poolLiquidityInGlobal = convertToGlobal(poolLiquidity);
+          const uncollectedFeesInGlobal = convertToGlobal(poolUncollectedFees);
 
-      totalLiquidity = accm[0] + poolLiquidityInGlobal;
-      totalUncollectedFees = accm[1] + uncollectedFeesInGlobal;
+          totalLiquidity = accm[0] + poolLiquidityInGlobal;
+          totalUncollectedFees = accm[1] + uncollectedFeesInGlobal;
 
-      return [totalLiquidity, totalUncollectedFees];
-    },
-    [0, 0]
+          return [totalLiquidity, totalUncollectedFees];
+        },
+        [0, 0]
+      ),
+    [pools, convertToGlobal]
   );
 
   return (

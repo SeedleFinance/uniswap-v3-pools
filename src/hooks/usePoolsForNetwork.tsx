@@ -4,7 +4,7 @@ import { Pool } from "@uniswap/v3-sdk";
 
 import { useChainWeb3React } from "./useChainWeb3React";
 import { useAppSettings } from "../AppSettingsProvider";
-import { useAddresses } from "./useAddresses";
+import { useAddress } from "../AddressProvider";
 import { getNetworkConnector } from "../utils/connectors";
 import { useQueryPositions, PositionState } from "./useQueryPositions";
 import { usePoolContracts } from "./useContract";
@@ -25,10 +25,10 @@ export function usePoolsForNetwork(chainId: number) {
     }
   }, [chainId, activate, active]);
 
-  const addresses = useAddresses();
+  const { addresses } = useAddress();
 
   const { loading: queryLoading, positionStates: allPositions } =
-    useQueryPositions(chainId as number, addresses);
+    useQueryPositions(chainId, addresses);
 
   const filteredPositions = useMemo(() => {
     if (filterClosed) {
@@ -67,10 +67,16 @@ export function usePoolsForNetwork(chainId: number) {
     return positionsByPool;
   }, [filteredPositions]);
 
-  const poolKeys = Object.keys(positionsByPool);
+  const poolKeys = useMemo(
+    () => Object.keys(positionsByPool),
+    [positionsByPool]
+  );
   const poolContracts = usePoolContracts(poolKeys, library);
   const pools = usePoolsState(poolContracts, positionsByPool);
-  const poolsLoading = poolKeys.length > 0 && pools === null;
+  const poolsLoading = useMemo(
+    () => poolKeys.length > 0 && pools === null,
+    [poolKeys, pools]
+  );
 
   return { loading: queryLoading || poolsLoading, pools: pools || [] };
 }

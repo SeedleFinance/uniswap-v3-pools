@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 
-import { useAddresses } from "./useAddresses";
+import { useAddress } from "../AddressProvider";
 import { getClient } from "../apollo/client";
 import { WETH9 } from "../constants";
 
@@ -85,7 +85,7 @@ export function useTransactions(
   token1: Token | null
 ) {
   const chainId = token0 ? token0.chainId : 1;
-  const addresses = useAddresses();
+  const { addresses } = useAddress();
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
     variables: { origins: addresses, poolAddress },
