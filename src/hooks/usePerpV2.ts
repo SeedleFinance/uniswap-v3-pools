@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
-import { useAddresses } from "./useAddresses";
+import { useAddress } from "../AddressProvider";
 import { getPerpClient } from "../apollo/client";
 
 const QUERY_OPEN_ORDERS = gql`
@@ -39,6 +39,7 @@ export function useQueryPerpOpenOrders(
   chainId: number,
   accounts: string[]
 ): { loading: boolean; positionStates: PositionState[] } {
+  console.count("called use query perp");
   const { loading, error, data } = useQuery(QUERY_OPEN_ORDERS, {
     variables: { accounts },
     fetchPolicy: "network-only",
@@ -50,7 +51,6 @@ export function useQueryPerpOpenOrders(
     return { loading: true, positionStates: [] };
   }
 
-  console.log(error);
   if (error || !data) {
     return { loading: false, positionStates: [] };
   }
@@ -64,7 +64,7 @@ export function usePerpV2(chainId: number): {
   loading: boolean;
   pools: PositionState[];
 } {
-  const addresses = useAddresses();
+  const { addresses } = useAddress();
   const { loading, positionStates } = useQueryPerpOpenOrders(
     chainId,
     addresses
