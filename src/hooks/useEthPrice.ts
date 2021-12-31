@@ -20,7 +20,8 @@ export function useEthPrice(): number {
 
   useEffect(() => {
     queryEthPrice();
-  }, []);
+    // eslint-disable-next-line
+  }, []); // we would want this to run only once
 
   if (loading || error || !data) {
     return 0;
