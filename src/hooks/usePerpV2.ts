@@ -8,6 +8,7 @@ import { Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Position, Pool, tickToPrice } from "@uniswap/v3-sdk";
 
 import { useAddress } from "../AddressProvider";
+import { useAppSettings } from "../AppSettingsProvider";
 import { getClient, getPerpClient } from "../apollo/client";
 import { PoolState } from "./usePoolsState";
 
@@ -191,19 +192,31 @@ export function usePerpV2(chainId: number): {
   loading: boolean;
   pools: PoolState[];
 } {
+  const { filterClosed } = useAppSettings();
   const { addresses } = useAddress();
   const { loading: loadingPositions, positionStates } = useQueryPerpOpenOrders(
     chainId,
     addresses
   );
 
+  const filteredPositionStates = useMemo(() => {
+    if (!positionStates.length) {
+      return [];
+    }
+    if (!filterClosed) {
+      return positionStates;
+    }
+
+    return positionStates.filter((ps) => ps && !ps.liquidity.isZero());
+  }, [filterClosed, positionStates]);
+
   const poolAddresses = useMemo(() => {
     if (loadingPositions) {
       return [];
     }
 
-    return uniq(positionStates.map(({ poolAddress }) => poolAddress));
-  }, [loadingPositions, positionStates]);
+    return uniq(filteredPositionStates.map(({ poolAddress }) => poolAddress));
+  }, [loadingPositions, filteredPositionStates]);
 
   const { loading: loadingPools, pools } = useQueryPools(
     chainId,
@@ -213,11 +226,11 @@ export function usePerpV2(chainId: number): {
   const positionsByPool = useMemo(() => {
     const positionsByPool: { [key: string]: any[] } = {};
 
-    if (!positionStates.length || !Object.keys(pools).length) {
+    if (!filteredPositionStates.length || !Object.keys(pools).length) {
       return positionsByPool;
     }
 
-    positionStates.forEach((position) => {
+    filteredPositionStates.forEach((position) => {
       // enhance position
       const pool = pools[position.poolAddress];
 
@@ -269,7 +282,7 @@ export function usePerpV2(chainId: number): {
     });
 
     return positionsByPool;
-  }, [pools, positionStates]);
+  }, [pools, filteredPositionStates]);
 
   const poolStates = useMemo(() => {
     if (!positionsByPool || !Object.keys(pools).length) {
