@@ -4,8 +4,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
-import { useEthToQuote } from "./useUSDConversion";
-import { WETH9 } from "../constants";
+import { useGasFee } from "./useGasFee";
+import { WETH9, MATIC } from "../constants";
 
 export function useTransactionTotals(
   transactions: any[],
@@ -19,7 +19,7 @@ export function useTransactionTotals(
     let totalBurnValue = CurrencyAmount.fromRawAmount(baseToken, 0);
     let totalCollectValue = CurrencyAmount.fromRawAmount(baseToken, 0);
     let totalTransactionCost = CurrencyAmount.fromRawAmount(
-      WETH9[chainId as number],
+      chainId === 137 ? MATIC[chainId as number] : WETH9[chainId as number],
       "0"
     );
 
@@ -58,21 +58,20 @@ export function useReturnValue(
   totalTransactionCost: CurrencyAmount<Token>,
   totalCurrentValue: CurrencyAmount<Token>
 ) {
-  const convertEthToQuote = useEthToQuote(baseToken);
+  const convertGasFee = useGasFee(baseToken);
 
   return useMemo(() => {
+    const totalTransactionCostConverted = convertGasFee(totalTransactionCost);
     const returnValue = totalCurrentValue
       .add(totalBurnValue)
       .add(totalCollectValue)
       .subtract(totalMintValue)
-      .subtract(convertEthToQuote(totalTransactionCost));
+      .subtract(totalTransactionCostConverted);
 
     const returnPercent =
       (parseFloat(returnValue.toSignificant(2)) /
         parseFloat(
-          totalMintValue
-            .add(convertEthToQuote(totalTransactionCost))
-            .toSignificant(2)
+          totalMintValue.add(totalTransactionCostConverted).toSignificant(2)
         )) *
       100;
 
@@ -83,7 +82,7 @@ export function useReturnValue(
     totalCollectValue,
     totalTransactionCost,
     totalCurrentValue,
-    convertEthToQuote,
+    convertGasFee,
   ]);
 }
 

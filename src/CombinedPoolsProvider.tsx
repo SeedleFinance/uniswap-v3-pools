@@ -6,7 +6,7 @@ import { useEthPrice } from "./hooks/useEthPrice";
 import { usePoolsForNetwork } from "./hooks/usePoolsForNetwork";
 import { usePerpV2 } from "./hooks/usePerpV2";
 
-import { DAI, USDC, USDT, PAX, FEI, WETH9 } from "./constants";
+import { DAI, USDC, USDT, PAX, FEI, WETH9, vUSD, MATIC } from "./constants";
 import { formatCurrency } from "./utils/numbers";
 import { useAppSettings } from "./AppSettingsProvider";
 
@@ -68,8 +68,9 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
       ...arbitrumPools,
       ...optimismPools,
       ...polygonPools,
+      ...perpPools,
     ];
-  }, [mainnetPools, arbitrumPools, optimismPools, polygonPools]);
+  }, [mainnetPools, arbitrumPools, optimismPools, polygonPools, perpPools]);
 
   const empty = useMemo(() => !loading && !pools.length, [loading, pools]);
 
@@ -83,6 +84,8 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     } else if (token.equals(PAX)) {
       return true;
     } else if (token.equals(FEI)) {
+      return true;
+    } else if (token.equals(vUSD)) {
       return true;
     }
 
@@ -99,6 +102,14 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
           isStableCoin(val.currency))
       ) {
         return valFloat;
+      }
+
+      if (
+        val.currency.chainId === 137 &&
+        val.currency.equals(MATIC[val.currency.chainId])
+      ) {
+        // FIXME: get dynamic MATIC value
+        return valFloat * 2.5;
       }
 
       if (globalCurrencyToken.equals(WETH9[val.currency.chainId])) {

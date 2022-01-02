@@ -5,7 +5,7 @@ import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 
 import { useAddress } from "../AddressProvider";
 import { getClient } from "../apollo/client";
-import { WETH9 } from "../constants";
+import { WETH9, MATIC } from "../constants";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origins: [String]!, $poolAddress: String!) {
@@ -104,7 +104,7 @@ export function useTransactions(
     const price = BigNumber.from(transaction.gasPrice);
     const cost = used.mul(price);
     const costCurrency = CurrencyAmount.fromRawAmount(
-      WETH9[token0.chainId],
+      token0.chainId === 137 ? MATIC[token0.chainId] : WETH9[token0.chainId],
       cost.toString()
     );
 

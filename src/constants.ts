@@ -138,6 +138,24 @@ export const PAX = new Token(
   "Paxos Standard"
 );
 
+export const vUSD = new Token(
+  10,
+  "0xC84Da6c8ec7A57cD10B939E79eaF9d2D17834E04",
+  18,
+  "vUSD",
+  "vUSD"
+);
+
+export const MATIC: { [chainId: number]: Token } = {
+  137: new Token(
+    137,
+    "0x0000000000000000000000000000000000001010",
+    18,
+    "MATIC",
+    "Matic Token"
+  ),
+};
+
 export const WETH9: { [chainId: number]: Token } = {
   1: new Token(
     1,
