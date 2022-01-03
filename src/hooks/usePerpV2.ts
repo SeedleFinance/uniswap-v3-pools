@@ -354,7 +354,9 @@ export function usePerpV2(chainId: number): {
 
       positions.forEach(
         ({ entity, positionLiquidity, positionUncollectedFees }) => {
-          //rawPoolLiquidity = rawPoolLiquidity.add(entity.liquidity);
+          rawPoolLiquidity = rawPoolLiquidity.add(
+            BigNumber.from(entity.liquidity.toString())
+          );
           poolLiquidity = poolLiquidity.add(positionLiquidity);
           poolUncollectedFees = poolUncollectedFees.add(
             positionUncollectedFees
