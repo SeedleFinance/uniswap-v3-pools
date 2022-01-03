@@ -12,6 +12,9 @@ import { abi as V3PoolABI } from "@uniswap/v3-core/artifacts/contracts/UniswapV3
 import ERC20_ABI from "../abis/erc20.json";
 import ERC20_BYTES32_ABI from "../abis/erc20_bytes32.json";
 
+import PerpMainMetadataOptimism from "@perp/curie-contract/metadata/optimism.json";
+import { abi as PerpOrderBookABI } from "@perp/curie-contract/artifacts/contracts/OrderBook.sol/OrderBook.json";
+
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../constants";
 
 import { NonfungiblePositionManager } from "../types/v3/NonfungiblePositionManager";
@@ -167,6 +170,21 @@ export function usePoolContracts(
   return useContractBulk(
     addresses,
     V3PoolABI,
+    withSignerIfPossible,
+    providerLibrary
+  );
+}
+
+export function usePerpOrderBookContract(
+  providerLibrary?: Web3Provider,
+  withSignerIfPossible?: boolean
+) {
+  const { contracts } = PerpMainMetadataOptimism;
+  const { address } = contracts.OrderBook;
+
+  return useContract(
+    address,
+    PerpOrderBookABI,
     withSignerIfPossible,
     providerLibrary
   );

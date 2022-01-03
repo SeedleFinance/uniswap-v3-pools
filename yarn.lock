@@ -2135,6 +2135,11 @@
   resolved "https://registry.yarnpkg.com/@openzeppelin/contracts/-/contracts-3.4.1-solc-0.7-2.tgz#371c67ebffe50f551c3146a9eec5fe6ffe862e92"
   integrity sha512-tAG9LWg8+M2CMu7hIsqHPaTyG4uDzjr6mhvH96LvOpLZZj6tgzTluBt+LsCf1/QaYrlis6pITvpIaIhE+iZB+Q==
 
+"@perp/curie-contract@^1.1.3-staging":
+  version "1.1.3-staging"
+  resolved "https://registry.yarnpkg.com/@perp/curie-contract/-/curie-contract-1.1.3-staging.tgz#daba078397dfa488c5064e39a814e8e981644feb"
+  integrity sha512-y0C0OQX6mqAl+s5dhjYokMf/73/02h8a1iSXKgdzQDSm3cGC6378aLrWrh2UXUdOTOW7Qf/Fm51pNAEXo6s58g==
+
 "@pmmmwh/react-refresh-webpack-plugin@0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.4.3.tgz#1eec460596d200c0236bf195b078a5d1df89b766"

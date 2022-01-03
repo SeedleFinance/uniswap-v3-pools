@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { uniq } from "lodash";
+import { uniq, flatten } from "lodash";
 import gql from "graphql-tag";
 import JSBI from "jsbi";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -9,6 +9,8 @@ import { Position, Pool, tickToPrice } from "@uniswap/v3-sdk";
 
 import { useAddress } from "../AddressProvider";
 import { useAppSettings } from "../AppSettingsProvider";
+import { useChainWeb3React } from "./useChainWeb3React";
+import { usePerpOrderBookContract } from "./useContract";
 import { getClient, getPerpClient } from "../apollo/client";
 import { PoolState } from "./usePoolsState";
 
@@ -50,6 +52,8 @@ const QUERY_OPEN_ORDERS = gql`
       marketRef {
         pool
       }
+      maker
+      baseToken
     }
   }
 `;
@@ -67,6 +71,8 @@ export interface PerpPositionState {
   collectedFee: number;
   timestamp: Date;
   poolAddress: string;
+  maker: string;
+  baseTokenAddress: string;
 }
 
 export function useQueryPerpOpenOrders(
@@ -107,11 +113,13 @@ export function useQueryPerpOpenOrders(
         lowerTick,
         upperTick,
         liquidity,
+        baseToken,
         baseAmount,
         quoteAmount,
         collectedFee,
         timestamp,
         marketRef,
+        maker,
       }: any) => ({
         id,
         tickLower: parseInt(lowerTick, 10),
@@ -122,11 +130,49 @@ export function useQueryPerpOpenOrders(
         collectedFee: parseFloat(collectedFee),
         timestamp: new Date(parseInt(timestamp, 10) * 1000),
         poolAddress: marketRef.pool,
+        maker,
+        baseTokenAddress: baseToken,
       })
     );
   }, [loading, error, data]);
 
   return { loading, positionStates };
+}
+
+export function usePerpUncollectedFees(
+  chainId: number,
+  positions: PerpPositionState[]
+) {
+  const { library } = useChainWeb3React(chainId);
+  const contract = usePerpOrderBookContract(library);
+
+  const [fees, setFees] = useState<BigNumber[]>([]);
+
+  useEffect(() => {
+    if (!contract || !positions.length) {
+      return;
+    }
+
+    const callContract = async () => {
+      let results = await Promise.all(
+        positions.map((pos: PerpPositionState) =>
+          contract.functions.getPendingFee(
+            pos.maker,
+            pos.baseTokenAddress,
+            pos.tickLower,
+            pos.tickUpper
+          )
+        )
+      );
+
+      results = flatten(results);
+      setFees(results);
+    };
+
+    callContract();
+  }, [positions, contract]);
+
+  return fees;
 }
 
 export function useQueryPools(chainId: number, addresses: string[]) {
@@ -210,6 +256,11 @@ export function usePerpV2(chainId: number): {
     return positionStates.filter((ps) => ps && !ps.liquidity.isZero());
   }, [filterClosed, positionStates]);
 
+  const uncollectedFeesByPosition = usePerpUncollectedFees(
+    chainId,
+    filteredPositionStates
+  );
+
   const poolAddresses = useMemo(() => {
     if (loadingPositions) {
       return [];
@@ -226,11 +277,15 @@ export function usePerpV2(chainId: number): {
   const positionsByPool = useMemo(() => {
     const positionsByPool: { [key: string]: any[] } = {};
 
-    if (!filteredPositionStates.length || !Object.keys(pools).length) {
+    if (
+      !filteredPositionStates.length ||
+      !Object.keys(pools).length ||
+      !uncollectedFeesByPosition.length
+    ) {
       return positionsByPool;
     }
 
-    filteredPositionStates.forEach((position) => {
+    filteredPositionStates.forEach((position, idx) => {
       // enhance position
       const pool = pools[position.poolAddress];
 
@@ -263,7 +318,7 @@ export function usePerpV2(chainId: number): {
       ];
       const positionUncollectedFees = CurrencyAmount.fromRawAmount(
         pool.token1,
-        0
+        uncollectedFeesByPosition[idx].toString()
       );
 
       const enhanced = {
@@ -282,16 +337,17 @@ export function usePerpV2(chainId: number): {
     });
 
     return positionsByPool;
-  }, [pools, filteredPositionStates]);
+  }, [pools, filteredPositionStates, uncollectedFeesByPosition]);
 
   const poolStates = useMemo(() => {
-    if (!positionsByPool || !Object.keys(pools).length) {
+    if (!Object.keys(positionsByPool).length || !Object.keys(pools).length) {
       return [];
     }
 
     return Object.entries(pools).map((entry) => {
       const [address, pool] = entry;
       const positions = positionsByPool[address];
+
       let rawPoolLiquidity = BigNumber.from(0);
       let poolLiquidity = CurrencyAmount.fromRawAmount(pool.token1, 0);
       let poolUncollectedFees = CurrencyAmount.fromRawAmount(pool.token1, 0);
