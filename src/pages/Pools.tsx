@@ -34,6 +34,7 @@ function Pools() {
         <a
           href="https://blog.perp.fi/how-to-provide-liquidity-on-perp-v2-9064ed085d7f"
           className="underline"
+          rel="noreferrer"
           target="_blank"
         >
           Learn how to provide leveraged liquidity in Perp V2.
