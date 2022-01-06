@@ -1,19 +1,20 @@
-import { ethers } from "ethers";
 import { useEffect, useState } from "react";
+import { useWeb3React } from "@web3-react/core";
+import { isAddress } from "@ethersproject/address";
 
 const useENS = (address: string | null | undefined) => {
+  const { library } = useWeb3React("mainnet");
   const [ensName, setENSName] = useState<string | null>();
 
   useEffect(() => {
     const resolveENS = async () => {
-      if (address && ethers.utils.isAddress(address)) {
-        const provider = ethers.providers.getDefaultProvider();
-        const ensName = await provider.lookupAddress(address);
+      if (library && address && isAddress(address)) {
+        const ensName = await library.lookupAddress(address);
         setENSName(ensName);
       }
     };
     resolveENS();
-  }, [address]);
+  }, [address, library]);
 
   return { ensName };
 };
