@@ -3,6 +3,8 @@ import { useWeb3React } from "@web3-react/core";
 
 import { injectedConnector } from "./utils/connectors";
 import { BLOCK_EXPLORER_URL } from "./constants";
+import useENS from "./hooks/useENS";
+import Davatar from "@davatar/react";
 
 interface AccountProps {
   address: string | null | undefined;
@@ -10,6 +12,7 @@ interface AccountProps {
 
 function Account({ address }: AccountProps) {
   const { chainId, activate } = useWeb3React("injected");
+  const { ensName } = useENS(address);
 
   const truncatedAddress = useMemo(() => {
     if (!address || !address.length) {
@@ -62,9 +65,20 @@ function Account({ address }: AccountProps) {
               : "/missing-icon.svg"
           }
         />
-        <a href={`${BLOCK_EXPLORER_URL[chainId as number]}/address/${address}`}>
-          {truncatedAddress}
-        </a>
+        <div className="flex items-center">
+          <div className="mr-2">
+            <Davatar
+              size={20}
+              address={address}
+              generatedAvatarType="jazzicon"
+            />
+          </div>
+          <a
+            href={`${BLOCK_EXPLORER_URL[chainId as number]}/address/${address}`}
+          >
+            {ensName || truncatedAddress}
+          </a>
+        </div>
       </div>
     </>
   );

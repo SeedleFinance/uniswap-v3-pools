@@ -4,6 +4,7 @@
   "dependencies": {
     "@apollo/client": "^3.3.18",
     "@craco/craco": "^6.1.2",
+    "@davatar/react": "^1.8.1",
     "@ethersproject/address": "^5.1.0",
     "@ethersproject/constants": "^5.1.0",
     "@ethersproject/contracts": "^5.1.1",
