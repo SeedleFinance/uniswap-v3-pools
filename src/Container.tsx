@@ -30,7 +30,7 @@ function Container() {
               <span>Seedle</span>
             </a>
           </h2>
-          <div className="w-60 flex justify-between">
+          <div className="w-72 flex justify-between">
             <GlobalCurrencySelector />
             <Account address={injectedAddress} />
           </div>
