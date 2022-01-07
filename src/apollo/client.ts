@@ -45,7 +45,7 @@ export const optimismClient = new ApolloClient({
 });
 
 export const polygonClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
+  uri: "https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-polygon",
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
