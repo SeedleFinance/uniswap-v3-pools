@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Token } from "@uniswap/sdk-core";
 
-import { usePools } from "../../PoolsProvider";
-import { useAppSettings } from "../../AppSettingsProvider";
+import { usePoolsForNetwork } from "../../hooks/usePoolsForNetwork";
 
 import Pools from "./Pools";
 
 interface Props {
+  chainId: number;
   filter: string;
   onPoolClick: (
     baseToken: Token,
@@ -16,23 +16,8 @@ interface Props {
   ) => void;
 }
 
-function ExistingPools({ onPoolClick, filter }: Props) {
-  const { pools } = usePools();
-  const { filterClosed, setFilterClosed } = useAppSettings();
-
-  useEffect(() => {
-    const currentFilterClosed = filterClosed;
-    if (currentFilterClosed) {
-      setFilterClosed(false);
-    }
-
-    return function reset() {
-      if (currentFilterClosed) {
-        setFilterClosed(true);
-      }
-    };
-    // eslint-disable-next-line
-  }, []); // this should run only on mount/unmount
+function ExistingPools({ chainId, onPoolClick, filter }: Props) {
+  const { pools } = usePoolsForNetwork(chainId, true);
 
   return <Pools pools={pools} filter={filter} onPoolClick={onPoolClick} />;
 }

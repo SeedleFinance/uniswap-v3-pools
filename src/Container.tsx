@@ -1,7 +1,6 @@
 import React from "react";
 
 import { AppSettingsProvider } from "./AppSettingsProvider";
-import { CombinedPoolsProvider } from "./CombinedPoolsProvider";
 import { useAddress } from "./AddressProvider";
 import Account from "./Account";
 import GlobalCurrencySelector from "./GlobalCurrencySelector";
@@ -37,9 +36,7 @@ function Container() {
         </div>
         <div>
           <div>
-            <CombinedPoolsProvider>
-              <PageBody />
-            </CombinedPoolsProvider>
+            <PageBody />
           </div>
           <Footer />
         </div>

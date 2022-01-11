@@ -176,7 +176,11 @@ function AddLiquidity({ tab }: Props) {
           ) : selectedTab === "new" ? (
             <NewPools onPoolClick={handlePoolClick} filter={searchInput} />
           ) : (
-            <ExistingPools onPoolClick={handlePoolClick} filter={searchInput} />
+            <ExistingPools
+              chainId={chainId || 1}
+              onPoolClick={handlePoolClick}
+              filter={searchInput}
+            />
           )}
         </div>
       </div>

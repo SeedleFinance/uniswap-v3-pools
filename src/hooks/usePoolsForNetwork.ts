@@ -10,7 +10,7 @@ import { useQueryPositions, PositionState } from "./useQueryPositions";
 import { usePoolContracts } from "./useContract";
 import { usePoolsState } from "./usePoolsState";
 
-export function usePoolsForNetwork(chainId: number) {
+export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const { library, activate, active } = useChainWeb3React(chainId);
   const { filterClosed } = useAppSettings();
 
@@ -31,13 +31,14 @@ export function usePoolsForNetwork(chainId: number) {
     useQueryPositions(chainId, addresses);
 
   const filteredPositions = useMemo(() => {
-    if (filterClosed) {
-      return allPositions.filter(
-        (position) => position && !position.liquidity.isZero()
-      );
+    if (noFilterClosed || !filterClosed) {
+      return allPositions;
     }
-    return allPositions;
-  }, [allPositions, filterClosed]);
+
+    return allPositions.filter(
+      (position) => position && !position.liquidity.isZero()
+    );
+  }, [allPositions, filterClosed, noFilterClosed]);
 
   const positionsByPool = useMemo((): {
     [key: string]: PositionState[];

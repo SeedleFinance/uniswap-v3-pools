@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
+import { CombinedPoolsProvider } from "./CombinedPoolsProvider";
 import PoolsPage from "./pages/Pools";
 import AddLiquidityPage from "./pages/AddLiquidity/index";
 
@@ -20,7 +21,9 @@ function PageBody() {
         </Route>
 
         <Route path="/">
-          <PoolsPage />
+          <CombinedPoolsProvider>
+            <PoolsPage />
+          </CombinedPoolsProvider>
         </Route>
       </Switch>
     </Router>
