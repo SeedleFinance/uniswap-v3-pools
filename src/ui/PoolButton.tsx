@@ -64,6 +64,7 @@ function PoolButton({
             className={`rounded-md text-sm text-gray-800 mt-2 px-1 ${chainColor}`}
           >
             {chainName}
+            {baseToken.symbol === "vUSD" ? " / PerpV2" : ""}
           </div>
         )}
       </div>

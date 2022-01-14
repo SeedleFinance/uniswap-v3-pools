@@ -29,17 +29,6 @@ function Pools() {
 
   return (
     <div className="w-full">
-      <div className="my-4 p-2 bg-yellow-100 border-yellow-700 rounded ">
-        Seedle now shows the performance of your Perp V2 positions.{" "}
-        <a
-          href="https://blog.perp.fi/how-to-provide-liquidity-on-perp-v2-9064ed085d7f"
-          className="underline"
-          rel="noreferrer"
-          target="_blank"
-        >
-          Learn how to provide leveraged liquidity in Perp V2.
-        </a>
-      </div>
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center justify-between w-5/12  pr-24">
           <div>
