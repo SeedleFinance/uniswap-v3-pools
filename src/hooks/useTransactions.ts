@@ -170,7 +170,12 @@ export function useTransactions(
       tx.gas = {
         ...tx.gas,
         cost: BigNumber.from(0),
-        costCurrency: CurrencyAmount.fromRawAmount(WETH9[token0.chainId], "0"),
+        costCurrency: CurrencyAmount.fromRawAmount(
+          token0.chainId === 137
+            ? MATIC[token0.chainId]
+            : WETH9[token0.chainId],
+          0
+        ),
       };
 
       // subtract the burn amount to get only the fees collected

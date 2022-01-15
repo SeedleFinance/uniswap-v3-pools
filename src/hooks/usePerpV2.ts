@@ -316,9 +316,12 @@ export function usePerpV2(chainId: number): {
         CurrencyAmount.fromRawAmount(pool.token0, 0),
         CurrencyAmount.fromRawAmount(pool.token1, 0),
       ];
+
       const positionUncollectedFees = CurrencyAmount.fromRawAmount(
         pool.token1,
-        uncollectedFeesByPosition[idx].toString()
+        uncollectedFeesByPosition.length
+          ? uncollectedFeesByPosition[idx].toString()
+          : 0
       );
 
       const enhanced = {
