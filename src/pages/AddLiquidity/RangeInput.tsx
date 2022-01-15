@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   tickToPrice,
   priceToClosestTick,
@@ -18,6 +18,7 @@ interface RangeInputProps {
   tabIndex?: number;
   reverse: boolean;
   onChange: (value: number) => void;
+  onFocus: (el: HTMLInputElement | null) => void;
 }
 
 function RangeInput({
@@ -29,7 +30,10 @@ function RangeInput({
   tabIndex,
   reverse,
   onChange,
+  onFocus,
 }: RangeInputProps) {
+  const inputEl = useRef(null);
+
   const [input, setInput] = useState<string>("0.00");
   const [tick, setTick] = useState<number>(initTick);
 
@@ -92,6 +96,12 @@ function RangeInput({
     setTick(reverse ? tick - tickSpacing : tick + tickSpacing);
   };
 
+  const handleFocus = () => {
+    if (inputEl.current) {
+      onFocus(inputEl.current);
+    }
+  };
+
   return (
     <div className="px-3 py-2 mr-3 border rounded border-gray-400 flex flex-col items-center">
       <div className="my-2 text-gray-600">{label}</div>
@@ -105,9 +115,11 @@ function RangeInput({
           -
         </button>
         <input
+          ref={inputEl}
           className="w-36 p-2 text-xl focus:outline-none text-center"
           value={input}
           onChange={handleInput}
+          onFocus={handleFocus}
           onBlur={calculateTick}
           tabIndex={tabIndex}
           inputMode="decimal"

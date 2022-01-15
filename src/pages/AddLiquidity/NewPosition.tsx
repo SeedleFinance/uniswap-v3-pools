@@ -77,6 +77,9 @@ function NewPosition({
 
   const [transactionPending, setTransactionPending] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
+
+  const [focusedRangeInput, setFocusedRangeInput] =
+    useState<HTMLInputElement | null>(null);
   const [alert, setAlert] =
     useState<{ message: string; level: AlertLevel } | null>(null);
 
@@ -247,7 +250,7 @@ function NewPosition({
 
   const currentPrice = useMemo(() => {
     if (!pool || !baseToken || !quoteToken) {
-      return 0;
+      return "0";
     }
 
     const { tickCurrent } = pool;
@@ -412,6 +415,14 @@ function NewPosition({
     setAlert(null);
   };
 
+  const handleCurrentPriceClick = () => {
+    if (focusedRangeInput) {
+      const curLength = focusedRangeInput.value.length;
+      focusedRangeInput.setRangeText(currentPrice, 0, curLength, "start");
+      focusedRangeInput.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+  };
+
   return (
     <div className="w-1/2">
       <div className="flex flex-col my-2">
@@ -459,7 +470,10 @@ function NewPosition({
       <div className="flex flex-col my-2 w-full">
         <div>Range</div>
         <div className="text-sm">
-          Current price: <span className="font-bold">{currentPrice}&nbsp;</span>
+          Current price:{" "}
+          <button onClick={handleCurrentPriceClick} className="font-bold">
+            {currentPrice}&nbsp;
+          </button>
           <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
         </div>
         <div className="w-1/3 my-2 flex justify-between">
@@ -472,6 +486,7 @@ function NewPosition({
             tabIndex={4}
             reverse={rangeReverse}
             onChange={tickLowerChange}
+            onFocus={(el) => setFocusedRangeInput(el)}
           />
           <RangeInput
             label="Max"
@@ -482,6 +497,7 @@ function NewPosition({
             tabIndex={5}
             reverse={rangeReverse}
             onChange={tickUpperChange}
+            onFocus={(el) => setFocusedRangeInput(el)}
           />
         </div>
       </div>
