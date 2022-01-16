@@ -3,7 +3,7 @@ import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
-import { usePools } from "./CombinedPoolsProvider";
+import { useCurrencyConversions } from "./CurrencyConversionsProvider";
 import TokenSymbol from "./ui/TokenLabel";
 
 import { BLOCK_EXPLORER_URL } from "./constants";
@@ -33,7 +33,8 @@ function Transaction({
   priceUpper,
   gas,
 }: TransactionProps) {
-  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
+    useCurrencyConversions();
   const totalLiquidity = useMemo(() => {
     if (!baseToken || !pool) {
       return 0;

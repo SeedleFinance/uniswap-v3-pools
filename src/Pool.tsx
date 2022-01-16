@@ -17,7 +17,7 @@ import {
   useAPR,
   useFeeAPY,
 } from "./hooks/calculations";
-import { usePools } from "./CombinedPoolsProvider";
+import { useCurrencyConversions } from "./CurrencyConversionsProvider";
 import { WETH9 } from "./constants";
 
 import Positions from "./Positions";
@@ -56,7 +56,7 @@ function Pool({
   rawPoolLiquidity,
   poolUncollectedFees,
 }: PoolProps) {
-  const { convertToGlobalFormatted } = usePools();
+  const { convertToGlobalFormatted } = useCurrencyConversions();
 
   const { token0, token1 } = entity;
 

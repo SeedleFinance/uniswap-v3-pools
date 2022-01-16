@@ -1,21 +1,56 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
 import { usePools } from "../CombinedPoolsProvider";
 import { PoolState } from "../hooks/usePoolsState";
+import { useCurrencyConversions } from "../CurrencyConversionsProvider";
 import Pool from "../Pool";
 import FilterClosedToggle from "../FilterClosedToggle";
 import DownloadCSV from "../DownloadCSV";
 
 function Pools() {
-  const {
-    loading,
-    empty,
-    pools,
-    totalLiquidity,
-    totalUncollectedFees,
-    formatCurrencyWithSymbol,
-  } = usePools();
+  const { convertToGlobal, formatCurrencyWithSymbol } =
+    useCurrencyConversions();
+
+  const { loading, empty, pools } = usePools();
+
+  // sort pools by liquidity
+  const sortedPools = useMemo(() => {
+    if (loading) {
+      return [];
+    }
+
+    return pools.sort((a, b) => {
+      const aLiq = convertToGlobal(a.poolLiquidity);
+      const bLiq = convertToGlobal(b.poolLiquidity);
+      return bLiq - aLiq;
+    });
+  }, [loading, pools, convertToGlobal]);
+
+  // calculate total
+  const [totalLiquidity, totalUncollectedFees] = useMemo(() => {
+    if (loading) {
+      return [0, 0];
+    }
+
+    return pools.reduce(
+      (accm, pool) => {
+        let totalLiquidity = 0;
+        let totalUncollectedFees = 0;
+
+        const { poolLiquidity, poolUncollectedFees } = pool;
+
+        const poolLiquidityInGlobal = convertToGlobal(poolLiquidity);
+        const uncollectedFeesInGlobal = convertToGlobal(poolUncollectedFees);
+
+        totalLiquidity = accm[0] + poolLiquidityInGlobal;
+        totalUncollectedFees = accm[1] + uncollectedFeesInGlobal;
+
+        return [totalLiquidity, totalUncollectedFees];
+      },
+      [0, 0]
+    );
+  }, [loading, pools, convertToGlobal]);
 
   if (loading) {
     return (
@@ -80,7 +115,7 @@ function Pools() {
             </Link>
           </>
         ) : (
-          pools.map(
+          sortedPools.map(
             ({
               key,
               address,

@@ -13,7 +13,7 @@ import {
 
 import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
 
-import { usePools } from "./CombinedPoolsProvider";
+import { useCurrencyConversions } from "./CurrencyConversionsProvider";
 import Transaction from "./Transaction";
 import TokenLabel from "./ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
@@ -43,7 +43,8 @@ function Position({
   priceUpper,
   transactions,
 }: PositionProps) {
-  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = usePools();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
+    useCurrencyConversions();
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);

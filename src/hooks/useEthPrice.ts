@@ -15,6 +15,7 @@ export function useEthPrice(): number {
     QUERY_ETH_PRICE,
     {
       fetchPolicy: "network-only",
+      nextFetchPolicy: "cache-first",
     }
   );
 

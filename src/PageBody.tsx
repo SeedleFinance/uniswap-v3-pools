@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { CombinedPoolsProvider } from "./CombinedPoolsProvider";
+import { CurrencyConversionsProvider } from "./CurrencyConversionsProvider";
 import PoolsPage from "./pages/Pools";
 import AddLiquidityPage from "./pages/AddLiquidity/index";
 
@@ -22,7 +23,9 @@ function PageBody() {
 
         <Route path="/">
           <CombinedPoolsProvider>
-            <PoolsPage />
+            <CurrencyConversionsProvider>
+              <PoolsPage />
+            </CurrencyConversionsProvider>
           </CombinedPoolsProvider>
         </Route>
       </Switch>

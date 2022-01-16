@@ -469,7 +469,7 @@ function NewPosition({
 
       <div className="flex flex-col my-2 w-full">
         <div>Range</div>
-        <div className="text-sm">
+        <div className="text-sm py-1">
           Current price:{" "}
           <button onClick={handleCurrentPriceClick} className="font-bold">
             {currentPrice}&nbsp;
