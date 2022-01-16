@@ -12,13 +12,19 @@ function PageBody() {
     <Router>
       <Switch>
         <Route path="/add/new">
-          <AddLiquidityPage tab="new" />
+          <CurrencyConversionsProvider>
+            <AddLiquidityPage tab="new" />
+          </CurrencyConversionsProvider>
         </Route>
         <Route path="/add/existing">
-          <AddLiquidityPage tab="existing" />
+          <CurrencyConversionsProvider>
+            <AddLiquidityPage tab="existing" />
+          </CurrencyConversionsProvider>
         </Route>
         <Route path="/add/:quoteTokenSymbol/:baseTokenSymbol/:fee">
-          <AddLiquidityPage tab="new" />
+          <CurrencyConversionsProvider>
+            <AddLiquidityPage tab="new" />
+          </CurrencyConversionsProvider>
         </Route>
 
         <Route path="/">

@@ -5,11 +5,12 @@ import {
   tickToPrice,
   NonfungiblePositionManager,
 } from "@uniswap/v3-sdk";
-import { Token, Ether } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount, Ether } from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
+import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
@@ -56,6 +57,7 @@ function NewPosition({
     [baseToken, quoteToken],
     account
   );
+  const { convertToGlobalFormatted } = useCurrencyConversions();
 
   const [baseAmount, setBaseAmount] = useState<number>(0);
   const [quoteAmount, setQuoteAmount] = useState<number>(0);
@@ -199,6 +201,19 @@ function NewPosition({
       quoteAmount
     );
   }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance]);
+
+  const totalPositionValue = useMemo(() => {
+    if (!pool) {
+      return CurrencyAmount.fromRawAmount(baseToken, 0);
+    }
+
+    const quoteRaw = Math.ceil(quoteAmount * Math.pow(10, quoteToken.decimals));
+    const baseRaw = Math.ceil(baseAmount * Math.pow(10, baseToken.decimals));
+    return pool
+      .priceOf(quoteToken)
+      .quote(CurrencyAmount.fromRawAmount(quoteToken, quoteRaw))
+      .add(CurrencyAmount.fromRawAmount(baseToken, baseRaw));
+  }, [pool, quoteToken, baseToken, baseAmount, quoteAmount]);
 
   const calculateBaseAndQuoteAmounts = (val0: number, val1: number) => {
     if (!pool) {
@@ -522,15 +537,22 @@ function NewPosition({
             onChange={baseDepositChange}
           />
         </div>
+        <div className="w-64 mb-2 text-sm">
+          Total position value:{" "}
+          <span className="font-bold">
+            {convertToGlobalFormatted(totalPositionValue)}
+          </span>
+        </div>
       </div>
 
-      <div className="w-48 my-2 flex justify-between">
+      <div className="w-64 my-2 flex">
         {baseTokenNeedApproval ? (
           <Button
             onClick={() => onApprove(0, baseAmount)}
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
+            className="mr-2"
           >
             Approve {baseToken.symbol}
           </Button>
@@ -540,6 +562,7 @@ function NewPosition({
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
+            className="mr-2"
           >
             Approve {quoteToken.symbol}
           </Button>
@@ -549,6 +572,7 @@ function NewPosition({
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
+            className="mr-2"
           >
             Add Liquidity
           </Button>
