@@ -20,9 +20,6 @@ function NewPools({ onPoolClick, filter }: Props) {
   const { chainId } = useWeb3React("injected");
   const date = +endOfYesterday().setUTCHours(0, 0, 0, 0) / 1000;
   const pools = useTopPools(chainId || 1, date);
-  if (!chainId) {
-    return null;
-  }
 
   return <Pools pools={pools} filter={filter} onPoolClick={onPoolClick} />;
 }
