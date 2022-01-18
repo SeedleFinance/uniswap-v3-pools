@@ -52,7 +52,7 @@
     "compile-external-abi-types": "yarn typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
     "compile-v3-contract-types": "yarn typechain --target ethers-v5 --out-dir src/types/v3 './node_modules/@uniswap/?(v3-core|v3-periphery)/artifacts/contracts/**/*.json'",
     "start": "yarn compile-contract-types && parcel ./public/index.html",
-    "build": "yarn compile-contract-types && parcel build",
+    "build": "yarn compile-contract-types && parcel build ./public/index.html",
     "test": "craco test",
     "eject": "react-scripts eject",
     "codegen:schema": "yarn apollo client:download-schema --endpoint=https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-testing",
