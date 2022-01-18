@@ -74,6 +74,7 @@ function Account({ address }: AccountProps) {
             />
           </div>
           <a
+            className="text-slate-600 dark:text-slate-300"
             href={`${BLOCK_EXPLORER_URL[chainId as number]}/address/${address}`}
           >
             {ensName || truncatedAddress}

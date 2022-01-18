@@ -97,8 +97,8 @@ function DepositInput({
         )
       </div>
       {disabled && (
-        <div className="absolute w-full -m-2 py-4 px-2 h-full bg-white bg-opacity-90">
-          <div className="text-sm text-center">
+        <div className="absolute w-full -m-2 py-4 px-2 h-full bg-white bg-opacity-90 dark:bg-slate-700">
+          <div className="text-sm text-center text-slate-600 dark:text-slate-300">
             The market price is outside your specified price range. Single-asset
             deposit only.
           </div>
