@@ -11,7 +11,10 @@ function TokenLogo({ chain, name, address, className }: Props) {
   const imgEl = useRef<HTMLImageElement>(null);
   const showFallbackImage = () => {
     if (imgEl.current) {
-      imgEl.current.src = "/missing-icon.svg";
+      imgEl.current.src = new URL(
+        "../../public/missing-icon.svg",
+        import.meta.url
+      );
     }
   };
 
