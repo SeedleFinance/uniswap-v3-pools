@@ -12,8 +12,8 @@ interface Props {
 
 function Positions({ positions, pool, baseToken }: Props) {
   return (
-    <div className="w-full flex flex-col my-2 border rounded p-2">
-      <table className="table-auto w-full">
+    <div className="w-full flex flex-col my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
+      <table className="table-auto w-full  text-slate-600 dark:text-slate-300">
         <thead>
           <tr className="text-left">
             <th className="pb-4">Range</th>
@@ -22,7 +22,7 @@ function Positions({ positions, pool, baseToken }: Props) {
             <th className="pb-4">Uncl. fees</th>
             <th className="pb-4">
               <span
-                style={{ borderBottom: "1px dotted", cursor: "help" }}
+                className="underline underline-offset-1 decoration-dotted cursor-help"
                 title="annualized fees earned over liquidity"
               >
                 Fee APY
@@ -30,7 +30,7 @@ function Positions({ positions, pool, baseToken }: Props) {
             </th>
             <th className="pb-4">
               <span
-                style={{ borderBottom: "1px dotted", cursor: "help" }}
+                className="underline underline-offset-1 decoration-dotted cursor-help"
                 title="liquidity gain + fees - gas cost"
               >
                 Net Return

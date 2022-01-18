@@ -45,7 +45,7 @@ function Account({ address }: AccountProps) {
   if (!address || !address.length) {
     return (
       <button
-        className="p-2 rounded-md border focus:outline-none focus:border-gray-400"
+        className="p-2 rounded-md border focus:outline-none border-slate-200 dark:border-slate-700 focus:border-slate-400 text-slate-800 dark:text-slate-100"
         onClick={connectWallet}
       >
         Connect Wallet
@@ -57,7 +57,7 @@ function Account({ address }: AccountProps) {
     <>
       <div className="p-2 rounded-md border flex items-center">
         <img
-          className={`w-6 h-6 mr-1 rounded-full bg-white text-sm`}
+          className={`w-6 h-6 mr-1 rounded-full bg-white dark:bg-slate-800 text-sm`}
           alt={`${chainName} logo`}
           src={
             chainName !== "unknown"

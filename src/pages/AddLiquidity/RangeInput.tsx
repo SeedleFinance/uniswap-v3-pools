@@ -104,10 +104,10 @@ function RangeInput({
 
   return (
     <div className="px-3 py-2 mr-3 border rounded border-gray-400 flex flex-col items-center">
-      <div className="my-2 text-gray-600">{label}</div>
+      <div className="my-2 text-slate-600 dark:text-slate-300">{label}</div>
       <div className="flex items-center">
         <button
-          className="text-2xl px-2 focus:outline-none bg-gray-200 border rounded focus:border-gray-400"
+          className="text-2xl px-2 focus:outline-none bg-slate-200 dark:bg-slate-700 border rounded focus:border-gray-400"
           tabIndex={tabIndex}
           onClick={decreaseValue}
           onBlur={calculateTick}
@@ -116,7 +116,7 @@ function RangeInput({
         </button>
         <input
           ref={inputEl}
-          className="w-36 p-2 text-xl focus:outline-none text-center"
+          className="w-36 p-2 text-xl focus:outline-none text-center bg-white dark:bg-slate-900"
           value={input}
           onChange={handleInput}
           onFocus={handleFocus}
@@ -125,7 +125,7 @@ function RangeInput({
           inputMode="decimal"
         />
         <button
-          className="text-2xl px-2 focus:outline-none bg-gray-200 border rounded focus:border-gray-400"
+          className="text-2xl px-2 focus:outline-none bg-slate-200 dark:bg-slate-700 border rounded focus:border-gray-400"
           tabIndex={tabIndex}
           onClick={increaseValue}
           onBlur={calculateTick}
@@ -133,7 +133,7 @@ function RangeInput({
           +
         </button>
       </div>
-      <div className="my-2 text-gray-600">
+      <div className="my-2 text-slate-600 dark:text-slate-300">
         <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
         <span> per </span>
         <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />

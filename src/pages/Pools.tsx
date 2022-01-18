@@ -54,8 +54,8 @@ function Pools() {
 
   if (loading) {
     return (
-      <div className="my-16 flex items-center justify-center">
-        <div className="text-center text-2xl text-gray-400">
+      <div className="h-full my-16 flex items-center justify-center">
+        <div className="text-center text-2xl text-slate-400 dark:text-slate-100">
           Loading pools...
         </div>
       </div>
@@ -78,38 +78,44 @@ function Pools() {
           <DownloadCSV />
         </div>
         <div className="flex flex-row justify-end">
-          <div className="border rounded-md p-6 mx-2">
-            <div className="text-2xl text-gray-600 my-1 font-bold">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-6 mx-2">
+            <div className="text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
-            <div className="text-md text-gray-500">Total Liquidity</div>
+            <div className="text-md text-slate-500 dark:text-slate-400">
+              Total Liquidity
+            </div>
           </div>
-          <div className="border rounded-md p-6 mx-2">
-            <div className="text-2xl text-gray-600 my-1 font-bold">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-6 mx-2">
+            <div className="text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
-            <div className="text-md text-gray-500">Total Uncollected Fees</div>
+            <div className="text-md text-slate-500 dark:text-slate-400">
+              Total Uncollected Fees
+            </div>
           </div>
-          <div className="border rounded-md p-6 mx-2">
-            <div className="text-2xl text-gray-800 my-1 font-bold">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-6 mx-2">
+            <div className="text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(
                 totalLiquidity + totalUncollectedFees,
                 1
               )}
             </div>
-            <div className="text-md text-gray-500">Total Value</div>
+            <div className="text-md text-slate-500 dark:text-slate-400">
+              Total Value
+            </div>
           </div>
         </div>
       </div>
       <div className="w-full">
         {empty ? (
           <>
-            <div className="text-center text-2xl text-gray-600 m-8">
+            <div className="text-center text-2xl text-slate-600 dark:text-slate-300 m-8">
               This address do not have any Uniswap LP positions.
             </div>
             <Link
               to="/add/new"
-              className="block text-center text-xl text-blue-500 m-8"
+              className="block text-center text-xl text-blue-500 dark:text-blue-200 m-8"
             >
               Add Liquidity
             </Link>

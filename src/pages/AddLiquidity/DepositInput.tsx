@@ -72,12 +72,12 @@ function DepositInput({
 
   return (
     <div className="w-full flex flex-wrap items-start border rounded p-2 my-2 relative">
-      <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-gray-100 border rounded">
+      <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-800 border rounded">
         <TokenLogo name={token.name} address={token.address} />
         <TokenLabel name={token.name} symbol={token.symbol} />
       </div>
       <input
-        className="w-2/3 focus:outline-none text-2xl p-2 text-right"
+        className="w-2/3 focus:outline-none text-2xl p-2 text-right bg-white dark:bg-slate-900"
         type="text"
         value={input}
         tabIndex={tabIndex}
@@ -88,7 +88,10 @@ function DepositInput({
       <div className="w-full text-sm my-1">
         <span>Balance: {balance} </span>
         <TokenLabel name={token.name} symbol={token.symbol} /> (
-        <button className="text-blue-500" onClick={handleMaxBalance}>
+        <button
+          className="text-blue-500 dark:text-blue-200"
+          onClick={handleMaxBalance}
+        >
           Max
         </button>
         )

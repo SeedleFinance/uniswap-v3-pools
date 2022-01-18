@@ -24,7 +24,7 @@ export const UnstyledButton = ({
 }: Props) => {
   return (
     <button
-      className={`rounded-md focus:outline-none p-2 border border-transparent focus:border-dotted focus:border-gray-200 appearance-none ${className}`}
+      className={`rounded-md focus:outline-none p-2 border border-transparent focus:border-dotted focus:border-gray-200 dark:focus:border-white dark:text-gray-100 appearance-none ${className}`}
       disabled={disabled}
       type={type || "button"}
       tabIndex={tabIndex}

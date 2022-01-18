@@ -158,15 +158,15 @@ function Pool({
   if (!baseToken || !quoteToken || !entity) {
     return (
       <div className="my-4 p-4 border rounded-md">
-        <div className="text-gray-400">Loading...</div>
+        <div className="text-slate-400 dark:text-slate-200">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="my-4 p-4 border rounded-md">
+    <div className="my-4 p-4 border rounded-md border-slate-200 dark:border-slate-700">
       <div className="flex justify-between">
-        <div className="text-2xl text-gray-600 py-2 flex items-baseline">
+        <div className="text-2xl text-slate-600 dark:text-slate-300 py-2 flex items-baseline">
           <PoolButton
             baseToken={baseToken}
             quoteToken={quoteToken}
@@ -189,7 +189,7 @@ function Pool({
             positions={positions.map(({ entity }) => entity)}
             onClick={toggleExpand}
           />
-          <div className="text-lg rounded-md text-gray-800">
+          <div className="text-lg rounded-md text-slate-600 dark:text-slate-300">
             {convertToGlobalFormatted(totalValue)}{" "}
           </div>
         </div>
@@ -197,7 +197,7 @@ function Pool({
 
       {expanded && (
         <>
-          <table className="table-auto w-3/4 mt-4">
+          <table className="table-auto w-3/4 mt-4  text-slate-600 dark:text-slate-300">
             <thead>
               <tr className="text-left">
                 <th className="pb-4">Current Price</th>
@@ -205,7 +205,7 @@ function Pool({
                 <th className="pb-4">Total Fees</th>
                 <th className="pb-4">
                   <span
-                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    className="underline underline-offset-1 decoration-dotted cursor-help"
                     title="annualized fees earned over liquidity"
                   >
                     Fee APY
@@ -213,7 +213,7 @@ function Pool({
                 </th>
                 <th className="pb-4">
                   <span
-                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    className="underline underline-offset-1 decoration-dotted cursor-help"
                     title="liquidity gain + fees - gas cost"
                   >
                     Net Return
@@ -221,7 +221,7 @@ function Pool({
                 </th>
                 <th className="pb-4">
                   <span
-                    style={{ borderBottom: "1px dotted", cursor: "help" }}
+                    className="underline underline-offset-1 decoration-dotted cursor-help"
                     title="Net Annual Percentage Yield"
                   >
                     Net APY
@@ -277,14 +277,14 @@ function Pool({
                 className="flex items-center focus:outline-none"
                 onClick={() => setShowPriceChart(!showPriceChart)}
               >
-                <span className="text-lg text-gray-800 font-bold">
+                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
                   Price (last 30 days)
                 </span>
                 <span className="mx-2">
                   {showPriceChart ? (
-                    <ChevronUp className="h-4 w-4 stroke-2" />
+                    <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 stroke-2" />
+                    <ChevronDown className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
                   )}
                 </span>
               </button>
@@ -302,14 +302,14 @@ function Pool({
                 className="flex items-center focus:outline-none"
                 onClick={() => setShowPositions(!showPositions)}
               >
-                <span className="text-lg text-gray-800 font-bold">
+                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
                   Positions
                 </span>
                 <span className="mx-2">
                   {showPositions ? (
-                    <ChevronUp className="h-4 w-4 stroke-2" />
+                    <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 stroke-2" />
+                    <ChevronDown className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
                   )}
                 </span>
               </button>

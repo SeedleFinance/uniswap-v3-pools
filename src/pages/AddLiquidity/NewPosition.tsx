@@ -439,10 +439,10 @@ function NewPosition({
   };
 
   return (
-    <div className="w-1/2">
+    <div className="w-1/2 text-slate-600 dark:text-slate-300">
       <div className="flex flex-col my-2">
         <div>Pair</div>
-        <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 bg-blue-100">
+        <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 dark:border-slate-700 bg-blue-100 dark:bg-slate-700">
           <PoolButton
             baseToken={baseToken}
             quoteToken={quoteToken}

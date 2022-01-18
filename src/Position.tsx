@@ -158,7 +158,7 @@ function Position({
           positionStatus === PositionStatus.Inactive ? "text-gray-500" : ""
         }
       >
-        <td className="flex flex-col justify-between border-t border-gray-200 py-4">
+        <td className="flex flex-col justify-between border-t border-slate-200 dark:border-slate-700 py-4">
           <div className="text-lg font-bold">{formattedRange}</div>
           <div className={`text-md ${getStatusColor(positionStatus)}`}>
             {statusLabel}{" "}
@@ -171,7 +171,7 @@ function Position({
             flip={pool.token0.equals(baseToken)}
           />
         </td>
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
           <div>
             <TokenLabel symbol={pool.token0.symbol} />:{" "}
             {entity.amount0.toSignificant(4)}({percent0}%)
@@ -181,14 +181,14 @@ function Position({
             {entity.amount1.toSignificant(4)}({percent1}%)
           </div>
         </td>
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
           <div>
             {positionLiquidity
               ? convertToGlobalFormatted(positionLiquidity)
               : formatCurrencyWithSymbol(0, 1)}
           </div>
         </td>
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
           <div className="flex flex-col items-start justify-center">
             <button
               style={{ borderBottom: "1px dotted" }}
@@ -214,13 +214,13 @@ function Position({
             )}
           </div>
         </td>
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
           <div className={feeAPY < 0 ? "text-red-500" : "text-green-500"}>
             {feeAPY.toFixed(2)}%
           </div>
         </td>
 
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
           <div
             className={
               returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
@@ -229,13 +229,13 @@ function Position({
             {convertToGlobalFormatted(returnValue)}
           </div>
         </td>
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
           <div className={apr < 0 ? "text-red-500" : "text-green-500"}>
             {apr.toFixed(2)}%
           </div>
         </td>
 
-        <td className="border-t border-gray-200 py-4">
+        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
           <div className="flex my-2 justify-end">
             <button
               className="text-blue-500 mr-2"

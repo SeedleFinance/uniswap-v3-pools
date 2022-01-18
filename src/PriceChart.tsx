@@ -74,7 +74,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
   }
 
   return (
-    <div className="w-full flex flex-col flex-wrap items-start my-2 border rounded p-2">
+    <div className="w-full flex flex-col flex-wrap items-start my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
       <ResponsiveContainer width={"80%"} height={200}>
         <LineChart
           data={priceData}
@@ -99,24 +99,32 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
       <table className="m-2 w-1/2">
         <tbody>
           <tr>
-            <td className="text-gray-500">Min.</td>
-            <td>{minPrice}</td>
+            <td className="text-slate-500 dark:text-slate-200">Min.</td>
+            <td className="text-slate-800 dark:text-slate-400">{minPrice}</td>
           </tr>
           <tr>
-            <td className="text-gray-500">Max.</td>
-            <td>{maxPrice}</td>
+            <td className="text-slate-500 dark:text-slate-200">Max.</td>
+            <td className="text-slate-800 dark:text-slate-400">{maxPrice}</td>
           </tr>
           <tr>
-            <td className="text-gray-500">Mean</td>
-            <td>{meanPrice.toFixed(8)}</td>
+            <td className="text-slate-500 dark:text-slate-200">Mean</td>
+            <td className="text-slate-800 dark:text-slate-400">
+              {meanPrice.toFixed(8)}
+            </td>
           </tr>
           <tr>
-            <td className="text-gray-500">Standard deviation</td>
-            <td>{stdev.toFixed(8)}</td>
+            <td className="text-slate-500 dark:text-slate-200">
+              Standard deviation
+            </td>
+            <td className="text-slate-800 dark:text-slate-400">
+              {stdev.toFixed(8)}
+            </td>
           </tr>
           <tr>
-            <td className="text-gray-500">Optimal range</td>
-            <td>
+            <td className="text-slate-500 dark:text-slate-200">
+              Optimal range
+            </td>
+            <td className="text-slate-800 dark:text-slate-400">
               {(meanPrice - stdev).toFixed(8)} -{" "}
               {(meanPrice + stdev).toFixed(8)}
             </td>

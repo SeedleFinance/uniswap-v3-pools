@@ -45,7 +45,9 @@ function Pools({ pools, onPoolClick, filter }: Props) {
   }, [pools, filter]);
 
   if (!pools.length) {
-    return <div>Loading pools...</div>;
+    return (
+      <div className="text-slate-600 dark:text-slate-300">Loading pools...</div>
+    );
   }
 
   return (
@@ -55,7 +57,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
         .map(({ key, baseToken, quoteToken, entity, positions }: PoolState) => (
           <div
             key={key}
-            className="w-80 border border-gray-400 rounded my-3 mr-3 p-3 text-lg"
+            className="w-80 border border-slate-200 dark:border-slate-700 rounded my-3 mr-3 p-3 text-lg text-slate-600 dark:text-slate-300"
           >
             <PoolButton
               baseToken={baseToken}

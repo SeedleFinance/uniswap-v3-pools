@@ -10,7 +10,7 @@ function App() {
     <Web3CombinedProvider>
       <SubgraphProvider>
         <AddressProvider>
-          <div className="App max-h-screen max-w-full">
+          <div className="App max-w-full bg-white dark:bg-slate-900">
             <Container />
           </div>
         </AddressProvider>

@@ -33,25 +33,27 @@ function Landing() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <h2 className="flex flex-col items-center text-3xl font-bold text-gray-600 my-16">
+    <div className="h-screen flex flex-col items-center">
+      <h2 className="flex flex-col items-center text-3xl font-bold my-16">
         <img
           alt="Seedle logo - a seedling"
           src={new URL("../public/icon128.png", import.meta.url)}
           className="my-4"
         />
-        <div className="text-6xl text-gray-800 mb-4">Seedle</div>
-        <div className="text-2xl text-gray-400 text-center">
+        <div className="text-6xl text-slate-800 dark:text-slate-100 mb-4">
+          Seedle
+        </div>
+        <div className="text-2xl text-slate-400 text-center">
           Track performance of Uniswap V3 Positions
         </div>
       </h2>
 
       <form
         onSubmit={handleSubmit}
-        className="m-4 flex items-center justify-center w-1/2"
+        className="m-4 my flex items-center justify-center w-1/2"
       >
         <input
-          className="text-xl text-gray-800 p-2 border rounded-md mx-2 w-4/5 focus:outline-none focus:border-gray-800"
+          className="text-xl text-slate-800 bg-white dark:bg-slate-200 p-2 border rounded-md mx-2 w-4/5 focus:outline-none focus:border-gray-800"
           type="text"
           placeholder="Enter an Ethereum address or ENS name"
           value={addresses.join(" ")}
@@ -60,16 +62,16 @@ function Landing() {
         <Button onClick={handleSubmit}>Go</Button>
       </form>
       {addresses.length > 0 && (
-        <div className="mb-4 text-sm text-center text-gray-500">
+        <div className="mb-4 text-sm text-center text-gray-500 dark:text-gray-300">
           Tip: You can enter multiple addresses separated by spaces
         </div>
       )}
 
       <button
-        className="text-center text-md text-gray-600"
+        className="text-center text-md text-gray-600 dark:text-gray-300 underline underline-offset-4 decoration-dotted"
         onClick={handleConnectWallet}
       >
-        Or connect your Metamask wallet.
+        or connect your Metamask wallet.
       </button>
       <Footer />
     </div>

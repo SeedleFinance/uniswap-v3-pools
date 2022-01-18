@@ -71,7 +71,7 @@ function DownloadCSV() {
   return (
     <div>
       <button
-        className="text-blue-500 p-2 bg-gray-100 rounded focus:outline-none"
+        className="text-blue-500 dark:text-blue-200 p-2 bg-slate-100 dark:bg-slate-700 rounded focus:outline-none"
         onClick={() => handleDownload()}
       >
         Download CSV

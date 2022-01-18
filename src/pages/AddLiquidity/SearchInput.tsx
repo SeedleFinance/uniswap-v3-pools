@@ -15,7 +15,7 @@ function SearchInput({ onChange }: Props) {
 
   return (
     <input
-      className="w-full rounded border border-gray-200 p-2 focus:outline-none focus:border-gray-500"
+      className="w-full rounded border border-slate-200 dark:border-slate-700 p-2 focus:outline-none focus:border-gray-500 bg-white dark:bg-slate-200"
       type="text"
       placeholder="Search by tokens"
       onChange={handleInput}

@@ -133,7 +133,7 @@ function AddLiquidity({ tab }: Props) {
         >
           <span>←</span>
         </Link>
-        <div>Add Liquidity</div>
+        <div className="text-slate-600 dark:text-slate-300">Add Liquidity</div>
       </div>
 
       <div className="w-1/2">
@@ -141,9 +141,9 @@ function AddLiquidity({ tab }: Props) {
       </div>
 
       <div className="w-full py-4 my-4">
-        <div className="flex border-b border-gray-200">
+        <div className="flex border-b border-slate-200 dark:border-slate-700">
           <button
-            className={`p-2 mr-2 border-b-4 focus:outline-none ${
+            className={`p-2 mr-2 border-b-4 focus:outline-none text-slate-600 dark:text-slate-300 ${
               selectedTab === "new" ? "border-green-500" : "border-transparent"
             }`}
             onClick={handleNewTabClick}
@@ -151,7 +151,7 @@ function AddLiquidity({ tab }: Props) {
             New
           </button>
           <button
-            className={`p-2 border-b-4 focus:outline-none ${
+            className={`p-2 border-b-4 focus:outline-none text-slate-600 dark:text-slate-300 ${
               selectedTab === "existing"
                 ? "border-green-500"
                 : "border-transparent"
