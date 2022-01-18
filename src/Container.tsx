@@ -18,7 +18,7 @@ function Container() {
   return (
     <AppSettingsProvider>
       <div className="min-h-screen lg:container mx-auto pb-4">
-        <div className="w-full px-2 py-4 my-4 mb-4 flex justify-between">
+        <div className="w-full px-2 py-4 mb-4 flex justify-between">
           <h2 className="flex items-baseline text-3xl font-bold text-slate-800 dark:text-slate-100">
             <a className="flex" href="https://www.seedle.finance">
               <img
