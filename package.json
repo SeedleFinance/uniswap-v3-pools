@@ -68,7 +68,8 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "not ios_saf < 13"
     ],
     "development": [
       "last 1 chrome version",
