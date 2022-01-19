@@ -375,7 +375,7 @@ function NewPosition({
         setTransactionPending(false);
         setTransactionHash(null);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       if (e.error) {
         setAlert({
@@ -408,7 +408,7 @@ function NewPosition({
         setTransactionPending(false);
         setTransactionHash(null);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       if (e.error) {
         setAlert({

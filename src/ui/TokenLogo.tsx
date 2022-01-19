@@ -14,7 +14,7 @@ function TokenLogo({ chain, name, address, className }: Props) {
       imgEl.current.src = new URL(
         "../../public/missing-icon.svg",
         import.meta.url
-      );
+      ).toString();
     }
   };
 

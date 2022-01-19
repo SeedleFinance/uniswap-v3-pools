@@ -37,7 +37,7 @@ function Landing() {
       <h2 className="flex flex-col items-center text-3xl font-bold my-16">
         <img
           alt="Seedle logo - a seedling"
-          src={new URL("../public/icon128.png", import.meta.url)}
+          src={new URL("../public/icon128.png", import.meta.url).toString()}
           className="my-4"
         />
         <div className="text-6xl text-slate-800 dark:text-slate-100 mb-4">

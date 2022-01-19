@@ -54,7 +54,10 @@ function Container() {
               <img
                 className="mr-2"
                 alt="Seedle logo - a seedling"
-                src={new URL("../public/icon32.png", import.meta.url)}
+                src={new URL(
+                  "../public/icon32.png",
+                  import.meta.url
+                ).toString()}
               />
               <span>Seedle</span>
             </a>

@@ -43,7 +43,7 @@
     "recharts": "^2.0.9",
     "tailwindcss": "^3.0.15",
     "typechain": "^5.0.0",
-    "typescript": "^4.1.2",
+    "typescript": "^4.5.4",
     "use-persisted-state": "^0.3.3",
     "web-vitals": "^1.0.1"
   },
@@ -51,10 +51,11 @@
     "compile-contract-types": "yarn compile-v3-contract-types",
     "compile-external-abi-types": "yarn typechain --target ethers-v5 --out-dir src/abis/types './src/abis/**/*.json'",
     "compile-v3-contract-types": "yarn typechain --target ethers-v5 --out-dir src/types/v3 './node_modules/@uniswap/?(v3-core|v3-periphery)/artifacts/contracts/**/*.json'",
+    "lint": "yarn eslint src",
+    "typecheck": "yarn tsc --noEmit",
     "start": "yarn compile-contract-types && parcel ./public/index.html",
-    "build": "yarn compile-contract-types && parcel build ./public/index.html",
-    "test": "craco test",
-    "eject": "react-scripts eject",
+    "build": "yarn compile-contract-types && yarn lint && yarn typecheck && parcel build ./public/index.html",
+    "test": "yarn lint && yarn typecheck",
     "codegen:schema": "yarn apollo client:download-schema --endpoint=https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-testing",
     "codegen:generate": "yarn apollo codegen:generate --localSchemaFile=schema.json --target=typescript --includes=src/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-global-types.ts types"
   },
@@ -64,6 +65,9 @@
       "react-app/jest"
     ]
   },
+  "eslintIgnore": [
+    "src/abis/*"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -85,6 +89,8 @@
     "@types/react-transition-group": "^4.4.3",
     "@types/use-persisted-state": "^0.3.0",
     "apollo": "^2.33.2",
+    "eslint": "^8.0.0",
+    "eslint-config-react-app": "^7.0.0",
     "parcel": "^2.2.1"
   }
 }
