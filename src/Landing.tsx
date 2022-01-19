@@ -53,7 +53,7 @@ function Landing() {
         className="m-4 my flex items-center justify-center w-1/2"
       >
         <input
-          className="text-xl text-slate-800 bg-white dark:bg-slate-200 p-2 border rounded-md mx-2 w-4/5 focus:outline-none focus:border-gray-800"
+          className="text-xl text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 p-2 border border-slate-200 dark:border-slate-700 rounded-md mx-2 w-4/5 focus:outline-none focus:border-slate-800 dark:focus:border-slate-400"
           type="text"
           placeholder="Enter an Ethereum address or ENS name"
           value={addresses.join(" ")}

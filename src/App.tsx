@@ -3,6 +3,7 @@ import React from "react";
 import Web3CombinedProvider from "./Web3CombinedProvider";
 import SubgraphProvider from "./SubgraphProvider";
 import { AddressProvider } from "./AddressProvider";
+import { AppSettingsProvider } from "./AppSettingsProvider";
 import Container from "./Container";
 
 function App() {
@@ -10,9 +11,11 @@ function App() {
     <Web3CombinedProvider>
       <SubgraphProvider>
         <AddressProvider>
-          <div className="App max-w-full bg-white dark:bg-slate-900">
-            <Container />
-          </div>
+          <AppSettingsProvider>
+            <div className="App">
+              <Container />
+            </div>
+          </AppSettingsProvider>
         </AddressProvider>
       </SubgraphProvider>
     </Web3CombinedProvider>

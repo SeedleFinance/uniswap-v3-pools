@@ -9,6 +9,7 @@ export const useAppSettings = () => useContext(AppSettingsContext);
 
 const useFilterClosedState = createPersistedState("app-filter-closed");
 const useGlobalCurrencyState = createPersistedState("app-global-currency");
+const useThemeState = createPersistedState("app-theme");
 
 interface Props {
   children: ReactNode;
@@ -17,6 +18,7 @@ interface Props {
 export const AppSettingsProvider = ({ children }: Props) => {
   const [filterClosed, setFilterClosed] = useFilterClosedState(false);
   const [globalCurrency, setGlobalCurrency] = useGlobalCurrencyState("usd");
+  const [theme, setTheme] = useThemeState("");
 
   const getGlobalCurrencyToken = useCallback(
     (chainId: number) => {
@@ -37,6 +39,8 @@ export const AppSettingsProvider = ({ children }: Props) => {
         globalCurrency,
         getGlobalCurrencyToken,
         setGlobalCurrency,
+        theme,
+        setTheme,
       }}
     >
       {children}

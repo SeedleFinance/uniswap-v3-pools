@@ -55,7 +55,7 @@ function Account({ address }: AccountProps) {
 
   return (
     <>
-      <div className="p-2 rounded-md border flex items-center">
+      <div className="p-2 rounded-md border border-slate-200 dark:border-slate-700 flex items-center">
         <img
           className={`w-6 h-6 mr-1 rounded-full bg-white dark:bg-slate-800 text-sm`}
           alt={`${chainName} logo`}

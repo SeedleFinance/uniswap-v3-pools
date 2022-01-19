@@ -12,7 +12,7 @@ function GlobalCurrencySelector() {
   };
 
   return (
-    <div className="p-2 rounded-md border border-slate-200 dark:border-slate-700 relative text-gray-800 dark:text-slate-200">
+    <div className="p-2 mx-2 rounded-md border border-slate-200 dark:border-slate-700 relative text-gray-800 dark:text-slate-200">
       <button
         className="focus:outline-none"
         onClick={() => setSelectorExpanded(!selectorExpanded)}
