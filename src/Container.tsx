@@ -15,7 +15,7 @@ interface ThemeWrapperProps {
 }
 function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
   return (
-    <div className={theme}>
+    <div id="theme-wrapper" className={theme}>
       <div className="max-w-full bg-white dark:bg-slate-900">{children}</div>
     </div>
   );
