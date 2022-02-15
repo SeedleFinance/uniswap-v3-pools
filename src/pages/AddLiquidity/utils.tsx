@@ -45,6 +45,13 @@ export function positionFromAmounts(
   });
 }
 
+export function toCurrencyAmount(token: Token, amount: number) {
+  const bigIntish = JSBI.BigInt(
+    Math.floor(amount * Math.pow(10, token.decimals))
+  );
+  return CurrencyAmount.fromRawAmount(token, bigIntish);
+}
+
 export function calculateNewAmounts(
   {
     pool,
