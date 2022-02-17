@@ -41,7 +41,7 @@ export function useTokenFunctions(
   getBalances: () => Promise<string[]>;
   getAllowances: (spender: string) => Promise<number[]>;
   approveToken: (
-    idx: number,
+    token: Token,
     spender: string,
     amount: number
   ) => Promise<TransactionResponse | null>;
@@ -124,7 +124,7 @@ export function useTokenFunctions(
       spender: string,
       amount: number
     ): Promise<TransactionResponse | null> => {
-      if (!library || !contracts || !tokens) {
+      if (!library || !addresses || !contracts || !tokens) {
         return null;
       }
 
@@ -161,7 +161,7 @@ export function useTokenFunctions(
         }
       );
     },
-    [library, contracts, tokens]
+    [library, addresses, contracts, tokens]
   );
 
   return { getBalances, getAllowances, approveToken };

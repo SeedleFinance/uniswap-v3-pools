@@ -318,7 +318,10 @@ function NewPosition({
         );
       }
 
-      const router = new AlphaRouter({ chainId, provider: library });
+      const router = new AlphaRouter({
+        chainId: chainId as number,
+        provider: library,
+      });
 
       const token0Balance = rangeReverse
         ? toCurrencyAmount(baseToken, baseAmount)
@@ -333,13 +336,10 @@ function NewPosition({
         tickLower,
         tickUpper
       );
-      const addLiquidityOptions = matchingPosition
-        ? {
-            tokenId: matchingPosition.id,
-          }
-        : {
-            recipient: account,
-          };
+      const addLiquidityOptions = {
+        recipient: account,
+        tokenId: matchingPosition ? matchingPosition.id : null,
+      };
 
       const newPosition = new Position({
         pool,
@@ -353,14 +353,14 @@ function NewPosition({
       };
       const opts = {
         swapOptions: {
-          recipient: account,
+          recipient: account as string,
           slippageTolerance: SWAP_SLIPPAGE,
           deadline: +new Date() + 120 * 60, // TODO: use current blockchain timestamp,
         },
         addLiquidityOptions,
       };
 
-      const { status, result, error } = await router.routeToRatio(
+      const routerResult = await router.routeToRatio(
         token0Balance,
         token1Balance,
         newPosition,
@@ -368,14 +368,13 @@ function NewPosition({
         opts
       );
 
-      if (status === SwapToRatioStatus.NO_ROUTE_FOUND) {
-        console.error(error);
+      if (routerResult.status === SwapToRatioStatus.NO_ROUTE_FOUND) {
+        console.error(routerResult.error);
         throw new Error("Failed to find a route to swap");
-        return;
-      } else if (status === SwapToRatioStatus.NO_SWAP_NEEDED) {
+      } else if (routerResult.status === SwapToRatioStatus.NO_SWAP_NEEDED) {
         // TODO: call regular add liquidity
-      } else if (status === SwapToRatioStatus.SUCCESS) {
-        setSwapAndAddRoute(result);
+      } else if (routerResult.status === SwapToRatioStatus.SUCCESS) {
+        setSwapAndAddRoute(routerResult.result);
       }
     } catch (e: any) {
       console.error(e);
@@ -401,8 +400,8 @@ function NewPosition({
     try {
       const route = swapAndAddRoute;
 
-      if (!route) {
-        throw "Swap and Add: no valid route found";
+      if (!route || !route.methodParameters) {
+        throw new Error("Swap and Add: no valid route found");
       }
 
       const tx = {
@@ -428,7 +427,7 @@ function NewPosition({
           level: AlertLevel.Success,
         });
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       if (e.error) {
         setAlert({

@@ -35,12 +35,8 @@ function SwapAndAddModal({
   onComplete,
 }: Props) {
   const { chainId, account } = useWeb3React("injected");
-  const { getAllowances, approveToken } = useTokenFunctions(
-    [token0, token1],
-    account
-  );
+  const { getAllowances } = useTokenFunctions([token0, token1], account);
 
-  const [transactionPending, setTransactionPending] = useState<boolean>(false);
   const [tokenApproving, setTokenApproving] = useState<boolean>(false);
 
   const [token0Allowance, setToken0Allowance] = useState<number>(0);
@@ -75,16 +71,16 @@ function SwapAndAddModal({
       token0Amount = token0PreswapAmount + quoteAmount;
       token1Amount =
         token1PreswapAmount -
-        parseFloat(pool.priceOf(token0).quote(quote).toSignificant(18));
+        parseFloat(pool.priceOf(token0).quote(quote.wrapped).toSignificant(18));
     } else {
       token1Amount = token1PreswapAmount + quoteAmount;
       token0Amount =
         token0PreswapAmount -
-        parseFloat(pool.priceOf(token1).quote(quote).toSignificant(18));
+        parseFloat(pool.priceOf(token1).quote(quote.wrapped).toSignificant(18));
     }
 
-    return [formatInput(token0Amount), formatInput(token1Amount)];
-  }, [route]);
+    return [token0Amount, token1Amount];
+  }, [route, token0, token1, token0PreswapAmount, token1PreswapAmount]);
 
   const token0NeedApproval = useMemo(() => {
     if (!chainId || !token0 || !route) {
@@ -97,7 +93,14 @@ function SwapAndAddModal({
       token0Allowance,
       getApprovalAmount(token0PreswapAmount, token0Amount)
     );
-  }, [chainId, token0, token0Amount, token0Allowance, route]);
+  }, [
+    chainId,
+    token0,
+    token0PreswapAmount,
+    token0Amount,
+    token0Allowance,
+    route,
+  ]);
 
   const token1NeedApproval = useMemo(() => {
     if (!chainId || !token1 || !route) {
@@ -110,7 +113,14 @@ function SwapAndAddModal({
       token1Allowance,
       getApprovalAmount(token1PreswapAmount, token1Amount)
     );
-  }, [chainId, token1, token1Amount, token1Allowance, route]);
+  }, [
+    chainId,
+    token1,
+    token1PreswapAmount,
+    token1Amount,
+    token1Allowance,
+    route,
+  ]);
 
   const handleApprove = async (token: Token, amount: number) => {
     setTokenApproving(true);
@@ -131,7 +141,7 @@ function SwapAndAddModal({
                 <TokenLogo name={token0.name} address={token0.address} />
                 <TokenLabel name={token0.name} symbol={token0.symbol} />
               </div>
-              <div className="w-2/3 p-2 my-1">{token0Amount}</div>
+              <div className="w-2/3 p-2 my-1">{formatInput(token0Amount)}</div>
             </div>
 
             <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
@@ -139,7 +149,7 @@ function SwapAndAddModal({
                 <TokenLogo name={token1.name} address={token1.address} />
                 <TokenLabel name={token1.name} symbol={token1.symbol} />
               </div>
-              <div className="w-2/3 p-2 my-1">{token1Amount}</div>
+              <div className="w-2/3 p-2 my-1">{formatInput(token1Amount)}</div>
             </div>
           </div>
 
@@ -150,6 +160,7 @@ function SwapAndAddModal({
                 className="text-underline text-blue-500"
                 href="https://etherscan.io/address/0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45#code"
                 target="_blank"
+                rel="noreferrer"
               >
                 SmartRouter02 contract
               </a>{" "}
@@ -163,7 +174,6 @@ function SwapAndAddModal({
                     getApprovalAmount(token0PreswapAmount, token0Amount)
                   )
                 }
-                disabled={transactionPending}
                 tabIndex={8}
                 compact={true}
                 className="mr-2"
@@ -178,7 +188,6 @@ function SwapAndAddModal({
                     getApprovalAmount(token1PreswapAmount, token1Amount)
                   )
                 }
-                disabled={transactionPending}
                 tabIndex={8}
                 compact={true}
                 className="mr-2"
@@ -188,7 +197,6 @@ function SwapAndAddModal({
             ) : (
               <Button
                 onClick={onComplete}
-                disabled={transactionPending}
                 tabIndex={8}
                 compact={true}
                 className="mr-2"

@@ -203,7 +203,7 @@ export function findTokens(
 }
 
 export function findMatchingPosition(
-  positions: any[],
+  positions: any[] | null,
   fee: number,
   tickLower: number,
   tickUpper: number
