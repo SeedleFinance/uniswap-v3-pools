@@ -4,9 +4,15 @@ import {
   TickMath,
   tickToPrice,
   NonfungiblePositionManager,
+  Position,
 } from "@uniswap/v3-sdk";
-import { Token, CurrencyAmount, Ether } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount, Ether, Fraction } from "@uniswap/sdk-core";
 import { BigNumber } from "@ethersproject/bignumber";
+import {
+  AlphaRouter,
+  SwapToRatioStatus,
+  SwapToRatioRoute,
+} from "@uniswap/smart-order-router";
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
@@ -16,11 +22,14 @@ import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
 import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
+import Toggle from "../../ui/Toggle";
 import { WETH9 } from "../../constants";
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
+  SWAP_ROUTER_ADDRESSES,
   DEFAULT_SLIPPAGE,
+  SWAP_SLIPPAGE,
   ZERO_PERCENT,
   BLOCK_EXPLORER_URL,
 } from "../../constants";
@@ -30,11 +39,14 @@ import { formatInput } from "../../utils/numbers";
 import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
 import FeeButton from "./FeeButton";
+import SwapAndAddModal from "./SwapAndAddModal";
 import {
   positionFromAmounts,
   calculateNewAmounts,
   positionDistance,
   tokenAmountNeedApproval,
+  toCurrencyAmount,
+  findMatchingPosition,
 } from "./utils";
 
 interface Props {
@@ -80,6 +92,11 @@ function NewPosition({
   const [transactionPending, setTransactionPending] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
+  const [swapAndAdd, setSwapAndAdd] = useState<boolean>(false);
+  const [swapAndAddPending, setSwapAndAddPending] = useState<boolean>(false);
+  const [swapAndAddRoute, setSwapAndAddRoute] =
+    useState<SwapToRatioRoute | null>(null);
+
   const [focusedRangeInput, setFocusedRangeInput] =
     useState<HTMLInputElement | null>(null);
   const [alert, setAlert] =
@@ -105,6 +122,7 @@ function NewPosition({
       setBaseTokenAllowance(val0);
       setQuoteTokenAllowance(val1);
     };
+
     _run();
   }, [getAllowances, chainId]);
 
@@ -220,6 +238,10 @@ function NewPosition({
       return;
     }
 
+    if (swapAndAdd) {
+      return;
+    }
+
     if (tickLower === TickMath.MIN_TICK || tickUpper === TickMath.MIN_TICK) {
       return;
     }
@@ -280,6 +302,155 @@ function NewPosition({
     return null;
   }
 
+  const onSwapAndAddLiquidity = async () => {
+    setSwapAndAddPending(true);
+
+    try {
+      if (quoteAmount > 0 && quoteAmount > parseFloat(quoteBalance)) {
+        throw new Error(
+          `You don't have enough ${quoteToken.symbol} to complete the transaction`
+        );
+      }
+
+      if (baseAmount > 0 && baseAmount > parseFloat(baseBalance)) {
+        throw new Error(
+          `You don't have enough ${baseToken.symbol} to complete the transaction`
+        );
+      }
+
+      const router = new AlphaRouter({
+        chainId: chainId as number,
+        provider: library,
+      });
+
+      const token0Balance = rangeReverse
+        ? toCurrencyAmount(baseToken, baseAmount)
+        : toCurrencyAmount(quoteToken, quoteAmount);
+      const token1Balance = rangeReverse
+        ? toCurrencyAmount(quoteToken, quoteAmount)
+        : toCurrencyAmount(baseToken, baseAmount);
+
+      const matchingPosition = findMatchingPosition(
+        positions,
+        fee,
+        tickLower,
+        tickUpper
+      );
+      const addLiquidityOptions = {
+        recipient: account,
+        tokenId: matchingPosition ? matchingPosition.id : null,
+      };
+
+      const newPosition = new Position({
+        pool,
+        liquidity: 1,
+        tickLower: rangeReverse ? tickUpper : tickLower,
+        tickUpper: rangeReverse ? tickLower : tickUpper,
+      });
+      const config = {
+        maxIterations: 6,
+        ratioErrorTolerance: new Fraction(1, 100),
+      };
+      const opts = {
+        swapOptions: {
+          recipient: account as string,
+          slippageTolerance: SWAP_SLIPPAGE,
+          deadline: +new Date() + 120 * 60, // TODO: use current blockchain timestamp,
+        },
+        addLiquidityOptions,
+      };
+
+      const routerResult = await router.routeToRatio(
+        token0Balance,
+        token1Balance,
+        newPosition,
+        config,
+        opts
+      );
+
+      if (routerResult.status === SwapToRatioStatus.NO_ROUTE_FOUND) {
+        console.error(routerResult.error);
+        throw new Error("Failed to find a route to swap");
+      } else if (routerResult.status === SwapToRatioStatus.NO_SWAP_NEEDED) {
+        // TODO: call regular add liquidity
+      } else if (routerResult.status === SwapToRatioStatus.SUCCESS) {
+        setSwapAndAddRoute(routerResult.result);
+      }
+    } catch (e: any) {
+      console.error(e);
+      if (e.error) {
+        setAlert({
+          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+          level: AlertLevel.Error,
+        });
+      } else {
+        setAlert({
+          message: e.toString(),
+          level: AlertLevel.Error,
+        });
+      }
+      setSwapAndAddPending(false);
+      setTransactionHash(null);
+    }
+  };
+
+  const onSwapAndAddComplete = async () => {
+    setTransactionPending(true);
+
+    try {
+      const route = swapAndAddRoute;
+
+      if (!route || !route.methodParameters) {
+        throw new Error("Swap and Add: no valid route found");
+      }
+
+      const tx = {
+        to: SWAP_ROUTER_ADDRESSES[chainId as number],
+        value: BigNumber.from(route.methodParameters.value),
+        data: route.methodParameters.calldata,
+        gasPrice: BigNumber.from(route.gasPriceWei),
+      };
+
+      const estimatedGas = await library.getSigner().estimateGas(tx);
+      const res = await library.getSigner().sendTransaction({
+        ...tx,
+        gasLimit: estimatedGas
+          .mul(BigNumber.from(10000 + 2000))
+          .div(BigNumber.from(10000)),
+      });
+
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: "Liquidity added to the pool.",
+          level: AlertLevel.Success,
+        });
+      }
+    } catch (e: any) {
+      console.error(e);
+      if (e.error) {
+        setAlert({
+          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+          level: AlertLevel.Error,
+        });
+      } else {
+        setAlert({
+          message: e.toString(),
+          level: AlertLevel.Error,
+        });
+      }
+    }
+    setSwapAndAddPending(false);
+    setTransactionPending(false);
+    setTransactionHash(null);
+  };
+
+  const onSwapAndAddCancel = () => {
+    setSwapAndAddPending(false);
+    setSwapAndAddRoute(null);
+  };
+
   const onAddLiquidity = async () => {
     setTransactionPending(true);
 
@@ -299,20 +470,12 @@ function NewPosition({
       // see if the current tick range  and pool match an existing position,
       // if match found, call increaseLiquidity
       // otherwise call mint
-      let matchingPosition = null;
-      if (positions) {
-        matchingPosition = positions.find((position) => {
-          const { entity } = position;
-          if (
-            entity.pool.fee === fee &&
-            entity.tickLower === tickLower &&
-            entity.tickUpper === tickUpper
-          ) {
-            return true;
-          }
-          return false;
-        });
-      }
+      const matchingPosition = findMatchingPosition(
+        positions,
+        fee,
+        tickLower,
+        tickUpper
+      );
 
       const newPosition = positionFromAmounts(
         {
@@ -372,8 +535,6 @@ function NewPosition({
           message: "Liquidity added to the pool.",
           level: AlertLevel.Success,
         });
-        setTransactionPending(false);
-        setTransactionHash(null);
       }
     } catch (e: any) {
       console.error(e);
@@ -388,16 +549,15 @@ function NewPosition({
           level: AlertLevel.Error,
         });
       }
-      setTransactionPending(false);
-      setTransactionHash(null);
     }
+    setTransactionPending(false);
+    setTransactionHash(null);
   };
 
-  const onApprove = async (idx: number, amount: number) => {
+  const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
     try {
-      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number];
-      const res = await approveToken(idx, spender, amount);
+      const res = await approveToken(token, spender, amount);
       if (res) {
         setTransactionHash(res.hash);
         await res.wait();
@@ -413,6 +573,11 @@ function NewPosition({
       if (e.error) {
         setAlert({
           message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+          level: AlertLevel.Error,
+        });
+      } else if (e.message) {
+        setAlert({
+          message: `Transaction failed. (reason: ${e.message})`,
           level: AlertLevel.Error,
         });
       } else {
@@ -517,9 +682,18 @@ function NewPosition({
         </div>
       </div>
 
-      <div className="flex flex-col my-2">
-        <div>Deposit</div>
-        <div className="w-80 my-2">
+      <div className="flex flex-col my-6">
+        <div className="w-3/4 flex justify-between">
+          <div>Deposit</div>
+          <div>
+            <Toggle
+              label="Swap & Add"
+              onChange={() => setSwapAndAdd(!swapAndAdd)}
+              checked={swapAndAdd}
+            />
+          </div>
+        </div>
+        <div className="w-3/4 my-2">
           <DepositInput
             token={quoteToken}
             value={quoteAmount}
@@ -546,9 +720,25 @@ function NewPosition({
       </div>
 
       <div className="w-64 my-2 flex">
-        {baseTokenNeedApproval ? (
+        {swapAndAdd ? (
           <Button
-            onClick={() => onApprove(0, baseAmount)}
+            onClick={onSwapAndAddLiquidity}
+            disabled={transactionPending}
+            tabIndex={8}
+            compact={true}
+            className="mr-2"
+          >
+            Swap & Add
+          </Button>
+        ) : baseTokenNeedApproval ? (
+          <Button
+            onClick={() =>
+              onApprove(
+                baseToken,
+                baseAmount,
+                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+              )
+            }
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
@@ -558,7 +748,13 @@ function NewPosition({
           </Button>
         ) : quoteTokenNeedApproval ? (
           <Button
-            onClick={() => onApprove(1, quoteAmount)}
+            onClick={() =>
+              onApprove(
+                quoteToken,
+                quoteAmount,
+                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+              )
+            }
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
@@ -586,6 +782,19 @@ function NewPosition({
           <Alert level={alert.level} onHide={resetAlert}>
             {alert.message}
           </Alert>
+        )}
+
+        {swapAndAddPending && (
+          <SwapAndAddModal
+            route={swapAndAddRoute}
+            token0={quoteToken}
+            token1={baseToken}
+            token0PreswapAmount={quoteAmount}
+            token1PreswapAmount={baseAmount}
+            onCancel={onSwapAndAddCancel}
+            onComplete={onSwapAndAddComplete}
+            onApprove={onApprove}
+          />
         )}
 
         {transactionPending && (

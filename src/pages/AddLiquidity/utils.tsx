@@ -45,6 +45,13 @@ export function positionFromAmounts(
   });
 }
 
+export function toCurrencyAmount(token: Token, amount: number) {
+  const bigIntish = JSBI.BigInt(
+    Math.floor(amount * Math.pow(10, token.decimals))
+  );
+  return CurrencyAmount.fromRawAmount(token, bigIntish);
+}
+
 export function calculateNewAmounts(
   {
     pool,
@@ -193,4 +200,32 @@ export function findTokens(
   }
 
   return matches;
+}
+
+export function findMatchingPosition(
+  positions: any[] | null,
+  fee: number,
+  tickLower: number,
+  tickUpper: number
+) {
+  if (!positions || positions.length) {
+    return null;
+  }
+
+  return positions.find((position) => {
+    const { entity } = position;
+    if (
+      entity.pool.fee === fee &&
+      entity.tickLower === tickLower &&
+      entity.tickUpper === tickUpper
+    ) {
+      return true;
+    }
+    return false;
+  });
+}
+
+export function getApprovalAmount(val1: number, val2: number) {
+  // increase amount by 20% to handle ratio errors
+  return Math.max(val1, val2) * 1.2;
 }

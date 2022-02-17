@@ -20,6 +20,10 @@ export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES = constructSameAddressMap(
   "0xC36442b4a4522E871399CD717aBDD847Ab11FE88"
 );
 
+export const SWAP_ROUTER_ADDRESSES = constructSameAddressMap(
+  "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45"
+);
+
 export const DAI: { [key: number]: Token } = {
   1: new Token(
     1,
@@ -233,6 +237,7 @@ export const WETH9: { [chainId: number]: Token } = {
 };
 
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
+export const SWAP_SLIPPAGE = new Percent(5, 100);
 export const ZERO_PERCENT = new Percent("0");
 export const Q128 = BigNumber.from(2).pow(128);
 
