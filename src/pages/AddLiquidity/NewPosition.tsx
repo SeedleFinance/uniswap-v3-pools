@@ -202,8 +202,7 @@ function NewPosition({
       chainId as number,
       baseToken,
       baseTokenAllowance,
-      baseAmount,
-      swapAndAdd
+      baseAmount
     );
   }, [chainId, baseToken, baseAmount, baseTokenAllowance]);
 
@@ -429,9 +428,10 @@ function NewPosition({
           level: AlertLevel.Error,
         });
       }
-      setSwapAndAddPending(false);
-      setTransactionHash(null);
     }
+    setSwapAndAddPending(false);
+    setTransactionPending(false);
+    setTransactionHash(null);
   };
 
   const onSwapAndAddCancel = () => {
@@ -550,11 +550,10 @@ function NewPosition({
     }
   };
 
-  const onApprove = async (idx: number, amount: number) => {
+  const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
     try {
-      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number];
-      const res = await approveToken(idx, spender, amount);
+      const res = await approveToken(token, spender, amount);
       if (res) {
         setTransactionHash(res.hash);
         await res.wait();
@@ -570,6 +569,11 @@ function NewPosition({
       if (e.error) {
         setAlert({
           message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+          level: AlertLevel.Error,
+        });
+      } else if (e.message) {
+        setAlert({
+          message: `Transaction failed. (reason: ${e.message})`,
           level: AlertLevel.Error,
         });
       } else {
@@ -724,7 +728,13 @@ function NewPosition({
           </Button>
         ) : baseTokenNeedApproval ? (
           <Button
-            onClick={() => onApprove(0, baseAmount)}
+            onClick={() =>
+              onApprove(
+                baseToken,
+                baseAmount,
+                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+              )
+            }
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
@@ -734,7 +744,13 @@ function NewPosition({
           </Button>
         ) : quoteTokenNeedApproval ? (
           <Button
-            onClick={() => onApprove(1, quoteAmount)}
+            onClick={() =>
+              onApprove(
+                quoteToken,
+                quoteAmount,
+                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+              )
+            }
             disabled={transactionPending}
             tabIndex={8}
             compact={true}
@@ -769,8 +785,11 @@ function NewPosition({
             route={swapAndAddRoute}
             token0={quoteToken}
             token1={baseToken}
+            token0PreswapAmount={quoteAmount}
+            token1PreswapAmount={baseAmount}
             onCancel={onSwapAndAddCancel}
             onComplete={onSwapAndAddComplete}
+            onApprove={onApprove}
           />
         )}
 

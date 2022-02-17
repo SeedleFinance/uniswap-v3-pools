@@ -120,7 +120,7 @@ export function useTokenFunctions(
 
   const approveToken = useCallback(
     async (
-      idx: number,
+      token: Token,
       spender: string,
       amount: number
     ): Promise<TransactionResponse | null> => {
@@ -128,14 +128,15 @@ export function useTokenFunctions(
         return null;
       }
 
+      const idx = addresses.findIndex((addr) => token.address === addr);
       const contract = contracts[idx];
       if (!contract) {
         return null;
       }
 
       const amountToApprove = CurrencyAmount.fromRawAmount(
-        tokens[idx],
-        Math.ceil(amount * Math.pow(10, tokens[idx].decimals))
+        token,
+        Math.ceil(amount * Math.pow(10, token.decimals))
       ).quotient.toString();
       let estimatedGas = BigNumber.from(0);
       let useExact = false;

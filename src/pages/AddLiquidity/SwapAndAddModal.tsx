@@ -1,55 +1,122 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useWeb3React } from "@web3-react/core";
 import { Token } from "@uniswap/sdk-core";
 import { SwapToRatioRoute } from "@uniswap/smart-order-router";
 
+import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import TokenLabel from "../../ui/TokenLabel";
 import TokenLogo from "../../ui/TokenLogo";
 import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
 import { formatInput } from "../../utils/numbers";
+import { tokenAmountNeedApproval } from "./utils";
+
+import { SWAP_ROUTER_ADDRESSES } from "../../constants";
 
 interface Props {
   token0: Token;
   token1: Token;
+  token0PreswapAmount: number;
+  token1PreswapAmount: number;
   route: SwapToRatioRoute | null;
   onCancel: () => void;
   onComplete: () => void;
+  onApprove: (token: Token, amount: number, spender: string) => void;
 }
 
 function SwapAndAddModal({
   token0,
   token1,
+  token0PreswapAmount,
+  token1PreswapAmount,
   route,
+  onApprove,
   onCancel,
   onComplete,
 }: Props) {
+  const { chainId, account } = useWeb3React("injected");
+  const { getAllowances, approveToken } = useTokenFunctions(
+    [token0, token1],
+    account
+  );
+
   const [transactionPending, setTransactionPending] = useState<boolean>(false);
+  const [tokenApproving, setTokenApproving] = useState<boolean>(false);
+
+  const [token0Allowance, setToken0Allowance] = useState<number>(0);
+  const [token1Allowance, setToken1Allowance] = useState<number>(0);
+
+  useEffect(() => {
+    if (!chainId || !getAllowances || tokenApproving) {
+      return;
+    }
+
+    const _run = async () => {
+      const spender = SWAP_ROUTER_ADDRESSES[chainId as number];
+      const [val0, val1] = await getAllowances(spender);
+      setToken0Allowance(val0);
+      setToken1Allowance(val1);
+    };
+
+    _run();
+  }, [getAllowances, chainId, tokenApproving]);
 
   const [token0Amount, token1Amount] = useMemo(() => {
     if (!route) {
       return [0, 0];
     }
 
-    const optimalRatio = route.optimalRatio.toSignificant(18);
-    const { quote } = route;
+    const { quote, postSwapTargetPool: pool } = route;
+    const quoteAmount = parseFloat(quote.toSignificant(18));
 
     let token0Amount = 0;
     let token1Amount = 0;
     if (quote.currency.equals(token0)) {
-      token0Amount = quote.toSignificant(18);
-      token1Amount = token0Amount * optimalRatio;
+      token0Amount = token0PreswapAmount + quoteAmount;
+      token1Amount =
+        token1PreswapAmount -
+        parseFloat(pool.priceOf(token0).quote(quote).toSignificant(18));
     } else {
-      token1Amount = quote.toSignificant(18);
-      token0Amount = token1Amount * optimalRatio;
+      token1Amount = token1PreswapAmount + quoteAmount;
+      token0Amount =
+        token0PreswapAmount -
+        parseFloat(pool.priceOf(token1).quote(quote).toSignificant(18));
     }
 
     return [formatInput(token0Amount), formatInput(token1Amount)];
   }, [route]);
 
-  const token0NeedApproval = false;
-  const token1NeedApproval = false;
+  const token0NeedApproval = useMemo(() => {
+    if (!chainId || !token0) {
+      return false;
+    }
 
-  const onApprove = () => {};
+    return tokenAmountNeedApproval(
+      chainId as number,
+      token0,
+      token0Allowance,
+      token0PreswapAmount
+    );
+  }, [chainId, token0, token0Amount, token0Allowance]);
+
+  const token1NeedApproval = useMemo(() => {
+    if (!chainId || !token1) {
+      return false;
+    }
+
+    return tokenAmountNeedApproval(
+      chainId as number,
+      token1,
+      token1Allowance,
+      token1PreswapAmount
+    );
+  }, [chainId, token1, token1Amount, token1Allowance]);
+
+  const handleApprove = async (token: Token, amount: number) => {
+    setTokenApproving(true);
+    await onApprove(token, amount, SWAP_ROUTER_ADDRESSES[chainId as number]);
+    setTokenApproving(false);
+  };
 
   return (
     <Modal title={"Swap & Add"}>
@@ -60,7 +127,7 @@ function SwapAndAddModal({
           <div>Liquidity to be added after the swap:</div>
           <div>
             <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
-              <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-800 border rounded">
+              <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                 <TokenLogo name={token0.name} address={token0.address} />
                 <TokenLabel name={token0.name} symbol={token0.symbol} />
               </div>
@@ -68,7 +135,7 @@ function SwapAndAddModal({
             </div>
 
             <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
-              <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-800 border rounded">
+              <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                 <TokenLogo name={token1.name} address={token1.address} />
                 <TokenLabel name={token1.name} symbol={token1.symbol} />
               </div>
@@ -90,7 +157,7 @@ function SwapAndAddModal({
             </div>
             {token0NeedApproval ? (
               <Button
-                onClick={() => onApprove(0, token0Amount)}
+                onClick={() => handleApprove(token0, token0PreswapAmount)}
                 disabled={transactionPending}
                 tabIndex={8}
                 compact={true}
@@ -100,13 +167,13 @@ function SwapAndAddModal({
               </Button>
             ) : token1NeedApproval ? (
               <Button
-                onClick={() => onApprove(1, token1Amount)}
+                onClick={() => handleApprove(token1, token1PreswapAmount)}
                 disabled={transactionPending}
                 tabIndex={8}
                 compact={true}
                 className="mr-2"
               >
-                Approve {token1Token.symbol}
+                Approve {token1.symbol}
               </Button>
             ) : (
               <Button
