@@ -16,6 +16,8 @@ import {
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
+import { useChainWeb3React } from "../../hooks/useChainWeb3React";
+import { getNetworkConnector } from "../../utils/connectors";
 import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
@@ -65,6 +67,23 @@ function NewPosition({
   onCancel,
 }: Props) {
   const { chainId, account, library } = useWeb3React("injected");
+  const chainWeb3React = useChainWeb3React(chainId as number);
+
+  useEffect(() => {
+    if (!chainId) {
+      return;
+    }
+
+    if (!chainWeb3React.active) {
+      const networkConnector = getNetworkConnector();
+      networkConnector.changeChainId(chainId);
+
+      chainWeb3React.activate(networkConnector, (err) => {
+        console.error(err);
+      });
+    }
+  }, [chainId, chainWeb3React]);
+
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
     [baseToken, quoteToken],
     account
@@ -320,7 +339,7 @@ function NewPosition({
 
       const router = new AlphaRouter({
         chainId: chainId as number,
-        provider: library,
+        provider: chainWeb3React.library,
       });
 
       const token0Balance = rangeReverse
