@@ -550,9 +550,9 @@ function NewPosition({
           level: AlertLevel.Error,
         });
       }
-      setTransactionPending(false);
-      setTransactionHash(null);
     }
+    setTransactionPending(false);
+    setTransactionHash(null);
   };
 
   const onApprove = async (token: Token, amount: number, spender: string) => {
