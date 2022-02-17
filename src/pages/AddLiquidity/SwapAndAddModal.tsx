@@ -9,7 +9,7 @@ import TokenLogo from "../../ui/TokenLogo";
 import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
 import { formatInput } from "../../utils/numbers";
-import { tokenAmountNeedApproval } from "./utils";
+import { tokenAmountNeedApproval, getApprovalAmount } from "./utils";
 
 import { SWAP_ROUTER_ADDRESSES } from "../../constants";
 
@@ -87,7 +87,7 @@ function SwapAndAddModal({
   }, [route]);
 
   const token0NeedApproval = useMemo(() => {
-    if (!chainId || !token0) {
+    if (!chainId || !token0 || !route) {
       return false;
     }
 
@@ -95,12 +95,12 @@ function SwapAndAddModal({
       chainId as number,
       token0,
       token0Allowance,
-      token0PreswapAmount
+      getApprovalAmount(token0PreswapAmount, token0Amount)
     );
-  }, [chainId, token0, token0Amount, token0Allowance]);
+  }, [chainId, token0, token0Amount, token0Allowance, route]);
 
   const token1NeedApproval = useMemo(() => {
-    if (!chainId || !token1) {
+    if (!chainId || !token1 || !route) {
       return false;
     }
 
@@ -108,9 +108,9 @@ function SwapAndAddModal({
       chainId as number,
       token1,
       token1Allowance,
-      token1PreswapAmount
+      getApprovalAmount(token1PreswapAmount, token1Amount)
     );
-  }, [chainId, token1, token1Amount, token1Allowance]);
+  }, [chainId, token1, token1Amount, token1Allowance, route]);
 
   const handleApprove = async (token: Token, amount: number) => {
     setTokenApproving(true);
@@ -157,7 +157,12 @@ function SwapAndAddModal({
             </div>
             {token0NeedApproval ? (
               <Button
-                onClick={() => handleApprove(token0, token0PreswapAmount)}
+                onClick={() =>
+                  handleApprove(
+                    token0,
+                    getApprovalAmount(token0PreswapAmount, token0Amount)
+                  )
+                }
                 disabled={transactionPending}
                 tabIndex={8}
                 compact={true}
@@ -167,7 +172,12 @@ function SwapAndAddModal({
               </Button>
             ) : token1NeedApproval ? (
               <Button
-                onClick={() => handleApprove(token1, token1PreswapAmount)}
+                onClick={() =>
+                  handleApprove(
+                    token1,
+                    getApprovalAmount(token1PreswapAmount, token1Amount)
+                  )
+                }
                 disabled={transactionPending}
                 tabIndex={8}
                 compact={true}

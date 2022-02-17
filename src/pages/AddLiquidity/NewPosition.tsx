@@ -46,6 +46,7 @@ import {
   positionDistance,
   tokenAmountNeedApproval,
   toCurrencyAmount,
+  findMatchingPosition,
 } from "./utils";
 
 interface Props {
@@ -326,6 +327,20 @@ function NewPosition({
         ? toCurrencyAmount(quoteToken, quoteAmount)
         : toCurrencyAmount(baseToken, baseAmount);
 
+      const matchingPosition = findMatchingPosition(
+        positions,
+        fee,
+        tickLower,
+        tickUpper
+      );
+      const addLiquidityOptions = matchingPosition
+        ? {
+            tokenId: matchingPosition.id,
+          }
+        : {
+            recipient: account,
+          };
+
       const newPosition = new Position({
         pool,
         liquidity: 1,
@@ -342,9 +357,7 @@ function NewPosition({
           slippageTolerance: SWAP_SLIPPAGE,
           deadline: +new Date() + 120 * 60, // TODO: use current blockchain timestamp,
         },
-        addLiquidityOptions: {
-          recipient: account, // TODO: determine mint or increase liquidity
-        },
+        addLiquidityOptions,
       };
 
       const { status, result, error } = await router.routeToRatio(
@@ -458,20 +471,12 @@ function NewPosition({
       // see if the current tick range  and pool match an existing position,
       // if match found, call increaseLiquidity
       // otherwise call mint
-      let matchingPosition = null;
-      if (positions) {
-        matchingPosition = positions.find((position) => {
-          const { entity } = position;
-          if (
-            entity.pool.fee === fee &&
-            entity.tickLower === tickLower &&
-            entity.tickUpper === tickUpper
-          ) {
-            return true;
-          }
-          return false;
-        });
-      }
+      const matchingPosition = findMatchingPosition(
+        positions,
+        fee,
+        tickLower,
+        tickUpper
+      );
 
       const newPosition = positionFromAmounts(
         {
