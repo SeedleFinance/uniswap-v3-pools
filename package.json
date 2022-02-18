@@ -97,5 +97,8 @@
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.0",
     "parcel": "^2.3.1"
+  },
+  "alias": {
+      "retry": "./custom/retry"
   }
 }
