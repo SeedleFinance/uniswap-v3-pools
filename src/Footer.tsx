@@ -19,6 +19,13 @@ function Footer() {
         >
           GitHub
         </a>
+        |{" "}
+        <a
+          className="text-blue-500"
+          href="https://gitcoin.co/grants/4385/seedle-finance"
+        >
+          Donate
+        </a>
       </div>
     </footer>
   );
