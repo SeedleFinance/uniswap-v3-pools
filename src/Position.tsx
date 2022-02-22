@@ -152,7 +152,6 @@ function Position({
     const url = isPerp
       ? `https://app.perp.com`
       : `https://app.uniswap.org/#/pool/${id}`;
-    0;
     window.open(url);
   };
 
