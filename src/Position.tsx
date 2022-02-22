@@ -147,6 +147,15 @@ function Position({
     return colors[positionStatus];
   };
 
+  const handleManage = () => {
+    const isPerp = baseToken.symbol === "vUSD";
+    const url = isPerp
+      ? `https://app.perp.com`
+      : `https://app.uniswap.org/#/pool/${id}`;
+    0;
+    window.open(url);
+  };
+
   if (!pool || !entity) {
     return null;
   }
@@ -245,12 +254,7 @@ function Position({
             >
               Transactions
             </button>
-            <button
-              className="text-blue-500 mr-2"
-              onClick={() => {
-                window.open(`https://app.uniswap.org/#/pool/${id}`);
-              }}
-            >
+            <button className="text-blue-500 mr-2" onClick={handleManage}>
               Manage
             </button>
           </div>
