@@ -18,7 +18,7 @@ function Footer() {
           href="https://github.com/laktek/uniswap-v3-pools"
         >
           GitHub
-        </a>
+        </a>{" "}
         |{" "}
         <a
           className="text-blue-500"

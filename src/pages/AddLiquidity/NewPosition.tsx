@@ -619,6 +619,7 @@ function NewPosition({
       const curLength = focusedRangeInput.value.length;
       focusedRangeInput.setRangeText(currentPrice, 0, curLength, "start");
       focusedRangeInput.dispatchEvent(new Event("input", { bubbles: true }));
+      focusedRangeInput.focus();
     }
   };
 
