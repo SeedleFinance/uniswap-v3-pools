@@ -319,7 +319,7 @@ export function usePerpV2(chainId: number): {
 
       const positionUncollectedFees = CurrencyAmount.fromRawAmount(
         pool.token1,
-        uncollectedFeesByPosition.length
+        uncollectedFeesByPosition.length && uncollectedFeesByPosition[idx]
           ? uncollectedFeesByPosition[idx].toString()
           : 0
       );
