@@ -49,6 +49,7 @@ function Position({
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   const { percent0, percent1 } = useMemo(() => {
     if (
@@ -245,16 +246,27 @@ function Position({
         </td>
 
         <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
-          <div className="flex my-2 justify-end">
+          <div className="flex my-2 justify-end relative">
             <button
               className="text-slate-500 dark:text-slate-200 mr-2"
-              onClick={handleManage}
+              onClick={() => setShowActions(!showActions)}
             >
               <Icon size="lg" icon={faEllipsis} />
             </button>
+            {showActions && (
+              <div className="absolute p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 right-2 w-32">
+                <button onClick={() => setShowTransactions(true)}>
+                  Transactions
+                </button>
+                <button onClick={}>Add Liquidity</button>
+                <button onClick={}>Transfer</button>
+                <button onClick={}>Close</button>
+              </div>
+            )}
           </div>
         </td>
       </tr>
+
       {showTransactions && (
         <tr>
           <td colSpan={4}>

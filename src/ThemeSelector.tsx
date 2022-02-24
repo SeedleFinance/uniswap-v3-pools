@@ -35,6 +35,7 @@ function ThemeSelector() {
       >
         <Icon
           className="text-xl"
+          size="sm"
           icon={computedTheme === "light" ? faSun : faMoon}
         />
         <Icon className="pl-1 text-xl" icon={faCaretDown} />
@@ -46,21 +47,21 @@ function ThemeSelector() {
             className="flex items-center justify-between w-24 my-1"
             onClick={() => handleSelection("light")}
           >
-            <Icon className="w-1/5 mr-1" icon={faSun} />
+            <Icon size="sm" className="w-1/5 mr-2" icon={faSun} />
             <span className="w-4/5 text-left">Light</span>
           </button>
           <button
             className="flex items-center justify-between w-24 my-1"
             onClick={() => handleSelection("dark")}
           >
-            <Icon className="w-1/5 mr-1" icon={faMoon} />
+            <Icon size="sm" className="w-1/5 mr-2" icon={faMoon} />
             <span className="w-4/5 text-left">Dark</span>
           </button>
           <button
             className="flex items-center justify-between w-24 my-1"
             onClick={() => handleSelection("")}
           >
-            <Icon className="w-1/5 mr-1" icon={faDesktop} />
+            <Icon size="sm" className="w-1/5 mr-2" icon={faDesktop} />
             <span className="w-4/5 text-left">System</span>
           </button>
         </div>
