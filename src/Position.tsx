@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
-//import formatDistanceStrict from "date-fns/formatDistanceStrict";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 import {
   useTransactionTotals,
@@ -17,6 +17,7 @@ import { useCurrencyConversions } from "./CurrencyConversionsProvider";
 import Transaction from "./Transaction";
 import TokenLabel from "./ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
+import Icon from "./ui/Icon";
 
 export interface PositionProps {
   id: BigNumber;
@@ -246,15 +247,10 @@ function Position({
         <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
           <div className="flex my-2 justify-end">
             <button
-              className="text-blue-500 mr-2"
-              onClick={() => {
-                setShowTransactions(!showTransactions);
-              }}
+              className="text-slate-500 dark:text-slate-200 mr-2"
+              onClick={handleManage}
             >
-              Transactions
-            </button>
-            <button className="text-blue-500 mr-2" onClick={handleManage}>
-              Manage
+              <Icon size="lg" icon={faEllipsis} />
             </button>
           </div>
         </td>

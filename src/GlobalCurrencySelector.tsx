@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
 import { useAppSettings } from "./AppSettingsProvider";
+import Icon from "./ui/Icon";
 
 function GlobalCurrencySelector() {
   const { globalCurrency, setGlobalCurrency } = useAppSettings();
@@ -18,7 +20,7 @@ function GlobalCurrencySelector() {
         onClick={() => setSelectorExpanded(!selectorExpanded)}
       >
         <span>{globalCurrency === "eth" ? "ETH" : "USD"}</span>
-        <span className="pl-1 text-xl">▿</span>
+        <Icon className="pl-1 text-xl" icon={faCaretDown} />
       </button>
 
       {selectorExpanded && (
