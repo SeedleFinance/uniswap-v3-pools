@@ -96,9 +96,10 @@
     "apollo": "^2.33.2",
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.0",
-    "parcel": "^2.3.1"
+    "parcel": "^2.3.1",
+    "parcel-optimizer-ogimage": "^0.1.0"
   },
   "alias": {
-      "retry": "./custom/retry"
+    "retry": "./custom/retry"
   }
 }
