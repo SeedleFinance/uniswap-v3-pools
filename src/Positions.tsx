@@ -8,9 +8,10 @@ interface Props {
   positions: any[];
   pool: Pool;
   baseToken: Token;
+  quoteToken: Token;
 }
 
-function Positions({ positions, pool, baseToken }: Props) {
+function Positions({ positions, pool, baseToken, quoteToken }: Props) {
   return (
     <div className="w-full flex flex-col my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
       <table className="table-auto w-full  text-slate-600 dark:text-slate-300">
@@ -53,6 +54,7 @@ function Positions({ positions, pool, baseToken }: Props) {
               key={position.id.toString()}
               pool={pool}
               baseToken={baseToken}
+              quoteToken={quoteToken}
               {...position}
             />
           ))}

@@ -1,8 +1,9 @@
 import React, { useMemo, useState } from "react";
-//import formatDistanceStrict from "date-fns/formatDistanceStrict";
+import { useNavigate } from "react-router-dom";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 import {
   useTransactionTotals,
@@ -17,11 +18,13 @@ import { useCurrencyConversions } from "./CurrencyConversionsProvider";
 import Transaction from "./Transaction";
 import TokenLabel from "./ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
+import Icon from "./ui/Icon";
 
 export interface PositionProps {
   id: BigNumber;
   pool: Pool;
   baseToken: Token;
+  quoteToken: Token;
   entity: UniPosition;
   positionLiquidity?: CurrencyAmount<Token>;
   uncollectedFees: CurrencyAmount<Token>[];
@@ -35,6 +38,7 @@ function Position({
   id,
   pool,
   baseToken,
+  quoteToken,
   entity,
   positionLiquidity,
   uncollectedFees,
@@ -46,8 +50,11 @@ function Position({
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
     useCurrencyConversions();
 
+  const navigate = useNavigate();
+
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
+  const [showActions, setShowActions] = useState(false);
 
   const { percent0, percent1 } = useMemo(() => {
     if (
@@ -147,12 +154,29 @@ function Position({
     return colors[positionStatus];
   };
 
-  const handleManage = () => {
-    const isPerp = baseToken.symbol === "vUSD";
-    const url = isPerp
-      ? `https://app.perp.com`
-      : `https://app.uniswap.org/#/pool/${id}`;
+  const isPerp = baseToken.symbol === "vUSD";
+
+  const handlePerp = () => {
+    setShowActions(false);
+    const url = "https://app.perp.com";
     window.open(url);
+  };
+
+  const handleRemove = () => {
+    setShowActions(false);
+    const url = `https://app.uniswap.org/#/pool/${id}`;
+    window.open(url);
+  };
+
+  const handleTransactions = () => {
+    setShowActions(false);
+    setShowTransactions(!showTransactions);
+  };
+
+  const handleAddLiquidity = () => {
+    navigate(
+      `/add/${quoteToken.symbol}/${baseToken.symbol}/${pool.fee}?position=${id}`
+    );
   };
 
   if (!pool || !entity) {
@@ -244,21 +268,59 @@ function Position({
         </td>
 
         <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
-          <div className="flex my-2 justify-end">
+          <div className="flex my-2 justify-end relative">
             <button
-              className="text-blue-500 mr-2"
-              onClick={() => {
-                setShowTransactions(!showTransactions);
-              }}
+              className="text-slate-500 dark:text-slate-200 mr-2"
+              onClick={() => setShowActions(!showActions)}
             >
-              Transactions
+              <Icon size="lg" icon={faEllipsis} />
             </button>
-            <button className="text-blue-500 mr-2" onClick={handleManage}>
-              Manage
-            </button>
+            {showActions && (
+              <div className="absolute p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 w-32 flex flex-col">
+                <button className="text-left my-1" onClick={handleTransactions}>
+                  Transactions
+                </button>
+                {isPerp ? (
+                  <button className="text-left my-1" onClick={handlePerp}>
+                    Manage
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="text-left my-1"
+                      onClick={handleAddLiquidity}
+                    >
+                      Add Liquidity
+                    </button>
+                    {/*
+                    <button className="text-left my-1" onClick={}>
+                      Collect fees
+                    </button>
+                    */}
+                    <div className="border-t border-slate-200 dark:border-slate-700 pt-1 mt-1">
+                      {/*
+                      <button className="text-left my-1" onClick={}>
+                        Reposition
+                      </button>
+                      <button className="text-left my-1" onClick={}>
+                        Transfer
+                      </button>
+                      */}
+                      <button
+                        className="text-left text-red-500 my-1"
+                        onClick={handleRemove}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </td>
       </tr>
+
       {showTransactions && (
         <tr>
           <td colSpan={4}>

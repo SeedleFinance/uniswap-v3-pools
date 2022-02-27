@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
+import { useSearchParams } from "react-router-dom";
 import {
   TickMath,
   tickToPrice,
@@ -49,6 +50,7 @@ import {
   tokenAmountNeedApproval,
   toCurrencyAmount,
   findMatchingPosition,
+  findPositionById,
 } from "./utils";
 
 interface Props {
@@ -68,6 +70,8 @@ function NewPosition({
 }: Props) {
   const { chainId, account, library } = useWeb3React("injected");
   const chainWeb3React = useChainWeb3React(chainId as number);
+  const [searchParams] = useSearchParams();
+  const positionId = searchParams.get("position");
 
   useEffect(() => {
     if (!chainId) {
@@ -168,6 +172,9 @@ function NewPosition({
       tickUpper =
         Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) *
         tickSpacing;
+    } else if (findPositionById(positions, positionId)) {
+      tickLower = position.entity.tickLower;
+      tickUpper = position.entity.tickUpper;
     } else {
       let sortedPositions = positions.sort((posA, posB) => {
         const disA = positionDistance(tickCurrent, posA);

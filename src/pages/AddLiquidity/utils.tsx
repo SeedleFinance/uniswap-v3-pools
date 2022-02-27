@@ -229,3 +229,11 @@ export function getApprovalAmount(val1: number, val2: number) {
   // increase amount by 20% to handle ratio errors
   return Math.max(val1, val2) * 1.2;
 }
+
+export function findPositionById(positions: any[], id: string) {
+  if (id === "") {
+    return null;
+  }
+
+  return positions.find((pos) => pos.id === id);
+}

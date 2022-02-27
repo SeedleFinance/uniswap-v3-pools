@@ -319,6 +319,7 @@ function Pool({
                   positions={positionsWithPricesAndTransactions}
                   pool={entity}
                   baseToken={baseToken}
+                  quoteToken={quoteToken}
                 />
               )}
             </div>
