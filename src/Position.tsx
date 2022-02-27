@@ -149,12 +149,27 @@ function Position({
     return colors[positionStatus];
   };
 
-  const handleManage = () => {
-    const isPerp = baseToken.symbol === "vUSD";
-    const url = isPerp
-      ? `https://app.perp.com`
-      : `https://app.uniswap.org/#/pool/${id}`;
+  const isPerp = baseToken.symbol === "vUSD";
+
+  const handlePerp = () => {
+    setShowActions(false);
+    const url = "https://app.perp.com";
     window.open(url);
+  };
+
+  const handleRemove = () => {
+    setShowActions(false);
+    const url = `https://app.uniswap.org/#/pool/${id}`;
+    window.open(url);
+  };
+
+  const handleTransactions = () => {
+    setShowActions(false);
+    setShowTransactions(!showTransactions);
+  };
+
+  const handleAddLiquidity = () => {
+    setShowActions(false);
   };
 
   if (!pool || !entity) {
@@ -254,13 +269,41 @@ function Position({
               <Icon size="lg" icon={faEllipsis} />
             </button>
             {showActions && (
-              <div className="absolute p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 right-2 w-32">
-                <button onClick={() => setShowTransactions(true)}>
+              <div className="absolute p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 w-32 flex flex-col">
+                <button className="text-left my-1" onClick={handleTransactions}>
                   Transactions
                 </button>
-                <button onClick={}>Add Liquidity</button>
-                <button onClick={}>Transfer</button>
-                <button onClick={}>Close</button>
+                {isPerp ? (
+                  <button className="text-left my-1" onClick={handlePerp}>
+                    Manage
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      className="text-left my-1"
+                      onClick={handleAddLiquidity}
+                    >
+                      Add Liquidity
+                    </button>
+                    <button className="text-left my-1" onClick={}>
+                      Collect fees
+                    </button>
+                    <div className="border-t border-slate-200 dark:border-slate-700 pt-1 mt-1">
+                      <button className="text-left my-1" onClick={}>
+                        Reposition
+                      </button>
+                      <button className="text-left my-1" onClick={}>
+                        Transfer
+                      </button>
+                      <button
+                        className="text-left text-red-500 my-1"
+                        onClick={handleRemove}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>

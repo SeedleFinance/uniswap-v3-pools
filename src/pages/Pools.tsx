@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
-import { usePools } from "../CombinedPoolsProvider";
+import { CombinedPoolsProvider, usePools } from "../CombinedPoolsProvider";
 import { PoolState } from "../hooks/usePoolsState";
 import { useCurrencyConversions } from "../CurrencyConversionsProvider";
 import Pool from "../Pool";
@@ -152,4 +152,12 @@ function Pools() {
   );
 }
 
-export default Pools;
+function PoolsWrapped() {
+  return (
+    <CombinedPoolsProvider>
+      <Pools />
+    </CombinedPoolsProvider>
+  );
+}
+
+export default PoolsWrapped;

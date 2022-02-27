@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { Link, useHistory, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Token } from "@uniswap/sdk-core";
 
 import NewPools from "./NewPools";
@@ -18,7 +18,7 @@ interface Props {
 
 function AddLiquidity({ tab }: Props) {
   const { chainId, active, activate } = useWeb3React("injected");
-  const history = useHistory();
+  const navigate = useNavigate();
   const { baseTokenSymbol, quoteTokenSymbol, fee } = useParams<any>();
 
   useEffect(() => {
@@ -106,22 +106,22 @@ function AddLiquidity({ tab }: Props) {
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(fee);
     setSelectedPositions(positions);
-    history.push(`/add/${quoteToken.symbol}/${baseToken.symbol}/${fee}`);
+    navigate(`/add/${quoteToken.symbol}/${baseToken.symbol}/${fee}`);
   };
 
   const handleNewTabClick = () => {
     resetSelections();
-    history.push("/add/new");
+    navigate("/add/new");
   };
 
   const handleExistingTabClick = () => {
     resetSelections();
-    history.push("/add/existing");
+    navigate("/add/existing");
   };
 
   const handleCancelNewPosition = () => {
     resetSelections();
-    history.push("/add/new");
+    navigate("/add/new");
   };
 
   return (
