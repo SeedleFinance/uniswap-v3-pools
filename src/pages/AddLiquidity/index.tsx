@@ -70,7 +70,7 @@ function AddLiquidity({ tab }: Props) {
     ]);
 
     // invalid tokens
-    if (matches.length !== 2) {
+    if (matches.length < 2) {
       return;
     }
 

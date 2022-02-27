@@ -9,14 +9,14 @@ function PageBody() {
   return (
     <Router>
       <Routes>
+        <Route
+          path="/add/:quoteTokenSymbol/:baseTokenSymbol/:fee"
+          element={<AddLiquidityPage tab="new" />}
+        />
         <Route path="/add/new" element={<AddLiquidityPage tab="new" />} />
         <Route
           path="/add/existing"
           element={<AddLiquidityPage tab="existing" />}
-        />
-        <Route
-          path="/add/:quoteTokenSymbol/:baseTokenSymbol/:fee"
-          element={<AddLiquidityPage tab="new" />}
         />
         <Route path="/" element={<PoolsPage />} />
       </Routes>

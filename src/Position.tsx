@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
@@ -23,6 +24,7 @@ export interface PositionProps {
   id: BigNumber;
   pool: Pool;
   baseToken: Token;
+  quoteToken: Token;
   entity: UniPosition;
   positionLiquidity?: CurrencyAmount<Token>;
   uncollectedFees: CurrencyAmount<Token>[];
@@ -36,6 +38,7 @@ function Position({
   id,
   pool,
   baseToken,
+  quoteToken,
   entity,
   positionLiquidity,
   uncollectedFees,
@@ -46,6 +49,8 @@ function Position({
 }: PositionProps) {
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
     useCurrencyConversions();
+
+  const navigate = useNavigate();
 
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
@@ -169,7 +174,9 @@ function Position({
   };
 
   const handleAddLiquidity = () => {
-    setShowActions(false);
+    navigate(
+      `/add/${quoteToken.symbol}/${baseToken.symbol}/${pool.fee}?position=${id}`
+    );
   };
 
   if (!pool || !entity) {
