@@ -172,25 +172,28 @@ function NewPosition({
       tickUpper =
         Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) *
         tickSpacing;
-    } else if (findPositionById(positions, positionId)) {
-      tickLower = position.entity.tickLower;
-      tickUpper = position.entity.tickUpper;
     } else {
-      let sortedPositions = positions.sort((posA, posB) => {
-        const disA = positionDistance(tickCurrent, posA);
-        const disB = positionDistance(tickCurrent, posB);
-        return disA - disB;
-      });
+      const position = findPositionById(positions, positionId);
+      if (position) {
+        tickLower = position.entity.tickLower;
+        tickUpper = position.entity.tickUpper;
+      } else {
+        let sortedPositions = positions.sort((posA, posB) => {
+          const disA = positionDistance(tickCurrent, posA);
+          const disB = positionDistance(tickCurrent, posB);
+          return disA - disB;
+        });
 
-      tickLower = sortedPositions[0].entity.tickLower;
-      tickUpper = sortedPositions[0].entity.tickUpper;
+        tickLower = sortedPositions[0].entity.tickLower;
+        tickUpper = sortedPositions[0].entity.tickUpper;
+      }
     }
 
     if (rangeReverse) {
       return [tickUpper, tickLower];
     }
     return [tickLower, tickUpper];
-  }, [pool, positions, rangeReverse]);
+  }, [pool, positions, rangeReverse, positionId]);
 
   useEffect(() => {
     setTickLower(suggestedTicks[0]);

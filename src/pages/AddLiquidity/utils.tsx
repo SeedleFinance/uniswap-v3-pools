@@ -230,8 +230,8 @@ export function getApprovalAmount(val1: number, val2: number) {
   return Math.max(val1, val2) * 1.2;
 }
 
-export function findPositionById(positions: any[], id: string) {
-  if (id === "") {
+export function findPositionById(positions: any[], id: string | null) {
+  if (!id || id === "") {
     return null;
   }
 
