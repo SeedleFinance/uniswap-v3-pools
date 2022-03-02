@@ -64,6 +64,17 @@ function Pools() {
 
   return (
     <div className="w-full">
+      <div class="my-4 p-2 bg-yellow-100 rounded">
+        <a
+          href="https://donate.uniswap.org/#/swap"
+          className="w-full text-blue-500 font-bold underline text-center"
+        >
+          Donate to Ukraine
+        </a>
+        <span className="ml-2">
+          Swap and donate any ERC-20 token via Uniswap
+        </span>
+      </div>
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center justify-between w-5/12  pr-24">
           <div>
