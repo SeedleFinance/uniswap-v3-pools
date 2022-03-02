@@ -64,7 +64,7 @@ function Pools() {
 
   return (
     <div className="w-full">
-      <div class="my-4 p-2 bg-yellow-100 rounded">
+      <div className="my-4 p-2 bg-yellow-100 rounded">
         <a
           href="https://donate.uniswap.org/#/swap"
           className="w-full text-blue-500 font-bold underline text-center"
