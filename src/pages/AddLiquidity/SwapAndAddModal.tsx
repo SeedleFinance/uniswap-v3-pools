@@ -83,7 +83,7 @@ function SwapAndAddModal({
   }, [route, token0, token1, token0PreswapAmount, token1PreswapAmount]);
 
   const token0NeedApproval = useMemo(() => {
-    if (!chainId || !token0 || !route) {
+    if (!chainId || !token0 || !route || tokenApproving) {
       return false;
     }
 
@@ -100,10 +100,11 @@ function SwapAndAddModal({
     token0Amount,
     token0Allowance,
     route,
+    tokenApproving,
   ]);
 
   const token1NeedApproval = useMemo(() => {
-    if (!chainId || !token1 || !route) {
+    if (!chainId || !token1 || !route || tokenApproving) {
       return false;
     }
 
@@ -120,6 +121,7 @@ function SwapAndAddModal({
     token1Amount,
     token1Allowance,
     route,
+    tokenApproving,
   ]);
 
   const handleApprove = async (token: Token, amount: number) => {
