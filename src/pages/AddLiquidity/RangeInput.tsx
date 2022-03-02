@@ -42,6 +42,10 @@ function RangeInput({
   }, [quoteToken, baseToken]);
 
   useEffect(() => {
+    setTick(initTick);
+  }, [initTick]);
+
+  useEffect(() => {
     const price = parseFloat(
       tickToPrice(token1, token0, tick).toSignificant(16)
     );

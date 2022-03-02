@@ -1,13 +1,14 @@
 import React from "react";
 import { Token } from "@uniswap/sdk-core";
 
-import { usePoolsForNetwork } from "../../hooks/usePoolsForNetwork";
+import { PoolState } from "../../hooks/usePoolsState";
 
 import Pools from "./Pools";
 
 interface Props {
   chainId: number;
   filter: string;
+  pools: PoolState[];
   onPoolClick: (
     baseToken: Token,
     quoteToken: Token,
@@ -16,9 +17,7 @@ interface Props {
   ) => void;
 }
 
-function ExistingPools({ chainId, onPoolClick, filter }: Props) {
-  const { pools } = usePoolsForNetwork(chainId, true);
-
+function ExistingPools({ chainId, onPoolClick, filter, pools }: Props) {
   return <Pools pools={pools} filter={filter} onPoolClick={onPoolClick} />;
 }
 

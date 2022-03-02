@@ -8,6 +8,8 @@ import ExistingPools from "./ExistingPools";
 import NewPosition from "./NewPosition";
 import SearchInput from "./SearchInput";
 
+import { usePoolsForNetwork } from "../../hooks/usePoolsForNetwork";
+
 import { getQuoteAndBaseToken } from "../../utils/tokens";
 import { injectedConnector } from "../../utils/connectors";
 import { loadTokens, findTokens, TokenListItem } from "./utils";
@@ -18,6 +20,7 @@ interface Props {
 
 function AddLiquidity({ tab }: Props) {
   const { chainId, active, activate } = useWeb3React("injected");
+
   const navigate = useNavigate();
   const { baseTokenSymbol, quoteTokenSymbol, fee } = useParams<any>();
 
@@ -28,6 +31,8 @@ function AddLiquidity({ tab }: Props) {
       });
     }
   }, [activate, active]);
+
+  const { pools } = usePoolsForNetwork(chainId || 1, true);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
   const [selectedTab, setSelectedTab] = useState("new");
@@ -88,6 +93,24 @@ function AddLiquidity({ tab }: Props) {
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(parseInt(fee, 10));
   }, [chainId, tokens, baseTokenSymbol, quoteTokenSymbol, fee]);
+
+  // set the positions
+  useEffect(() => {
+    if (!pools || !selectedBaseToken || !selectedQuoteToken || !selectedFee) {
+      return;
+    }
+
+    const matchingPool = pools.find(
+      (p) =>
+        p.baseToken.equals(selectedBaseToken) &&
+        p.quoteToken.equals(selectedQuoteToken) &&
+        p.entity.fee === selectedFee
+    );
+
+    if (matchingPool) {
+      setSelectedPositions(matchingPool.positions);
+    }
+  }, [pools, selectedBaseToken, selectedQuoteToken, selectedFee]);
 
   const resetSelections = () => {
     setSelectedBaseToken(null);
@@ -180,6 +203,7 @@ function AddLiquidity({ tab }: Props) {
               chainId={chainId || 1}
               onPoolClick={handlePoolClick}
               filter={searchInput}
+              pools={pools}
             />
           )}
         </div>

@@ -1,4 +1,5 @@
 import JSBI from "jsbi";
+import { BigNumber } from "@ethersproject/bignumber";
 import { Pool, Position } from "@uniswap/v3-sdk";
 import { Token, CurrencyAmount, MaxUint256 } from "@uniswap/sdk-core";
 
@@ -235,5 +236,5 @@ export function findPositionById(positions: any[], id: string | null) {
     return null;
   }
 
-  return positions.find((pos) => pos.id === id);
+  return positions.find((pos) => pos.id.eq(BigNumber.from(id)));
 }
