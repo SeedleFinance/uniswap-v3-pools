@@ -134,9 +134,11 @@ export function useTokenFunctions(
         return null;
       }
 
+      // inflate the approval amount by 20% to avoid rounding errors
+      const inflatedAmount = amount * 1.2;
       const amountToApprove = CurrencyAmount.fromRawAmount(
         token,
-        Math.ceil(amount * Math.pow(10, token.decimals))
+        Math.ceil(inflatedAmount * Math.pow(10, token.decimals))
       ).quotient.toString();
       let estimatedGas = BigNumber.from(0);
       let useExact = false;
