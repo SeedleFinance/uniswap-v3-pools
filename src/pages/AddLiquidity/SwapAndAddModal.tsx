@@ -34,6 +34,7 @@ function SwapAndAddModal({
   onCancel,
   onComplete,
 }: Props) {
+  console.log(route);
   const { chainId, account } = useWeb3React("injected");
   const { getAllowances } = useTokenFunctions([token0, token1], account);
 
@@ -50,6 +51,8 @@ function SwapAndAddModal({
     const _run = async () => {
       const spender = SWAP_ROUTER_ADDRESSES[chainId as number];
       const [val0, val1] = await getAllowances(spender);
+      console.log("allowance0", val0);
+      console.log("allowance1", val1);
       setToken0Allowance(val0);
       setToken1Allowance(val1);
     };

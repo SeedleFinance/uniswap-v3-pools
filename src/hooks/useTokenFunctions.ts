@@ -134,6 +134,8 @@ export function useTokenFunctions(
         return null;
       }
 
+      // inflate the approval amount by 20% to avoid rounding errors
+      const inflatedAmount = amount * 1.2;
       const amountToApprove = CurrencyAmount.fromRawAmount(
         token,
         Math.ceil(amount * Math.pow(10, token.decimals))
@@ -143,6 +145,8 @@ export function useTokenFunctions(
       try {
         estimatedGas = await contract.estimateGas.approve(spender, MaxUint256);
       } catch (e) {
+        console.log(e);
+        console.log(amountToApprove);
         // fallback for tokens who restrict approval amounts
         estimatedGas = await contract.estimateGas.approve(
           spender,

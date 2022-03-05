@@ -122,9 +122,14 @@ export function tokenAmountNeedApproval(
   const allowanceRaw = Math.floor(allowance * Math.pow(10, token.decimals));
   const amountRaw = Math.ceil(amount * Math.pow(10, token.decimals));
 
-  return CurrencyAmount.fromRawAmount(token, allowanceRaw).lessThan(
+  console.log("needs approval");
+  console.log(allowanceRaw, amountRaw);
+
+  const res = CurrencyAmount.fromRawAmount(token, allowanceRaw).lessThan(
     CurrencyAmount.fromRawAmount(token, amountRaw)
   );
+
+  return res;
 }
 
 export interface TokenListItem {
@@ -227,8 +232,9 @@ export function findMatchingPosition(
 }
 
 export function getApprovalAmount(val1: number, val2: number) {
-  // increase amount by 20% to handle ratio errors
-  return Math.max(val1, val2) * 1.2;
+  console.log("approval amount 1", val1);
+  console.log("approval amount 2", val2);
+  return Math.max(val1, val2);
 }
 
 export function findPositionById(positions: any[], id: string | null) {

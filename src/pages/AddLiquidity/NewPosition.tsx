@@ -331,6 +331,31 @@ function NewPosition({
     return null;
   }
 
+  const handleTxError = (e: any) => {
+    console.error(e);
+    if (e.error) {
+      setAlert({
+        message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+        level: AlertLevel.Error,
+      });
+    } else if (e.data) {
+      setAlert({
+        message: `Transaction failed. (reason: ${e.data.message} code: ${e.data.code})`,
+        level: AlertLevel.Error,
+      });
+    } else if (e.message) {
+      setAlert({
+        message: `Transaction failed. (reason: ${e.message} code: ${e.code})`,
+        level: AlertLevel.Error,
+      });
+    } else {
+      setAlert({
+        message: e.toString(),
+        level: AlertLevel.Error,
+      });
+    }
+  };
+
   const onSwapAndAddLiquidity = async () => {
     setSwapAndAddPending(true);
 
@@ -384,7 +409,7 @@ function NewPosition({
         swapOptions: {
           recipient: account as string,
           slippageTolerance: SWAP_SLIPPAGE,
-          deadline: +new Date() + 120 * 60, // TODO: use current blockchain timestamp,
+          deadline: +new Date() + 10 * 60 * 1000, // TODO: use current blockchain timestamp,
         },
         addLiquidityOptions,
       };
@@ -406,18 +431,7 @@ function NewPosition({
         setSwapAndAddRoute(routerResult.result);
       }
     } catch (e: any) {
-      console.error(e);
-      if (e.error) {
-        setAlert({
-          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
-          level: AlertLevel.Error,
-        });
-      } else {
-        setAlert({
-          message: e.toString(),
-          level: AlertLevel.Error,
-        });
-      }
+      handleTxError(e);
       setSwapAndAddPending(false);
       setTransactionHash(null);
     }
@@ -457,18 +471,7 @@ function NewPosition({
         });
       }
     } catch (e: any) {
-      console.error(e);
-      if (e.error) {
-        setAlert({
-          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
-          level: AlertLevel.Error,
-        });
-      } else {
-        setAlert({
-          message: e.toString(),
-          level: AlertLevel.Error,
-        });
-      }
+      handleTxError(e);
     }
     setSwapAndAddPending(false);
     setTransactionPending(false);
@@ -517,7 +520,7 @@ function NewPosition({
         rangeReverse
       );
 
-      const deadline = +new Date() + 120 * 60; // TODO: use current blockchain timestamp
+      const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
       const slippageTolerance =
         baseTokenDisabled || quoteTokenDisabled
           ? ZERO_PERCENT
@@ -566,18 +569,7 @@ function NewPosition({
         });
       }
     } catch (e: any) {
-      console.error(e);
-      if (e.error) {
-        setAlert({
-          message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
-          level: AlertLevel.Error,
-        });
-      } else {
-        setAlert({
-          message: e.toString(),
-          level: AlertLevel.Error,
-        });
-      }
+      handleTxError(e);
     }
     setTransactionPending(false);
     setTransactionHash(null);
@@ -586,6 +578,7 @@ function NewPosition({
   const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
     try {
+      console.log("approved amount", amount);
       const res = await approveToken(token, spender, amount);
       if (res) {
         setTransactionHash(res.hash);
