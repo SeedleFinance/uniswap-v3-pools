@@ -51,9 +51,10 @@ export function toCurrencyAmount(token: Token, amount: number) {
     Math.floor(amount * Math.pow(10, token.decimals))
   );
   // convert the token to native ether if it's WETH
-  const native = token.equals(WETH9[token.chainId])
-    ? Ether.onChain(token.chainId)
-    : token;
+  const native =
+    token.equals(WETH9[token.chainId]) && token.chainId !== 137
+      ? Ether.onChain(token.chainId)
+      : token;
 
   return CurrencyAmount.fromRawAmount(native, bigIntish);
 }
