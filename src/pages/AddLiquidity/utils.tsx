@@ -1,7 +1,7 @@
 import JSBI from "jsbi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Pool, Position } from "@uniswap/v3-sdk";
-import { Token, CurrencyAmount, MaxUint256 } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount, Ether, MaxUint256 } from "@uniswap/sdk-core";
 
 import { WETH9 } from "../../constants";
 
@@ -50,7 +50,12 @@ export function toCurrencyAmount(token: Token, amount: number) {
   const bigIntish = JSBI.BigInt(
     Math.floor(amount * Math.pow(10, token.decimals))
   );
-  return CurrencyAmount.fromRawAmount(token, bigIntish);
+  // convert the token to native ether if it's WETH
+  const native = token.equals(WETH9[token.chainId])
+    ? Ether.onChain(token.chainId)
+    : token;
+
+  return CurrencyAmount.fromRawAmount(native, bigIntish);
 }
 
 export function calculateNewAmounts(
