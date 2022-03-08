@@ -217,7 +217,7 @@ export function findMatchingPosition(
   tickLower: number,
   tickUpper: number
 ) {
-  if (!positions || positions.length) {
+  if (!positions || !positions.length) {
     return null;
   }
 
