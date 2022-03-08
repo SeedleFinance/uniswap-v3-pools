@@ -302,10 +302,10 @@ function Position({
                       <button className="text-left my-1" onClick={}>
                         Reposition
                       </button>
+                      */}
                       <button className="text-left my-1" onClick={}>
                         Transfer
                       </button>
-                      */}
                       <button
                         className="text-left text-red-500 my-1"
                         onClick={handleRemove}
