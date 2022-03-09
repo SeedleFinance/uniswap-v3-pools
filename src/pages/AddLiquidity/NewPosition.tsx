@@ -390,10 +390,12 @@ function NewPosition({
         tickLower,
         tickUpper
       );
-      const addLiquidityOptions = {
-        recipient: account,
-        tokenId: matchingPosition ? matchingPosition.id : null,
-      };
+      const addLiquidityOptions: any = {};
+      if (matchingPosition) {
+        addLiquidityOptions.tokenId = matchingPosition.id;
+      } else {
+        addLiquidityOptions.recipient = account;
+      }
 
       const newPosition = new Position({
         pool,
