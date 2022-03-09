@@ -47,9 +47,10 @@ export function positionFromAmounts(
 }
 
 export function toCurrencyAmount(token: Token, amount: number) {
-  const bigIntish = JSBI.BigInt(
-    Math.floor(amount * Math.pow(10, token.decimals))
-  );
+  const bigIntish =
+    amount > 0
+      ? JSBI.BigInt(Math.floor(amount * Math.pow(10, token.decimals)))
+      : 0;
   // convert the token to native ether if it's WETH
   const native =
     token.equals(WETH9[token.chainId]) && token.chainId !== 137
