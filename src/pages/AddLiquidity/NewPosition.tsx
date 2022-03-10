@@ -449,9 +449,15 @@ function NewPosition({
         throw new Error("Swap and Add: no valid route found");
       }
 
+      // check if the value is > 0
+      let value = BigNumber.from(route.methodParameters.value);
+      if (value.lt(BigNumber.from(0))) {
+        value = BigNumber.from(0);
+      }
+
       const tx = {
         to: SWAP_ROUTER_ADDRESSES[chainId as number],
-        value: BigNumber.from(route.methodParameters.value),
+        value,
         data: route.methodParameters.calldata,
         gasPrice: BigNumber.from(route.gasPriceWei),
       };
