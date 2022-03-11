@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 
-import { CombinedPoolsProvider, usePools } from "../CombinedPoolsProvider";
-import { PoolState } from "../hooks/usePoolsState";
-import { useCurrencyConversions } from "../CurrencyConversionsProvider";
-import Pool from "../Pool";
-import FilterClosedToggle from "../FilterClosedToggle";
-import DownloadCSV from "../DownloadCSV";
+import { CombinedPoolsProvider, usePools } from "../../CombinedPoolsProvider";
+import { PoolState } from "../../hooks/usePoolsState";
+import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
+import Pool from "./Pool";
+import FilterClosedToggle from "./FilterClosedToggle";
+import DownloadCSV from "./DownloadCSV";
 
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol } =

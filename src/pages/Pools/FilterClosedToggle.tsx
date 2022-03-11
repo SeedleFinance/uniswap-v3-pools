@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useAppSettings } from "./AppSettingsProvider";
-import Toggle from "./ui/Toggle";
+import { useAppSettings } from "../../AppSettingsProvider";
+import Toggle from "../../ui/Toggle";
 
 function FilterClosedToggle() {
   const { filterClosed, setFilterClosed } = useAppSettings();

@@ -3,10 +3,10 @@ import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import format from "date-fns/format";
 
-import { useCurrencyConversions } from "./CurrencyConversionsProvider";
-import TokenSymbol from "./ui/TokenLabel";
+import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
+import TokenSymbol from "../../ui/TokenLabel";
 
-import { BLOCK_EXPLORER_URL } from "./constants";
+import { BLOCK_EXPLORER_URL } from "../../constants";
 
 export interface TransactionProps {
   id: string;

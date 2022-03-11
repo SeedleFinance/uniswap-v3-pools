@@ -10,22 +10,22 @@ import {
 import {
   useTransactions,
   FormattedPoolTransaction,
-} from "./hooks/useTransactions";
+} from "../../hooks/useTransactions";
 import {
   useTransactionTotals,
   useReturnValue,
   useAPR,
   useFeeAPY,
-} from "./hooks/calculations";
-import { useCurrencyConversions } from "./CurrencyConversionsProvider";
-import { WETH9 } from "./constants";
+} from "../../hooks/calculations";
+import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
+import { WETH9 } from "../../constants";
 
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
 import PriceChart from "./PriceChart";
-import ChevronDown from "./icons/ChevronDown";
-import ChevronUp from "./icons/ChevronUp";
-import PoolButton from "./ui/PoolButton";
+import ChevronDown from "../../icons/ChevronDown";
+import ChevronUp from "../../icons/ChevronUp";
+import PoolButton from "../..//ui/PoolButton";
 
 interface PoolProps {
   address: string;

@@ -13,7 +13,7 @@ import format from "date-fns/format";
 import { Token } from "@uniswap/sdk-core";
 import { tickToPrice } from "@uniswap/v3-sdk";
 
-import { usePoolDayData } from "./hooks/usePoolDayData";
+import { usePoolDayData } from "../../hooks/usePoolDayData";
 
 interface Props {
   address: string;

@@ -10,15 +10,15 @@ import {
   useReturnValue,
   useAPR,
   useFeeAPY,
-} from "./hooks/calculations";
+} from "../../hooks/calculations";
 
-import { getPositionStatus, PositionStatus } from "./utils/positionStatus";
+import { getPositionStatus, PositionStatus } from "../../utils/positionStatus";
 
-import { useCurrencyConversions } from "./CurrencyConversionsProvider";
+import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import Transaction from "./Transaction";
-import TokenLabel from "./ui/TokenLabel";
+import TokenLabel from "../../ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
-import Icon from "./ui/Icon";
+import Icon from "../../ui/Icon";
 
 export interface PositionProps {
   id: BigNumber;
