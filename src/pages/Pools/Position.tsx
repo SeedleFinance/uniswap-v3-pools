@@ -276,7 +276,7 @@ function Position({
               <Icon size="lg" icon={faEllipsis} />
             </button>
             {showActions && (
-              <div className="absolute p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 w-32 flex flex-col">
+              <div className="absolute z-50 p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 w-32 flex flex-col">
                 <button className="text-left my-1" onClick={handleTransactions}>
                   Transactions
                 </button>

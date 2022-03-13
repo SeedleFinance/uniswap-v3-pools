@@ -25,8 +25,9 @@ function PositionStatuses({
 
   return (
     <button className="flex flex-wrap text-2xl" onClick={onClick}>
-      {positions.map((position) => (
+      {positions.map((position, idx) => (
         <div
+          key={idx}
           className={`${
             statusColor[getPositionStatus(tickCurrent, position)]
           } px-1`}
