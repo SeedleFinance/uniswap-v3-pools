@@ -16,6 +16,7 @@ import { getPositionStatus, PositionStatus } from "../../utils/positionStatus";
 
 import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import Transaction from "./Transaction";
+import TransferModal from "./TransferModal";
 import TokenLabel from "../../ui/TokenLabel";
 import RangeVisual from "./RangeVisual";
 import Icon from "../../ui/Icon";
@@ -55,6 +56,7 @@ function Position({
   const [showTransactions, setShowTransactions] = useState(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
   const [showActions, setShowActions] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
 
   const { percent0, percent1 } = useMemo(() => {
     if (
@@ -177,6 +179,20 @@ function Position({
     navigate(
       `/add/${quoteToken.symbol}/${baseToken.symbol}/${pool.fee}?position=${id}`
     );
+  };
+
+  const handleTransfer = () => {
+    setShowActions(false);
+    setShowTransfer(!showTransfer);
+  };
+
+  const onTransferCancel = () => {
+    setShowTransfer(false);
+  };
+
+  const onTransferComplete = (address: string) => {
+    setShowTransfer(false);
+    console.log(address);
   };
 
   if (!pool || !entity) {
@@ -303,7 +319,10 @@ function Position({
                         Reposition
                       </button>
                       */}
-                      <button className="text-left my-1" onClick={}>
+                      <button
+                        className="text-left my-1"
+                        onClick={handleTransfer}
+                      >
                         Transfer
                       </button>
                       <button
@@ -345,6 +364,14 @@ function Position({
             </table>
           </td>
         </tr>
+      )}
+
+      {showTransfer && (
+        <TransferModal
+          id={id}
+          onCancel={onTransferCancel}
+          onComplete={onTransferComplete}
+        />
       )}
     </>
   );
