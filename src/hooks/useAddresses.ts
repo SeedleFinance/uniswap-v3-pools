@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { getNetworkConnector, injectedConnector } from "../utils/connectors";
+import { isAddress } from "@ethersproject/address";
 
 export function useAddresses() {
   const { library, active, activate } = useWeb3React("mainnet");
@@ -43,10 +44,10 @@ export function useAddresses() {
 
       if (inputAddresses.length) {
         inputAddresses.forEach((addr) => {
-          if (addr.includes(".")) {
-            ensNames.push(addr);
-          } else {
+          if (isAddress(addr)) {
             hexAddresses.push(addr);
+          } else {
+            ensNames.push(addr);
           }
         });
       }

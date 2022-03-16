@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { useNavigate } from "react-router-dom";
 import { BigNumber } from "@ethersproject/bignumber";
+import { isAddress } from "@ethersproject/address";
 import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import {
   Pool,
@@ -213,7 +214,8 @@ function Position({
 
     try {
       let recipient = address;
-      if (address.includes(".")) {
+      // check if the address is a hex address
+      if (!isAddress(address)) {
         recipient = await library.resolveName(address);
       }
 
