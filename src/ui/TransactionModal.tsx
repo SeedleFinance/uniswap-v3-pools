@@ -4,8 +4,8 @@ import { BLOCK_EXPLORER_URL } from "../constants";
 import Modal from "./Modal";
 
 interface Props {
-  chainId: number;
-  transactionHash: string;
+  chainId: number | undefined;
+  transactionHash: string | null;
 }
 
 function TransactionModal({ chainId, transactionHash }: Props) {

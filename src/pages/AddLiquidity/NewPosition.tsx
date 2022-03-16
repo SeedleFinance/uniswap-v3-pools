@@ -23,7 +23,6 @@ import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
-import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
 import Toggle from "../../ui/Toggle";
 import { WETH9 } from "../../constants";

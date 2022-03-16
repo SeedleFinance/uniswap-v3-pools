@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Token } from "@uniswap/sdk-core";
+import { BigNumber } from "@ethersproject/bignumber";
 
 import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
@@ -9,7 +10,7 @@ interface Props {
   baseToken: Token;
   quoteToken: Token;
   onCancel: () => void;
-  onComplete: () => void;
+  onComplete: (address: string) => void;
 }
 
 function TransferModal({
@@ -31,7 +32,7 @@ function TransferModal({
     setAddress(val);
   };
 
-  const handleTransfer = (ev: { target: any }) => {
+  const handleTransfer = (ev: { target: any; preventDefault: () => void }) => {
     ev.preventDefault();
     if (!askConfirm) {
       setAskConfirm(true);

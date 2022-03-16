@@ -221,9 +221,9 @@ function Position({
 
       const { calldata, value } =
         NonfungiblePositionManager.safeTransferFromParameters({
-          sender: account,
+          sender: account as string,
           recipient,
-          tokenId: id,
+          tokenId: id.toString(),
         });
       const tx = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
@@ -232,7 +232,12 @@ function Position({
       };
 
       const estimatedGas = await library.getSigner().estimateGas(tx);
-      const res = await library.getSigner().sendTransaction(tx);
+      const res = await library.getSigner().sendTransaction({
+        ...tx,
+        gasLimit: estimatedGas
+          .mul(BigNumber.from(10000 + 2000))
+          .div(BigNumber.from(10000)),
+      });
 
       if (res) {
         setTransactionHash(res.hash);
