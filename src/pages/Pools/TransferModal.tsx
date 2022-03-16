@@ -71,8 +71,9 @@ function TransferModal({
           </>
         ) : (
           <div className="mb-2">
-            <div className="mb-2 leading-relaxed">
-              Are you sure you want to transfer the position to{" "}
+            <div className="my-4 leading-relaxed">
+              Are you sure you want to transfer the position{" "}
+              <span className="font-bold">{tokenId.toString()}</span> to{" "}
               <span className="bg-slate-100 dark:bg-slate-900 p-1">
                 {address}
               </span>

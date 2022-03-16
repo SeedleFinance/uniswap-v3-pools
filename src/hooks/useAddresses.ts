@@ -43,7 +43,7 @@ export function useAddresses() {
 
       if (inputAddresses.length) {
         inputAddresses.forEach((addr) => {
-          if (addr.endsWith(".eth")) {
+          if (addr.includes(".")) {
             ensNames.push(addr);
           } else {
             hexAddresses.push(addr);

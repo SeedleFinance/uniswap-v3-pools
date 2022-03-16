@@ -207,11 +207,16 @@ function Position({
     setShowTransfer(false);
   };
 
-  const onTransferComplete = async (recipient: string) => {
+  const onTransferComplete = async (address: string) => {
     setShowTransfer(false);
     setTransactionPending(true);
 
     try {
+      let recipient = address;
+      if (address.includes(".")) {
+        recipient = await library.resolveName(address);
+      }
+
       const { calldata, value } =
         NonfungiblePositionManager.safeTransferFromParameters({
           sender: account,
