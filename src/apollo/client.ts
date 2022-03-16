@@ -23,7 +23,7 @@ export const ropstenClient = new ApolloClient({
 });
 
 export const arbitrumClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-arbitrum",
+  uri: "https://api.thegraph.com/subgraphs/name/ianlapham/arbitrum-dev",
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
