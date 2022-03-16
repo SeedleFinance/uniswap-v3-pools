@@ -1,15 +1,24 @@
 import React, { useState, useMemo } from "react";
+import { Token } from "@uniswap/sdk-core";
 
 import Modal from "../../ui/Modal";
 import { Button, UnstyledButton } from "../../ui/Button";
 
 interface Props {
-  id: number;
+  tokenId: BigNumber;
+  baseToken: Token;
+  quoteToken: Token;
   onCancel: () => void;
   onComplete: () => void;
 }
 
-function TransferModal({ id, onCancel, onComplete }: Props) {
+function TransferModal({
+  tokenId,
+  baseToken,
+  quoteToken,
+  onCancel,
+  onComplete,
+}: Props) {
   const [address, setAddress] = useState("");
   const [askConfirm, setAskConfirm] = useState(false);
 
@@ -42,7 +51,13 @@ function TransferModal({ id, onCancel, onComplete }: Props) {
       <form action="/" onSubmit={handleTransfer}>
         {!askConfirm ? (
           <>
-            <div>Transfer the position to a different account.</div>
+            <div>
+              Transfer the position{" "}
+              <span className="font-bold">
+                {quoteToken.symbol} / {baseToken.symbol} ({tokenId.toString()})
+              </span>{" "}
+              to a different account.
+            </div>
             <div className="my-4">
               <input
                 className="w-full focus:outline-none text-lg p-2 bg-white dark:bg-slate-900 border rounded border-gray-400"

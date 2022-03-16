@@ -34,7 +34,6 @@ import {
   DEFAULT_SLIPPAGE,
   SWAP_SLIPPAGE,
   ZERO_PERCENT,
-  BLOCK_EXPLORER_URL,
 } from "../../constants";
 
 import { formatInput } from "../../utils/numbers";
@@ -43,6 +42,7 @@ import RangeInput from "./RangeInput";
 import DepositInput from "./DepositInput";
 import FeeButton from "./FeeButton";
 import SwapAndAddModal from "./SwapAndAddModal";
+import TransactionModal from "../../ui/TransactionModal";
 import {
   positionFromAmounts,
   calculateNewAmounts,
@@ -828,31 +828,10 @@ function NewPosition({
         )}
 
         {transactionPending && (
-          <Modal
-            title={
-              transactionHash
-                ? "Waiting for confirmation"
-                : "Complete Transaction"
-            }
-          >
-            {transactionHash ? (
-              <div>
-                Waiting for transaction to be confirmed. Check status on{" "}
-                <a
-                  className="text-blue-500"
-                  target="_blank"
-                  rel="noreferrer"
-                  href={`${
-                    BLOCK_EXPLORER_URL[chainId as number]
-                  }/tx/${transactionHash}`}
-                >
-                  Etherscan
-                </a>
-              </div>
-            ) : (
-              <div>Complete the transaction in your wallet.</div>
-            )}
-          </Modal>
+          <TransactionModal
+            chainId={chainId}
+            transactionHash={transactionHash}
+          />
         )}
       </div>
     </div>

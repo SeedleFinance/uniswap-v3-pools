@@ -1,8 +1,13 @@
 import React, { useMemo, useState } from "react";
+import { useWeb3React } from "@web3-react/core";
 import { useNavigate } from "react-router-dom";
 import { BigNumber } from "@ethersproject/bignumber";
 import { CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
-import { Pool, Position as UniPosition } from "@uniswap/v3-sdk";
+import {
+  Pool,
+  Position as UniPosition,
+  NonfungiblePositionManager,
+} from "@uniswap/v3-sdk";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -18,8 +23,12 @@ import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import Transaction from "./Transaction";
 import TransferModal from "./TransferModal";
 import TokenLabel from "../../ui/TokenLabel";
+import Alert, { AlertLevel } from "../../ui/Alert";
 import RangeVisual from "./RangeVisual";
 import Icon from "../../ui/Icon";
+import TransactionModal from "../../ui/TransactionModal";
+
+import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from "../../constants";
 
 export interface PositionProps {
   id: BigNumber;
@@ -48,15 +57,23 @@ function Position({
   priceUpper,
   transactions,
 }: PositionProps) {
+  const { chainId, account, library } = useWeb3React("injected");
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
     useCurrencyConversions();
 
   const navigate = useNavigate();
 
-  const [showTransactions, setShowTransactions] = useState(false);
-  const [expandedUncollectedFees, setExpandedUncollectedFees] = useState(false);
-  const [showActions, setShowActions] = useState(false);
-  const [showTransfer, setShowTransfer] = useState(false);
+  const [showTransactions, setShowTransactions] = useState<boolean>(false);
+  const [expandedUncollectedFees, setExpandedUncollectedFees] =
+    useState<boolean>(false);
+  const [showActions, setShowActions] = useState<boolean>(false);
+  const [showTransfer, setShowTransfer] = useState<boolean>(false);
+
+  const [transactionPending, setTransactionPending] = useState<boolean>(false);
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
+
+  const [alert, setAlert] =
+    useState<{ message: string; level: AlertLevel } | null>(null);
 
   const { percent0, percent1 } = useMemo(() => {
     if (
@@ -190,9 +207,67 @@ function Position({
     setShowTransfer(false);
   };
 
-  const onTransferComplete = (address: string) => {
+  const onTransferComplete = async (recipient: string) => {
     setShowTransfer(false);
-    console.log(address);
+    setTransactionPending(true);
+
+    try {
+      const { calldata, value } =
+        NonfungiblePositionManager.safeTransferFromParameters({
+          sender: account,
+          recipient,
+          tokenId: id,
+        });
+      const tx = {
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        data: calldata,
+        value,
+      };
+
+      const estimatedGas = await library.getSigner().estimateGas(tx);
+      const res = await library.getSigner().sendTransaction(tx);
+
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: `Successfully transferred the position to ${recipient}.`,
+          level: AlertLevel.Success,
+        });
+      }
+    } catch (e: any) {
+      handleTxError(e);
+    }
+    setTransactionPending(false);
+  };
+
+  const handleTxError = (e: any) => {
+    console.error(e);
+    if (e.error) {
+      setAlert({
+        message: `Transaction failed. (reason: ${e.error.message} code: ${e.error.code})`,
+        level: AlertLevel.Error,
+      });
+    } else if (e.data) {
+      setAlert({
+        message: `Transaction failed. (reason: ${e.data.message} code: ${e.data.code})`,
+        level: AlertLevel.Error,
+      });
+    } else if (e.message) {
+      setAlert({
+        message: `Transaction failed. (reason: ${e.message} code: ${e.code})`,
+        level: AlertLevel.Error,
+      });
+    } else {
+      setAlert({
+        message: e.toString(),
+        level: AlertLevel.Error,
+      });
+    }
+  };
+
+  const resetAlert = () => {
+    setAlert(null);
   };
 
   if (!pool || !entity) {
@@ -368,10 +443,22 @@ function Position({
 
       {showTransfer && (
         <TransferModal
-          id={id}
+          tokenId={id}
+          baseToken={baseToken}
+          quoteToken={quoteToken}
           onCancel={onTransferCancel}
           onComplete={onTransferComplete}
         />
+      )}
+
+      {transactionPending && (
+        <TransactionModal chainId={chainId} transactionHash={transactionHash} />
+      )}
+
+      {alert && (
+        <Alert level={alert.level} onHide={resetAlert}>
+          {alert.message}
+        </Alert>
       )}
     </>
   );
