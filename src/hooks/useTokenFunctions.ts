@@ -2,9 +2,10 @@ import { useMemo, useCallback } from "react";
 import { parseBytes32String } from "@ethersproject/strings";
 import { TransactionResponse } from "@ethersproject/providers";
 import { formatUnits } from "@ethersproject/units";
-import { CurrencyAmount, Token, MaxUint256 } from "@uniswap/sdk-core";
+import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 import { useWeb3React } from "@web3-react/core";
 import { BigNumber } from "@ethersproject/bignumber";
+import { MaxUint256 } from "@ethersproject/constants";
 
 import { useTokenContracts, useBytes32TokenContracts } from "./useContract";
 import { WETH9 } from "../constants";
