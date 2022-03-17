@@ -64,15 +64,16 @@ function Pools() {
 
   return (
     <div className="w-full">
-      <div className="my-4 p-2 bg-yellow-100 rounded">
+      <div className="my-4 p-2 bg-blue-100 rounded">
         <a
-          href="https://donate.uniswap.org/#/swap"
-          className="w-full text-blue-500 font-bold underline text-center"
+          href="https://gitcoin.co/grants/4385/seedle-finance-an-easy-tool-to-track-manage-your-"
+          className="w-full text-slate-500 font-bold underline text-center"
         >
-          Donate to Ukraine
+          Contribute to Gitcoin Grants Round 13
         </a>
         <span className="ml-2">
-          Swap and donate any ERC-20 token via Uniswap
+          You can contribute as little as $1 till March 24th. The funds will
+          help us to fast-track the development.
         </span>
       </div>
       <div className="flex flex-row justify-between">
