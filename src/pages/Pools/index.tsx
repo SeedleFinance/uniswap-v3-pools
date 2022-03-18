@@ -64,17 +64,14 @@ function Pools() {
 
   return (
     <div className="w-full">
-      <div className="my-4 p-2 bg-blue-100 rounded">
+      <div className="my-4 p-2 bg-blue-100 rounded text-center">
+        <span className="ml-2">Help us build Seedle with </span>
         <a
           href="https://gitcoin.co/grants/4385/seedle-finance-an-easy-tool-to-track-manage-your-"
           className="w-full text-slate-500 font-bold underline text-center"
         >
-          Contribute to Gitcoin Grants Round 13
+          Gitcoin Grants Round 13
         </a>
-        <span className="ml-2">
-          You can contribute as little as $1 till March 24th. The funds will
-          help us to fast-track the development.
-        </span>
       </div>
       <div className="flex flex-row justify-between">
         <div className="flex flex-row items-center justify-between w-5/12  pr-24">
