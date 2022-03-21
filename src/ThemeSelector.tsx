@@ -8,6 +8,7 @@ import {
 
 import { useAppSettings } from "./AppSettingsProvider";
 import Icon from "./ui/Icon";
+import Menu from "./ui/Menu";
 
 function ThemeSelector() {
   const { theme, setTheme } = useAppSettings();
@@ -42,7 +43,10 @@ function ThemeSelector() {
       </button>
 
       {selectorExpanded && (
-        <div className="absolute p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-12 left-0">
+        <Menu
+          onClose={() => setSelectorExpanded(false)}
+          className="top-12 left-0 w-32"
+        >
           <button
             className="flex items-center justify-between w-24 my-1"
             onClick={() => handleSelection("light")}
@@ -64,7 +68,7 @@ function ThemeSelector() {
             <Icon size="sm" className="w-1/5 mr-2" icon={faDesktop} />
             <span className="w-4/5 text-left">System</span>
           </button>
-        </div>
+        </Menu>
       )}
     </div>
   );

@@ -14,6 +14,7 @@ import {
   SwapToRatioStatus,
   SwapToRatioRoute,
 } from "@uniswap/smart-order-router";
+import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
@@ -23,9 +24,11 @@ import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
+import Icon from "../../ui/Icon";
 import { Button, UnstyledButton } from "../../ui/Button";
 import Toggle from "../../ui/Toggle";
 import { WETH9 } from "../../constants";
+import FeeTierData from "./FeeTierData";
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -118,6 +121,8 @@ function NewPosition({
   const [swapAndAddPending, setSwapAndAddPending] = useState<boolean>(false);
   const [swapAndAddRoute, setSwapAndAddRoute] =
     useState<SwapToRatioRoute | null>(null);
+
+  const [showFeeTierData, setShowFeeTierData] = useState<boolean>(false);
 
   const [focusedRangeInput, setFocusedRangeInput] =
     useState<HTMLInputElement | null>(null);
@@ -632,209 +637,234 @@ function NewPosition({
     }
   };
 
+  const handleFeeTierDataClick = () => {
+    setShowFeeTierData(!showFeeTierData);
+  };
+
   return (
-    <div className="w-1/2 text-slate-600 dark:text-slate-300">
-      <div className="flex flex-col my-2">
-        <div>Pair</div>
-        <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 dark:border-slate-700 bg-blue-100 dark:bg-slate-700">
-          <PoolButton
-            baseToken={baseToken}
-            quoteToken={quoteToken}
-            onClick={() => {}}
-            tabIndex={0}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col my-2">
-        <div>Fee tier</div>
-        <div className="w-64 my-2 flex justify-between">
-          <FeeButton
-            fee={0.01}
-            selected={fee === 100}
-            onClick={() => setFee(100)}
-            tabIndex={1}
-          />
-          <FeeButton
-            fee={0.05}
-            selected={fee === 500}
-            onClick={() => setFee(500)}
-            tabIndex={2}
-          />
-          <FeeButton
-            fee={0.3}
-            selected={fee === 3000}
-            onClick={() => setFee(3000)}
-            tabIndex={3}
-          />
-          <FeeButton
-            fee={1}
-            selected={fee === 10000}
-            onClick={() => setFee(10000)}
-            tabIndex={4}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col my-2 w-full">
-        <div>Range</div>
-        <div className="text-sm py-1">
-          Current price:{" "}
-          <button onClick={handleCurrentPriceClick} className="font-bold">
-            {currentPrice}&nbsp;
-          </button>
-          <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
-        </div>
-        <div className="w-1/3 my-2 flex justify-between">
-          <RangeInput
-            label="Min"
-            initTick={suggestedTicks[0]}
-            baseToken={baseToken}
-            quoteToken={quoteToken}
-            tickSpacing={pool.tickSpacing}
-            tabIndex={4}
-            reverse={rangeReverse}
-            onChange={tickLowerChange}
-            onFocus={(el) => setFocusedRangeInput(el)}
-          />
-          <RangeInput
-            label="Max"
-            initTick={suggestedTicks[1]}
-            baseToken={baseToken}
-            quoteToken={quoteToken}
-            tickSpacing={pool.tickSpacing}
-            tabIndex={5}
-            reverse={rangeReverse}
-            onChange={tickUpperChange}
-            onFocus={(el) => setFocusedRangeInput(el)}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col my-6">
-        <div className="w-3/4 flex justify-between">
-          <div>Deposit</div>
-          <div>
-            <Toggle
-              label="Swap & Add"
-              onChange={() => setSwapAndAdd(!swapAndAdd)}
-              checked={swapAndAdd}
+    <div className="w-full flex">
+      <div className="w-1/2 text-slate-600 dark:text-slate-300">
+        <div className="flex flex-col my-2">
+          <div className="text-xl">Pair</div>
+          <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 dark:border-slate-700 bg-blue-100 dark:bg-slate-700">
+            <PoolButton
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              onClick={() => {}}
+              tabIndex={0}
             />
           </div>
         </div>
-        <div className="w-3/4 my-2">
-          <DepositInput
-            token={quoteToken}
-            value={quoteAmount}
-            balance={quoteBalance}
-            tabIndex={6}
-            disabled={quoteTokenDisabled}
-            onChange={quoteDepositChange}
-          />
-          <DepositInput
-            token={baseToken}
-            value={baseAmount}
-            balance={baseBalance}
-            tabIndex={7}
-            disabled={baseTokenDisabled}
-            onChange={baseDepositChange}
-          />
+
+        <div className="w-72 flex flex-col my-3">
+          <div className="flex items-center justify-between">
+            <div className="text-xl">Fee tier</div>
+            <div className="mx-2">
+              <button
+                className="border rounded-full bg-slate-200 dark:bg-slate-700 px-2 py-1"
+                onClick={handleFeeTierDataClick}
+              >
+                <Icon className="text-lg" size="sm" icon={faChartLine} />
+              </button>
+            </div>
+          </div>
+          <div className="my-2 flex justify-between">
+            <FeeButton
+              fee={0.01}
+              selected={fee === 100}
+              onClick={() => setFee(100)}
+              tabIndex={1}
+            />
+            <FeeButton
+              fee={0.05}
+              selected={fee === 500}
+              onClick={() => setFee(500)}
+              tabIndex={2}
+            />
+            <FeeButton
+              fee={0.3}
+              selected={fee === 3000}
+              onClick={() => setFee(3000)}
+              tabIndex={3}
+            />
+            <FeeButton
+              fee={1}
+              selected={fee === 10000}
+              onClick={() => setFee(10000)}
+              tabIndex={4}
+            />
+          </div>
         </div>
-        <div className="w-64 mb-2 text-sm">
-          Total position value:{" "}
-          <span className="font-bold">
-            {convertToGlobalFormatted(totalPositionValue)}
-          </span>
+
+        <div className="flex flex-col my-2 w-full">
+          <div className="text-xl">Range</div>
+          <div className="text-sm py-1">
+            Current price:{" "}
+            <button onClick={handleCurrentPriceClick} className="font-bold">
+              {currentPrice}&nbsp;
+            </button>
+            <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+          </div>
+          <div className="w-1/3 my-2 flex justify-between">
+            <RangeInput
+              label="Min"
+              initTick={suggestedTicks[0]}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              tickSpacing={pool.tickSpacing}
+              tabIndex={4}
+              reverse={rangeReverse}
+              onChange={tickLowerChange}
+              onFocus={(el) => setFocusedRangeInput(el)}
+            />
+            <RangeInput
+              label="Max"
+              initTick={suggestedTicks[1]}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              tickSpacing={pool.tickSpacing}
+              tabIndex={5}
+              reverse={rangeReverse}
+              onChange={tickUpperChange}
+              onFocus={(el) => setFocusedRangeInput(el)}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col my-6">
+          <div className="w-3/4 flex justify-between">
+            <div className="text-xl">Deposit</div>
+            <div>
+              <Toggle
+                label="Swap & Add"
+                onChange={() => setSwapAndAdd(!swapAndAdd)}
+                checked={swapAndAdd}
+              />
+            </div>
+          </div>
+          <div className="w-3/4 my-2">
+            <DepositInput
+              token={quoteToken}
+              value={quoteAmount}
+              balance={quoteBalance}
+              tabIndex={6}
+              disabled={quoteTokenDisabled}
+              onChange={quoteDepositChange}
+            />
+            <DepositInput
+              token={baseToken}
+              value={baseAmount}
+              balance={baseBalance}
+              tabIndex={7}
+              disabled={baseTokenDisabled}
+              onChange={baseDepositChange}
+            />
+          </div>
+          <div className="w-64 mb-2 text-sm">
+            Total position value:{" "}
+            <span className="font-bold">
+              {convertToGlobalFormatted(totalPositionValue)}
+            </span>
+          </div>
+        </div>
+
+        <div className="w-64 my-2 flex">
+          {swapAndAdd ? (
+            <Button
+              onClick={onSwapAndAddLiquidity}
+              disabled={transactionPending}
+              tabIndex={8}
+              compact={true}
+              className="mr-2"
+            >
+              Swap & Add
+            </Button>
+          ) : baseTokenNeedApproval ? (
+            <Button
+              onClick={() =>
+                onApprove(
+                  baseToken,
+                  baseAmount,
+                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+                )
+              }
+              disabled={transactionPending}
+              tabIndex={8}
+              compact={true}
+              className="mr-2"
+            >
+              Approve {baseToken.symbol}
+            </Button>
+          ) : quoteTokenNeedApproval ? (
+            <Button
+              onClick={() =>
+                onApprove(
+                  quoteToken,
+                  quoteAmount,
+                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+                )
+              }
+              disabled={transactionPending}
+              tabIndex={8}
+              compact={true}
+              className="mr-2"
+            >
+              Approve {quoteToken.symbol}
+            </Button>
+          ) : (
+            <Button
+              onClick={onAddLiquidity}
+              disabled={transactionPending}
+              tabIndex={8}
+              compact={true}
+              className="mr-2"
+            >
+              Add Liquidity
+            </Button>
+          )}
+
+          <UnstyledButton onClick={onCancel} tabIndex={9}>
+            Cancel
+          </UnstyledButton>
+
+          {alert && (
+            <Alert level={alert.level} onHide={resetAlert}>
+              {alert.message}
+            </Alert>
+          )}
+
+          {swapAndAddPending && (
+            <SwapAndAddModal
+              route={swapAndAddRoute}
+              token0={quoteToken}
+              token1={baseToken}
+              token0PreswapAmount={quoteAmount}
+              token1PreswapAmount={baseAmount}
+              onCancel={onSwapAndAddCancel}
+              onComplete={onSwapAndAddComplete}
+              onApprove={onApprove}
+            />
+          )}
+
+          {transactionPending && (
+            <TransactionModal
+              chainId={chainId}
+              transactionHash={transactionHash}
+            />
+          )}
         </div>
       </div>
-
-      <div className="w-64 my-2 flex">
-        {swapAndAdd ? (
-          <Button
-            onClick={onSwapAndAddLiquidity}
-            disabled={transactionPending}
-            tabIndex={8}
-            compact={true}
-            className="mr-2"
-          >
-            Swap & Add
-          </Button>
-        ) : baseTokenNeedApproval ? (
-          <Button
-            onClick={() =>
-              onApprove(
-                baseToken,
-                baseAmount,
-                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
-              )
-            }
-            disabled={transactionPending}
-            tabIndex={8}
-            compact={true}
-            className="mr-2"
-          >
-            Approve {baseToken.symbol}
-          </Button>
-        ) : quoteTokenNeedApproval ? (
-          <Button
-            onClick={() =>
-              onApprove(
-                quoteToken,
-                quoteAmount,
-                NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
-              )
-            }
-            disabled={transactionPending}
-            tabIndex={8}
-            compact={true}
-            className="mr-2"
-          >
-            Approve {quoteToken.symbol}
-          </Button>
-        ) : (
-          <Button
-            onClick={onAddLiquidity}
-            disabled={transactionPending}
-            tabIndex={8}
-            compact={true}
-            className="mr-2"
-          >
-            Add Liquidity
-          </Button>
-        )}
-
-        <UnstyledButton onClick={onCancel} tabIndex={9}>
-          Cancel
-        </UnstyledButton>
-
-        {alert && (
-          <Alert level={alert.level} onHide={resetAlert}>
-            {alert.message}
-          </Alert>
-        )}
-
-        {swapAndAddPending && (
-          <SwapAndAddModal
-            route={swapAndAddRoute}
-            token0={quoteToken}
-            token1={baseToken}
-            token0PreswapAmount={quoteAmount}
-            token1PreswapAmount={baseAmount}
-            onCancel={onSwapAndAddCancel}
-            onComplete={onSwapAndAddComplete}
-            onApprove={onApprove}
-          />
-        )}
-
-        {transactionPending && (
-          <TransactionModal
+      <div className="w-1/2">
+        {showFeeTierData && (
+          <FeeTierData
+            baseToken={baseToken}
+            quoteToken={quoteToken}
+            selected={fee}
             chainId={chainId}
-            transactionHash={transactionHash}
           />
         )}
       </div>
     </div>
   );
 }
-
 export default NewPosition;
