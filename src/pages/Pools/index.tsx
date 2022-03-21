@@ -120,17 +120,17 @@ function Pools() {
       </div>
       <div className="w-full">
         {empty ? (
-          <>
-            <div className="text-center text-2xl text-slate-600 dark:text-slate-300 m-8">
+          <div className="py-4 mt-12 rounded-lg">
+            <div className="text-center text-xl md:text-2xl text-slate-600 dark:text-slate-300 m-8">
               This address do not have any Uniswap LP positions.
             </div>
             <Link
               to="/add/new"
               className="block text-center text-xl text-blue-500 dark:text-blue-200 m-8"
             >
-              Add Liquidity
+              + Add Liquidity
             </Link>
-          </>
+          </div>
         ) : (
           sortedPools.map(
             ({
