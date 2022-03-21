@@ -25,7 +25,7 @@ function Footer() {
           href="https://gitcoin.co/grants/4385/seedle-finance"
         >
           Donate
-        </a>
+        </a>{" "}
         |{" "}
         <a className="text-blue-500" href="https://seedle.frill.co">
           Suggest a feature
