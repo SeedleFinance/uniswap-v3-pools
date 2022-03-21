@@ -26,6 +26,10 @@ function Footer() {
         >
           Donate
         </a>
+        |{" "}
+        <a className="text-blue-500" href="https://seedle.frill.co">
+          Suggest a feature
+        </a>
       </div>
     </footer>
   );
