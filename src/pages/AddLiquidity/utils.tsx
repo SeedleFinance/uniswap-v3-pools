@@ -192,6 +192,7 @@ export function findTokens(
     }
     return s;
   });
+
   const matches = tokens.filter(
     (token: TokenListItem) =>
       token.chainId === chainId && symbolsFormatted.includes(token.symbol)
