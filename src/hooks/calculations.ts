@@ -167,7 +167,10 @@ export function useFeeAPY(
       }) => {
         let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
         if (type === "mint") {
-          if (periodLiquidityAdded.equalTo(zeroAmount)) {
+          if (
+            periodLiquidityAdded.lessThan(zeroAmount) ||
+            periodLiquidityAdded.equalTo(zeroAmount)
+          ) {
             periodStart = new Date(timestamp * 1000);
           }
           periodLiquidityAdded = periodLiquidityAdded.add(liquidity);
