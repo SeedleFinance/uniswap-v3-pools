@@ -63,8 +63,8 @@ function Pools() {
   }
 
   return (
-    <div className="w-full">
-      <div className="my-4 p-2 bg-blue-100 rounded text-center">
+    <div className="w-full p-4">
+      <div className="my-4 p-2 bg-blue-100 rounded text-center ">
         <span className="ml-2">Help us build Seedle with </span>
         <a
           href="https://gitcoin.co/grants/4385/seedle-finance-an-easy-tool-to-track-manage-your-"
@@ -73,38 +73,40 @@ function Pools() {
           Gitcoin Grants Round 13
         </a>
       </div>
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row items-center justify-between w-5/12  pr-24">
-          <div>
-            <Link
-              to="/add/new"
-              className="block bg-gradient-to-b from-green-400 to-green-600 text-white p-2 bg-gray-100 rounded focus:outline-none"
-            >
-              Add liquidity
-            </Link>
+      <div className="flex flex-col-reverse md:flex-row md:justify-between">
+        <div className="flex justify-center items-center mt-4 md:mt-0">
+          <Link
+            to="/add/new"
+            className="block bg-gradient-to-b from-green-400 to-green-600 text-white p-2 bg-gray-100 rounded focus:outline-none"
+          >
+            Add liquidity
+          </Link>
+          <div className="ml-2">
+            <FilterClosedToggle />
           </div>
-          <FilterClosedToggle />
-          <DownloadCSV />
+          <div className="ml-2">
+            <DownloadCSV />
+          </div>
         </div>
-        <div className="flex flex-row justify-end">
-          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-6 mx-2">
-            <div className="text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
+        <div className="flex">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-2 md:p-6 mx-2 flex-1">
+            <div className="md:text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
             <div className="text-md text-slate-500 dark:text-slate-400">
               Total Liquidity
             </div>
           </div>
-          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-6 mx-2">
-            <div className="text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-2 md:p-6 mx-2 flex-1">
+            <div className="md:text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
             <div className="text-md text-slate-500 dark:text-slate-400">
               Total Uncollected Fees
             </div>
           </div>
-          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-6 mx-2">
-            <div className="text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-md p-2 md:p-6 mx-2 flex-1">
+            <div className="md:text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(
                 totalLiquidity + totalUncollectedFees,
                 1

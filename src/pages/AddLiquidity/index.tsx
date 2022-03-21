@@ -155,7 +155,7 @@ function AddLiquidity({ tab }: Props) {
   };
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col p-4">
       <div className="py-4 mb-4 flex items-center text-2xl w-2/12">
         <Link
           to="/"
@@ -166,7 +166,7 @@ function AddLiquidity({ tab }: Props) {
         <div className="text-slate-600 dark:text-slate-300">Add Liquidity</div>
       </div>
 
-      <div className="w-1/2">
+      <div className="md:w-1/2">
         <SearchInput onChange={setSearchInput} />
       </div>
 
