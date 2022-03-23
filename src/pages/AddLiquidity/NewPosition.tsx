@@ -643,7 +643,7 @@ function NewPosition({
 
   return (
     <div className="w-full flex">
-      <div className="w-1/2 text-slate-600 dark:text-slate-300">
+      <div className="lg:w-1/2 text-slate-600 dark:text-slate-300">
         <div className="flex flex-col my-2">
           <div className="text-xl">Pair</div>
           <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 dark:border-slate-700 bg-blue-100 dark:bg-slate-700">
@@ -732,7 +732,7 @@ function NewPosition({
         </div>
 
         <div className="flex flex-col my-6">
-          <div className="w-3/4 flex justify-between">
+          <div className="lg:w-3/4 flex justify-between">
             <div className="text-xl">Deposit</div>
             <div>
               <Toggle
@@ -742,7 +742,7 @@ function NewPosition({
               />
             </div>
           </div>
-          <div className="w-3/4 my-2">
+          <div className="lg:w-3/4 my-2">
             <DepositInput
               token={quoteToken}
               value={quoteAmount}
@@ -854,7 +854,8 @@ function NewPosition({
           )}
         </div>
       </div>
-      <div className="w-1/2">
+
+      <div className="lg:w-1/2">
         {showFeeTierData && (
           <FeeTierData
             baseToken={baseToken}

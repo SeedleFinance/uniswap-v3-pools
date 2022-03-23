@@ -2,7 +2,7 @@ import React from "react";
 
 function Footer() {
   return (
-    <footer className="my-16 flex w-full justify-center text-gray-600 dark:text-gray-300">
+    <footer className="my-16 flex w-full justify-center text-gray-600 dark:text-gray-300 text-center">
       <div className="text-sm">
         Built by{" "}
         <a className="text-blue-500" href="https://twitter.com/laktek">

@@ -33,7 +33,7 @@ function Landing() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center">
+    <div className="h-screen flex flex-col items-center p-4">
       <h2 className="flex flex-col items-center text-3xl font-bold my-16">
         <img
           alt="Seedle logo - a seedling"
@@ -47,13 +47,12 @@ function Landing() {
           Track performance of Uniswap V3 Positions
         </div>
       </h2>
-
       <form
         onSubmit={handleSubmit}
         className="m-4 my flex items-center justify-center w-1/2"
       >
         <input
-          className="text-xl text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 p-2 border border-slate-200 dark:border-slate-700 rounded-md mx-2 w-4/5 focus:outline-none focus:border-slate-800 dark:focus:border-slate-400"
+          className="text-xl text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 p-2 border border-slate-200 dark:border-slate-700 rounded-md mx-2 md:w-4/5 focus:outline-none focus:border-slate-800 dark:focus:border-slate-400"
           type="text"
           placeholder="Enter an Ethereum address or ENS name"
           value={addresses.join(" ")}
@@ -66,7 +65,6 @@ function Landing() {
           Tip: You can enter multiple addresses separated by spaces
         </div>
       )}
-
       <button
         className="text-center text-md text-gray-600 dark:text-gray-300 underline underline-offset-4 decoration-dotted"
         onClick={handleConnectWallet}

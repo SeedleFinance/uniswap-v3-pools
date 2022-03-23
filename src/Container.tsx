@@ -49,10 +49,10 @@ function Container() {
   return (
     <CurrencyConversionsProvider>
       <ThemeWrapper theme={computedTheme}>
-        <div className="min-h-screen lg:container mx-auto pb-4">
-          <div className="w-full px-2 py-4 mb-4 flex justify-between">
+        <div className="min-h-screen lg:container mx-auto pb-4 p-4">
+          <div className="w-full py-4 mb-4 flex justify-between">
             <h2 className="flex items-center text-3xl font-bold text-slate-800 dark:text-slate-100">
-              <a className="flex w-3/5" href="https://www.seedle.finance">
+              <a className="flex sm:w-3/5" href="https://www.seedle.finance">
                 <img
                   className="mr-2"
                   alt="Seedle logo - a seedling"
@@ -61,10 +61,10 @@ function Container() {
                     import.meta.url
                   ).toString()}
                 />
-                <span>Seedle</span>
+                <span className="hidden sm:block">Seedle</span>
               </a>
             </h2>
-            <div className="w-2/5 flex justify-end">
+            <div className="md:w-2/5 flex justify-end">
               <ThemeSelector />
               <GlobalCurrencySelector />
               <Account address={injectedAddress} />
