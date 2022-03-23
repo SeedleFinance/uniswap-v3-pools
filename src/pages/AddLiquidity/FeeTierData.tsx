@@ -30,14 +30,14 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
   const [chart, setChart] = useState(0);
 
   const poolAddresses = useMemo(() => {
-    if (!chainId || !baseToken || !quoteToken) {
+    if (!baseToken || !quoteToken) {
       return [];
     }
 
     return [100, 500, 3000, 10000].map((fee) =>
       Pool.getAddress(quoteToken, baseToken, fee).toLowerCase()
     );
-  }, [chainId, baseToken, quoteToken]);
+  }, [baseToken, quoteToken]);
 
   const data = useFeeTierData(chainId || 1, poolAddresses);
 
