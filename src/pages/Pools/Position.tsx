@@ -25,6 +25,7 @@ import Transaction from "./Transaction";
 import TransferModal from "./TransferModal";
 import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
+import Menu from "../../ui/Menu";
 import RangeVisual from "./RangeVisual";
 import Icon from "../../ui/Icon";
 import TransactionModal from "../../ui/TransactionModal";
@@ -379,7 +380,10 @@ function Position({
               <Icon size="lg" icon={faEllipsis} />
             </button>
             {showActions && (
-              <div className="absolute z-50 p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 top-8 w-32 flex flex-col">
+              <Menu
+                onClose={() => setShowActions(false)}
+                className="w-32 top-8"
+              >
                 <button className="text-left my-1" onClick={handleTransactions}>
                   Transactions
                 </button>
@@ -421,7 +425,7 @@ function Position({
                     </div>
                   </>
                 )}
-              </div>
+              </Menu>
             )}
           </div>
         </td>
