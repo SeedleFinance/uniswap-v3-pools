@@ -65,7 +65,14 @@ function AddLiquidity({ tab }: Props) {
   }, [tab]);
 
   useEffect(() => {
-    if (!chainId || !tokens || !baseTokenSymbol || !quoteTokenSymbol || !fee) {
+    if (
+      !chainId ||
+      !tokens ||
+      !tokens.length ||
+      !baseTokenSymbol ||
+      !quoteTokenSymbol ||
+      !fee
+    ) {
       return;
     }
 
@@ -75,7 +82,7 @@ function AddLiquidity({ tab }: Props) {
     ]);
 
     // invalid tokens
-    if (matches.length < 2) {
+    if (matches.length !== 2) {
       return;
     }
 

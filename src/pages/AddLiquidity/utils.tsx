@@ -185,17 +185,23 @@ export function findTokens(
   tokens: TokenListItem[],
   symbols: string[]
 ) {
-  const symbolsFormatted = symbols.map((symbol) => {
-    const s = symbol.toUpperCase();
+  const symbolsFormatted = symbols.map((sym) => {
+    const s = sym.toUpperCase();
     if (s === "ETH") {
       return "WETH";
     }
     return s;
   });
-  const matches = tokens.filter(
-    (token: TokenListItem) =>
-      token.chainId === chainId && symbolsFormatted.includes(token.symbol)
-  );
+
+  let matches = [];
+  symbolsFormatted.forEach((sym) => {
+    const matched = tokens.find((token: TokenListItem) => {
+      return token.chainId === chainId && token.symbol === sym;
+    });
+    if (matched) {
+      matches.push(matched);
+    }
+  });
 
   // Optimism WETH
   if (chainId === 10 && symbolsFormatted.includes("WETH")) {
