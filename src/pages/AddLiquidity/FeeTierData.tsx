@@ -95,7 +95,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
           className="text-lg text-center"
           onClick={() => setMenuOpened(!menuOpened)}
         >
-          <span>{chartTitles[chart]} (per fee tier)</span>
+          <span>{chartTitles[chart]} (by fee tier)</span>
           <Icon className="pl-1 text-xl" icon={faCaretDown} />
         </button>
         {menuOpened && (
