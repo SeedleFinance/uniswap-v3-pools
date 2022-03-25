@@ -5,6 +5,7 @@ import {
   Line,
   AreaChart,
   Area,
+  Brush,
   XAxis,
   YAxis,
   Tooltip,
@@ -14,7 +15,6 @@ import {
 import { tickToPrice } from "@uniswap/v3-sdk";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 
-import format from "date-fns/format";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 
@@ -24,7 +24,7 @@ import Menu from "../../ui/Menu";
 import Icon from "../../ui/Icon";
 
 interface Props {
-  chainId: number;
+  chainId: number | undefined;
   pool: Pool;
   tickLower: number;
   tickUpper: number;
@@ -43,16 +43,26 @@ function RangeData({
   const [menuOpened, setMenuOpened] = useState(false);
   const [chart, setChart] = useState(0);
 
-  const poolAddress = Pool.getAddress(quoteToken, baseToken, pool.fee).toLowerCase();
+  const poolAddress = Pool.getAddress(
+    quoteToken,
+    baseToken,
+    pool.fee
+  ).toLowerCase();
 
   const { priceData, minPrice, maxPrice, meanPrice, stdev } = usePoolPriceData(
-    chainId,
+    chainId || 1,
     poolAddress,
     quoteToken,
     baseToken
   );
 
-  const liquidityData = usePoolLiquidityData(chainId, poolAddress, quoteToken, baseToken, pool);
+  const liquidityData = usePoolLiquidityData(
+    chainId || 1,
+    poolAddress,
+    quoteToken,
+    baseToken,
+    pool
+  );
 
   const [priceLower, priceUpper] = useMemo(() => {
     if (!tickLower || !tickUpper || !baseToken || !quoteToken) {
@@ -104,17 +114,21 @@ function RangeData({
               <YAxis
                 width={100}
                 mirror={true}
-                domain={[minPrice - minPrice * 0.1, maxPrice + maxPrice * 0.1]}
+                domain={[
+                  priceLower - priceLower * 0.25,
+                  priceUpper + priceUpper * 0.25,
+                ]}
               />
               <Tooltip />
               <Legend />
-              <ReferenceLine y={priceLower} stroke="#8804c0" />
-              <ReferenceLine y={priceUpper} stroke="#8804c0" />
+              <ReferenceLine y={priceLower} stroke="#ff6361" />
+              <ReferenceLine y={priceUpper} stroke="#ff6361" />
+              <Brush dataKey="date" height={30} stroke="#3390d6" />
               <Line
                 type="monotone"
                 dot={false}
                 dataKey="price"
-                stroke="#8884d8"
+                stroke="#3390d6"
                 strokeWidth={2}
               />
             </LineChart>
@@ -168,13 +182,19 @@ function RangeData({
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           >
             <XAxis dataKey="price" />
-            <YAxis />
+            <YAxis hide={true} />
             <Tooltip />
             <Legend />
-            <ReferenceLine x={tickLower} stroke="#8804c0" />
-            <ReferenceLine y={tickUpper} stroke="#8804c0" />
-            <Area dataKey="liquidity" fill="#8884d8" />
-          </BarChart>
+            <ReferenceLine x={priceLower} stroke="#ff6361" />
+            <ReferenceLine x={priceUpper} stroke="#ff6361" />
+            <Brush dataKey="price" height={30} stroke="#3390d6" />
+            <Area
+              dataKey="liquidity"
+              fill="#3390d6"
+              fillOpacity={0.9}
+              stroke="#3390d6"
+            />
+          </AreaChart>
         </ResponsiveContainer>
       )}
     </div>

@@ -1,9 +1,7 @@
-import { useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 import { Token } from "@uniswap/sdk-core";
 import { Pool, tickToPrice } from "@uniswap/v3-sdk";
-import format from "date-fns/format";
 import JSBI from "jsbi";
 
 import { getClient } from "../apollo/client";
@@ -37,14 +35,19 @@ export function usePoolLiquidityData(
     return [];
   }
 
-  const allTicks = data.pool.ticks.map(({ tick, liquidityNet }) => {
-    return {
-      tick: Number(tick),
-      liquidityNet: JSBI.BigInt(liquidityNet),
-    };
-  });
+  const allTicks = data.pool.ticks.map(
+    ({ tick, liquidityNet }: { tick: string; liquidityNet: number }) => {
+      return {
+        tick: Number(tick),
+        liquidityNet: JSBI.BigInt(liquidityNet),
+      };
+    }
+  );
 
-  const pivot = allTicks.findIndex((t) => t.tick > pool.tickCurrent) - 1;
+  const pivot =
+    allTicks.findIndex(
+      ({ tick }: { tick: number }) => tick > pool.tickCurrent
+    ) - 1;
   if (pivot === -1) {
     return [];
   }
@@ -53,33 +56,33 @@ export function usePoolLiquidityData(
     liquidity: JSBI.BigInt(pool.liquidity),
   };
 
-  // ascending ticks
-  let ascendingTicks = [];
+  // ticks after active tick
+  let afterTicks = [];
   for (let i = pivot + 1; i < allTicks.length; i++) {
     const t = allTicks[i];
-    const previousTick = ascendingTicks.length
-      ? ascendingTicks[ascendingTicks.length - 1]
+    const previousTick: { tick: number; liquidity: JSBI } = afterTicks.length
+      ? afterTicks[afterTicks.length - 1]
       : activeTick;
-    ascendingTicks.push({
+    afterTicks.push({
       tick: t.tick,
       liquidity: JSBI.add(previousTick.liquidity, t.liquidityNet),
     });
   }
 
-  // descending ticks
-  let descendingTicks = [];
+  // ticks before active tick
+  let beforeTicks = [];
   for (let i = pivot - 1; i >= 0; i--) {
     const t = allTicks[i];
-    const previousTick = descendingTicks.length
-      ? descendingTicks[descendingTicks.length - 1]
+    const previousTick: { tick: number; liquidity: JSBI } = beforeTicks.length
+      ? beforeTicks[0]
       : activeTick;
-    descendingTicks.push({
+    beforeTicks.unshift({
       tick: t.tick,
       liquidity: JSBI.subtract(previousTick.liquidity, t.liquidityNet),
     });
   }
 
-  return [...ascendingTicks.reverse(), activeTick, ...descendingTicks]
+  const results = [...beforeTicks, activeTick, ...afterTicks]
     .map(({ tick, liquidity }) => ({
       tick,
       price: parseFloat(
@@ -88,4 +91,9 @@ export function usePoolLiquidityData(
       liquidity: parseFloat(liquidity.toString()),
     }))
     .filter(({ liquidity }) => liquidity > 0);
+
+  if (baseToken.sortsBefore(quoteToken)) {
+    return results.reverse();
+  }
+  return results;
 }
