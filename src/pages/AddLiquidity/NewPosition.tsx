@@ -14,7 +14,6 @@ import {
   SwapToRatioStatus,
   SwapToRatioRoute,
 } from "@uniswap/smart-order-router";
-import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
 import { usePool } from "../../hooks/usePool";
@@ -24,11 +23,12 @@ import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import PoolButton from "../../ui/PoolButton";
 import TokenLabel from "../../ui/TokenLabel";
 import Alert, { AlertLevel } from "../../ui/Alert";
-import Icon from "../../ui/Icon";
 import { Button, UnstyledButton } from "../../ui/Button";
 import Toggle from "../../ui/Toggle";
 import { WETH9 } from "../../constants";
+import ChartButton from "./ChartButton";
 import FeeTierData from "./FeeTierData";
+import RangeData from "./RangeData";
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -123,6 +123,7 @@ function NewPosition({
     useState<SwapToRatioRoute | null>(null);
 
   const [showFeeTierData, setShowFeeTierData] = useState<boolean>(false);
+  const [showRangeData, setShowRangeData] = useState<boolean>(false);
 
   const [focusedRangeInput, setFocusedRangeInput] =
     useState<HTMLInputElement | null>(null);
@@ -641,9 +642,13 @@ function NewPosition({
     setShowFeeTierData(!showFeeTierData);
   };
 
+  const handleRangeDataClick = () => {
+    setShowRangeData(!showRangeData);
+  };
+
   return (
-    <div className="w-full flex">
-      <div className="lg:w-1/2 text-slate-600 dark:text-slate-300">
+    <div className="w-full flex text-slate-600 dark:text-slate-300">
+      <div className="lg:w-1/2">
         <div className="flex flex-col my-2">
           <div className="text-xl">Pair</div>
           <div className="w-80 my-2 p-2 text-lg border rounded border-blue-400 dark:border-slate-700 bg-blue-100 dark:bg-slate-700">
@@ -660,12 +665,10 @@ function NewPosition({
           <div className="flex items-center justify-between">
             <div className="text-xl">Fee tier</div>
             <div className="mx-2">
-              <button
-                className="border rounded-full bg-slate-200 dark:bg-slate-700 px-2 py-1"
+              <ChartButton
+                selected={showFeeTierData}
                 onClick={handleFeeTierDataClick}
-              >
-                <Icon className="text-lg" size="sm" icon={faChartLine} />
-              </button>
+              />
             </div>
           </div>
           <div className="my-2 flex justify-between">
@@ -696,9 +699,18 @@ function NewPosition({
           </div>
         </div>
 
-        <div className="flex flex-col my-2 w-full">
-          <div className="text-xl">Range</div>
-          <div className="text-sm py-1">
+        <div className="flex flex-col my-2 w-5/6">
+          <div className="flex items-center justify-between">
+            <div className="text-xl">Range</div>
+            <div className="px-6">
+              <ChartButton
+                selected={showRangeData}
+                onClick={handleRangeDataClick}
+              />
+            </div>
+          </div>
+
+          <div className="text-sm py-1 text-center">
             Current price:{" "}
             <button onClick={handleCurrentPriceClick} className="font-bold">
               {currentPrice}&nbsp;
@@ -856,13 +868,28 @@ function NewPosition({
       </div>
 
       <div className="lg:w-1/2">
-        {showFeeTierData && (
-          <FeeTierData
-            baseToken={baseToken}
-            quoteToken={quoteToken}
-            selected={fee}
-            chainId={chainId}
-          />
+        <div className="h-64">
+          {showFeeTierData && (
+            <FeeTierData
+              chainId={chainId}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              currentValue={fee}
+            />
+          )}
+        </div>
+
+        {showRangeData && (
+          <div>
+            <RangeData
+              chainId={chainId}
+              tickLower={tickLower}
+              tickUpper={tickUpper}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              pool={pool}
+            />
+          </div>
         )}
       </div>
     </div>

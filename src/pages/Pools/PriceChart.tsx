@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -8,12 +8,9 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import format from "date-fns/format";
-
 import { Token } from "@uniswap/sdk-core";
-import { tickToPrice } from "@uniswap/v3-sdk";
 
-import { usePoolDayData } from "../../hooks/usePoolDayData";
+import { usePoolPriceData } from "../../hooks/usePoolPriceData";
 
 interface Props {
   address: string;
@@ -22,55 +19,15 @@ interface Props {
 }
 
 function PriceChart({ address, quoteToken, baseToken }: Props) {
-  const poolDayData = usePoolDayData(address, baseToken.chainId);
+  const { priceData, minPrice, maxPrice, meanPrice, stdev } = usePoolPriceData(
+    baseToken.chainId,
+    address,
+    quoteToken,
+    baseToken
+  );
 
-  const priceData = useMemo(() => {
-    if (!baseToken || !quoteToken) {
-      return [];
-    }
-
-    return poolDayData
-      .filter(({ tick }: { tick: number }) => !Number.isNaN(tick))
-      .map(({ date, tick }: { date: number; tick: number }) => ({
-        date: format(new Date(date * 1000), "dd.MMM"),
-        price: parseFloat(
-          tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
-        ),
-      }))
-      .reverse();
-  }, [poolDayData, baseToken, quoteToken]);
-
-  const [minPrice, maxPrice, meanPrice, stdev] = useMemo(() => {
-    if (!priceData || !priceData.length) {
-      return [0, 0, 0, 0];
-    }
-
-    const prices = priceData.map((d: { price: number }) => d.price);
-
-    const sum = (values: number[]) => {
-      return values.reduce((s: number, p: number) => {
-        return s + p;
-      }, 0);
-    };
-
-    const pricesSum = sum(prices);
-
-    const pricesSorted = prices.sort((a: number, b: number) => a - b);
-
-    const minPrice = pricesSorted[0];
-    const maxPrice = pricesSorted[pricesSorted.length - 1];
-    const meanPrice = pricesSum / prices.length;
-
-    const variance =
-      sum(prices.map((price: number) => Math.pow(price - meanPrice, 2))) /
-      prices.length;
-    const stdev = Math.sqrt(variance);
-
-    return [minPrice, maxPrice, meanPrice, stdev];
-  }, [priceData]);
-
-  if (!priceData || priceData.length) {
-    <div>Loading price data...</div>;
+  if (!priceData || !priceData.length) {
+    return <div>Loading price data...</div>;
   }
 
   return (
@@ -90,6 +47,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           <Legend />
           <Line
             type="monotone"
+            dot={false}
             dataKey="price"
             stroke="#8884d8"
             strokeWidth={2}
