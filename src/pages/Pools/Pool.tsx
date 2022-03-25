@@ -278,7 +278,7 @@ function Pool({
                 onClick={() => setShowPriceChart(!showPriceChart)}
               >
                 <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
-                  Price (last 30 days)
+                  Price
                 </span>
                 <span className="mx-2">
                   {showPriceChart ? (

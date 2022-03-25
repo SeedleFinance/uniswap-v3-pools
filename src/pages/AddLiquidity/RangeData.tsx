@@ -1,0 +1,184 @@
+import React, { useMemo, useState } from "react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ReferenceLine,
+} from "recharts";
+import { tickToPrice } from "@uniswap/v3-sdk";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+
+import format from "date-fns/format";
+import { Token } from "@uniswap/sdk-core";
+import { Pool } from "@uniswap/v3-sdk";
+
+import { usePoolPriceData } from "../../hooks/usePoolPriceData";
+import { usePoolLiquidityData } from "../../hooks/usePoolLiquidityData";
+import Menu from "../../ui/Menu";
+import Icon from "../../ui/Icon";
+
+interface Props {
+  chainId: number;
+  pool: Pool;
+  tickLower: number;
+  tickUpper: number;
+  baseToken: Token;
+  quoteToken: Token;
+}
+
+function RangeData({
+  chainId,
+  pool,
+  tickLower,
+  tickUpper,
+  quoteToken,
+  baseToken,
+}: Props) {
+  const [menuOpened, setMenuOpened] = useState(false);
+  const [chart, setChart] = useState(0);
+
+  const poolAddress = Pool.getAddress(quoteToken, baseToken, pool.fee).toLowerCase();
+
+  const { priceData, minPrice, maxPrice, meanPrice, stdev } = usePoolPriceData(
+    chainId,
+    poolAddress,
+    quoteToken,
+    baseToken
+  );
+
+  const liquidityData = usePoolLiquidityData(chainId, poolAddress, quoteToken, baseToken, pool);
+
+  const [priceLower, priceUpper] = useMemo(() => {
+    if (!tickLower || !tickUpper || !baseToken || !quoteToken) {
+      return [0, 0];
+    }
+
+    const convertToPrice = (tick: number) => {
+      return parseFloat(
+        tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
+      );
+    };
+
+    return [convertToPrice(tickLower), convertToPrice(tickUpper)];
+  }, [tickLower, tickUpper, baseToken, quoteToken]);
+
+  const handleSelect = (item: number) => {
+    setMenuOpened(false);
+    setChart(item);
+  };
+
+  const chartTitles = ["Price", "Liquidity"];
+
+  return (
+    <div className="w-full flex flex-col flex-wrap items-center mt-8 border border-slate-200 dark:border-slate-700 rounded p-2">
+      <div className="mb-2">
+        <button
+          className="text-lg text-center"
+          onClick={() => setMenuOpened(!menuOpened)}
+        >
+          <span>{chartTitles[chart]}</span>
+          <Icon className="pl-1 text-xl" icon={faCaretDown} />
+        </button>
+        {menuOpened && (
+          <Menu onClose={() => setMenuOpened(false)}>
+            <button onClick={() => handleSelect(0)}>{chartTitles[0]}</button>
+            <button onClick={() => handleSelect(1)}>{chartTitles[1]}</button>
+          </Menu>
+        )}
+      </div>
+
+      {chart === 0 && (
+        <>
+          <ResponsiveContainer width={"100%"} height={200}>
+            <LineChart
+              data={priceData}
+              margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+            >
+              <XAxis dataKey="date" />
+              <YAxis
+                width={100}
+                mirror={true}
+                domain={[minPrice - minPrice * 0.1, maxPrice + maxPrice * 0.1]}
+              />
+              <Tooltip />
+              <Legend />
+              <ReferenceLine y={priceLower} stroke="#8804c0" />
+              <ReferenceLine y={priceUpper} stroke="#8804c0" />
+              <Line
+                type="monotone"
+                dot={false}
+                dataKey="price"
+                stroke="#8884d8"
+                strokeWidth={2}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+          <table className="w-full">
+            <tbody>
+              <tr>
+                <td className="text-slate-500 dark:text-slate-200">Min.</td>
+                <td className="text-slate-800 dark:text-slate-400">
+                  {minPrice}
+                </td>
+              </tr>
+              <tr>
+                <td className="text-slate-500 dark:text-slate-200">Max.</td>
+                <td className="text-slate-800 dark:text-slate-400">
+                  {maxPrice}
+                </td>
+              </tr>
+              <tr>
+                <td className="text-slate-500 dark:text-slate-200">Mean</td>
+                <td className="text-slate-800 dark:text-slate-400">
+                  {meanPrice.toFixed(8)}
+                </td>
+              </tr>
+              <tr>
+                <td className="text-slate-500 dark:text-slate-200">
+                  Standard deviation
+                </td>
+                <td className="text-slate-800 dark:text-slate-400">
+                  {stdev.toFixed(8)}
+                </td>
+              </tr>
+              <tr>
+                <td className="text-slate-500 dark:text-slate-200">
+                  Optimal range
+                </td>
+                <td className="text-slate-800 dark:text-slate-400">
+                  {(meanPrice - stdev).toFixed(8)} -{" "}
+                  {(meanPrice + stdev).toFixed(8)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </>
+      )}
+
+      {chart === 1 && (
+        <ResponsiveContainer width={"100%"} height={200}>
+          <AreaChart
+            data={liquidityData}
+            margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+          >
+            <XAxis dataKey="price" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <ReferenceLine x={tickLower} stroke="#8804c0" />
+            <ReferenceLine y={tickUpper} stroke="#8804c0" />
+            <Area dataKey="liquidity" fill="#8884d8" />
+          </BarChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+}
+
+export default RangeData;

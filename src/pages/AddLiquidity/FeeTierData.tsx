@@ -22,10 +22,10 @@ interface Props {
   chainId: number | undefined;
   baseToken: Token | null;
   quoteToken: Token | null;
-  selected: number;
+  currentValue: number;
 }
 
-function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
+function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
   const [menuOpened, setMenuOpened] = useState(false);
   const [chart, setChart] = useState(0);
 
@@ -78,15 +78,15 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
     return [tvl, fees, feesOverTvl];
   }, [data, poolAddresses]);
 
-  if (!data || !data.length) {
-    return <div>Loading data...</div>;
-  }
-
   const handleSelect = (item: number) => {
     setMenuOpened(false);
     setChart(item);
   };
   const chartTitles = ["TVL", "Fees", "Fees / TVL"];
+
+  if (!data || !data.length) {
+    return <div>Loading data...</div>;
+  }
 
   return (
     <div className="w-full flex flex-col flex-wrap items-center mt-8 border border-slate-200 dark:border-slate-700 rounded p-2">
@@ -121,7 +121,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
             dataKey="0.01"
             name="0.01%"
             stroke="#ffc999"
-            strokeWidth={selected === 100 ? 3 : 2}
+            strokeWidth={currentValue === 100 ? 3 : 2}
           />
           <Line
             type="monotone"
@@ -129,7 +129,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
             dataKey="0.05"
             name="0.05%"
             stroke="#c390d2"
-            strokeWidth={selected === 500 ? 3 : 2}
+            strokeWidth={currentValue === 500 ? 3 : 2}
           />
           <Line
             type="monotone"
@@ -137,7 +137,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
             dataKey="0.3"
             name="0.3%"
             stroke="#3390d6"
-            strokeWidth={selected === 3000 ? 3 : 2}
+            strokeWidth={currentValue === 3000 ? 3 : 2}
           />
           <Line
             type="monotone"
@@ -145,7 +145,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, selected }: Props) {
             dataKey="1"
             name="1%"
             stroke="#fea0ac"
-            strokeWidth={selected === 10000 ? 3 : 2}
+            strokeWidth={currentValue === 10000 ? 3 : 2}
           />
         </LineChart>
       </ResponsiveContainer>
