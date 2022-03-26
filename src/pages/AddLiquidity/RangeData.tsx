@@ -78,6 +78,14 @@ function RangeData({
     return [convertToPrice(tickLower), convertToPrice(tickUpper)];
   }, [tickLower, tickUpper, baseToken, quoteToken]);
 
+  const domain = useMemo(() => {
+    if (!pool) {
+      return [0, 0];
+    }
+    const multiplier = (pool.tickSpacing / 10000) * pool.tickSpacing;
+    return [minPrice - minPrice * multiplier, maxPrice + maxPrice * multiplier];
+  }, [pool, minPrice, maxPrice]);
+
   const handleSelect = (item: number) => {
     setMenuOpened(false);
     setChart(item);
@@ -111,18 +119,11 @@ function RangeData({
               margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
             >
               <XAxis dataKey="date" />
-              <YAxis
-                width={100}
-                mirror={true}
-                domain={[
-                  priceLower - priceLower * 0.25,
-                  priceUpper + priceUpper * 0.25,
-                ]}
-              />
+              <YAxis width={100} mirror={true} domain={domain} />
               <Tooltip />
               <Legend />
-              <ReferenceLine y={priceLower} stroke="#ff6361" />
-              <ReferenceLine y={priceUpper} stroke="#ff6361" />
+              <ReferenceLine y={priceLower} stroke="#9a3b38" strokeWidth={1} />
+              <ReferenceLine y={priceUpper} stroke="#9a3b38" strokeWidth={1} />
               <Brush dataKey="date" height={30} stroke="#3390d6" />
               <Line
                 type="monotone"
@@ -185,8 +186,6 @@ function RangeData({
             <YAxis hide={true} />
             <Tooltip />
             <Legend />
-            <ReferenceLine x={priceLower} stroke="#ff6361" />
-            <ReferenceLine x={priceUpper} stroke="#ff6361" />
             <Brush dataKey="price" height={30} stroke="#3390d6" />
             <Area
               dataKey="liquidity"
@@ -194,6 +193,8 @@ function RangeData({
               fillOpacity={0.9}
               stroke="#3390d6"
             />
+            <ReferenceLine x={priceLower} stroke="#9a3b38" strokeWidth={2} />
+            <ReferenceLine x={priceUpper} stroke="#9a3b38" strokeWidth={2} />
           </AreaChart>
         </ResponsiveContainer>
       )}

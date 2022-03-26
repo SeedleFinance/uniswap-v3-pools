@@ -16,15 +16,19 @@ export function formatCurrency(num: number, symbol?: string) {
   });
 }
 
-export function formatInput(input: number, rounding: boolean = true) {
+export function formatInput(
+  input: number,
+  rounding: boolean = true,
+  mantissa: number = 4
+) {
   if (isNaN(input)) {
     return "0";
   }
 
   return numbro(input).format({
-    mantissa: input > 0.01 ? 4 : 8,
+    mantissa: input > 0.01 ? mantissa : 8,
     optionalMantissa: true,
-    trimMantissa: true,
+    trimMantissa: mantissa === 4,
     roundingFunction: rounding ? Math.floor : (val: number) => val,
   });
 }

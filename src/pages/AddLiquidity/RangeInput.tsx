@@ -50,8 +50,8 @@ function RangeInput({
       tickToPrice(token1, token0, tick).toSignificant(16)
     );
 
-    setInput(formatInput(price));
-  }, [token0, token1, tick]);
+    setInput(formatInput(price, false, tickSpacing === 1 ? 8 : 4));
+  }, [token0, token1, tick, tickSpacing]);
 
   const handleInput = (ev: { target: any }) => {
     const { value } = ev.target;
