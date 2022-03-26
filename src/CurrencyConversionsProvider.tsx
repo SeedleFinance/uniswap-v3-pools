@@ -63,7 +63,7 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
         val.currency.equals(MATIC[val.currency.chainId])
       ) {
         // FIXME: get dynamic MATIC value
-        return valFloat * 2.5;
+        return valFloat * 2;
       }
 
       if (globalCurrencyToken.equals(WETH9[val.currency.chainId])) {

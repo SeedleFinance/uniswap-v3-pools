@@ -14,8 +14,12 @@ export function useGasFee(baseToken: Token) {
       if (val.currency.chainId === 137) {
         return CurrencyAmount.fromRawAmount(
           baseToken,
-          Math.round(2 * parseFloat(val.toSignificant(8)) * 100000)
-        ).divide(100000);
+          Math.round(
+            2 *
+              parseFloat(val.toSignificant(8)) *
+              Math.pow(10, baseToken.decimals)
+          )
+        );
       }
 
       if (baseToken.equals(weth)) {
@@ -24,8 +28,12 @@ export function useGasFee(baseToken: Token) {
 
       return CurrencyAmount.fromRawAmount(
         baseToken,
-        Math.round(ethPriceUSD * parseFloat(val.toSignificant(8)) * 100000)
-      ).divide(100000);
+        Math.round(
+          ethPriceUSD *
+            parseFloat(val.toSignificant(8)) *
+            Math.pow(10, baseToken.decimals)
+        )
+      );
     };
   }, [baseToken, weth, ethPriceUSD]);
 }
