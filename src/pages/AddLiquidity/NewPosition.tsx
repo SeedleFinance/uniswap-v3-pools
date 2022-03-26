@@ -329,7 +329,7 @@ function NewPosition({
       tickToPrice(quoteToken, baseToken, tickCurrent).toSignificant(16)
     );
 
-    return formatInput(price);
+    return formatInput(price, false, pool.tickSpacing === 1 ? 8 : 4);
   }, [pool, baseToken, quoteToken]);
 
   if (!pool || !baseToken || !quoteToken) {
