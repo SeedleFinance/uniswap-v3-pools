@@ -9,6 +9,7 @@ import Footer from "./Footer";
 import Landing from "./Landing";
 import { useAppSettings } from "./AppSettingsProvider";
 import { CurrencyConversionsProvider } from "./CurrencyConversionsProvider";
+import Emails from "./Emails";
 
 interface ThemeWrapperProps {
   theme: string;
@@ -68,6 +69,7 @@ function Container() {
               <ThemeSelector />
               <GlobalCurrencySelector />
               <Account address={injectedAddress} />
+              <Emails />
             </div>
           </div>
           <div>

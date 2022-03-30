@@ -405,11 +405,6 @@ function Position({
                     </button>
                     */}
                     <div className="border-t border-slate-200 dark:border-slate-700 pt-1 mt-1">
-                      {/*
-                      <button className="text-left my-1" onClick={}>
-                        Reposition
-                      </button>
-                      */}
                       <button
                         className="text-left my-1"
                         onClick={handleTransfer}

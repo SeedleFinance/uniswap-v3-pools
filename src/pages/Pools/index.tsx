@@ -7,12 +7,16 @@ import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
 import Pool from "./Pool";
 import FilterClosedToggle from "./FilterClosedToggle";
 import DownloadCSV from "./DownloadCSV";
+import AddEmailModal from "../../ui/EmailSettingsModal";
+import { useAppSettings } from "../../AppSettingsProvider";
 
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol } =
     useCurrencyConversions();
 
   const { loading, empty, pools } = usePools();
+
+  const { showPositionsModal, setShowPositionsModal } = useAppSettings();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -52,6 +56,12 @@ function Pools() {
     );
   }, [loading, pools, convertToGlobal]);
 
+  const handleHideModal = () => {
+    setShowPositionsModal(false);
+  };
+
+  const handleSubmitEmail = () => {};
+
   if (loading) {
     return (
       <div className="h-full my-16 flex items-center justify-center">
@@ -64,6 +74,12 @@ function Pools() {
 
   return (
     <div className="w-full p-4">
+      {showPositionsModal && (
+        <AddEmailModal
+          onSubmit={handleSubmitEmail}
+          onCancel={handleHideModal}
+        />
+      )}
       <div className="flex flex-col-reverse md:flex-row md:justify-between">
         <div className="flex justify-center items-center mt-4 md:mt-0">
           <Link
