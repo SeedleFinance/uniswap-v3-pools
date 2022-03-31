@@ -2,7 +2,7 @@ import React, { ChangeEvent } from "react";
 import { Button } from "../Button";
 
 interface AddPositionFormProps {
-  onSubmit(): void;
+  onSubmit(e: React.FormEvent<HTMLFormElement>): void;
   onCancel(): void;
   onChange(e: ChangeEvent<HTMLInputElement>): void;
   account: string;
@@ -16,7 +16,7 @@ const AddPositionForm: React.FC<AddPositionFormProps> = ({
   account,
   email,
 }) => (
-  <div className="flex mt-3 flex-col">
+  <form onSubmit={onSubmit} action="/" className="flex mt-3 flex-col">
     <label className="py-1">Account address:</label>
     <input
       className="text-lg border text-slate-600 dark:text-white bg-white dark:bg-slate-600 p-2 dark:border-slate-700 rounded-md focus:outline-none focus:border-slate-800 dark:focus:border-slate-400"
@@ -35,20 +35,18 @@ const AddPositionForm: React.FC<AddPositionFormProps> = ({
       value={email}
       onChange={onChange}
     />
-    <div className="flex mt-4 justify-end">
-      <div>
-        <Button onClick={onCancel} className="mt-4 ">
-          Cancel
-        </Button>
-        <Button
-          onClick={onSubmit}
-          className="bg-slate-200 border border-slate-300 dark:text-slate-600 px-4 ml-2 "
-        >
-          Save
-        </Button>
-      </div>
+    <div className="flex mt-6 justify-end">
+      <Button onClick={onCancel} type="button">
+        Cancel
+      </Button>
+      <Button
+        type="submit"
+        className="bg-slate-200 border border-slate-300 dark:text-slate-600 px-4 ml-2"
+      >
+        Save
+      </Button>
     </div>
-  </div>
+  </form>
 );
 
 export default AddPositionForm;

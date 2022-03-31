@@ -98,10 +98,14 @@ const OpenPosition: React.FC<OpenPositionProps> = ({ position, onDelete }) => {
           onChange={handleOnChange}
         />
         <div className="flex mt-2">
-          <Button onClick={handleCancelEdit} className="text-xs">
+          <Button onClick={handleCancelEdit} type="button" className="text-xs">
             Cancel
           </Button>
-          <Button onClick={handleUpdatePosition} className="ml-2 text-xs">
+          <Button
+            onClick={handleUpdatePosition}
+            type="button"
+            className="ml-2 text-xs"
+          >
             Save
           </Button>
         </div>

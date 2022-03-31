@@ -35,7 +35,9 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
     }
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     const response = await addPosition({
       account,
       email,
