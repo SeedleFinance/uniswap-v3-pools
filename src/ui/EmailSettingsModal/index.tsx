@@ -44,7 +44,6 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
     if (response.error) {
       console.log(response.error);
     }
-    console.log("response", response);
 
     clearForm();
   }
@@ -55,8 +54,6 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
     if (response.error) {
       console.log(response.error);
     }
-
-    console.log("response", response);
   }
 
   function handleOnCancel() {
@@ -91,10 +88,10 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
           <div className="flex flex-col">
             <div className="relative overflow-y-auto max-h-80">
               <div>
-                {openPositions.map((position: Position) => (
+                {openPositions.map((position: Position, i) => (
                   <OpenPosition
                     position={position}
-                    key={`${position.account}-i`}
+                    key={`${position.account}-${i}`}
                     onDelete={handleDeletePosition}
                   />
                 ))}
