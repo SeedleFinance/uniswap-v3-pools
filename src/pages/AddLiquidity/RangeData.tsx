@@ -122,8 +122,18 @@ function RangeData({
               <YAxis width={100} mirror={true} domain={domain} />
               <Tooltip />
               <Legend />
-              <ReferenceLine y={priceLower} stroke="#9a3b38" strokeWidth={1} />
-              <ReferenceLine y={priceUpper} stroke="#9a3b38" strokeWidth={1} />
+              <ReferenceLine
+                y={priceLower}
+                stroke="#9a3b38"
+                strokeWidth={1}
+                AlwaysShow={true}
+              />
+              <ReferenceLine
+                y={priceUpper}
+                stroke="#9a3b38"
+                strokeWidth={1}
+                AlwaysShow={true}
+              />
               <Brush dataKey="date" height={30} stroke="#3390d6" />
               <Line
                 type="monotone"
@@ -193,8 +203,18 @@ function RangeData({
               fillOpacity={0.9}
               stroke="#3390d6"
             />
-            <ReferenceLine x={priceLower} stroke="#9a3b38" strokeWidth={2} />
-            <ReferenceLine x={priceUpper} stroke="#9a3b38" strokeWidth={2} />
+            <ReferenceLine
+              x={priceLower}
+              stroke="#9a3b38"
+              strokeWidth={2}
+              alwaysShow={true}
+            />
+            <ReferenceLine
+              x={priceUpper}
+              stroke="#9a3b38"
+              strokeWidth={2}
+              alwaysShow={true}
+            />
           </AreaChart>
         </ResponsiveContainer>
       )}
