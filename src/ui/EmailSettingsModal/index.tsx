@@ -72,7 +72,7 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
   return (
     <Modal
       title={`Watch positions (${openPositions.length})`}
-      className="p-12 dark:text-white md:w-full"
+      className="dark:text-white"
     >
       <>
         <div className="dark:text-slate-300 pr-12">
