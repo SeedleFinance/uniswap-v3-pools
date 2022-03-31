@@ -1,8 +1,8 @@
 import React, { useContext, useState, useMemo } from "react";
-import { Token } from "@uniswap/sdk-core";
+import { Currency, Token } from "@uniswap/sdk-core";
 import createPersistedState from "use-persisted-state";
 
-import { USDC, WETH9 } from "./constants";
+import { USDC, USDT, WETH9 } from "./constants";
 
 export interface Position {
   id: string;
@@ -21,15 +21,13 @@ interface AppSettingsContext {
   filterClosed: boolean;
   setFilterClosed(flag: React.SetStateAction<boolean>): void;
   globalCurrency: {};
-  getGlobalCurrencyToken(chainId: number): void;
+  getGlobalCurrencyToken(chainId: number): Currency;
   setGlobalCurrency(currency: React.SetStateAction<string>): void;
   theme: string;
   setTheme(theme: React.SetStateAction<string>): void;
   openPositions: Position[];
-  addPosition(
-    position: Omit<Position, "id" | "time">
-  ): Promise<ApiResponse | void>;
-  removePosition(id: string): Promise<ApiResponse | void>;
+  addPosition(position: Omit<Position, "id" | "time">): Promise<ApiResponse>;
+  removePosition(id: string): Promise<ApiResponse>;
   setShowPositionsModal(flag: React.SetStateAction<boolean>): void;
   showPositionsModal: boolean;
 }
@@ -38,13 +36,13 @@ const AppSettingsContext = React.createContext<AppSettingsContext>({
   filterClosed: true,
   setFilterClosed: () => {},
   globalCurrency: {},
-  getGlobalCurrencyToken: () => {},
+  getGlobalCurrencyToken: () => USDC[1],
   setGlobalCurrency: () => {},
   theme: "light",
   setTheme: () => {},
   openPositions: [],
-  addPosition: async () => {},
-  removePosition: async () => {},
+  addPosition: async () => ({ success: false, data: {} }),
+  removePosition: async () => ({ success: false, data: {} }),
   setShowPositionsModal: () => {},
   showPositionsModal: false,
 });
@@ -61,7 +59,7 @@ export const AppSettingsProvider: React.FC = ({ children }) => {
   const [openPositions, setOpenPositions] = useState<Position[]>([]);
   const [showPositionsModal, setShowPositionsModal] = useState(false);
 
-  const contextValue = useMemo(() => {
+  const contextValue: AppSettingsContext = useMemo(() => {
     const addPosition = async (p: Omit<Position, "id" | "time">) => {
       try {
         // todo - replace with API call
@@ -75,7 +73,7 @@ export const AppSettingsProvider: React.FC = ({ children }) => {
           data: {},
         };
       } catch (err) {
-        return { success: false, error: "something went wrong." };
+        return { success: false, error: "something went wrong.", data: {} };
       }
     };
 
@@ -98,6 +96,7 @@ export const AppSettingsProvider: React.FC = ({ children }) => {
         return {
           success: false,
           error: "something went wrong.",
+          data: {},
         };
       }
     };

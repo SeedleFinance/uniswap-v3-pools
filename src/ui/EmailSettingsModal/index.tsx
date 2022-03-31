@@ -41,8 +41,8 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
       email,
     });
 
-    if (response?.error) {
-      console.log("uhoh");
+    if (response.error) {
+      console.log(response.error);
     }
     console.log("response", response);
 
@@ -50,10 +50,10 @@ const EmailSettingsModal: React.FC<ModalProps> = ({ onSubmit, onCancel }) => {
   }
 
   async function handleDeletePosition(id: string) {
-    const response = removePosition(id);
+    const response = await removePosition(id);
 
-    if (response?.error) {
-      console.log("uhoh");
+    if (response.error) {
+      console.log(response.error);
     }
 
     console.log("response", response);
