@@ -28,27 +28,17 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const { addresses } = useAddress();
 
   const { loading: queryLoading, positionStates: allPositions } =
-    useQueryPositions(chainId, addresses);
-
-  const filteredPositions = useMemo(() => {
-    if (noFilterClosed || !filterClosed) {
-      return allPositions;
-    }
-
-    return allPositions.filter(
-      (position) => position && !position.liquidity.isZero()
-    );
-  }, [allPositions, filterClosed, noFilterClosed]);
+    useQueryPositions(chainId, addresses, noFilterClosed || !filterClosed);
 
   const positionsByPool = useMemo((): {
     [key: string]: PositionState[];
   } => {
-    if (!filteredPositions.length) {
+    if (!allPositions.length) {
       return {};
     }
     const positionsByPool: { [key: string]: PositionState[] } = {};
 
-    filteredPositions.forEach((position) => {
+    allPositions.forEach((position) => {
       if (!position) {
         return;
       }
@@ -66,7 +56,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
     });
 
     return positionsByPool;
-  }, [filteredPositions]);
+  }, [allPositions]);
 
   const poolKeys = useMemo(
     () => Object.keys(positionsByPool),

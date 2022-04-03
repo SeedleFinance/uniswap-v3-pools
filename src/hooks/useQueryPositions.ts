@@ -9,8 +9,8 @@ import { Pool } from "@uniswap/v3-sdk";
 import { getClient } from "../apollo/client";
 
 const QUERY_POSITIONS = gql`
-  query positionsByOwner($accounts: [String]!) {
-    positions(where: { owner_in: $accounts }) {
+  query positionsByOwner($accounts: [String]!, $liquidity: BigInt) {
+    positions(where: { owner_in: $accounts, liquidity_gt: $liquidity }) {
       id
       token0 {
         id
@@ -57,10 +57,11 @@ export interface PositionState {
 
 export function useQueryPositions(
   chainId: number,
-  accounts: string[]
+  accounts: string[],
+  includeEmpty: boolean
 ): { loading: boolean; positionStates: PositionState[] } {
   const { loading, error, data } = useQuery(QUERY_POSITIONS, {
-    variables: { accounts },
+    variables: { accounts, liquidity: includeEmpty ? -1 : 0 },
     fetchPolicy: "network-only",
     nextFetchPolicy: "cache-first",
     client: getClient(chainId),
