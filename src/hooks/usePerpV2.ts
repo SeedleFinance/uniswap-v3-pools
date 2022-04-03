@@ -44,8 +44,6 @@ const QUERY_OPEN_ORDERS = gql`
       baseToken
       lowerTick
       upperTick
-      baseAmount
-      quoteAmount
       liquidity
       collectedFee
       timestamp
@@ -66,8 +64,6 @@ export interface PerpPositionState {
   tickLower: number;
   tickUpper: number;
   liquidity: BigNumber;
-  baseAmount: number;
-  quoteAmount: number;
   collectedFee: number;
   timestamp: Date;
   poolAddress: string;
@@ -114,8 +110,6 @@ export function useQueryPerpOpenOrders(
         upperTick,
         liquidity,
         baseToken,
-        baseAmount,
-        quoteAmount,
         collectedFee,
         timestamp,
         marketRef,
@@ -125,8 +119,6 @@ export function useQueryPerpOpenOrders(
         tickLower: parseInt(lowerTick, 10),
         tickUpper: parseInt(upperTick, 10),
         liquidity: BigNumber.from(liquidity),
-        baseAmount: parseFloat(baseAmount),
-        quoteAmount: parseFloat(quoteAmount),
         collectedFee: parseFloat(collectedFee),
         timestamp: new Date(parseInt(timestamp, 10) * 1000),
         poolAddress: marketRef.pool,
