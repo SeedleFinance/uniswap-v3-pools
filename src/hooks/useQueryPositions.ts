@@ -10,7 +10,12 @@ import { getClient } from "../apollo/client";
 
 const QUERY_POSITIONS = gql`
   query positionsByOwner($accounts: [String]!, $liquidity: BigInt) {
-    positions(where: { owner_in: $accounts, liquidity_gt: $liquidity }) {
+    positions(
+      where: { owner_in: $accounts, liquidity_gt: $liquidity }
+      orderBy: id
+      orderDirection: desc
+      first: 1000
+    ) {
       id
       token0 {
         id
