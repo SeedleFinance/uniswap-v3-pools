@@ -38,8 +38,13 @@ const QUERY_POOLS = gql`
 `;
 
 const QUERY_OPEN_ORDERS = gql`
-  query openOrdersByAccounts($accounts: [String]!) {
-    openOrders(where: { maker_in: $accounts }) {
+  query openOrdersByAccounts($accounts: [String]!, $liquidity: BigInt) {
+    openOrders(
+      where: { maker_in: $accounts, liquidity_gt: $liquidity }
+      orderBy: id
+      orderDirection: desc
+      first: 1000
+    ) {
       id
       baseToken
       lowerTick
@@ -73,12 +78,13 @@ export interface PerpPositionState {
 
 export function useQueryPerpOpenOrders(
   chainId: number,
-  accounts: string[]
+  accounts: string[],
+  includeEmpty: boolean
 ): { loading: boolean; positionStates: PerpPositionState[] } {
   const [queryOpenOrders, { loading, error, data }] = useLazyQuery(
     QUERY_OPEN_ORDERS,
     {
-      variables: { accounts },
+      variables: { accounts, liquidity: includeEmpty ? -1 : 0 },
       fetchPolicy: "network-only",
       nextFetchPolicy: "cache-first",
       client: getPerpClient(chainId),
@@ -234,23 +240,13 @@ export function usePerpV2(chainId: number): {
   const { addresses } = useAddress();
   const { loading: loadingPositions, positionStates } = useQueryPerpOpenOrders(
     chainId,
-    addresses
+    addresses,
+    !filterClosed
   );
-
-  const filteredPositionStates = useMemo(() => {
-    if (!positionStates.length) {
-      return [];
-    }
-    if (!filterClosed) {
-      return positionStates;
-    }
-
-    return positionStates.filter((ps) => ps && !ps.liquidity.isZero());
-  }, [filterClosed, positionStates]);
 
   const uncollectedFeesByPosition = usePerpUncollectedFees(
     chainId,
-    filteredPositionStates
+    positionStates
   );
 
   const poolAddresses = useMemo(() => {
@@ -258,8 +254,8 @@ export function usePerpV2(chainId: number): {
       return [];
     }
 
-    return uniq(filteredPositionStates.map(({ poolAddress }) => poolAddress));
-  }, [loadingPositions, filteredPositionStates]);
+    return uniq(positionStates.map(({ poolAddress }) => poolAddress));
+  }, [loadingPositions, positionStates]);
 
   const { loading: loadingPools, pools } = useQueryPools(
     chainId,
@@ -270,14 +266,14 @@ export function usePerpV2(chainId: number): {
     const positionsByPool: { [key: string]: any[] } = {};
 
     if (
-      !filteredPositionStates.length ||
+      !positionStates.length ||
       !Object.keys(pools).length ||
       !uncollectedFeesByPosition.length
     ) {
       return positionsByPool;
     }
 
-    filteredPositionStates.forEach((position, idx) => {
+    positionStates.forEach((position, idx) => {
       // enhance position
       const pool = pools[position.poolAddress];
 
@@ -332,7 +328,7 @@ export function usePerpV2(chainId: number): {
     });
 
     return positionsByPool;
-  }, [pools, filteredPositionStates, uncollectedFeesByPosition]);
+  }, [pools, positionStates, uncollectedFeesByPosition]);
 
   const poolStates = useMemo(() => {
     if (!Object.keys(positionsByPool).length || !Object.keys(pools).length) {
