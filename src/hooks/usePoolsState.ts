@@ -62,11 +62,6 @@ export function usePoolsState(
         return [];
       }
 
-      // const result = await contract.functions.slot0();
-      // const tickCurrent = result[1];
-      // const feeGrowthGlobal0X128 = await contract.feeGrowthGlobal0X128();
-      // const feeGrowthGlobal1X128 = await contract.feeGrowthGlobal1X128();
-
       const tickUpperResult = await contract.functions.ticks(tickUpper);
 
       let fa0, fa1;
@@ -233,7 +228,14 @@ export function usePoolsState(
         poolUncollectedFees,
         quoteToken,
         baseToken,
-        entity: pool,
+        entity: new Pool(
+          pool.token0,
+          pool.token1,
+          pool.fee,
+          sqrtPriceX96,
+          rawPoolLiquidity,
+          tickCurrent
+        ),
         positions: enhancedPositions,
       };
     };

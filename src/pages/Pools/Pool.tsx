@@ -23,6 +23,7 @@ import { WETH9 } from "../../constants";
 import Positions from "./Positions";
 import PositionStatuses from "./PositionStatuses";
 import PriceChart from "./PriceChart";
+import LiquidityChart from "./LiquidityChart";
 import ChevronDown from "../../icons/ChevronDown";
 import ChevronUp from "../../icons/ChevronUp";
 import PoolButton from "../..//ui/PoolButton";
@@ -69,6 +70,7 @@ function Pool({
   const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
   const [showPriceChart, setShowPriceChart] = useState(false);
+  const [showLiquidityChart, setShowLiquidityChart] = useState(false);
 
   const poolPrice = useMemo(() => {
     if (!quoteToken || !entity) {
@@ -293,6 +295,32 @@ function Pool({
                   address={address}
                   baseToken={baseToken}
                   quoteToken={quoteToken}
+                />
+              )}
+            </div>
+
+            <div className="flex flex-col items-start mb-4">
+              <button
+                className="flex items-center focus:outline-none"
+                onClick={() => setShowLiquidityChart(!showLiquidityChart)}
+              >
+                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
+                  Liquidity
+                </span>
+                <span className="mx-2">
+                  {showLiquidityChart ? (
+                    <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                  )}
+                </span>
+              </button>
+              {showLiquidityChart && (
+                <LiquidityChart
+                  address={address}
+                  baseToken={baseToken}
+                  quoteToken={quoteToken}
+                  pool={entity}
                 />
               )}
             </div>
