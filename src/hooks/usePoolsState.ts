@@ -52,17 +52,15 @@ export function usePoolsState(
       liquidity: BigNumber,
       token0: Token,
       token1: Token,
+      tickCurrent: number,
+      feeGrowthGlobal0X128: BigNumber,
+      feeGrowthGlobal1X128: BigNumber,
       feeGrowthInside0LastX128: BigNumber,
       feeGrowthInside1LastX128: BigNumber
     ) => {
       if (!contract) {
         return [];
       }
-
-      const result = await contract.functions.slot0();
-      const tickCurrent = result[1];
-      const feeGrowthGlobal0X128 = await contract.feeGrowthGlobal0X128();
-      const feeGrowthGlobal1X128 = await contract.feeGrowthGlobal1X128();
 
       const tickUpperResult = await contract.functions.ticks(tickUpper);
 
@@ -108,6 +106,9 @@ export function usePoolsState(
       contract: Contract | null,
       baseToken: Token,
       quoteToken: Token,
+      tickCurrent: number,
+      feeGrowthGlobal0X128: BigNumber,
+      feeGrowthGlobal1X128: BigNumber,
       {
         id,
         pool,
@@ -139,6 +140,9 @@ export function usePoolsState(
         liquidity,
         pool.token0,
         pool.token1,
+        tickCurrent,
+        feeGrowthGlobal0X128,
+        feeGrowthGlobal1X128,
         feeGrowthInside0LastX128,
         feeGrowthInside1LastX128
       );
@@ -181,13 +185,28 @@ export function usePoolsState(
         pool.token1
       );
 
-      let rawPoolLiquidity = BigNumber.from(0);
+      const slot0 = await contract.functions.slot0();
+      const sqrtPriceX96 = slot0[0];
+      const tickCurrent = slot0[1];
+      const feeGrowthGlobal0X128 = await contract.feeGrowthGlobal0X128();
+      const feeGrowthGlobal1X128 = await contract.feeGrowthGlobal1X128();
+
+      const liquidityResult = await contract.functions.liquidity();
+      let rawPoolLiquidity = liquidityResult[0];
       let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
       let poolUncollectedFees = CurrencyAmount.fromRawAmount(baseToken, 0);
 
       const enhancedPositions = await Promise.all<any>(
         positions.map((position: any) =>
-          enhancePosition(contract, baseToken, quoteToken, position)
+          enhancePosition(
+            contract,
+            baseToken,
+            quoteToken,
+            tickCurrent,
+            feeGrowthGlobal0X128,
+            feeGrowthGlobal1X128,
+            position
+          )
         )
       );
 
@@ -209,7 +228,14 @@ export function usePoolsState(
         poolUncollectedFees,
         quoteToken,
         baseToken,
-        entity: pool,
+        entity: new Pool(
+          pool.token0,
+          pool.token1,
+          pool.fee,
+          sqrtPriceX96,
+          rawPoolLiquidity,
+          tickCurrent
+        ),
         positions: enhancedPositions,
       };
     };
