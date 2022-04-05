@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { Token } from "@uniswap/sdk-core";
+import { Token, Currency } from "@uniswap/sdk-core";
 import { SwapToRatioRoute } from "@uniswap/smart-order-router";
 
 import { useTokenFunctions } from "../../hooks/useTokenFunctions";
@@ -11,7 +11,7 @@ import { Button, UnstyledButton } from "../../ui/Button";
 import { formatInput } from "../../utils/numbers";
 import { tokenAmountNeedApproval, getApprovalAmount } from "./utils";
 
-import { SWAP_ROUTER_ADDRESSES } from "../../constants";
+import { WETH9, SWAP_ROUTER_ADDRESSES } from "../../constants";
 
 interface Props {
   token0: Token;
@@ -124,34 +124,104 @@ function SwapAndAddModal({
     tokenApproving,
   ]);
 
+  const [swapInput, swapOutput] = useMemo(() => {
+    if (!route || !route.trade || !route.trade.swaps) {
+      return [null, null];
+    }
+
+    const { swaps } = route.trade;
+    const firstSwap = swaps[0];
+    let swapInput = firstSwap.inputAmount;
+    let swapOutput = firstSwap.outputAmount;
+
+    for (let i = 1; i < swaps.length; i++) {
+      swapInput = swapInput.add(swaps[i].inputAmount);
+      swapOutput = swapOutput.add(swaps[i].outputAmount);
+    }
+
+    return [swapInput, swapOutput];
+  }, [route]);
+
   const handleApprove = async (token: Token, amount: number) => {
     setTokenApproving(true);
     await onApprove(token, amount, SWAP_ROUTER_ADDRESSES[chainId as number]);
     setTokenApproving(false);
   };
 
+  const getCurrencyAddress = (currency: Currency) => {
+    if (currency.isNative && currency.name === "Ether") {
+      return WETH9[chainId || 1].address;
+    }
+
+    return (currency as Token).address;
+  };
+
   return (
     <Modal title={"Swap & Add"}>
-      {!route ? (
+      {!swapInput || !swapOutput ? (
         <div>Finding the best route for the swap...</div>
       ) : (
         <div>
-          <div>Liquidity to be added after the swap:</div>
           <div>
-            <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
-              <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
-                <TokenLogo name={token0.name} address={token0.address} />
-                <TokenLabel name={token0.name} symbol={token0.symbol} />
+            <div>Swap</div>
+            <div className="flex item-center py-2">
+              <div className="grow flex flex-wrap items-start my-1 relative">
+                <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+                  <TokenLogo
+                    name={swapInput.currency.name}
+                    address={getCurrencyAddress(swapInput.currency)}
+                  />
+                  <TokenLabel
+                    name={swapInput.currency.name}
+                    symbol={swapInput.currency.symbol}
+                  />
+                </div>
+                <div className="w-1/2 p-2 my-1">
+                  {formatInput(parseFloat(swapInput.toSignificant(18)))}
+                </div>
               </div>
-              <div className="w-2/3 p-2 my-1">{formatInput(token0Amount)}</div>
-            </div>
 
-            <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
-              <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
-                <TokenLogo name={token1.name} address={token1.address} />
-                <TokenLabel name={token1.name} symbol={token1.symbol} />
+              <div className="grow-0 p-4">→</div>
+
+              <div className="grow flex flex-wrap items-start my-1 relative">
+                <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+                  <TokenLogo
+                    name={swapOutput.currency.name}
+                    address={getCurrencyAddress(swapOutput.currency)}
+                  />
+                  <TokenLabel
+                    name={swapOutput.currency.name}
+                    symbol={swapOutput.currency.symbol}
+                  />
+                </div>
+                <div className="w-1/2 p-2 my-1">
+                  {formatInput(parseFloat(swapOutput.toSignificant(18)))}
+                </div>
               </div>
-              <div className="w-2/3 p-2 my-1">{formatInput(token1Amount)}</div>
+            </div>
+          </div>
+          <div>
+            <div>Liquidity to be added after the swap:</div>
+            <div>
+              <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
+                <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+                  <TokenLogo name={token0.name} address={token0.address} />
+                  <TokenLabel name={token0.name} symbol={token0.symbol} />
+                </div>
+                <div className="w-2/3 p-2 my-1">
+                  {formatInput(token0Amount)}
+                </div>
+              </div>
+
+              <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
+                <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+                  <TokenLogo name={token1.name} address={token1.address} />
+                  <TokenLabel name={token1.name} symbol={token1.symbol} />
+                </div>
+                <div className="w-2/3 p-2 my-1">
+                  {formatInput(token1Amount)}
+                </div>
+              </div>
             </div>
           </div>
 

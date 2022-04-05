@@ -122,8 +122,18 @@ function RangeData({
               <YAxis width={100} mirror={true} domain={domain} />
               <Tooltip />
               <Legend />
-              <ReferenceLine y={priceLower} stroke="#9a3b38" strokeWidth={1} />
-              <ReferenceLine y={priceUpper} stroke="#9a3b38" strokeWidth={1} />
+              <ReferenceLine
+                y={priceLower}
+                stroke="#9a3b38"
+                strokeWidth={1}
+                ifOverflow="extendDomain"
+              />
+              <ReferenceLine
+                y={priceUpper}
+                stroke="#9a3b38"
+                strokeWidth={1}
+                ifOverflow="extendDomain"
+              />
               <Brush dataKey="date" height={30} stroke="#3390d6" />
               <Line
                 type="monotone"
@@ -182,7 +192,7 @@ function RangeData({
             data={liquidityData}
             margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           >
-            <XAxis dataKey="price" />
+            <XAxis dataKey="price" domain={domain} />
             <YAxis hide={true} />
             <Tooltip />
             <Legend />
@@ -193,8 +203,18 @@ function RangeData({
               fillOpacity={0.9}
               stroke="#3390d6"
             />
-            <ReferenceLine x={priceLower} stroke="#9a3b38" strokeWidth={2} />
-            <ReferenceLine x={priceUpper} stroke="#9a3b38" strokeWidth={2} />
+            <ReferenceLine
+              x={priceLower}
+              stroke="#9a3b38"
+              strokeWidth={2}
+              ifOverflow="extendDomain"
+            />
+            <ReferenceLine
+              x={priceUpper}
+              stroke="#9a3b38"
+              strokeWidth={2}
+              ifOverflow="extendDomain"
+            />
           </AreaChart>
         </ResponsiveContainer>
       )}

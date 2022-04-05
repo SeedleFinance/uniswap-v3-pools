@@ -410,7 +410,7 @@ function NewPosition({
       });
       const config = {
         maxIterations: 6,
-        ratioErrorTolerance: new Fraction(1, 100),
+        ratioErrorTolerance: new Fraction(1, 1000),
       };
       const opts = {
         swapOptions: {
@@ -428,6 +428,8 @@ function NewPosition({
         config,
         opts
       );
+
+      // add a timeout
 
       if (routerResult.status === SwapToRatioStatus.NO_ROUTE_FOUND) {
         console.error(routerResult.error);
@@ -487,6 +489,7 @@ function NewPosition({
       handleTxError(e);
     }
     setSwapAndAddPending(false);
+    setSwapAndAddRoute(null);
     setTransactionPending(false);
     setTransactionHash(null);
   };
