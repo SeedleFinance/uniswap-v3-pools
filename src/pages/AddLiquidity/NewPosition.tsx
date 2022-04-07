@@ -210,6 +210,13 @@ function NewPosition({
       return;
     }
 
+    // if swap and add is enabled, we don't disable any token
+    if (swapAndAdd) {
+      setBaseTokenDisabled(false);
+      setQuoteTokenDisabled(false);
+      return;
+    }
+
     const { tickCurrent } = pool;
 
     let [lower, upper] = [tickLower, tickUpper];
@@ -226,7 +233,15 @@ function NewPosition({
     setQuoteTokenDisabled(
       pool.token1.equals(quoteToken) ? token1Disabled : token0Disabled
     );
-  }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse]);
+  }, [
+    pool,
+    tickLower,
+    tickUpper,
+    baseToken,
+    quoteToken,
+    rangeReverse,
+    swapAndAdd,
+  ]);
 
   const baseTokenNeedApproval = useMemo(() => {
     if (!chainId || !baseToken) {
@@ -395,6 +410,7 @@ function NewPosition({
         tickLower,
         tickUpper
       );
+
       const addLiquidityOptions: any = {};
       if (matchingPosition) {
         addLiquidityOptions.tokenId = matchingPosition.id;
@@ -412,6 +428,7 @@ function NewPosition({
         maxIterations: 6,
         ratioErrorTolerance: new Fraction(1, 1000),
       };
+
       const opts = {
         swapOptions: {
           recipient: account as string,
@@ -435,7 +452,9 @@ function NewPosition({
         console.error(routerResult.error);
         throw new Error("Failed to find a route to swap");
       } else if (routerResult.status === SwapToRatioStatus.NO_SWAP_NEEDED) {
-        // TODO: call regular add liquidity
+        setSwapAndAddPending(false);
+        setSwapAndAddRoute(null);
+        onAddLiquidity();
       } else if (routerResult.status === SwapToRatioStatus.SUCCESS) {
         setSwapAndAddRoute(routerResult.result);
       }

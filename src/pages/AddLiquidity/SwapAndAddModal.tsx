@@ -79,7 +79,7 @@ function SwapAndAddModal({
         parseFloat(pool.priceOf(token1).quote(quote.wrapped).toSignificant(18));
     }
 
-    return [token0Amount, token1Amount];
+    return [Math.max(0, token0Amount), Math.max(0, token1Amount)];
   }, [route, token0, token1, token0PreswapAmount, token1PreswapAmount]);
 
   const token0NeedApproval = useMemo(() => {

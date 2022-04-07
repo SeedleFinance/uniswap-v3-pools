@@ -193,7 +193,7 @@ export function findTokens(
     return s;
   });
 
-  let matches = [];
+  let matches: TokenListItem[] = [];
   symbolsFormatted.forEach((sym) => {
     const matched = tokens.find((token: TokenListItem) => {
       return token.chainId === chainId && token.symbol === sym;
@@ -202,18 +202,6 @@ export function findTokens(
       matches.push(matched);
     }
   });
-
-  // Optimism WETH
-  if (chainId === 10 && symbolsFormatted.includes("WETH")) {
-    const weth = {
-      address: "0x4200000000000000000000000000000000000006",
-      chainId: 10,
-      name: "Wrapped Ether",
-      symbol: "WETH",
-      decimals: 18,
-    };
-    matches.push(weth);
-  }
 
   return matches;
 }
