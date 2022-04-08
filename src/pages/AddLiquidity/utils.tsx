@@ -190,6 +190,10 @@ export function findTokens(
     if (s === "ETH") {
       return "WETH";
     }
+    // in Polygon, return ETH instead of WETH to match
+    if (chainId === 137 && s === "WETH") {
+      return "ETH";
+    }
     return s;
   });
 
