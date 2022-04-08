@@ -46,14 +46,18 @@ export function positionFromAmounts(
   });
 }
 
-export function toCurrencyAmount(token: Token, amount: number) {
+export function toCurrencyAmount(
+  token: Token,
+  amount: number,
+  wrapped: boolean = false
+) {
   const bigIntish =
     amount > 0
       ? JSBI.BigInt(Math.floor(amount * Math.pow(10, token.decimals)))
       : 0;
   // convert the token to native ether if it's WETH
   const native =
-    token.equals(WETH9[token.chainId]) && token.chainId !== 137
+    token.equals(WETH9[token.chainId]) && !wrapped && token.chainId !== 137
       ? Ether.onChain(token.chainId)
       : token;
 
@@ -112,13 +116,14 @@ export function tokenAmountNeedApproval(
   chainId: number,
   token: Token,
   allowance: number,
-  amount: number
+  amount: number,
+  wrapped: boolean = false
 ): boolean {
   if (!token || !chainId) {
     return false;
   }
 
-  if (token.equals(WETH9[chainId]) && token.chainId !== 137) {
+  if (token.equals(WETH9[chainId]) && !wrapped && token.chainId !== 137) {
     return false;
   }
 

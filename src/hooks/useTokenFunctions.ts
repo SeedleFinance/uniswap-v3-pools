@@ -37,7 +37,8 @@ const callContract = async (
 
 export function useTokenFunctions(
   tokens: Token[],
-  owner: string | null | undefined
+  owner: string | null | undefined,
+  nativeBalance: boolean = true
 ): {
   getBalances: () => Promise<string[]>;
   getAllowances: (spender: string) => Promise<number[]>;
@@ -70,7 +71,9 @@ export function useTokenFunctions(
     return await Promise.all(
       tokens.map(async (token: Token, idx: number) => {
         const balance =
-          token.equals(WETH9[token.chainId]) && token.chainId !== 137
+          nativeBalance &&
+          token.equals(WETH9[token.chainId]) &&
+          token.chainId !== 137
             ? await library.getBalance(owner)
             : await callContract(
                 contracts,
@@ -82,7 +85,7 @@ export function useTokenFunctions(
         return formatUnits(balance, token.decimals);
       })
     );
-  }, [library, tokens, owner, contracts, bytes32Contracts]);
+  }, [library, tokens, owner, contracts, bytes32Contracts, nativeBalance]);
 
   const getAllowances = useCallback(
     async (spender: string): Promise<number[]> => {
