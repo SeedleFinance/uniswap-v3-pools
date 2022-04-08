@@ -4,6 +4,7 @@ import { Token } from "@uniswap/sdk-core";
 import TokenLabel from "../../ui/TokenLabel";
 import TokenLogo from "../../ui/TokenLogo";
 import { formatInput } from "../../utils/numbers";
+import { WETH9 } from "../../constants";
 
 interface DepositInputProps {
   token: Token;
@@ -11,7 +12,9 @@ interface DepositInputProps {
   balance: string;
   tabIndex: number;
   disabled: boolean;
+  wrapped: boolean;
   onChange: (value: number) => void;
+  onWethToggle: () => void;
 }
 
 function DepositInput({
@@ -20,7 +23,9 @@ function DepositInput({
   balance,
   tabIndex,
   disabled,
+  wrapped,
   onChange,
+  onWethToggle,
 }: DepositInputProps) {
   const inputEl = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState<string>("0.00");
@@ -74,7 +79,7 @@ function DepositInput({
     <div className="w-full flex flex-wrap items-start border rounded p-2 my-2 relative">
       <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-800 border rounded">
         <TokenLogo name={token.name} address={token.address} />
-        <TokenLabel name={token.name} symbol={token.symbol} />
+        <TokenLabel name={token.name} symbol={token.symbol} wrapped={wrapped} />
       </div>
       <input
         className="w-2/3 focus:outline-none text-2xl p-2 text-right bg-white dark:bg-slate-900"
@@ -87,13 +92,29 @@ function DepositInput({
       />
       <div className="w-full text-sm my-1">
         <span>Balance: {balance} </span>
-        <TokenLabel name={token.name} symbol={token.symbol} /> (
+        <TokenLabel
+          name={token.name}
+          symbol={token.symbol}
+          wrapped={wrapped}
+        />{" "}
+        (
         <button
           className="text-blue-500 dark:text-blue-200"
           onClick={handleMaxBalance}
         >
           Max
         </button>
+        {token.equals(WETH9[token.chainId]) && token.chainId !== 137 && (
+          <>
+            <span className="px-1">|</span>
+            <button
+              className="text-blue-500 dark:text-blue-200"
+              onClick={onWethToggle}
+            >
+              {wrapped ? "Use ETH" : "Use WETH"}
+            </button>
+          </>
+        )}
         )
       </div>
       {disabled && (

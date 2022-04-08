@@ -18,6 +18,7 @@ interface Props {
   token1: Token;
   token0PreswapAmount: number;
   token1PreswapAmount: number;
+  wrapped: boolean;
   route: SwapToRatioRoute | null;
   onCancel: () => void;
   onComplete: () => void;
@@ -30,6 +31,7 @@ function SwapAndAddModal({
   token0PreswapAmount,
   token1PreswapAmount,
   route,
+  wrapped,
   onApprove,
   onCancel,
   onComplete,
@@ -164,7 +166,7 @@ function SwapAndAddModal({
         <div>
           <div>
             <div>Swap</div>
-            <div className="flex item-center py-2">
+            <div className="flex item-center p-2">
               <div className="grow flex flex-wrap items-start my-1 relative">
                 <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                   <TokenLogo
@@ -174,6 +176,7 @@ function SwapAndAddModal({
                   <TokenLabel
                     name={swapInput.currency.name}
                     symbol={swapInput.currency.symbol}
+                    wrapped={wrapped}
                   />
                 </div>
                 <div className="w-1/2 p-2 my-1">
@@ -192,6 +195,7 @@ function SwapAndAddModal({
                   <TokenLabel
                     name={swapOutput.currency.name}
                     symbol={swapOutput.currency.symbol}
+                    wrapped={wrapped}
                   />
                 </div>
                 <div className="w-1/2 p-2 my-1">
@@ -206,7 +210,11 @@ function SwapAndAddModal({
               <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                   <TokenLogo name={token0.name} address={token0.address} />
-                  <TokenLabel name={token0.name} symbol={token0.symbol} />
+                  <TokenLabel
+                    name={token0.name}
+                    symbol={token0.symbol}
+                    wrapped={wrapped}
+                  />
                 </div>
                 <div className="w-2/3 p-2 my-1">
                   {formatInput(token0Amount)}
@@ -216,7 +224,11 @@ function SwapAndAddModal({
               <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                   <TokenLogo name={token1.name} address={token1.address} />
-                  <TokenLabel name={token1.name} symbol={token1.symbol} />
+                  <TokenLabel
+                    name={token1.name}
+                    symbol={token1.symbol}
+                    wrapped={wrapped}
+                  />
                 </div>
                 <div className="w-2/3 p-2 my-1">
                   {formatInput(token1Amount)}

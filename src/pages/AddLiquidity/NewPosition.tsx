@@ -75,6 +75,8 @@ function NewPosition({
   const [searchParams] = useSearchParams();
   const positionId = searchParams.get("position");
 
+  const [depositWeth, setDepositWeth] = useState<boolean>(false);
+
   useEffect(() => {
     if (!chainId) {
       return;
@@ -92,7 +94,8 @@ function NewPosition({
 
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
     [baseToken, quoteToken],
-    account
+    account,
+    !depositWeth
   );
   const { convertToGlobalFormatted } = useCurrencyConversions();
 
@@ -252,9 +255,10 @@ function NewPosition({
       chainId as number,
       baseToken,
       baseTokenAllowance,
-      baseAmount
+      baseAmount,
+      depositWeth
     );
-  }, [chainId, baseToken, baseAmount, baseTokenAllowance]);
+  }, [chainId, baseToken, baseAmount, baseTokenAllowance, depositWeth]);
 
   const quoteTokenNeedApproval = useMemo(() => {
     if (!chainId || !quoteToken) {
@@ -265,9 +269,10 @@ function NewPosition({
       chainId as number,
       quoteToken,
       quoteTokenAllowance,
-      quoteAmount
+      quoteAmount,
+      depositWeth
     );
-  }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance]);
+  }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance, depositWeth]);
 
   const totalPositionValue = useMemo(() => {
     if (!pool) {
@@ -398,11 +403,11 @@ function NewPosition({
       });
 
       const token0Balance = rangeReverse
-        ? toCurrencyAmount(baseToken, baseAmount)
-        : toCurrencyAmount(quoteToken, quoteAmount);
+        ? toCurrencyAmount(baseToken, baseAmount, depositWeth)
+        : toCurrencyAmount(quoteToken, quoteAmount, depositWeth);
       const token1Balance = rangeReverse
-        ? toCurrencyAmount(quoteToken, quoteAmount)
-        : toCurrencyAmount(baseToken, baseAmount);
+        ? toCurrencyAmount(quoteToken, quoteAmount, depositWeth)
+        : toCurrencyAmount(baseToken, baseAmount, depositWeth);
 
       const matchingPosition = findMatchingPosition(
         positions,
@@ -563,7 +568,7 @@ function NewPosition({
       const useNative =
         pool.token0.equals(WETH9[chainId as number]) ||
         pool.token1.equals(WETH9[chainId as number])
-          ? pool.token0.chainId !== 137
+          ? !depositWeth && pool.token0.chainId !== 137
             ? Ether.onChain(chainId as number)
             : undefined
           : undefined;
@@ -666,6 +671,10 @@ function NewPosition({
 
   const handleRangeDataClick = () => {
     setShowRangeData(!showRangeData);
+  };
+
+  const toggleDepositWeth = () => {
+    setDepositWeth(!depositWeth);
   };
 
   return (
@@ -783,7 +792,9 @@ function NewPosition({
               balance={quoteBalance}
               tabIndex={6}
               disabled={quoteTokenDisabled}
+              wrapped={depositWeth}
               onChange={quoteDepositChange}
+              onWethToggle={toggleDepositWeth}
             />
             <DepositInput
               token={baseToken}
@@ -791,7 +802,9 @@ function NewPosition({
               balance={baseBalance}
               tabIndex={7}
               disabled={baseTokenDisabled}
+              wrapped={depositWeth}
               onChange={baseDepositChange}
+              onWethToggle={toggleDepositWeth}
             />
           </div>
           <div className="w-64 mb-2 text-sm">
@@ -874,6 +887,7 @@ function NewPosition({
               token1={baseToken}
               token0PreswapAmount={quoteAmount}
               token1PreswapAmount={baseAmount}
+              wrapped={depositWeth}
               onCancel={onSwapAndAddCancel}
               onComplete={onSwapAndAddComplete}
               onApprove={onApprove}
