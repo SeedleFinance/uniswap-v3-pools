@@ -29,7 +29,6 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
     baseToken,
     pool
   );
-  console.log(liquidityData);
 
   if (!liquidityData || !liquidityData.length) {
     return <div>Loading liquidity data...</div>;

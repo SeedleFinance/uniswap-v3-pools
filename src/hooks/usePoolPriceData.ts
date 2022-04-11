@@ -16,7 +16,11 @@ const QUERY_POOL_DAY_DATA = gql`
         date
         tick
       }
-      poolHourData(first: $hours, orderBy: periodStartUnix, orderDirection: desc) {
+      poolHourData(
+        first: $hours
+        orderBy: periodStartUnix
+        orderDirection: desc
+      ) {
         id
         periodStartUnix
         tick
@@ -29,9 +33,8 @@ export function usePoolPriceData(
   chainId: number,
   poolAddress: string | null,
   quoteToken: Token | null,
-  baseToken: Token | null
-  period: number,
-  periodType: string
+  baseToken: Token | null,
+  period: number
 ) {
   let days = period <= 30 ? 30 : 365;
   let hours = 1;
@@ -52,13 +55,15 @@ export function usePoolPriceData(
     }
 
     if (period === 0) {
-      return data.pool.poolHourData.map(({ id, periodStartUnix, tick }: any) => {
-        return {
-          id,
-          date: parseInt(periodStartUnix, 10),
-          tick: parseInt(tick, 10),
-        };
-      })
+      return data.pool.poolHourData.map(
+        ({ id, periodStartUnix, tick }: any) => {
+          return {
+            id,
+            date: parseInt(periodStartUnix, 10),
+            tick: parseInt(tick, 10),
+          };
+        }
+      );
     }
 
     return data.pool.poolDayData.map(({ id, date, tick }: any) => {
@@ -77,8 +82,8 @@ export function usePoolPriceData(
 
     const formatDate = (date: number) => {
       const dt = new Date(date * 1000);
-      return period === 0 ? format(dt, "HH:mm") : format(dt, "dd.MMM")
-    }
+      return period === 0 ? format(dt, "HH:mm") : format(dt, "dd.MMM");
+    };
 
     const items = period === 0 ? 24 : period;
     return poolData
@@ -90,7 +95,7 @@ export function usePoolPriceData(
         ),
       }))
       .slice(0, items)
-      .reverse()
+      .reverse();
   }, [poolData, baseToken, quoteToken, period]);
 
   const [minPrice, maxPrice, meanPrice, stdev] = useMemo(() => {
