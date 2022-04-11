@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -11,6 +11,7 @@ import {
 import { Token } from "@uniswap/sdk-core";
 
 import { usePoolPriceData } from "../../hooks/usePoolPriceData";
+import ChartPeriodSelector from "../../ui/ChartPeriodSelector";
 
 interface Props {
   address: string;
@@ -19,12 +20,19 @@ interface Props {
 }
 
 function PriceChart({ address, quoteToken, baseToken }: Props) {
+  const [period, setPeriod] = useState<number>(30);
+
   const { priceData, minPrice, maxPrice, meanPrice, stdev } = usePoolPriceData(
     baseToken.chainId,
     address,
     quoteToken,
-    baseToken
+    baseToken,
+    period
   );
+
+  const handlePeriod = (days: number) => {
+    setPeriod(days);
+  };
 
   if (!priceData || !priceData.length) {
     return <div>Loading price data...</div>;
@@ -32,7 +40,8 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
 
   return (
     <div className="w-full flex flex-col flex-wrap items-start my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
-      <ResponsiveContainer width={"80%"} height={200}>
+      <ChartPeriodSelector current={period} onSelect={handlePeriod} />
+      <ResponsiveContainer width={"100%"} height={200}>
         <LineChart
           data={priceData}
           margin={{ top: 10, right: 10, bottom: 10, left: 10 }}

@@ -37,7 +37,7 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
 
   return (
     <div className="w-full flex flex-col flex-wrap items-start my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
-      <ResponsiveContainer width={"80%"} height={200}>
+      <ResponsiveContainer width={"100%"} height={200}>
         <AreaChart
           data={liquidityData}
           margin={{ top: 10, right: 10, bottom: 10, left: 10 }}

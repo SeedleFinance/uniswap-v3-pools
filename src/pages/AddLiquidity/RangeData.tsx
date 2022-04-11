@@ -22,6 +22,7 @@ import { usePoolPriceData } from "../../hooks/usePoolPriceData";
 import { usePoolLiquidityData } from "../../hooks/usePoolLiquidityData";
 import Menu from "../../ui/Menu";
 import Icon from "../../ui/Icon";
+import ChartPeriodSelector from "../../ui/ChartPeriodSelector";
 
 interface Props {
   chainId: number | undefined;
@@ -41,6 +42,8 @@ function RangeData({
   baseToken,
 }: Props) {
   const [menuOpened, setMenuOpened] = useState(false);
+  const [period, setPeriod] = useState<number>(30);
+
   const [chart, setChart] = useState(0);
 
   const poolAddress = Pool.getAddress(
@@ -53,7 +56,8 @@ function RangeData({
     chainId || 1,
     poolAddress,
     quoteToken,
-    baseToken
+    baseToken,
+    period
   );
 
   const liquidityData = usePoolLiquidityData(
@@ -91,6 +95,10 @@ function RangeData({
     setChart(item);
   };
 
+  const handlePeriod = (days: number) => {
+    setPeriod(days);
+  };
+
   const chartTitles = ["Price", "Liquidity"];
 
   return (
@@ -112,7 +120,8 @@ function RangeData({
       </div>
 
       {chart === 0 && (
-        <>
+        <div className="w-full flex flex-col">
+          <ChartPeriodSelector current={period} onSelect={handlePeriod} />
           <ResponsiveContainer width={"100%"} height={200}>
             <LineChart
               data={priceData}
@@ -183,7 +192,7 @@ function RangeData({
               </tr>
             </tbody>
           </table>
-        </>
+        </div>
       )}
 
       {chart === 1 && (

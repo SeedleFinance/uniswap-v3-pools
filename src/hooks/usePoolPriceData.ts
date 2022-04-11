@@ -8,12 +8,17 @@ import format from "date-fns/format";
 import { getClient } from "../apollo/client";
 
 const QUERY_POOL_DAY_DATA = gql`
-  query pool_day_data($poolAddress: String!) {
+  query pool_day_data($poolAddress: String!, $days: Int!, $hours: Int!) {
     pool(id: $poolAddress) {
       id
-      poolDayData(first: 30, orderBy: date, orderDirection: desc) {
+      poolDayData(first: $days, orderBy: date, orderDirection: desc) {
         id
         date
+        tick
+      }
+      poolHourData(first: $hours, orderBy: periodStartUnix, orderDirection: desc) {
+        id
+        periodStartUnix
         tick
       }
     }
@@ -25,16 +30,35 @@ export function usePoolPriceData(
   poolAddress: string | null,
   quoteToken: Token | null,
   baseToken: Token | null
+  period: number,
+  periodType: string
 ) {
+  let days = period <= 30 ? 30 : 365;
+  let hours = 1;
+
+  if (period === 0) {
+    days = 1;
+    hours = 24;
+  }
   const { loading, error, data } = useQuery(QUERY_POOL_DAY_DATA, {
-    variables: { poolAddress },
+    variables: { poolAddress, days, hours },
     fetchPolicy: "network-only",
     client: getClient(chainId),
   });
 
-  const poolDayData = useMemo(() => {
+  const poolData = useMemo(() => {
     if (loading || error || !data) {
       return [];
+    }
+
+    if (period === 0) {
+      return data.pool.poolHourData.map(({ id, periodStartUnix, tick }: any) => {
+        return {
+          id,
+          date: parseInt(periodStartUnix, 10),
+          tick: parseInt(tick, 10),
+        };
+      })
     }
 
     return data.pool.poolDayData.map(({ id, date, tick }: any) => {
@@ -44,23 +68,30 @@ export function usePoolPriceData(
         tick: parseInt(tick, 10),
       };
     });
-  }, [loading, error, data]);
+  }, [loading, error, period, data]);
 
   const priceData = useMemo(() => {
-    if (!baseToken || !quoteToken || !poolDayData || !poolDayData.length) {
+    if (!baseToken || !quoteToken || !poolData || !poolData.length) {
       return [];
     }
 
-    return poolDayData
+    const formatDate = (date: number) => {
+      const dt = new Date(date * 1000);
+      return period === 0 ? format(dt, "HH:mm") : format(dt, "dd.MMM")
+    }
+
+    const items = period === 0 ? 24 : period;
+    return poolData
       .filter(({ tick }: { tick: number }) => !Number.isNaN(tick))
       .map(({ date, tick }: { date: number; tick: number }) => ({
-        date: format(new Date(date * 1000), "dd.MMM"),
+        date: formatDate(date),
         price: parseFloat(
           tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
         ),
       }))
-      .reverse();
-  }, [poolDayData, baseToken, quoteToken]);
+      .slice(0, items)
+      .reverse()
+  }, [poolData, baseToken, quoteToken, period]);
 
   const [minPrice, maxPrice, meanPrice, stdev] = useMemo(() => {
     if (!priceData || !priceData.length) {
