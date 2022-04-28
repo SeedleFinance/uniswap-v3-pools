@@ -31,7 +31,11 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
   );
 
   if (!liquidityData || !liquidityData.length) {
-    return <div>Loading liquidity data...</div>;
+    return (
+      <div className="text-slate-500 dark:text-slate-200">
+        Loading liquidity data...
+      </div>
+    );
   }
 
   return (

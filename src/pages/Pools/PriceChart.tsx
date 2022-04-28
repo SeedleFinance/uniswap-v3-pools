@@ -35,7 +35,11 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
   };
 
   if (!priceData || !priceData.length) {
-    return <div>Loading price data...</div>;
+    return (
+      <div className="text-slate-500 dark:text-slate-200">
+        Loading price data...
+      </div>
+    );
   }
 
   return (
