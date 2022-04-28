@@ -236,6 +236,16 @@ export const WETH9: { [chainId: number]: Token } = {
   ),
 };
 
+export const WMATIC: { [chainId: number]: Token } = {
+  137: new Token(
+    137,
+    "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+    18,
+    "WMATIC",
+    "Wrapped Matic Token"
+  ),
+};
+
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
 export const SWAP_SLIPPAGE = new Percent(5, 100);
 export const ZERO_PERCENT = new Percent("0");

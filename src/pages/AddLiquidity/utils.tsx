@@ -1,9 +1,10 @@
 import JSBI from "jsbi";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Pool, Position } from "@uniswap/v3-sdk";
-import { Token, CurrencyAmount, Ether, MaxUint256 } from "@uniswap/sdk-core";
+import { Token, CurrencyAmount, MaxUint256 } from "@uniswap/sdk-core";
 
 import { WETH9 } from "../../constants";
+import { isNativeToken, getNativeToken } from "../../utils/tokens";
 
 export function positionFromAmounts(
   {
@@ -57,9 +58,7 @@ export function toCurrencyAmount(
       : 0;
   // convert the token to native ether if it's WETH
   const native =
-    token.equals(WETH9[token.chainId]) && !wrapped && token.chainId !== 137
-      ? Ether.onChain(token.chainId)
-      : token;
+    isNativeToken(token) && !wrapped ? getNativeToken(token.chainId) : token;
 
   return CurrencyAmount.fromRawAmount(native, bigIntish);
 }

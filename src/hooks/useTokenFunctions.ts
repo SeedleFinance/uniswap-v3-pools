@@ -8,7 +8,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { MaxUint256 } from "@ethersproject/constants";
 
 import { useTokenContracts, useBytes32TokenContracts } from "./useContract";
-import { WETH9 } from "../constants";
+import { WETH9, WMATIC } from "../constants";
 
 const callContract = async (
   contracts: any[],
@@ -68,12 +68,16 @@ export function useTokenFunctions(
       return [];
     }
 
+    const shouldReturnNative = (token: Token) => {
+      return token.chainId === 137
+        ? token.equals(WMATIC[token.chainId])
+        : token.equals(WETH9[token.chainId]);
+    };
+
     return await Promise.all(
       tokens.map(async (token: Token, idx: number) => {
         const balance =
-          nativeBalance &&
-          token.equals(WETH9[token.chainId]) &&
-          token.chainId !== 137
+          nativeBalance && shouldReturnNative(token)
             ? await library.getBalance(owner)
             : await callContract(
                 contracts,
