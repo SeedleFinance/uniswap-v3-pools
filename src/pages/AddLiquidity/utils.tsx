@@ -181,7 +181,19 @@ export async function loadTokens(chainId: number) {
   }
 
   const json = await res.json();
-  return json.tokens;
+  const { tokens } = json;
+
+  // add WMATIC
+  if (chainId === 137) {
+    tokens.push({
+      address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      chainId: 137,
+      name: "Wrapped Matic Token",
+      symbol: "WMATIC",
+      decimals: 18,
+    });
+  }
+  return tokens;
 }
 
 export function findTokens(

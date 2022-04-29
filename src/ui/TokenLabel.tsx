@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 export interface TokenProps {
   name?: string | undefined;
@@ -7,13 +7,25 @@ export interface TokenProps {
 }
 
 function TokenLabel({ name, symbol, wrapped }: TokenProps) {
-  const symbolOrName = symbol || name;
+  const label = useMemo(() => {
+    const symbolOrName = symbol || name;
+    if (!symbolOrName) {
+      return "";
+    }
+
+    if (symbolOrName.startsWith("WETH") && !wrapped) {
+      return "ETH";
+    }
+    if (symbolOrName.startsWith("WMATIC") && !wrapped) {
+      return "MATIC";
+    }
+    return symbolOrName;
+  }, [name, symbol, wrapped]);
+
   return (
     <div className="inline">
       <span className="pr-1" title={name}>
-        {symbolOrName && symbolOrName.startsWith("WETH") && !wrapped
-          ? "ETH"
-          : symbolOrName}
+        {label}
       </span>
     </div>
   );
