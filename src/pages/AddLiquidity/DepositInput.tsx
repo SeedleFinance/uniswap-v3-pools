@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Token } from "@uniswap/sdk-core";
 
 import TokenLabel from "../../ui/TokenLabel";
 import TokenLogo from "../../ui/TokenLogo";
 import { formatInput } from "../../utils/numbers";
+import { isNativeToken } from "../../utils/tokens";
 import { WETH9 } from "../../constants";
 
 interface DepositInputProps {
@@ -14,7 +15,7 @@ interface DepositInputProps {
   disabled: boolean;
   wrapped: boolean;
   onChange: (value: number) => void;
-  onWethToggle: () => void;
+  onWrapToggle: () => void;
 }
 
 function DepositInput({
@@ -25,7 +26,7 @@ function DepositInput({
   disabled,
   wrapped,
   onChange,
-  onWethToggle,
+  onWrapToggle,
 }: DepositInputProps) {
   const inputEl = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState<string>("0.00");
@@ -40,6 +41,18 @@ function DepositInput({
     setInput(val);
     setDirty(true);
   };
+
+  const wrappedLabel = useMemo(() => {
+    if (!token) {
+      return "";
+    }
+
+    if (token.chainId === 137) {
+      return wrapped ? "Use MATIC" : "Use WMATIC";
+    }
+
+    return wrapped ? "Use ETH" : "Use WETH";
+  }, [wrapped, token]);
 
   const handleInput = (ev: { target: any }) => {
     const val = ev.target.value;
@@ -104,14 +117,14 @@ function DepositInput({
         >
           Max
         </button>
-        {token.equals(WETH9[token.chainId]) && token.chainId !== 137 && (
+        {isNativeToken(token) && (
           <>
             <span className="px-1">|</span>
             <button
               className="text-blue-500 dark:text-blue-200"
-              onClick={onWethToggle}
+              onClick={onWrapToggle}
             >
-              {wrapped ? "Use ETH" : "Use WETH"}
+              {wrappedLabel}
             </button>
           </>
         )}
