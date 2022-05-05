@@ -15,6 +15,7 @@ import LiquidityChart from './LiquidityChart';
 import ChevronDown from '../../icons/ChevronDown';
 import ChevronUp from '../../icons/ChevronUp';
 import PoolButton from '../..//ui/PoolButton';
+import { Link } from 'react-router-dom';
 
 interface PoolProps {
   address: string;
@@ -147,9 +148,11 @@ function Pool({
               onClick={() => {}}
             />
             {expanded && (
-              <a className="px-2" href={`https://info.uniswap.org/#/pools/${address}`}>
-                ↗
-              </a>
+              <button onClick={(e) => e.stopPropagation()}>
+                <a className="px-2" href={`https://info.uniswap.org/#/pools/${address}`}>
+                  ↗
+                </a>
+              </button>
             )}
           </div>
           <div className="flex flex-col items-center w-48">
