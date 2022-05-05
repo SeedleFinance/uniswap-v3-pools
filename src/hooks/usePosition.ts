@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { BigNumber } from "@ethersproject/bignumber";
+import { useEffect, useState } from 'react';
+import { BigNumber } from '@ethersproject/bignumber';
 
-import { useV3NFTPositionManagerContract } from "./useContract";
+import { useV3NFTPositionManagerContract } from './useContract';
 const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1);
 
 export interface PositionState {
@@ -15,25 +15,17 @@ export interface PositionState {
   fees: { amount0: BigNumber; amount1: BigNumber };
 }
 
-export function useAllPositions(
-  account: string | null | undefined
-): PositionState[] {
+export function useAllPositions(account: string | null | undefined): PositionState[] {
   const contract = useV3NFTPositionManagerContract();
   const [positions, setPositions] = useState<PositionState[]>([]);
 
   useEffect(() => {
-    const collectPositions = async (
-      account: string,
-      balance: number
-    ): Promise<PositionState[]> => {
+    const collectPositions = async (account: string, balance: number): Promise<PositionState[]> => {
       const results: PositionState[] = [];
 
       const _collect = async (idx: number): Promise<PositionState[]> => {
         if (contract && idx !== -1) {
-          const tokIdResult = await contract.functions.tokenOfOwnerByIndex(
-            account,
-            idx
-          );
+          const tokIdResult = await contract.functions.tokenOfOwnerByIndex(account, idx);
           const result = await contract.functions.positions(tokIdResult[0]);
           const liquidity = result[7];
 
@@ -47,7 +39,7 @@ export function useAllPositions(
                   amount0Max: MAX_UINT128,
                   amount1Max: MAX_UINT128,
                 },
-                { from: account }
+                { from: account },
               );
             }
           } catch (e) {

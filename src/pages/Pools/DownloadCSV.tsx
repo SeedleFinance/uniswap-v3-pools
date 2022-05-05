@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { usePools } from "../../CombinedPoolsProvider";
+import { usePools } from '../../CombinedPoolsProvider';
 
 function DownloadCSV() {
   const { pools } = usePools();
@@ -8,7 +8,7 @@ function DownloadCSV() {
   const prepareCSV = () => {
     const cols = [
       '"Id"',
-      "ChainID",
+      'ChainID',
       '"Token 0"',
       '"Token 1"',
       '"Fee tier"',
@@ -18,7 +18,7 @@ function DownloadCSV() {
       '"Liquidity 1"',
       '"Fees 0"',
       '"Fees 1"',
-    ].join(",");
+    ].join(',');
     const positionData = pools
       .map(({ positions }) =>
         positions.map((pos) => ({
@@ -33,16 +33,16 @@ function DownloadCSV() {
           liquidity1: pos.entity.amount1.toSignificant(16),
           fees0: pos.uncollectedFees[0].toSignificant(16),
           fees1: pos.uncollectedFees[1].toSignificant(16),
-        }))
+        })),
       )
       .flat();
 
     const rows = positionData.map((pos) =>
       Object.values(pos)
         .map((c) => `"${c}"`)
-        .join(",")
+        .join(','),
     );
-    return [cols, ...rows].join("\n");
+    return [cols, ...rows].join('\n');
   };
 
   const generateFilename = (ext: string) => {
@@ -54,18 +54,14 @@ function DownloadCSV() {
   };
 
   const downloadFile = (contents: string, mime: string, filename: string) => {
-    const el = document.createElement("a");
-    el.setAttribute("href", `data:${mime},` + encodeURIComponent(contents));
-    el.setAttribute("download", filename);
+    const el = document.createElement('a');
+    el.setAttribute('href', `data:${mime},` + encodeURIComponent(contents));
+    el.setAttribute('download', filename);
     el.click();
   };
 
   const handleDownload = () => {
-    downloadFile(
-      prepareCSV(),
-      "text/csv;charset=utf-16",
-      generateFilename("csv")
-    );
+    downloadFile(prepareCSV(), 'text/csv;charset=utf-16', generateFilename('csv'));
   };
 
   return (

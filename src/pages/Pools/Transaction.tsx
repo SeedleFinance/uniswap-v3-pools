@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
-import { Price, Token, CurrencyAmount } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
-import format from "date-fns/format";
+import React, { useMemo } from 'react';
+import { Price, Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
+import format from 'date-fns/format';
 
-import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
-import TokenSymbol from "../../ui/TokenLabel";
+import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import TokenSymbol from '../../ui/TokenLabel';
 
-import { BLOCK_EXPLORER_URL } from "../../constants";
+import { BLOCK_EXPLORER_URL } from '../../constants';
 
 export interface TransactionProps {
   id: string;
@@ -33,8 +33,7 @@ function Transaction({
   priceUpper,
   gas,
 }: TransactionProps) {
-  const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
-    useCurrencyConversions();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const totalLiquidity = useMemo(() => {
     if (!baseToken || !pool) {
       return 0;
@@ -45,21 +44,15 @@ function Transaction({
   }, [baseToken, pool, amount0, amount1]);
 
   const { percent0, percent1 } = useMemo(() => {
-    if (
-      !baseToken ||
-      !pool ||
-      totalLiquidity === 0 ||
-      totalLiquidity.equalTo(0)
-    ) {
-      return { percent0: "0", percent1: "0" };
+    if (!baseToken || !pool || totalLiquidity === 0 || totalLiquidity.equalTo(0)) {
+      return { percent0: '0', percent1: '0' };
     }
     const [value0, value1] = pool.token0.equals(baseToken)
       ? [amount0, pool.priceOf(pool.token1).quote(amount1)]
       : [pool.priceOf(pool.token0).quote(amount0), amount1];
     const calcPercent = (val: CurrencyAmount<Token>) =>
       (
-        (parseFloat(val.toSignificant(15)) /
-          parseFloat(totalLiquidity.toSignificant(15))) *
+        (parseFloat(val.toSignificant(15)) / parseFloat(totalLiquidity.toSignificant(15))) *
         100
       ).toFixed(2);
 
@@ -68,34 +61,29 @@ function Transaction({
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case "mint":
-        return "Add liquidity";
-      case "burn":
-        return "Remove liquidity";
-      case "collect":
-        return "Collect fees";
+      case 'mint':
+        return 'Add liquidity';
+      case 'burn':
+        return 'Remove liquidity';
+      case 'collect':
+        return 'Collect fees';
     }
   };
 
   return (
     <tr className="">
       <td>
-        <a
-          href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${id}`}
-          className="text-blue-500"
-        >
+        <a href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${id}`} className="text-blue-500">
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
       <td>{getTypeLabel(type)}</td>
       <td>
         <div>
-          <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}(
-          {percent0}%)
+          <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}({percent0}%)
         </div>
         <div>
-          <TokenSymbol symbol={pool.token1.symbol} />: {amount1.toFixed(4)}(
-          {percent1}%)
+          <TokenSymbol symbol={pool.token1.symbol} />: {amount1.toFixed(4)}({percent1}%)
         </div>
       </td>
       <td>

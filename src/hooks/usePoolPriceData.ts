@@ -1,11 +1,11 @@
-import { useMemo } from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import { Token } from "@uniswap/sdk-core";
-import { tickToPrice } from "@uniswap/v3-sdk";
-import format from "date-fns/format";
+import { useMemo } from 'react';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import { Token } from '@uniswap/sdk-core';
+import { tickToPrice } from '@uniswap/v3-sdk';
+import format from 'date-fns/format';
 
-import { getClient } from "../apollo/client";
+import { getClient } from '../apollo/client';
 
 const QUERY_POOL_DAY_DATA = gql`
   query pool_day_data($poolAddress: String!, $days: Int!, $hours: Int!) {
@@ -16,11 +16,7 @@ const QUERY_POOL_DAY_DATA = gql`
         date
         tick
       }
-      poolHourData(
-        first: $hours
-        orderBy: periodStartUnix
-        orderDirection: desc
-      ) {
+      poolHourData(first: $hours, orderBy: periodStartUnix, orderDirection: desc) {
         id
         periodStartUnix
         tick
@@ -34,7 +30,7 @@ export function usePoolPriceData(
   poolAddress: string | null,
   quoteToken: Token | null,
   baseToken: Token | null,
-  period: number
+  period: number,
 ) {
   let days = period <= 30 ? 30 : 365;
   let hours = 1;
@@ -45,7 +41,7 @@ export function usePoolPriceData(
   }
   const { loading, error, data } = useQuery(QUERY_POOL_DAY_DATA, {
     variables: { poolAddress, days, hours },
-    fetchPolicy: "network-only",
+    fetchPolicy: 'network-only',
     client: getClient(chainId),
   });
 
@@ -55,15 +51,13 @@ export function usePoolPriceData(
     }
 
     if (period === 0) {
-      return data.pool.poolHourData.map(
-        ({ id, periodStartUnix, tick }: any) => {
-          return {
-            id,
-            date: parseInt(periodStartUnix, 10),
-            tick: parseInt(tick, 10),
-          };
-        }
-      );
+      return data.pool.poolHourData.map(({ id, periodStartUnix, tick }: any) => {
+        return {
+          id,
+          date: parseInt(periodStartUnix, 10),
+          tick: parseInt(tick, 10),
+        };
+      });
     }
 
     return data.pool.poolDayData.map(({ id, date, tick }: any) => {
@@ -82,7 +76,7 @@ export function usePoolPriceData(
 
     const formatDate = (date: number) => {
       const dt = new Date(date * 1000);
-      return period === 0 ? format(dt, "HH:mm") : format(dt, "dd.MMM");
+      return period === 0 ? format(dt, 'HH:mm') : format(dt, 'dd.MMM');
     };
 
     const items = period === 0 ? 24 : period;
@@ -90,9 +84,7 @@ export function usePoolPriceData(
       .filter(({ tick }: { tick: number }) => !Number.isNaN(tick))
       .map(({ date, tick }: { date: number; tick: number }) => ({
         date: formatDate(date),
-        price: parseFloat(
-          tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
-        ),
+        price: parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8)),
       }))
       .slice(0, items)
       .reverse();
@@ -120,8 +112,7 @@ export function usePoolPriceData(
     const meanPrice = pricesSum / prices.length;
 
     const variance =
-      sum(prices.map((price: number) => Math.pow(price - meanPrice, 2))) /
-      prices.length;
+      sum(prices.map((price: number) => Math.pow(price - meanPrice, 2))) / prices.length;
     const stdev = Math.sqrt(variance);
 
     return [minPrice, maxPrice, meanPrice, stdev];

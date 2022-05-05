@@ -1,8 +1,8 @@
-import React from "react";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import React from 'react';
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import Position from "./Position";
+import Position from './Position';
 
 interface Props {
   positions: any[];
@@ -39,7 +39,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
             </th>
             <th className="pb-4">
               <span
-                style={{ borderBottom: "1px dotted", cursor: "help" }}
+                style={{ borderBottom: '1px dotted', cursor: 'help' }}
                 title="Net Annual Percentage Yield"
               >
                 Net APY

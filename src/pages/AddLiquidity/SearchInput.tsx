@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { debounce } from "lodash";
+import React, { useRef } from 'react';
+import { debounce } from 'lodash';
 
 interface Props {
   onChange: (value: string) => void;

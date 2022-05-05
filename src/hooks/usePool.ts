@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import { Pool } from "@uniswap/v3-sdk";
-import { Token } from "@uniswap/sdk-core";
+import { useState, useEffect } from 'react';
+import { Pool } from '@uniswap/v3-sdk';
+import { Token } from '@uniswap/sdk-core';
 
-import { useChainWeb3React } from "./useChainWeb3React";
-import { usePoolContract } from "./useContract";
+import { useChainWeb3React } from './useChainWeb3React';
+import { usePoolContract } from './useContract';
 
 export function usePool(
   token0: Token | null,
   token1: Token | null,
-  fee: number
+  fee: number,
 ): {
   pool: Pool | null;
   poolAddress: string | null;
@@ -35,14 +35,7 @@ export function usePool(
       const liquidity = liquidityResult[0];
 
       setPool(
-        new Pool(
-          token0 as Token,
-          token1 as Token,
-          fee,
-          sqrtPriceX96,
-          liquidity,
-          tickCurrent
-        )
+        new Pool(token0 as Token, token1 as Token, fee, sqrtPriceX96, liquidity, tickCurrent),
       );
     };
 

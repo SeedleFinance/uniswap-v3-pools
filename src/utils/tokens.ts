@@ -1,12 +1,12 @@
-import { Token, Ether } from "@uniswap/sdk-core";
+import { Token, Ether } from '@uniswap/sdk-core';
 
-import { WETH9, DAI, USDC, USDT, PAX, FEI, WMATIC } from "../constants";
-import MaticNativeCurrency from "./matic";
+import { WETH9, DAI, USDC, USDT, PAX, FEI, WMATIC } from '../constants';
+import MaticNativeCurrency from './matic';
 
 export function getQuoteAndBaseToken(
   chainId: number | undefined,
   token0: Token,
-  token1: Token
+  token1: Token,
 ): [Token, Token] {
   let quote = token0;
   let base = token1;
@@ -41,9 +41,7 @@ export function getQuoteAndBaseToken(
 }
 
 export function getNativeToken(chainId: number) {
-  return chainId === 137
-    ? new MaticNativeCurrency(chainId)
-    : Ether.onChain(chainId);
+  return chainId === 137 ? new MaticNativeCurrency(chainId) : Ether.onChain(chainId);
 }
 
 export function isNativeToken(token: Token) {

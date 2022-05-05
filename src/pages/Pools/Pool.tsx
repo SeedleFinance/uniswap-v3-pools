@@ -15,7 +15,6 @@ import LiquidityChart from './LiquidityChart';
 import ChevronDown from '../../icons/ChevronDown';
 import ChevronUp from '../../icons/ChevronUp';
 import PoolButton from '../..//ui/PoolButton';
-import { Link } from 'react-router-dom';
 
 interface PoolProps {
   address: string;

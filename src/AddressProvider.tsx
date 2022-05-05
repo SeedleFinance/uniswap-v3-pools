@@ -1,7 +1,7 @@
-import React, { ReactNode, useContext, useState, useEffect } from "react";
-import { useWeb3React } from "@web3-react/core";
+import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import { useWeb3React } from '@web3-react/core';
 
-import { getNetworkConnector, injectedConnector } from "./utils/connectors";
+import { getNetworkConnector, injectedConnector } from './utils/connectors';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
@@ -14,13 +14,9 @@ interface Props {
 }
 
 export const AddressProvider = ({ children }: Props) => {
-  const { library, active, activate } = useWeb3React("mainnet");
+  const { library, active, activate } = useWeb3React('mainnet');
 
-  const {
-    account,
-    active: injectedActive,
-    activate: activateInjected,
-  } = useWeb3React("injected");
+  const { account, active: injectedActive, activate: activateInjected } = useWeb3React('injected');
 
   const [addresses, setAddresses] = useState<string[]>([]);
 
@@ -48,15 +44,15 @@ export const AddressProvider = ({ children }: Props) => {
     const fetchAddresses = async () => {
       const { location } = window;
       const searchParams = new URLSearchParams(location.search);
-      const inputAddresses = searchParams.getAll("addr");
-      const noWallet = searchParams.has("nw");
+      const inputAddresses = searchParams.getAll('addr');
+      const noWallet = searchParams.has('nw');
 
       const hexAddresses: string[] = [];
       const ensNames: string[] = [];
 
       if (inputAddresses.length) {
         inputAddresses.forEach((addr) => {
-          if (addr.endsWith(".eth")) {
+          if (addr.endsWith('.eth')) {
             ensNames.push(addr);
           } else {
             hexAddresses.push(addr);
@@ -64,12 +60,9 @@ export const AddressProvider = ({ children }: Props) => {
         });
       }
 
-      const resolveName = async (name: string) =>
-        await library.resolveName(name);
+      const resolveName = async (name: string) => await library.resolveName(name);
 
-      const resolvedAddresses = await Promise.all(
-        ensNames.map((name) => resolveName(name))
-      );
+      const resolvedAddresses = await Promise.all(ensNames.map((name) => resolveName(name)));
 
       let results = [...hexAddresses, ...resolvedAddresses];
       if (!noWallet && account) {

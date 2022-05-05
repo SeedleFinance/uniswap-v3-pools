@@ -1,11 +1,11 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import { BigNumber } from "@ethersproject/bignumber";
-import { CurrencyAmount, Token } from "@uniswap/sdk-core";
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import { BigNumber } from '@ethersproject/bignumber';
+import { CurrencyAmount, Token } from '@uniswap/sdk-core';
 
-import { useAddress } from "../AddressProvider";
-import { getClient } from "../apollo/client";
-import { WETH9, MATIC } from "../constants";
+import { useAddress } from '../AddressProvider';
+import { getClient } from '../apollo/client';
+import { WETH9, MATIC } from '../constants';
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origins: [String]!, $poolAddress: String!) {
@@ -82,14 +82,14 @@ export interface FormattedPoolTransaction {
 export function useTransactions(
   poolAddress: string | null,
   token0: Token | null,
-  token1: Token | null
+  token1: Token | null,
 ) {
   const chainId = token0 ? token0.chainId : 1;
   const { addresses } = useAddress();
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
     variables: { origins: addresses, poolAddress },
-    fetchPolicy: "network-only",
+    fetchPolicy: 'network-only',
     client: getClient(chainId),
   });
 
@@ -105,7 +105,7 @@ export function useTransactions(
     const cost = used.mul(price);
     const costCurrency = CurrencyAmount.fromRawAmount(
       token0.chainId === 137 ? MATIC[token0.chainId] : WETH9[token0.chainId],
-      cost.toString()
+      cost.toString(),
     );
 
     return { used, price, cost, costCurrency };
@@ -128,22 +128,22 @@ export function useTransactions(
       gas: calcGasCost(transaction),
       amount0: CurrencyAmount.fromRawAmount(
         token0,
-        Math.ceil(parseFloat(amount0) * Math.pow(10, token0.decimals))
+        Math.ceil(parseFloat(amount0) * Math.pow(10, token0.decimals)),
       ),
       amount1: CurrencyAmount.fromRawAmount(
         token1,
-        Math.ceil(parseFloat(amount1) * Math.pow(10, token1.decimals))
+        Math.ceil(parseFloat(amount1) * Math.pow(10, token1.decimals)),
       ),
     });
   };
 
-  const mints = data.mints.map(formatTx("mint"));
-  const burns = data.burns.map(formatTx("burn"));
-  const collects = collectData.map(formatTx("collect"));
+  const mints = data.mints.map(formatTx('mint'));
+  const burns = data.burns.map(formatTx('burn'));
+  const collects = collectData.map(formatTx('collect'));
 
   const reconcileBurnsAndCollects = (
     accm: FormattedPoolTransaction[],
-    tx: FormattedPoolTransaction
+    tx: FormattedPoolTransaction,
   ) => {
     const prevTxIdx = accm.findIndex((ptx) => ptx.id === tx.id);
     // no previous tx found, returning early
@@ -157,24 +157,18 @@ export function useTransactions(
     // Remove the transaction from the list
     if (prevTx.amount0.equalTo(0) && prevTx.amount1.equalTo(0)) {
       accm.splice(prevTxIdx, 1);
-    } else if (
-      tx.type === "burn" &&
-      tx.amount0.equalTo(0) &&
-      tx.amount1.equalTo(0)
-    ) {
+    } else if (tx.type === 'burn' && tx.amount0.equalTo(0) && tx.amount1.equalTo(0)) {
       // an empty burn, this will be followed by a collect. Don't include this tx.
       return [...accm];
-    } else if (tx.type === "collect") {
+    } else if (tx.type === 'collect') {
       // burn with liquidity + fees
       // reset the gas cost (already included in the burn)
       tx.gas = {
         ...tx.gas,
         cost: BigNumber.from(0),
         costCurrency: CurrencyAmount.fromRawAmount(
-          token0.chainId === 137
-            ? MATIC[token0.chainId]
-            : WETH9[token0.chainId],
-          0
+          token0.chainId === 137 ? MATIC[token0.chainId] : WETH9[token0.chainId],
+          0,
         ),
       };
 
@@ -188,17 +182,14 @@ export function useTransactions(
 
   return [...mints, ...burns, ...collects]
     .reduce(reconcileBurnsAndCollects, [] as FormattedPoolTransaction[])
-    .sort(
-      (a: FormattedPoolTransaction, b: FormattedPoolTransaction) =>
-        a.timestamp - b.timestamp
-    );
+    .sort((a: FormattedPoolTransaction, b: FormattedPoolTransaction) => a.timestamp - b.timestamp);
 }
 
 export function useCollects(chainId: number, burns: any[]) {
   const ids = burns.map(({ transaction }) => transaction.id);
   const { loading, error, data } = useQuery(QUERY_COLLECTS, {
     variables: { ids },
-    fetchPolicy: "network-only",
+    fetchPolicy: 'network-only',
     client: getClient(chainId),
   });
 

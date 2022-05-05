@@ -1,67 +1,67 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 export const mainnetClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-mainnet",
+  uri: 'https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-mainnet',
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
 
 export const ropstenClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-ropsten",
+  uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-ropsten',
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
 
 export const arbitrumClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-arbitrum",
+  uri: 'https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-arbitrum',
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
 
 export const optimismClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-optimism",
+  uri: 'https://api.thegraph.com/subgraphs/name/laktek/uniswap-v3-optimism',
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
 
 export const polygonClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
+  uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon',
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
 
 export const perpOptimClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/perpetual-protocol/perpetual-v2-optimism",
+  uri: 'https://api.thegraph.com/subgraphs/name/perpetual-protocol/perpetual-v2-optimism',
   cache: new InMemoryCache(),
   queryDeduplication: false,
   defaultOptions: {
     watchQuery: {
-      fetchPolicy: "cache-and-network",
+      fetchPolicy: 'cache-and-network',
     },
   },
 });
@@ -86,11 +86,11 @@ export function getPerpClient(chainId: number) {
 }
 
 export const healthClient = new ApolloClient({
-  uri: "https://api.thegraph.com/index-node/graphql",
+  uri: 'https://api.thegraph.com/index-node/graphql',
   cache: new InMemoryCache(),
 });
 
 export const blockClient = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks",
+  uri: 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks',
   cache: new InMemoryCache(),
 });

@@ -1,15 +1,15 @@
-import React, { ReactNode, useContext, useCallback } from "react";
-import { Token } from "@uniswap/sdk-core";
-import createPersistedState from "use-persisted-state";
+import React, { ReactNode, useContext, useCallback } from 'react';
+import { Token } from '@uniswap/sdk-core';
+import createPersistedState from 'use-persisted-state';
 
-import { USDC, WETH9 } from "./constants";
+import { USDC, WETH9 } from './constants';
 
 const AppSettingsContext = React.createContext(null as any);
 export const useAppSettings = () => useContext(AppSettingsContext);
 
-const useFilterClosedState = createPersistedState("app-filter-closed");
-const useGlobalCurrencyState = createPersistedState("app-global-currency");
-const useThemeState = createPersistedState("app-theme");
+const useFilterClosedState = createPersistedState('app-filter-closed');
+const useGlobalCurrencyState = createPersistedState('app-global-currency');
+const useThemeState = createPersistedState('app-theme');
 
 interface Props {
   children: ReactNode;
@@ -17,8 +17,8 @@ interface Props {
 
 export const AppSettingsProvider = ({ children }: Props) => {
   const [filterClosed, setFilterClosed] = useFilterClosedState(false);
-  const [globalCurrency, setGlobalCurrency] = useGlobalCurrencyState("usd");
-  const [theme, setTheme] = useThemeState("");
+  const [globalCurrency, setGlobalCurrency] = useGlobalCurrencyState('usd');
+  const [theme, setTheme] = useThemeState('');
 
   const getGlobalCurrencyToken = useCallback(
     (chainId: number) => {
@@ -26,9 +26,9 @@ export const AppSettingsProvider = ({ children }: Props) => {
         usd: USDC[chainId],
         eth: WETH9[chainId],
       };
-      return tokens[globalCurrency] || tokens["usd"];
+      return tokens[globalCurrency] || tokens['usd'];
     },
-    [globalCurrency]
+    [globalCurrency],
   );
 
   return (

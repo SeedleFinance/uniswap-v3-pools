@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface RangeVisualProps {
   tickCurrent: number;
@@ -8,23 +8,15 @@ interface RangeVisualProps {
   flip: boolean;
 }
 
-function RangeVisual({
-  tickCurrent,
-  tickLower,
-  tickUpper,
-  tickSpacing,
-  flip,
-}: RangeVisualProps) {
+function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: RangeVisualProps) {
   let spaceMultiplier = 10;
   if (tickSpacing === 200) {
     spaceMultiplier = 10;
   } else if (tickSpacing === 10) {
     spaceMultiplier = 2;
   }
-  let rangeStart =
-    Math.min(tickCurrent, tickLower) - tickSpacing * spaceMultiplier;
-  let rangeEnd =
-    Math.max(tickCurrent, tickUpper) + tickSpacing * spaceMultiplier;
+  let rangeStart = Math.min(tickCurrent, tickLower) - tickSpacing * spaceMultiplier;
+  let rangeEnd = Math.max(tickCurrent, tickUpper) + tickSpacing * spaceMultiplier;
 
   if (tickLower < tickCurrent && tickCurrent < tickUpper) {
     rangeStart = tickLower - tickSpacing * spaceMultiplier;
@@ -45,13 +37,13 @@ function RangeVisual({
   return (
     <div
       className="flex border rounded bg-gray-200"
-      style={{ position: "relative", width: `${barWidth}px`, height: "16px" }}
+      style={{ position: 'relative', width: `${barWidth}px`, height: '16px' }}
     >
       <div
         className="bg-blue-400"
         style={{
-          position: "absolute",
-          height: "14px",
+          position: 'absolute',
+          height: '14px',
           left: `${beforeRangeWidth}px`,
           width: `${rangeWidth.toFixed(2)}px`,
         }}
@@ -59,9 +51,9 @@ function RangeVisual({
       <div
         className="bg-red-400"
         style={{
-          width: "2px",
-          height: "14px",
-          position: "absolute",
+          width: '2px',
+          height: '14px',
+          position: 'absolute',
           left: `${currentTickDistance.toFixed(2)}px`,
         }}
       ></div>

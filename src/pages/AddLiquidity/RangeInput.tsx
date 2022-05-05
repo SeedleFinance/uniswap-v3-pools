@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import {
-  tickToPrice,
-  priceToClosestTick,
-  nearestUsableTick,
-} from "@uniswap/v3-sdk";
-import { Price, CurrencyAmount, Token } from "@uniswap/sdk-core";
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { tickToPrice, priceToClosestTick, nearestUsableTick } from '@uniswap/v3-sdk';
+import { Price, CurrencyAmount, Token } from '@uniswap/sdk-core';
 
-import TokenLabel from "../../ui/TokenLabel";
-import { formatInput } from "../../utils/numbers";
+import TokenLabel from '../../ui/TokenLabel';
+import { formatInput } from '../../utils/numbers';
 
 interface RangeInputProps {
   label: string;
@@ -34,7 +30,7 @@ function RangeInput({
 }: RangeInputProps) {
   const inputEl = useRef(null);
 
-  const [input, setInput] = useState<string>("0.00");
+  const [input, setInput] = useState<string>('0.00');
   const [tick, setTick] = useState<number>(initTick);
 
   const [token0, token1] = useMemo(() => {
@@ -46,17 +42,15 @@ function RangeInput({
   }, [initTick]);
 
   useEffect(() => {
-    const price = parseFloat(
-      tickToPrice(token1, token0, tick).toSignificant(16)
-    );
+    const price = parseFloat(tickToPrice(token1, token0, tick).toSignificant(16));
 
     setInput(formatInput(price, false, tickSpacing === 1 ? 8 : 4));
   }, [token0, token1, tick, tickSpacing]);
 
   const handleInput = (ev: { target: any }) => {
     const { value } = ev.target;
-    if (value === "") {
-      setInput("0.00");
+    if (value === '') {
+      setInput('0.00');
       return;
     }
 
@@ -66,7 +60,7 @@ function RangeInput({
   const calculateTick = () => {
     const inputVal = parseFloat(input);
     if (Number.isNaN(inputVal)) {
-      setInput("0.00");
+      setInput('0.00');
       return;
     }
 
@@ -77,11 +71,11 @@ function RangeInput({
     const price = new Price({
       quoteAmount: CurrencyAmount.fromRawAmount(
         token0,
-        Math.ceil(inputVal * Math.pow(10, token0.decimals))
+        Math.ceil(inputVal * Math.pow(10, token0.decimals)),
       ),
       baseAmount: CurrencyAmount.fromRawAmount(
         token1,
-        Math.ceil(1 * Math.pow(10, token1.decimals))
+        Math.ceil(1 * Math.pow(10, token1.decimals)),
       ),
     });
 

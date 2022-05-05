@@ -1,10 +1,10 @@
-import JSBI from "jsbi";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Pool, Position } from "@uniswap/v3-sdk";
-import { Token, CurrencyAmount, MaxUint256 } from "@uniswap/sdk-core";
+import JSBI from 'jsbi';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Pool, Position } from '@uniswap/v3-sdk';
+import { Token, CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core';
 
-import { WETH9 } from "../../constants";
-import { isNativeToken, getNativeToken } from "../../utils/tokens";
+import { WETH9 } from '../../constants';
+import { isNativeToken, getNativeToken } from '../../utils/tokens';
 
 export function positionFromAmounts(
   {
@@ -20,7 +20,7 @@ export function positionFromAmounts(
     val0: number;
     val1: number;
   },
-  reverse: boolean
+  reverse: boolean,
 ): Position {
   if (reverse) {
     [tickLower, tickUpper] = [tickUpper, tickLower];
@@ -28,14 +28,10 @@ export function positionFromAmounts(
   }
 
   const amount0 =
-    val0 === 0
-      ? MaxUint256
-      : JSBI.BigInt(Math.floor(val0 * Math.pow(10, pool.token0.decimals)));
+    val0 === 0 ? MaxUint256 : JSBI.BigInt(Math.floor(val0 * Math.pow(10, pool.token0.decimals)));
 
   const amount1 =
-    val1 === 0
-      ? MaxUint256
-      : JSBI.BigInt(Math.floor(val1 * Math.pow(10, pool.token1.decimals)));
+    val1 === 0 ? MaxUint256 : JSBI.BigInt(Math.floor(val1 * Math.pow(10, pool.token1.decimals)));
 
   return Position.fromAmounts({
     pool,
@@ -47,18 +43,10 @@ export function positionFromAmounts(
   });
 }
 
-export function toCurrencyAmount(
-  token: Token,
-  amount: number,
-  wrapped: boolean = false
-) {
-  const bigIntish =
-    amount > 0
-      ? JSBI.BigInt(Math.floor(amount * Math.pow(10, token.decimals)))
-      : 0;
+export function toCurrencyAmount(token: Token, amount: number, wrapped: boolean = false) {
+  const bigIntish = amount > 0 ? JSBI.BigInt(Math.floor(amount * Math.pow(10, token.decimals))) : 0;
   // convert the token to native ether if it's WETH
-  const native =
-    isNativeToken(token) && !wrapped ? getNativeToken(token.chainId) : token;
+  const native = isNativeToken(token) && !wrapped ? getNativeToken(token.chainId) : token;
 
   return CurrencyAmount.fromRawAmount(native, bigIntish);
 }
@@ -77,12 +65,9 @@ export function calculateNewAmounts(
     val0: number;
     val1: number;
   },
-  reverse: boolean
+  reverse: boolean,
 ): [number, number] {
-  const pos = positionFromAmounts(
-    { pool, tickLower, tickUpper, val0, val1 },
-    reverse
-  );
+  const pos = positionFromAmounts({ pool, tickLower, tickUpper, val0, val1 }, reverse);
 
   let newVal0 = parseFloat(pos.amount0.toSignificant(16));
   let newVal1 = parseFloat(pos.amount1.toSignificant(16));
@@ -94,10 +79,7 @@ export function calculateNewAmounts(
   return [newVal0, newVal1];
 }
 
-export function positionDistance(
-  tickCurrent: number,
-  position: { entity: Position }
-): number {
+export function positionDistance(tickCurrent: number, position: { entity: Position }): number {
   const { tickLower, tickUpper } = position.entity;
   if (tickLower <= tickCurrent && tickCurrent <= tickUpper) {
     //within range
@@ -116,7 +98,7 @@ export function tokenAmountNeedApproval(
   token: Token,
   allowance: number,
   amount: number,
-  wrapped: boolean = false
+  wrapped: boolean = false,
 ): boolean {
   if (!token || !chainId) {
     return false;
@@ -134,7 +116,7 @@ export function tokenAmountNeedApproval(
   const amountRaw = Math.ceil(amount * Math.pow(10, token.decimals));
 
   const res = CurrencyAmount.fromRawAmount(token, allowanceRaw).lessThan(
-    CurrencyAmount.fromRawAmount(token, amountRaw)
+    CurrencyAmount.fromRawAmount(token, amountRaw),
   );
 
   return res;
@@ -152,27 +134,27 @@ export async function loadTokens(chainId: number) {
   if (chainId === 3) {
     return [
       {
-        address: "0xc778417E063141139Fce010982780140Aa0cD5Ab",
+        address: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
         chainId: 3,
-        name: "Wrapped Ether",
-        symbol: "WETH",
+        name: 'Wrapped Ether',
+        symbol: 'WETH',
         decimals: 18,
       },
       {
-        address: "0xaD6D458402F60fD3Bd25163575031ACDce07538D",
+        address: '0xaD6D458402F60fD3Bd25163575031ACDce07538D',
         chainId: 3,
-        name: "Dai Stablecoin",
-        symbol: "DAI",
+        name: 'Dai Stablecoin',
+        symbol: 'DAI',
         decimals: 18,
       },
     ];
   }
 
   const tokenURLs: { [key: number]: string } = {
-    1: "https://tokens.coingecko.com/uniswap/all.json",
-    10: "https://static.optimism.io/optimism.tokenlist.json",
-    42161: "https://bridge.arbitrum.io/token-list-42161.json",
-    137: "https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json",
+    1: 'https://tokens.coingecko.com/uniswap/all.json',
+    10: 'https://static.optimism.io/optimism.tokenlist.json',
+    42161: 'https://bridge.arbitrum.io/token-list-42161.json',
+    137: 'https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json',
   };
 
   const res = await fetch(tokenURLs[chainId]);
@@ -186,29 +168,25 @@ export async function loadTokens(chainId: number) {
   // add WMATIC
   if (chainId === 137) {
     tokens.push({
-      address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+      address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
       chainId: 137,
-      name: "Wrapped Matic Token",
-      symbol: "WMATIC",
+      name: 'Wrapped Matic Token',
+      symbol: 'WMATIC',
       decimals: 18,
     });
   }
   return tokens;
 }
 
-export function findTokens(
-  chainId: number,
-  tokens: TokenListItem[],
-  symbols: string[]
-) {
+export function findTokens(chainId: number, tokens: TokenListItem[], symbols: string[]) {
   const symbolsFormatted = symbols.map((sym) => {
     const s = sym.toUpperCase();
-    if (s === "ETH") {
-      return "WETH";
+    if (s === 'ETH') {
+      return 'WETH';
     }
     // in Polygon, return ETH instead of WETH to match
-    if (chainId === 137 && s === "WETH") {
-      return "ETH";
+    if (chainId === 137 && s === 'WETH') {
+      return 'ETH';
     }
     return s;
   });
@@ -230,7 +208,7 @@ export function findMatchingPosition(
   positions: any[] | null,
   fee: number,
   tickLower: number,
-  tickUpper: number
+  tickUpper: number,
 ) {
   if (!positions || !positions.length) {
     return null;
@@ -254,7 +232,7 @@ export function getApprovalAmount(val1: number, val2: number) {
 }
 
 export function findPositionById(positions: any[], id: string | null) {
-  if (!id || id === "") {
+  if (!id || id === '') {
     return null;
   }
 

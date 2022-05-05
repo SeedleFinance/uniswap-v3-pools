@@ -1,6 +1,6 @@
-import React, { ReactNode, useEffect, useState } from "react";
-import ReactDOM from "react-dom";
-import { CSSTransition } from "react-transition-group";
+import React, { ReactNode, useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
+import { CSSTransition } from 'react-transition-group';
 
 export enum AlertLevel {
   Success,
@@ -21,11 +21,11 @@ const Alert = ({ children, level, onHide }: Props) => {
     setShow(true);
   }, [setShow]);
 
-  let levelColors = "text-green-800 bg-green-200 border-green-400";
+  let levelColors = 'text-green-800 bg-green-200 border-green-400';
   if (level === AlertLevel.Warning) {
-    levelColors = "text-orange-800 bg-orange-200 border-orange-400";
+    levelColors = 'text-orange-800 bg-orange-200 border-orange-400';
   } else if (level === AlertLevel.Error) {
-    levelColors = "text-red-800 bg-red-200 border-red-400";
+    levelColors = 'text-red-800 bg-red-200 border-red-400';
   }
 
   const scheduleHide = () => {
@@ -48,7 +48,7 @@ const Alert = ({ children, level, onHide }: Props) => {
         {children}
       </div>
     </CSSTransition>,
-    document.body
+    document.body,
   );
 };
 

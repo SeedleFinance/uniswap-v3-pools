@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import Web3CombinedProvider from "./Web3CombinedProvider";
-import SubgraphProvider from "./SubgraphProvider";
-import { AddressProvider } from "./AddressProvider";
-import { AppSettingsProvider } from "./AppSettingsProvider";
-import Container from "./Container";
+import Web3CombinedProvider from './Web3CombinedProvider';
+import SubgraphProvider from './SubgraphProvider';
+import { AddressProvider } from './AddressProvider';
+import { AppSettingsProvider } from './AppSettingsProvider';
+import Container from './Container';
 
 function App() {
   return (

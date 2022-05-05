@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { isAddress } from "@ethersproject/address";
+import { useEffect, useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { isAddress } from '@ethersproject/address';
 
 const useENS = (address: string | null | undefined) => {
-  const { library } = useWeb3React("mainnet");
+  const { library } = useWeb3React('mainnet');
   const [ensName, setENSName] = useState<string | null>();
 
   useEffect(() => {

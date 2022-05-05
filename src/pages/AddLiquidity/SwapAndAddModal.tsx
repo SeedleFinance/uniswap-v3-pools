@@ -1,17 +1,17 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { Token, Currency } from "@uniswap/sdk-core";
-import { SwapToRatioRoute } from "@uniswap/smart-order-router";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { Token, Currency } from '@uniswap/sdk-core';
+import { SwapToRatioRoute } from '@uniswap/smart-order-router';
 
-import { useTokenFunctions } from "../../hooks/useTokenFunctions";
-import TokenLabel from "../../ui/TokenLabel";
-import TokenLogo from "../../ui/TokenLogo";
-import Modal from "../../ui/Modal";
-import { Button, UnstyledButton } from "../../ui/Button";
-import { formatInput } from "../../utils/numbers";
-import { tokenAmountNeedApproval, getApprovalAmount } from "./utils";
+import { useTokenFunctions } from '../../hooks/useTokenFunctions';
+import TokenLabel from '../../ui/TokenLabel';
+import TokenLogo from '../../ui/TokenLogo';
+import Modal from '../../ui/Modal';
+import { Button, UnstyledButton } from '../../ui/Button';
+import { formatInput } from '../../utils/numbers';
+import { tokenAmountNeedApproval, getApprovalAmount } from './utils';
 
-import { WETH9, SWAP_ROUTER_ADDRESSES } from "../../constants";
+import { WETH9, SWAP_ROUTER_ADDRESSES } from '../../constants';
 
 interface Props {
   token0: Token;
@@ -36,7 +36,7 @@ function SwapAndAddModal({
   onCancel,
   onComplete,
 }: Props) {
-  const { chainId, account } = useWeb3React("injected");
+  const { chainId, account } = useWeb3React('injected');
   const { getAllowances } = useTokenFunctions([token0, token1], account);
 
   const [tokenApproving, setTokenApproving] = useState<boolean>(false);
@@ -93,17 +93,9 @@ function SwapAndAddModal({
       chainId as number,
       token0,
       token0Allowance,
-      getApprovalAmount(token0PreswapAmount, token0Amount)
+      getApprovalAmount(token0PreswapAmount, token0Amount),
     );
-  }, [
-    chainId,
-    token0,
-    token0PreswapAmount,
-    token0Amount,
-    token0Allowance,
-    route,
-    tokenApproving,
-  ]);
+  }, [chainId, token0, token0PreswapAmount, token0Amount, token0Allowance, route, tokenApproving]);
 
   const token1NeedApproval = useMemo(() => {
     if (!chainId || !token1 || !route || tokenApproving) {
@@ -114,17 +106,9 @@ function SwapAndAddModal({
       chainId as number,
       token1,
       token1Allowance,
-      getApprovalAmount(token1PreswapAmount, token1Amount)
+      getApprovalAmount(token1PreswapAmount, token1Amount),
     );
-  }, [
-    chainId,
-    token1,
-    token1PreswapAmount,
-    token1Amount,
-    token1Allowance,
-    route,
-    tokenApproving,
-  ]);
+  }, [chainId, token1, token1PreswapAmount, token1Amount, token1Allowance, route, tokenApproving]);
 
   const [swapInput, swapOutput] = useMemo(() => {
     if (!route || !route.trade || !route.trade.swaps) {
@@ -151,7 +135,7 @@ function SwapAndAddModal({
   };
 
   const getCurrencyAddress = (currency: Currency) => {
-    if (currency.isNative && currency.name === "Ether") {
+    if (currency.isNative && currency.name === 'Ether') {
       return WETH9[chainId || 1].address;
     }
 
@@ -159,7 +143,7 @@ function SwapAndAddModal({
   };
 
   return (
-    <Modal title={"Swap & Add"}>
+    <Modal title={'Swap & Add'}>
       {!swapInput || !swapOutput ? (
         <div>Finding the best route for the swap...</div>
       ) : (
@@ -210,36 +194,24 @@ function SwapAndAddModal({
               <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                   <TokenLogo name={token0.name} address={token0.address} />
-                  <TokenLabel
-                    name={token0.name}
-                    symbol={token0.symbol}
-                    wrapped={wrapped}
-                  />
+                  <TokenLabel name={token0.name} symbol={token0.symbol} wrapped={wrapped} />
                 </div>
-                <div className="w-2/3 p-2 my-1">
-                  {formatInput(token0Amount)}
-                </div>
+                <div className="w-2/3 p-2 my-1">{formatInput(token0Amount)}</div>
               </div>
 
               <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
                   <TokenLogo name={token1.name} address={token1.address} />
-                  <TokenLabel
-                    name={token1.name}
-                    symbol={token1.symbol}
-                    wrapped={wrapped}
-                  />
+                  <TokenLabel name={token1.name} symbol={token1.symbol} wrapped={wrapped} />
                 </div>
-                <div className="w-2/3 p-2 my-1">
-                  {formatInput(token1Amount)}
-                </div>
+                <div className="w-2/3 p-2 my-1">{formatInput(token1Amount)}</div>
               </div>
             </div>
           </div>
 
           <div>
             <div className="text-sm my-2">
-              Swap & Add interacts with{" "}
+              Swap & Add interacts with{' '}
               <a
                 className="text-underline text-blue-500"
                 href="https://etherscan.io/address/0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45#code"
@@ -247,16 +219,13 @@ function SwapAndAddModal({
                 rel="noreferrer"
               >
                 SmartRouter02 contract
-              </a>{" "}
+              </a>{' '}
               from Uniswap Labs. You may need to approve tokens.
             </div>
             {token0NeedApproval ? (
               <Button
                 onClick={() =>
-                  handleApprove(
-                    token0,
-                    getApprovalAmount(token0PreswapAmount, token0Amount)
-                  )
+                  handleApprove(token0, getApprovalAmount(token0PreswapAmount, token0Amount))
                 }
                 tabIndex={8}
                 compact={true}
@@ -267,10 +236,7 @@ function SwapAndAddModal({
             ) : token1NeedApproval ? (
               <Button
                 onClick={() =>
-                  handleApprove(
-                    token1,
-                    getApprovalAmount(token1PreswapAmount, token1Amount)
-                  )
+                  handleApprove(token1, getApprovalAmount(token1PreswapAmount, token1Amount))
                 }
                 tabIndex={8}
                 compact={true}
@@ -279,12 +245,7 @@ function SwapAndAddModal({
                 Approve {token1.symbol}
               </Button>
             ) : (
-              <Button
-                onClick={onComplete}
-                tabIndex={8}
-                compact={true}
-                className="mr-2"
-              >
+              <Button onClick={onComplete} tabIndex={8} compact={true} className="mr-2">
                 Complete Transaction
               </Button>
             )}

@@ -1,17 +1,13 @@
-import { useMemo } from "react";
-import differenceInSeconds from "date-fns/differenceInSeconds";
-import { BigNumber } from "@ethersproject/bignumber";
-import { CurrencyAmount, Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import { useMemo } from 'react';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
+import { BigNumber } from '@ethersproject/bignumber';
+import { CurrencyAmount, Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { useGasFee } from "./useGasFee";
-import { WETH9, MATIC } from "../constants";
+import { useGasFee } from './useGasFee';
+import { WETH9, MATIC } from '../constants';
 
-export function useTransactionTotals(
-  transactions: any[],
-  baseToken: Token,
-  pool: Pool
-) {
+export function useTransactionTotals(transactions: any[], baseToken: Token, pool: Pool) {
   const chainId = baseToken.chainId;
 
   return useMemo(() => {
@@ -20,7 +16,7 @@ export function useTransactionTotals(
     let totalCollectValue = CurrencyAmount.fromRawAmount(baseToken, 0);
     let totalTransactionCost = CurrencyAmount.fromRawAmount(
       chainId === 137 ? MATIC[chainId as number] : WETH9[chainId as number],
-      "0"
+      '0',
     );
 
     if (transactions.length && baseToken && pool && chainId) {
@@ -28,11 +24,11 @@ export function useTransactionTotals(
         const txValue = pool.token0.equals(baseToken)
           ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
           : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
-        if (tx.type === "mint") {
+        if (tx.type === 'mint') {
           totalMintValue = totalMintValue.add(txValue);
-        } else if (tx.type === "burn") {
+        } else if (tx.type === 'burn') {
           totalBurnValue = totalBurnValue.add(txValue);
-        } else if (tx.type === "collect") {
+        } else if (tx.type === 'collect') {
           totalCollectValue = totalCollectValue.add(txValue);
         }
 
@@ -56,7 +52,7 @@ export function useReturnValue(
   totalBurnValue: CurrencyAmount<Token>,
   totalCollectValue: CurrencyAmount<Token>,
   totalTransactionCost: CurrencyAmount<Token>,
-  totalCurrentValue: CurrencyAmount<Token>
+  totalCurrentValue: CurrencyAmount<Token>,
 ) {
   const convertGasFee = useGasFee(baseToken);
 
@@ -70,9 +66,7 @@ export function useReturnValue(
 
     const returnPercent =
       (parseFloat(returnValue.toSignificant(2)) /
-        parseFloat(
-          totalMintValue.add(totalTransactionCostConverted).toSignificant(2)
-        )) *
+        parseFloat(totalMintValue.add(totalTransactionCostConverted).toSignificant(2))) *
       100;
 
     return { returnValue, returnPercent };
@@ -86,11 +80,7 @@ export function useReturnValue(
   ]);
 }
 
-export function useAPR(
-  transactions: any,
-  returnPercent: number,
-  liquidity: BigNumber
-) {
+export function useAPR(transactions: any, returnPercent: number, liquidity: BigNumber) {
   return useMemo(() => {
     if (!transactions.length) {
       return 0;
@@ -110,7 +100,7 @@ function calcLiquidity(
   pool: Pool,
   baseToken: Token,
   amount0: CurrencyAmount<Token>,
-  amount1: CurrencyAmount<Token>
+  amount1: CurrencyAmount<Token>,
 ) {
   return pool.token0.equals(baseToken)
     ? pool.priceOf(pool.token1).quote(amount1).add(amount0)
@@ -121,7 +111,7 @@ function calcPeriodYield(
   fees: CurrencyAmount<Token>,
   liquidity: CurrencyAmount<Token>,
   periodStart: Date,
-  periodEnd: Date
+  periodEnd: Date,
 ) {
   const zeroAmount = CurrencyAmount.fromRawAmount(liquidity.currency, 0);
   if (liquidity.equalTo(zeroAmount)) {
@@ -139,7 +129,7 @@ export function useFeeAPY(
   pool: Pool,
   baseToken: Token,
   uncollectedFees: CurrencyAmount<Token>[],
-  transactions: any
+  transactions: any,
 ) {
   return useMemo(() => {
     const zeroAmount = CurrencyAmount.fromRawAmount(baseToken, 0);
@@ -166,7 +156,7 @@ export function useFeeAPY(
         timestamp: number;
       }) => {
         let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
-        if (type === "mint") {
+        if (type === 'mint') {
           if (
             periodLiquidityAdded.lessThan(zeroAmount) ||
             periodLiquidityAdded.equalTo(zeroAmount)
@@ -174,26 +164,24 @@ export function useFeeAPY(
             periodStart = new Date(timestamp * 1000);
           }
           periodLiquidityAdded = periodLiquidityAdded.add(liquidity);
-        } else if (type === "burn") {
+        } else if (type === 'burn') {
           periodLiquidityRemoved = periodLiquidityRemoved.add(liquidity);
-        } else if (type === "collect") {
+        } else if (type === 'collect') {
           const periodEnd = new Date(timestamp * 1000);
           const periodYield = calcPeriodYield(
             liquidity,
             periodLiquidityAdded,
             periodStart,
-            periodEnd
+            periodEnd,
           );
           periodYieldsPerSecond.push(periodYield);
 
           // reset period
-          periodLiquidityAdded = periodLiquidityAdded.subtract(
-            periodLiquidityRemoved
-          );
+          periodLiquidityAdded = periodLiquidityAdded.subtract(periodLiquidityRemoved);
           periodLiquidityRemoved = zeroAmount;
           periodStart = periodEnd;
         }
-      }
+      },
     );
 
     // calculate uncollected fee yield
@@ -206,7 +194,7 @@ export function useFeeAPY(
         totalUncollectedFees,
         periodLiquidityAdded,
         periodStart,
-        new Date()
+        new Date(),
       );
       periodYieldsPerSecond.push(uncollectedYield);
     }
@@ -224,7 +212,7 @@ export function useFeeAPY(
         .divide(periodYieldsPerSecond.length)
         .multiply(yearInSeconds)
         .multiply(100)
-        .toFixed(2)
+        .toFixed(2),
     );
   }, [transactions, pool, baseToken, uncollectedFees]);
 }

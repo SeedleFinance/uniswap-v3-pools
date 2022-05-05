@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -8,11 +8,11 @@ import {
   YAxis,
   Tooltip,
   Legend,
-} from "recharts";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+} from 'recharts';
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { usePoolLiquidityData } from "../../hooks/usePoolLiquidityData";
+import { usePoolLiquidityData } from '../../hooks/usePoolLiquidityData';
 
 interface Props {
   address: string;
@@ -27,35 +27,23 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
     address,
     quoteToken,
     baseToken,
-    pool
+    pool,
   );
 
   if (!liquidityData || !liquidityData.length) {
-    return (
-      <div className="text-slate-500 dark:text-slate-200">
-        Loading liquidity data...
-      </div>
-    );
+    return <div className="text-slate-500 dark:text-slate-200">Loading liquidity data...</div>;
   }
 
   return (
     <div className="w-full flex flex-col flex-wrap items-start my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
-      <ResponsiveContainer width={"100%"} height={200}>
-        <AreaChart
-          data={liquidityData}
-          margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        >
+      <ResponsiveContainer width={'100%'} height={200}>
+        <AreaChart data={liquidityData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
           <XAxis dataKey="price" />
           <YAxis hide={true} />
           <Tooltip />
           <Legend />
           <Brush dataKey="price" height={30} stroke="#3390d6" />
-          <Area
-            dataKey="liquidity"
-            fill="#3390d6"
-            fillOpacity={0.9}
-            stroke="#3390d6"
-          />
+          <Area dataKey="liquidity" fill="#3390d6" fillOpacity={0.9} stroke="#3390d6" />
         </AreaChart>
       </ResponsiveContainer>
     </div>

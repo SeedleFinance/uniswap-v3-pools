@@ -1,18 +1,13 @@
-import React, { useMemo } from "react";
-import { Token } from "@uniswap/sdk-core";
+import React, { useMemo } from 'react';
+import { Token } from '@uniswap/sdk-core';
 
-import { PoolState } from "../../hooks/usePoolsState";
-import PoolButton from "../../ui/PoolButton";
+import { PoolState } from '../../hooks/usePoolsState';
+import PoolButton from '../../ui/PoolButton';
 
 interface Props {
   pools: PoolState[];
   filter: string;
-  onPoolClick: (
-    baseToken: Token,
-    quoteToken: Token,
-    fee: number,
-    positions: any[]
-  ) => void;
+  onPoolClick: (baseToken: Token, quoteToken: Token, fee: number, positions: any[]) => void;
 }
 
 function Pools({ pools, onPoolClick, filter }: Props) {
@@ -31,12 +26,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
       const b0 = quoteToken.name!.toLowerCase();
       const b1 = quoteToken.symbol!.toLowerCase();
       const c = filter.toLowerCase();
-      if (
-        a0.includes(c) ||
-        a1.includes(c) ||
-        b0.includes(c) ||
-        b1.includes(c)
-      ) {
+      if (a0.includes(c) || a1.includes(c) || b0.includes(c) || b1.includes(c)) {
         return true;
       }
 
@@ -45,9 +35,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
   }, [pools, filter]);
 
   if (!pools.length) {
-    return (
-      <div className="text-slate-600 dark:text-slate-300">Loading pools...</div>
-    );
+    return <div className="text-slate-600 dark:text-slate-300">Loading pools...</div>;
   }
 
   return (
@@ -63,9 +51,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
               baseToken={baseToken}
               quoteToken={quoteToken}
               fee={entity.fee / 10000}
-              onClick={() =>
-                onPoolClick(baseToken, quoteToken, entity.fee, positions)
-              }
+              onClick={() => onPoolClick(baseToken, quoteToken, entity.fee, positions)}
             />
           </div>
         ))}

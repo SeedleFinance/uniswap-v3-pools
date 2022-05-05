@@ -1,7 +1,7 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
 
-import { getClient } from "../apollo/client";
+import { getClient } from '../apollo/client';
 
 const QUERY_FEE_TIER_DATA = gql`
   query fee_tier_data($addr0: ID, $addr1: ID, $addr2: ID, $addr3: ID) {
@@ -52,7 +52,7 @@ export function useFeeTierData(chainId: number, poolAddresses: string[]) {
       addr2: poolAddresses[2],
       addr3: poolAddresses[3],
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: 'network-only',
     client: getClient(chainId),
   });
 

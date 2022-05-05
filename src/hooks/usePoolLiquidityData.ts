@@ -1,10 +1,10 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import { Token } from "@uniswap/sdk-core";
-import { Pool, tickToPrice } from "@uniswap/v3-sdk";
-import JSBI from "jsbi";
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import { Token } from '@uniswap/sdk-core';
+import { Pool, tickToPrice } from '@uniswap/v3-sdk';
+import JSBI from 'jsbi';
 
-import { getClient } from "../apollo/client";
+import { getClient } from '../apollo/client';
 
 const QUERY_POOL_LIQUIDITY_DATA = gql`
   query pool_liquidity_data($poolAddress: String!) {
@@ -23,11 +23,11 @@ export function usePoolLiquidityData(
   poolAddress: string | null,
   quoteToken: Token,
   baseToken: Token,
-  pool: Pool
+  pool: Pool,
 ) {
   const { loading, error, data } = useQuery(QUERY_POOL_LIQUIDITY_DATA, {
     variables: { poolAddress },
-    fetchPolicy: "network-only",
+    fetchPolicy: 'network-only',
     client: getClient(chainId),
   });
 
@@ -41,13 +41,10 @@ export function usePoolLiquidityData(
         tick: Number(tick),
         liquidityNet: JSBI.BigInt(liquidityNet),
       };
-    }
+    },
   );
 
-  const pivot =
-    allTicks.findIndex(
-      ({ tick }: { tick: number }) => tick > pool.tickCurrent
-    ) - 1;
+  const pivot = allTicks.findIndex(({ tick }: { tick: number }) => tick > pool.tickCurrent) - 1;
   if (pivot === -1) {
     return [];
   }
@@ -85,9 +82,7 @@ export function usePoolLiquidityData(
   const results = [...beforeTicks, activeTick, ...afterTicks]
     .map(({ tick, liquidity }) => ({
       tick,
-      price: parseFloat(
-        tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
-      ),
+      price: parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8)),
       liquidity: parseFloat(liquidity.toString()),
     }))
     .filter(({ liquidity }) => liquidity > 0);

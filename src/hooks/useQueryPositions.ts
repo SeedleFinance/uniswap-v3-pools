@@ -1,12 +1,12 @@
-import { useMemo } from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-import JSBI from "jsbi";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import { useMemo } from 'react';
+import { useQuery } from '@apollo/client';
+import gql from 'graphql-tag';
+import JSBI from 'jsbi';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { getClient } from "../apollo/client";
+import { getClient } from '../apollo/client';
 
 const QUERY_POSITIONS = gql`
   query positionsByOwner($accounts: [String]!, $liquidity: BigInt) {
@@ -63,12 +63,12 @@ export interface PositionState {
 export function useQueryPositions(
   chainId: number,
   accounts: string[],
-  includeEmpty: boolean
+  includeEmpty: boolean,
 ): { loading: boolean; positionStates: PositionState[] } {
   const { loading, error, data } = useQuery(QUERY_POSITIONS, {
     variables: { accounts, liquidity: includeEmpty ? -1 : 0 },
-    fetchPolicy: "network-only",
-    nextFetchPolicy: "cache-first",
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
     client: getClient(chainId),
   });
 
@@ -84,25 +84,21 @@ export function useQueryPositions(
         position.token0.id,
         parseInt(position.token0.decimals, 10),
         position.token0.symbol,
-        position.token0.name
+        position.token0.name,
       );
       const token1 = new Token(
         chainId,
         position.token1.id,
         parseInt(position.token1.decimals, 10),
         position.token1.symbol,
-        position.token1.name
+        position.token1.name,
       );
       const fee = parseInt(position.pool.feeTier, 10);
       const tickLower = parseInt(position.tickLower.tickIdx, 10);
       const tickUpper = parseInt(position.tickUpper.tickIdx, 10);
       const liquidity = BigNumber.from(position.liquidity);
-      const feeGrowthInside0LastX128 = BigNumber.from(
-        position.feeGrowthInside0LastX128
-      );
-      const feeGrowthInside1LastX128 = BigNumber.from(
-        position.feeGrowthInside1LastX128
-      );
+      const feeGrowthInside0LastX128 = BigNumber.from(position.feeGrowthInside0LastX128);
+      const feeGrowthInside1LastX128 = BigNumber.from(position.feeGrowthInside1LastX128);
       const sqrtPriceX96 = JSBI.BigInt(position.pool.sqrtPrice);
       const tickCurrent = parseInt(position.pool.tick, 10);
 
@@ -110,14 +106,7 @@ export function useQueryPositions(
         return null;
       }
 
-      const pool = new Pool(
-        token0 as Token,
-        token1 as Token,
-        fee,
-        sqrtPriceX96,
-        0,
-        tickCurrent
-      );
+      const pool = new Pool(token0 as Token, token1 as Token, fee, sqrtPriceX96, 0, tickCurrent);
 
       return {
         id,

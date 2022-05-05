@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { Token } from "@uniswap/sdk-core";
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { Token } from '@uniswap/sdk-core';
 
-import TokenLabel from "../../ui/TokenLabel";
-import TokenLogo from "../../ui/TokenLogo";
-import { formatInput } from "../../utils/numbers";
-import { isNativeToken } from "../../utils/tokens";
+import TokenLabel from '../../ui/TokenLabel';
+import TokenLogo from '../../ui/TokenLogo';
+import { formatInput } from '../../utils/numbers';
+import { isNativeToken } from '../../utils/tokens';
 
 interface DepositInputProps {
   token: Token;
@@ -28,7 +28,7 @@ function DepositInput({
   onWrapToggle,
 }: DepositInputProps) {
   const inputEl = useRef<HTMLInputElement>(null);
-  const [input, setInput] = useState<string>("0.00");
+  const [input, setInput] = useState<string>('0.00');
   const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
@@ -43,20 +43,20 @@ function DepositInput({
 
   const wrappedLabel = useMemo(() => {
     if (!token) {
-      return "";
+      return '';
     }
 
     if (token.chainId === 137) {
-      return wrapped ? "Use MATIC" : "Use WMATIC";
+      return wrapped ? 'Use MATIC' : 'Use WMATIC';
     }
 
-    return wrapped ? "Use ETH" : "Use WETH";
+    return wrapped ? 'Use ETH' : 'Use WETH';
   }, [wrapped, token]);
 
   const handleInput = (ev: { target: any }) => {
     const val = ev.target.value;
-    if (val === "") {
-      setInput("0.00");
+    if (val === '') {
+      setInput('0.00');
       return;
     }
     setInputWithDirty(val);
@@ -104,25 +104,14 @@ function DepositInput({
       />
       <div className="w-full text-sm my-1">
         <span>Balance: {balance} </span>
-        <TokenLabel
-          name={token.name}
-          symbol={token.symbol}
-          wrapped={wrapped}
-        />{" "}
-        (
-        <button
-          className="text-blue-500 dark:text-blue-200"
-          onClick={handleMaxBalance}
-        >
+        <TokenLabel name={token.name} symbol={token.symbol} wrapped={wrapped} /> (
+        <button className="text-blue-500 dark:text-blue-200" onClick={handleMaxBalance}>
           Max
         </button>
         {isNativeToken(token) && (
           <>
             <span className="px-1">|</span>
-            <button
-              className="text-blue-500 dark:text-blue-200"
-              onClick={onWrapToggle}
-            >
+            <button className="text-blue-500 dark:text-blue-200" onClick={onWrapToggle}>
               {wrappedLabel}
             </button>
           </>
@@ -132,8 +121,7 @@ function DepositInput({
       {disabled && (
         <div className="absolute w-full -m-2 py-4 px-2 h-full bg-white bg-opacity-90 dark:bg-slate-700">
           <div className="text-sm text-center text-slate-600 dark:text-slate-300">
-            The market price is outside your specified price range. Single-asset
-            deposit only.
+            The market price is outside your specified price range. Single-asset deposit only.
           </div>
         </div>
       )}

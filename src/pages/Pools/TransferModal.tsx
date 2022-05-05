@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from "react";
-import { Token } from "@uniswap/sdk-core";
-import { BigNumber } from "@ethersproject/bignumber";
+import React, { useState, useMemo } from 'react';
+import { Token } from '@uniswap/sdk-core';
+import { BigNumber } from '@ethersproject/bignumber';
 
-import Modal from "../../ui/Modal";
-import { Button, UnstyledButton } from "../../ui/Button";
+import Modal from '../../ui/Modal';
+import { Button, UnstyledButton } from '../../ui/Button';
 
 interface Props {
   tokenId: BigNumber;
@@ -13,14 +13,8 @@ interface Props {
   onComplete: (address: string) => void;
 }
 
-function TransferModal({
-  tokenId,
-  baseToken,
-  quoteToken,
-  onCancel,
-  onComplete,
-}: Props) {
-  const [address, setAddress] = useState("");
+function TransferModal({ tokenId, baseToken, quoteToken, onCancel, onComplete }: Props) {
+  const [address, setAddress] = useState('');
   const [askConfirm, setAskConfirm] = useState(false);
 
   const isTransferDisabled = useMemo(() => {
@@ -42,21 +36,21 @@ function TransferModal({
   };
 
   const handleCancel = () => {
-    setAddress("");
+    setAddress('');
     setAskConfirm(false);
     onCancel();
   };
 
   return (
-    <Modal title={"Transfer Position"}>
+    <Modal title={'Transfer Position'}>
       <form action="/" onSubmit={handleTransfer}>
         {!askConfirm ? (
           <>
             <div>
-              Transfer the position{" "}
+              Transfer the position{' '}
               <span className="font-bold">
                 {quoteToken.symbol} / {baseToken.symbol} ({tokenId.toString()})
-              </span>{" "}
+              </span>{' '}
               to a different account.
             </div>
             <div className="my-4">
@@ -64,7 +58,7 @@ function TransferModal({
                 className="w-full focus:outline-none text-lg p-2 bg-white dark:bg-slate-900 border rounded border-gray-400"
                 type="text"
                 value={address}
-                placeholder={"Enter the account address or ENS name"}
+                placeholder={'Enter the account address or ENS name'}
                 tabIndex={2}
                 onChange={handleInput}
               />
@@ -73,12 +67,9 @@ function TransferModal({
         ) : (
           <div className="mb-2">
             <div className="my-4 leading-relaxed">
-              Are you sure you want to transfer the position{" "}
-              <span className="font-bold">{tokenId.toString()}</span> to{" "}
-              <span className="bg-slate-100 dark:bg-slate-900 p-1">
-                {address}
-              </span>
-              ?
+              Are you sure you want to transfer the position{' '}
+              <span className="font-bold">{tokenId.toString()}</span> to{' '}
+              <span className="bg-slate-100 dark:bg-slate-900 p-1">{address}</span>?
             </div>
             <div className="my-2">This transaction cannot be reversed.</div>
           </div>

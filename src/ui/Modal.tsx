@@ -1,8 +1,8 @@
-import React, { useRef, ReactNode } from "react";
-import ReactDOM from "react-dom";
-import { faTimesCircle } from "@fortawesome/free-solid-svg-icons";
-import Icon from "./Icon";
-import { UnstyledButton } from "./Button";
+import React, { useRef, ReactNode } from 'react';
+import ReactDOM from 'react-dom';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import Icon from './Icon';
+import { UnstyledButton } from './Button';
 
 interface Props {
   children: ReactNode;
@@ -20,7 +20,7 @@ const Modal = ({ title, children, className, onClose }: Props) => {
     }
   };
 
-  const themeWrapperEl = document.getElementById("theme-wrapper");
+  const themeWrapperEl = document.getElementById('theme-wrapper');
 
   return ReactDOM.createPortal(
     <div
@@ -45,7 +45,7 @@ const Modal = ({ title, children, className, onClose }: Props) => {
         {children}
       </div>
     </div>,
-    themeWrapperEl as HTMLElement
+    themeWrapperEl as HTMLElement,
   );
 };
 

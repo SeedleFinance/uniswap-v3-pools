@@ -1,20 +1,15 @@
-import React from "react";
-import { Token } from "@uniswap/sdk-core";
+import React from 'react';
+import { Token } from '@uniswap/sdk-core';
 
-import { PoolState } from "../../hooks/usePoolsState";
+import { PoolState } from '../../hooks/usePoolsState';
 
-import Pools from "./Pools";
+import Pools from './Pools';
 
 interface Props {
   chainId: number;
   filter: string;
   pools: PoolState[];
-  onPoolClick: (
-    baseToken: Token,
-    quoteToken: Token,
-    fee: number,
-    positions: any[]
-  ) => void;
+  onPoolClick: (baseToken: Token, quoteToken: Token, fee: number, positions: any[]) => void;
 }
 
 function ExistingPools({ chainId, onPoolClick, filter, pools }: Props) {

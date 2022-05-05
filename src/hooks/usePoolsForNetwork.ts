@@ -1,14 +1,14 @@
-import { useEffect, useMemo } from "react";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import { useEffect, useMemo } from 'react';
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { useChainWeb3React } from "./useChainWeb3React";
-import { useAppSettings } from "../AppSettingsProvider";
-import { useAddress } from "../AddressProvider";
-import { getNetworkConnector } from "../utils/connectors";
-import { useQueryPositions, PositionState } from "./useQueryPositions";
-import { usePoolContracts } from "./useContract";
-import { usePoolsState } from "./usePoolsState";
+import { useChainWeb3React } from './useChainWeb3React';
+import { useAppSettings } from '../AppSettingsProvider';
+import { useAddress } from '../AddressProvider';
+import { getNetworkConnector } from '../utils/connectors';
+import { useQueryPositions, PositionState } from './useQueryPositions';
+import { usePoolContracts } from './useContract';
+import { usePoolsState } from './usePoolsState';
 
 export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const { library, activate, active } = useChainWeb3React(chainId);
@@ -27,8 +27,11 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
 
   const { addresses } = useAddress();
 
-  const { loading: queryLoading, positionStates: allPositions } =
-    useQueryPositions(chainId, addresses, noFilterClosed || !filterClosed);
+  const { loading: queryLoading, positionStates: allPositions } = useQueryPositions(
+    chainId,
+    addresses,
+    noFilterClosed || !filterClosed,
+  );
 
   const positionsByPool = useMemo((): {
     [key: string]: PositionState[];
@@ -44,11 +47,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
       }
 
       const { token0, token1 } = position;
-      const key = Pool.getAddress(
-        token0 as Token,
-        token1 as Token,
-        position.fee
-      );
+      const key = Pool.getAddress(token0 as Token, token1 as Token, position.fee);
 
       const collection = positionsByPool[key] || [];
       collection.push(position);
@@ -58,16 +57,10 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
     return positionsByPool;
   }, [allPositions]);
 
-  const poolKeys = useMemo(
-    () => Object.keys(positionsByPool),
-    [positionsByPool]
-  );
+  const poolKeys = useMemo(() => Object.keys(positionsByPool), [positionsByPool]);
   const poolContracts = usePoolContracts(poolKeys, library);
   const pools = usePoolsState(poolContracts, positionsByPool);
-  const poolsLoading = useMemo(
-    () => poolKeys.length > 0 && pools === null,
-    [poolKeys, pools]
-  );
+  const poolsLoading = useMemo(() => poolKeys.length > 0 && pools === null, [poolKeys, pools]);
 
   return { loading: queryLoading || poolsLoading, pools: pools || [] };
 }

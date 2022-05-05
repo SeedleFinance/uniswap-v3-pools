@@ -1,22 +1,14 @@
-import React, { useMemo, useState } from "react";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-} from "recharts";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import React, { useMemo, useState } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
-import format from "date-fns/format";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import format from 'date-fns/format';
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { useFeeTierData } from "../../hooks/useFeeTierData";
-import Menu from "../../ui/Menu";
-import Icon from "../../ui/Icon";
+import { useFeeTierData } from '../../hooks/useFeeTierData';
+import Menu from '../../ui/Menu';
+import Icon from '../../ui/Icon';
 
 interface Props {
   chainId: number | undefined;
@@ -35,7 +27,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
     }
 
     return [100, 500, 3000, 10000].map((fee) =>
-      Pool.getAddress(quoteToken, baseToken, fee).toLowerCase()
+      Pool.getAddress(quoteToken, baseToken, fee).toLowerCase(),
     );
   }, [baseToken, quoteToken]);
 
@@ -50,7 +42,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
       return [tvl, fees, feesOverTvl];
     }
 
-    const tierLabels = ["0.01", "0.05", "0.3", "1"];
+    const tierLabels = ['0.01', '0.05', '0.3', '1'];
 
     data.forEach((tier: any, i: number) => {
       const tierLabel = tierLabels[i];
@@ -59,7 +51,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
         let a = tvl[di] || {};
         let b = fees[di] || {};
         let c = feesOverTvl[di] || {};
-        const formattedDate = format(new Date(day.date * 1000), "dd.MMM");
+        const formattedDate = format(new Date(day.date * 1000), 'dd.MMM');
 
         a.date = formattedDate;
         b.date = formattedDate;
@@ -82,7 +74,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
     setMenuOpened(false);
     setChart(item);
   };
-  const chartTitles = ["TVL", "Fees", "Fees / TVL"];
+  const chartTitles = ['TVL', 'Fees', 'Fees / TVL'];
 
   if (!data || !data.length) {
     return <div>Loading data...</div>;
@@ -91,10 +83,7 @@ function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
   return (
     <div className="w-full flex flex-col flex-wrap items-center mt-8 border border-slate-200 dark:border-slate-700 rounded p-2">
       <div className="mb-2">
-        <button
-          className="text-lg text-center"
-          onClick={() => setMenuOpened(!menuOpened)}
-        >
+        <button className="text-lg text-center" onClick={() => setMenuOpened(!menuOpened)}>
           <span>{chartTitles[chart]} (by fee tier)</span>
           <Icon className="pl-1 text-xl" icon={faCaretDown} />
         </button>
@@ -106,11 +95,8 @@ function FeeTierData({ chainId, baseToken, quoteToken, currentValue }: Props) {
           </Menu>
         )}
       </div>
-      <ResponsiveContainer width={"80%"} height={200}>
-        <LineChart
-          data={chartData[chart]}
-          margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        >
+      <ResponsiveContainer width={'80%'} height={200}>
+        <LineChart data={chartData[chart]} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
           <XAxis dataKey="date" />
           <YAxis width={100} mirror={true} />
           <Tooltip />

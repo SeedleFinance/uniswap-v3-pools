@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Token } from "@uniswap/sdk-core";
+import React, { useState, useEffect } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Token } from '@uniswap/sdk-core';
 
-import NewPools from "./NewPools";
-import ExistingPools from "./ExistingPools";
-import NewPosition from "./NewPosition";
-import SearchInput from "./SearchInput";
+import NewPools from './NewPools';
+import ExistingPools from './ExistingPools';
+import NewPosition from './NewPosition';
+import SearchInput from './SearchInput';
 
-import { usePoolsForNetwork } from "../../hooks/usePoolsForNetwork";
+import { usePoolsForNetwork } from '../../hooks/usePoolsForNetwork';
 
-import { getQuoteAndBaseToken } from "../../utils/tokens";
-import { injectedConnector } from "../../utils/connectors";
-import { loadTokens, findTokens, TokenListItem } from "./utils";
+import { getQuoteAndBaseToken } from '../../utils/tokens';
+import { injectedConnector } from '../../utils/connectors';
+import { loadTokens, findTokens, TokenListItem } from './utils';
 
 interface Props {
   tab: string;
 }
 
 function AddLiquidity({ tab }: Props) {
-  const { chainId, active, activate } = useWeb3React("injected");
+  const { chainId, active, activate } = useWeb3React('injected');
 
   const navigate = useNavigate();
   const { baseTokenSymbol, quoteTokenSymbol, fee } = useParams<any>();
@@ -35,15 +35,12 @@ function AddLiquidity({ tab }: Props) {
   const { pools } = usePoolsForNetwork(chainId || 1, true);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
-  const [selectedTab, setSelectedTab] = useState("new");
-  const [selectedBaseToken, setSelectedBaseToken] =
-    useState<Token | null>(null);
-  const [selectedQuoteToken, setSelectedQuoteToken] =
-    useState<Token | null>(null);
+  const [selectedTab, setSelectedTab] = useState('new');
+  const [selectedBaseToken, setSelectedBaseToken] = useState<Token | null>(null);
+  const [selectedQuoteToken, setSelectedQuoteToken] = useState<Token | null>(null);
   const [selectedFee, setSelectedFee] = useState<number | null>(null);
-  const [selectedPositions, setSelectedPositions] =
-    useState<any[] | null>(null);
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [selectedPositions, setSelectedPositions] = useState<any[] | null>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
 
   useEffect(() => {
     if (!chainId) {
@@ -59,27 +56,17 @@ function AddLiquidity({ tab }: Props) {
   }, [chainId]);
 
   useEffect(() => {
-    if (tab !== "") {
+    if (tab !== '') {
       setSelectedTab(tab);
     }
   }, [tab]);
 
   useEffect(() => {
-    if (
-      !chainId ||
-      !tokens ||
-      !tokens.length ||
-      !baseTokenSymbol ||
-      !quoteTokenSymbol ||
-      !fee
-    ) {
+    if (!chainId || !tokens || !tokens.length || !baseTokenSymbol || !quoteTokenSymbol || !fee) {
       return;
     }
 
-    const matches = findTokens(chainId as number, tokens, [
-      baseTokenSymbol,
-      quoteTokenSymbol,
-    ]);
+    const matches = findTokens(chainId as number, tokens, [baseTokenSymbol, quoteTokenSymbol]);
 
     // invalid tokens
     if (matches.length !== 2) {
@@ -93,7 +80,7 @@ function AddLiquidity({ tab }: Props) {
     const [quoteToken, baseToken] = getQuoteAndBaseToken(
       chainId as number,
       toToken(matches[0]),
-      toToken(matches[1])
+      toToken(matches[1]),
     );
 
     setSelectedBaseToken(baseToken);
@@ -111,7 +98,7 @@ function AddLiquidity({ tab }: Props) {
       (p) =>
         p.baseToken.equals(selectedBaseToken) &&
         p.quoteToken.equals(selectedQuoteToken) &&
-        p.entity.fee === selectedFee
+        p.entity.fee === selectedFee,
     );
 
     if (matchingPool) {
@@ -126,12 +113,7 @@ function AddLiquidity({ tab }: Props) {
     setSelectedPositions(null);
   };
 
-  const handlePoolClick = (
-    baseToken: Token,
-    quoteToken: Token,
-    fee: number,
-    positions: any[]
-  ) => {
+  const handlePoolClick = (baseToken: Token, quoteToken: Token, fee: number, positions: any[]) => {
     setSelectedBaseToken(baseToken);
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(fee);
@@ -141,17 +123,17 @@ function AddLiquidity({ tab }: Props) {
 
   const handleNewTabClick = () => {
     resetSelections();
-    navigate("/add/new");
+    navigate('/add/new');
   };
 
   const handleExistingTabClick = () => {
     resetSelections();
-    navigate("/add/existing");
+    navigate('/add/existing');
   };
 
   const handleCancelNewPosition = () => {
     resetSelections();
-    navigate("/add/new");
+    navigate('/add/new');
   };
 
   return (
@@ -174,7 +156,7 @@ function AddLiquidity({ tab }: Props) {
         <div className="flex border-b border-slate-200 dark:border-slate-700">
           <button
             className={`p-2 mr-2 border-b-4 focus:outline-none text-slate-600 dark:text-slate-300 ${
-              selectedTab === "new" ? "border-green-500" : "border-transparent"
+              selectedTab === 'new' ? 'border-green-500' : 'border-transparent'
             }`}
             onClick={handleNewTabClick}
           >
@@ -182,9 +164,7 @@ function AddLiquidity({ tab }: Props) {
           </button>
           <button
             className={`p-2 border-b-4 focus:outline-none text-slate-600 dark:text-slate-300 ${
-              selectedTab === "existing"
-                ? "border-green-500"
-                : "border-transparent"
+              selectedTab === 'existing' ? 'border-green-500' : 'border-transparent'
             }`}
             onClick={handleExistingTabClick}
           >
@@ -193,9 +173,7 @@ function AddLiquidity({ tab }: Props) {
         </div>
 
         <div className="py-4 px-2">
-          {selectedBaseToken !== null &&
-          selectedQuoteToken !== null &&
-          selectedFee != null ? (
+          {selectedBaseToken !== null && selectedQuoteToken !== null && selectedFee != null ? (
             <NewPosition
               baseToken={selectedBaseToken as Token}
               quoteToken={selectedQuoteToken as Token}
@@ -203,7 +181,7 @@ function AddLiquidity({ tab }: Props) {
               positions={selectedPositions}
               onCancel={handleCancelNewPosition}
             />
-          ) : selectedTab === "new" ? (
+          ) : selectedTab === 'new' ? (
             <NewPools onPoolClick={handlePoolClick} filter={searchInput} />
           ) : (
             <ExistingPools

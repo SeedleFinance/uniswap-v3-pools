@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import { compact, isEqualWith } from "lodash";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Contract } from "@ethersproject/contracts";
-import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
-import { Position, Pool, tickToPrice } from "@uniswap/v3-sdk";
+import { useState, useEffect } from 'react';
+import { compact, isEqualWith } from 'lodash';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Contract } from '@ethersproject/contracts';
+import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
+import { Position, Pool, tickToPrice } from '@uniswap/v3-sdk';
 
-import { PositionState } from "./useQueryPositions";
-import { Q128 } from "../constants";
-import { getQuoteAndBaseToken } from "../utils/tokens";
-import { multiplyIn256 } from "../utils/numbers";
+import { PositionState } from './useQueryPositions';
+import { Q128 } from '../constants';
+import { getQuoteAndBaseToken } from '../utils/tokens';
+import { multiplyIn256 } from '../utils/numbers';
 
 export interface PoolState {
   key: string;
@@ -32,16 +32,12 @@ export interface PoolState {
 
 export function usePoolsState(
   contracts: (Contract | null)[],
-  positionsByPool: { [key: string]: any }
+  positionsByPool: { [key: string]: any },
 ) {
   const [pools, setPools] = useState<PoolState[] | null>(null);
 
   useEffect(() => {
-    if (
-      !contracts.length ||
-      !positionsByPool ||
-      !Object.keys(positionsByPool).length
-    ) {
+    if (!contracts.length || !positionsByPool || !Object.keys(positionsByPool).length) {
       return;
     }
 
@@ -56,7 +52,7 @@ export function usePoolsState(
       feeGrowthGlobal0X128: BigNumber,
       feeGrowthGlobal1X128: BigNumber,
       feeGrowthInside0LastX128: BigNumber,
-      feeGrowthInside1LastX128: BigNumber
+      feeGrowthInside1LastX128: BigNumber,
     ) => {
       if (!contract) {
         return [];
@@ -87,14 +83,8 @@ export function usePoolsState(
       const fr0 = feeGrowthGlobal0X128.sub(fb0).sub(fa0);
       const fr1 = feeGrowthGlobal1X128.sub(fb1).sub(fa1);
 
-      let amount0 = multiplyIn256(
-        fr0.sub(feeGrowthInside0LastX128),
-        liquidity
-      ).div(Q128);
-      let amount1 = multiplyIn256(
-        fr1.sub(feeGrowthInside1LastX128),
-        liquidity
-      ).div(Q128);
+      let amount0 = multiplyIn256(fr0.sub(feeGrowthInside0LastX128), liquidity).div(Q128);
+      let amount1 = multiplyIn256(fr1.sub(feeGrowthInside1LastX128), liquidity).div(Q128);
 
       return [
         CurrencyAmount.fromRawAmount(token0, amount0.toString()),
@@ -117,7 +107,7 @@ export function usePoolsState(
         tickUpper,
         feeGrowthInside0LastX128,
         feeGrowthInside1LastX128,
-      }: PositionState
+      }: PositionState,
     ) => {
       const entity = new Position({
         pool,
@@ -144,18 +134,12 @@ export function usePoolsState(
         feeGrowthGlobal0X128,
         feeGrowthGlobal1X128,
         feeGrowthInside0LastX128,
-        feeGrowthInside1LastX128
+        feeGrowthInside1LastX128,
       );
 
       const positionUncollectedFees = pool.token0.equals(baseToken)
-        ? pool
-            .priceOf(pool.token1)
-            .quote(uncollectedFees[1])
-            .add(uncollectedFees[0])
-        : pool
-            .priceOf(pool.token0)
-            .quote(uncollectedFees[0])
-            .add(uncollectedFees[1]);
+        ? pool.priceOf(pool.token1).quote(uncollectedFees[1]).add(uncollectedFees[0])
+        : pool.priceOf(pool.token0).quote(uncollectedFees[0]).add(uncollectedFees[1]);
 
       return {
         id: id,
@@ -182,7 +166,7 @@ export function usePoolsState(
       const [quoteToken, baseToken] = getQuoteAndBaseToken(
         pool.token0.chainId,
         pool.token0,
-        pool.token1
+        pool.token1,
       );
 
       const slot0 = await contract.functions.slot0();
@@ -205,20 +189,16 @@ export function usePoolsState(
             tickCurrent,
             feeGrowthGlobal0X128,
             feeGrowthGlobal1X128,
-            position
-          )
-        )
+            position,
+          ),
+        ),
       );
 
-      enhancedPositions.forEach(
-        ({ liquidity, positionLiquidity, positionUncollectedFees }) => {
-          rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
-          poolLiquidity = poolLiquidity.add(positionLiquidity);
-          poolUncollectedFees = poolUncollectedFees.add(
-            positionUncollectedFees
-          );
-        }
-      );
+      enhancedPositions.forEach(({ liquidity, positionLiquidity, positionUncollectedFees }) => {
+        rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
+        poolLiquidity = poolLiquidity.add(positionLiquidity);
+        poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
+      });
 
       return {
         key: address,
@@ -234,7 +214,7 @@ export function usePoolsState(
           pool.fee,
           sqrtPriceX96,
           rawPoolLiquidity,
-          tickCurrent
+          tickCurrent,
         ),
         positions: enhancedPositions,
       };
@@ -242,20 +222,14 @@ export function usePoolsState(
 
     const initPools = async () => {
       let results = await Promise.all(
-        contracts.map((contract: Contract | null, idx: number) =>
-          getPool(contract, idx)
-        )
+        contracts.map((contract: Contract | null, idx: number) => getPool(contract, idx)),
       );
       results = compact(results);
 
       if (
         pools !== null &&
         results.length === pools.length &&
-        isEqualWith(
-          results,
-          pools,
-          (newPool, curPool) => newPool.key === curPool.key
-        )
+        isEqualWith(results, pools, (newPool, curPool) => newPool.key === curPool.key)
       ) {
         return;
       }

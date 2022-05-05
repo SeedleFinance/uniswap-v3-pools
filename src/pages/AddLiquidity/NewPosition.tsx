@@ -1,33 +1,24 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
-import { useSearchParams } from "react-router-dom";
-import {
-  TickMath,
-  tickToPrice,
-  NonfungiblePositionManager,
-  Position,
-} from "@uniswap/v3-sdk";
-import { Token, CurrencyAmount, Fraction } from "@uniswap/sdk-core";
-import { BigNumber } from "@ethersproject/bignumber";
-import {
-  AlphaRouter,
-  SwapToRatioStatus,
-  SwapToRatioRoute,
-} from "@uniswap/smart-order-router";
+import React, { useState, useEffect, useMemo } from 'react';
+import { useWeb3React } from '@web3-react/core';
+import { useSearchParams } from 'react-router-dom';
+import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
+import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
+import { BigNumber } from '@ethersproject/bignumber';
+import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
 
-import { useTokenFunctions } from "../../hooks/useTokenFunctions";
-import { usePool } from "../../hooks/usePool";
-import { useChainWeb3React } from "../../hooks/useChainWeb3React";
-import { getNetworkConnector } from "../../utils/connectors";
-import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
-import PoolButton from "../../ui/PoolButton";
-import TokenLabel from "../../ui/TokenLabel";
-import Alert, { AlertLevel } from "../../ui/Alert";
-import { Button, UnstyledButton } from "../../ui/Button";
-import Toggle from "../../ui/Toggle";
-import ChartButton from "./ChartButton";
-import FeeTierData from "./FeeTierData";
-import RangeData from "./RangeData";
+import { useTokenFunctions } from '../../hooks/useTokenFunctions';
+import { usePool } from '../../hooks/usePool';
+import { useChainWeb3React } from '../../hooks/useChainWeb3React';
+import { getNetworkConnector } from '../../utils/connectors';
+import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import PoolButton from '../../ui/PoolButton';
+import TokenLabel from '../../ui/TokenLabel';
+import Alert, { AlertLevel } from '../../ui/Alert';
+import { Button, UnstyledButton } from '../../ui/Button';
+import Toggle from '../../ui/Toggle';
+import ChartButton from './ChartButton';
+import FeeTierData from './FeeTierData';
+import RangeData from './RangeData';
 
 import {
   NONFUNGIBLE_POSITION_MANAGER_ADDRESSES,
@@ -35,16 +26,16 @@ import {
   DEFAULT_SLIPPAGE,
   SWAP_SLIPPAGE,
   ZERO_PERCENT,
-} from "../../constants";
+} from '../../constants';
 
-import { formatInput } from "../../utils/numbers";
-import { getNativeToken, isNativeToken } from "../../utils/tokens";
+import { formatInput } from '../../utils/numbers';
+import { getNativeToken, isNativeToken } from '../../utils/tokens';
 
-import RangeInput from "./RangeInput";
-import DepositInput from "./DepositInput";
-import FeeButton from "./FeeButton";
-import SwapAndAddModal from "./SwapAndAddModal";
-import TransactionModal from "../../ui/TransactionModal";
+import RangeInput from './RangeInput';
+import DepositInput from './DepositInput';
+import FeeButton from './FeeButton';
+import SwapAndAddModal from './SwapAndAddModal';
+import TransactionModal from '../../ui/TransactionModal';
 import {
   positionFromAmounts,
   calculateNewAmounts,
@@ -53,7 +44,7 @@ import {
   toCurrencyAmount,
   findMatchingPosition,
   findPositionById,
-} from "./utils";
+} from './utils';
 
 interface Props {
   baseToken: Token;
@@ -63,17 +54,11 @@ interface Props {
   onCancel: () => void;
 }
 
-function NewPosition({
-  baseToken,
-  quoteToken,
-  initFee,
-  positions,
-  onCancel,
-}: Props) {
-  const { chainId, account, library } = useWeb3React("injected");
+function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Props) {
+  const { chainId, account, library } = useWeb3React('injected');
   const chainWeb3React = useChainWeb3React(chainId as number);
   const [searchParams] = useSearchParams();
-  const positionId = searchParams.get("position");
+  const positionId = searchParams.get('position');
 
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
 
@@ -95,7 +80,7 @@ function NewPosition({
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
     [baseToken, quoteToken],
     account,
-    !depositWrapped
+    !depositWrapped,
   );
   const { convertToGlobalFormatted } = useCurrencyConversions();
 
@@ -108,8 +93,8 @@ function NewPosition({
   const [tickLower, setTickLower] = useState<number>(TickMath.MIN_TICK);
   const [tickUpper, setTickUpper] = useState<number>(TickMath.MIN_TICK);
 
-  const [baseBalance, setBaseBalance] = useState<string>("0");
-  const [quoteBalance, setQuoteBalance] = useState<string>("0");
+  const [baseBalance, setBaseBalance] = useState<string>('0');
+  const [quoteBalance, setQuoteBalance] = useState<string>('0');
 
   const [baseTokenDisabled, setBaseTokenDisabled] = useState<boolean>(false);
   const [quoteTokenDisabled, setQuoteTokenDisabled] = useState<boolean>(false);
@@ -122,16 +107,13 @@ function NewPosition({
 
   const [swapAndAdd, setSwapAndAdd] = useState<boolean>(false);
   const [swapAndAddPending, setSwapAndAddPending] = useState<boolean>(false);
-  const [swapAndAddRoute, setSwapAndAddRoute] =
-    useState<SwapToRatioRoute | null>(null);
+  const [swapAndAddRoute, setSwapAndAddRoute] = useState<SwapToRatioRoute | null>(null);
 
   const [showFeeTierData, setShowFeeTierData] = useState<boolean>(false);
   const [showRangeData, setShowRangeData] = useState<boolean>(false);
 
-  const [focusedRangeInput, setFocusedRangeInput] =
-    useState<HTMLInputElement | null>(null);
-  const [alert, setAlert] =
-    useState<{ message: string; level: AlertLevel } | null>(null);
+  const [focusedRangeInput, setFocusedRangeInput] = useState<HTMLInputElement | null>(null);
+  const [alert, setAlert] = useState<{ message: string; level: AlertLevel } | null>(null);
 
   useEffect(() => {
     const _run = async () => {
@@ -174,12 +156,8 @@ function NewPosition({
 
     const { tickCurrent, tickSpacing } = pool;
     if (!positions || !positions.length) {
-      tickLower =
-        Math.round((tickCurrent - 10 * tickSpacing) / tickSpacing) *
-        tickSpacing;
-      tickUpper =
-        Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) *
-        tickSpacing;
+      tickLower = Math.round((tickCurrent - 10 * tickSpacing) / tickSpacing) * tickSpacing;
+      tickUpper = Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) * tickSpacing;
     } else {
       const position = findPositionById(positions, positionId);
       if (position) {
@@ -230,21 +208,9 @@ function NewPosition({
     const token0Disabled = tickCurrent > upper;
     const token1Disabled = tickCurrent < lower;
 
-    setBaseTokenDisabled(
-      pool.token0.equals(baseToken) ? token0Disabled : token1Disabled
-    );
-    setQuoteTokenDisabled(
-      pool.token1.equals(quoteToken) ? token1Disabled : token0Disabled
-    );
-  }, [
-    pool,
-    tickLower,
-    tickUpper,
-    baseToken,
-    quoteToken,
-    rangeReverse,
-    swapAndAdd,
-  ]);
+    setBaseTokenDisabled(pool.token0.equals(baseToken) ? token0Disabled : token1Disabled);
+    setQuoteTokenDisabled(pool.token1.equals(quoteToken) ? token1Disabled : token0Disabled);
+  }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse, swapAndAdd]);
 
   const baseTokenNeedApproval = useMemo(() => {
     if (!chainId || !baseToken) {
@@ -256,7 +222,7 @@ function NewPosition({
       baseToken,
       baseTokenAllowance,
       baseAmount,
-      depositWrapped
+      depositWrapped,
     );
   }, [chainId, baseToken, baseAmount, baseTokenAllowance, depositWrapped]);
 
@@ -270,7 +236,7 @@ function NewPosition({
       quoteToken,
       quoteTokenAllowance,
       quoteAmount,
-      depositWrapped
+      depositWrapped,
     );
   }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance, depositWrapped]);
 
@@ -312,7 +278,7 @@ function NewPosition({
         val0,
         val1,
       },
-      rangeReverse
+      rangeReverse,
     );
 
     setQuoteAmount(newQuoteAmount);
@@ -341,13 +307,11 @@ function NewPosition({
 
   const currentPrice = useMemo(() => {
     if (!pool || !baseToken || !quoteToken) {
-      return "0";
+      return '0';
     }
 
     const { tickCurrent } = pool;
-    const price = parseFloat(
-      tickToPrice(quoteToken, baseToken, tickCurrent).toSignificant(16)
-    );
+    const price = parseFloat(tickToPrice(quoteToken, baseToken, tickCurrent).toSignificant(16));
 
     return formatInput(price, false, pool.tickSpacing === 1 ? 8 : 4);
   }, [pool, baseToken, quoteToken]);
@@ -386,15 +350,11 @@ function NewPosition({
 
     try {
       if (quoteAmount > 0 && quoteAmount > parseFloat(quoteBalance)) {
-        throw new Error(
-          `You don't have enough ${quoteToken.symbol} to complete the transaction`
-        );
+        throw new Error(`You don't have enough ${quoteToken.symbol} to complete the transaction`);
       }
 
       if (baseAmount > 0 && baseAmount > parseFloat(baseBalance)) {
-        throw new Error(
-          `You don't have enough ${baseToken.symbol} to complete the transaction`
-        );
+        throw new Error(`You don't have enough ${baseToken.symbol} to complete the transaction`);
       }
 
       const router = new AlphaRouter({
@@ -409,12 +369,7 @@ function NewPosition({
         ? toCurrencyAmount(quoteToken, quoteAmount, depositWrapped)
         : toCurrencyAmount(baseToken, baseAmount, depositWrapped);
 
-      const matchingPosition = findMatchingPosition(
-        positions,
-        fee,
-        tickLower,
-        tickUpper
-      );
+      const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
 
       const addLiquidityOptions: any = {};
       if (matchingPosition) {
@@ -448,14 +403,14 @@ function NewPosition({
         token1Balance,
         newPosition,
         config,
-        opts
+        opts,
       );
 
       // add a timeout
 
       if (routerResult.status === SwapToRatioStatus.NO_ROUTE_FOUND) {
         console.error(routerResult.error);
-        throw new Error("Failed to find a route to swap");
+        throw new Error('Failed to find a route to swap');
       } else if (routerResult.status === SwapToRatioStatus.NO_SWAP_NEEDED) {
         setSwapAndAddPending(false);
         setSwapAndAddRoute(null);
@@ -477,7 +432,7 @@ function NewPosition({
       const route = swapAndAddRoute;
 
       if (!route || !route.methodParameters) {
-        throw new Error("Swap and Add: no valid route found");
+        throw new Error('Swap and Add: no valid route found');
       }
 
       // check if the value is > 0
@@ -496,16 +451,14 @@ function NewPosition({
       const estimatedGas = await library.getSigner().estimateGas(tx);
       const res = await library.getSigner().sendTransaction({
         ...tx,
-        gasLimit: estimatedGas
-          .mul(BigNumber.from(10000 + 2000))
-          .div(BigNumber.from(10000)),
+        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
 
       if (res) {
         setTransactionHash(res.hash);
         await res.wait();
         setAlert({
-          message: "Liquidity added to the pool.",
+          message: 'Liquidity added to the pool.',
           level: AlertLevel.Success,
         });
       }
@@ -528,26 +481,17 @@ function NewPosition({
 
     try {
       if (quoteAmount > 0 && quoteAmount > parseFloat(quoteBalance)) {
-        throw new Error(
-          `You don't have enough ${quoteToken.symbol} to complete the transaction`
-        );
+        throw new Error(`You don't have enough ${quoteToken.symbol} to complete the transaction`);
       }
 
       if (baseAmount > 0 && baseAmount > parseFloat(baseBalance)) {
-        throw new Error(
-          `You don't have enough ${baseToken.symbol} to complete the transaction`
-        );
+        throw new Error(`You don't have enough ${baseToken.symbol} to complete the transaction`);
       }
 
       // see if the current tick range  and pool match an existing position,
       // if match found, call increaseLiquidity
       // otherwise call mint
-      const matchingPosition = findMatchingPosition(
-        positions,
-        fee,
-        tickLower,
-        tickUpper
-      );
+      const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
 
       const newPosition = positionFromAmounts(
         {
@@ -557,14 +501,12 @@ function NewPosition({
           val0: quoteAmount,
           val1: baseAmount,
         },
-        rangeReverse
+        rangeReverse,
       );
 
       const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
       const slippageTolerance =
-        baseTokenDisabled || quoteTokenDisabled
-          ? ZERO_PERCENT
-          : DEFAULT_SLIPPAGE;
+        baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
       const useNative =
         isNativeToken(pool.token0) || isNativeToken(pool.token1)
           ? !depositWrapped
@@ -595,15 +537,13 @@ function NewPosition({
       const estimatedGas = await library.getSigner().estimateGas(tx);
       const res = await library.getSigner().sendTransaction({
         ...tx,
-        gasLimit: estimatedGas
-          .mul(BigNumber.from(10000 + 2000))
-          .div(BigNumber.from(10000)),
+        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
       if (res) {
         setTransactionHash(res.hash);
         await res.wait();
         setAlert({
-          message: "Liquidity added to the pool.",
+          message: 'Liquidity added to the pool.',
           level: AlertLevel.Success,
         });
       }
@@ -622,7 +562,7 @@ function NewPosition({
         setTransactionHash(res.hash);
         await res.wait();
         setAlert({
-          message: "Token approval confirmed.",
+          message: 'Token approval confirmed.',
           level: AlertLevel.Success,
         });
         setTransactionPending(false);
@@ -658,8 +598,8 @@ function NewPosition({
   const handleCurrentPriceClick = () => {
     if (focusedRangeInput) {
       const curLength = focusedRangeInput.value.length;
-      focusedRangeInput.setRangeText(currentPrice, 0, curLength, "start");
-      focusedRangeInput.dispatchEvent(new Event("input", { bubbles: true }));
+      focusedRangeInput.setRangeText(currentPrice, 0, curLength, 'start');
+      focusedRangeInput.dispatchEvent(new Event('input', { bubbles: true }));
       focusedRangeInput.focus();
     }
   };
@@ -695,25 +635,12 @@ function NewPosition({
           <div className="flex items-center justify-between">
             <div className="text-xl">Fee tier</div>
             <div className="mx-2">
-              <ChartButton
-                selected={showFeeTierData}
-                onClick={handleFeeTierDataClick}
-              />
+              <ChartButton selected={showFeeTierData} onClick={handleFeeTierDataClick} />
             </div>
           </div>
           <div className="my-2 flex justify-between">
-            <FeeButton
-              fee={0.01}
-              selected={fee === 100}
-              onClick={() => setFee(100)}
-              tabIndex={1}
-            />
-            <FeeButton
-              fee={0.05}
-              selected={fee === 500}
-              onClick={() => setFee(500)}
-              tabIndex={2}
-            />
+            <FeeButton fee={0.01} selected={fee === 100} onClick={() => setFee(100)} tabIndex={1} />
+            <FeeButton fee={0.05} selected={fee === 500} onClick={() => setFee(500)} tabIndex={2} />
             <FeeButton
               fee={0.3}
               selected={fee === 3000}
@@ -733,15 +660,12 @@ function NewPosition({
           <div className="flex items-center justify-between">
             <div className="text-xl">Range</div>
             <div className="px-6">
-              <ChartButton
-                selected={showRangeData}
-                onClick={handleRangeDataClick}
-              />
+              <ChartButton selected={showRangeData} onClick={handleRangeDataClick} />
             </div>
           </div>
 
           <div className="text-sm py-1 text-center">
-            Current price:{" "}
+            Current price:{' '}
             <button onClick={handleCurrentPriceClick} className="font-bold">
               {currentPrice}&nbsp;
             </button>
@@ -807,10 +731,8 @@ function NewPosition({
             />
           </div>
           <div className="w-64 mb-2 text-sm">
-            Total position value:{" "}
-            <span className="font-bold">
-              {convertToGlobalFormatted(totalPositionValue)}
-            </span>
+            Total position value:{' '}
+            <span className="font-bold">{convertToGlobalFormatted(totalPositionValue)}</span>
           </div>
         </div>
 
@@ -831,7 +753,7 @@ function NewPosition({
                 onApprove(
                   baseToken,
                   baseAmount,
-                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
                 )
               }
               disabled={transactionPending}
@@ -847,7 +769,7 @@ function NewPosition({
                 onApprove(
                   quoteToken,
                   quoteAmount,
-                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number]
+                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
                 )
               }
               disabled={transactionPending}
@@ -894,10 +816,7 @@ function NewPosition({
           )}
 
           {transactionPending && (
-            <TransactionModal
-              chainId={chainId}
-              transactionHash={transactionHash}
-            />
+            <TransactionModal chainId={chainId} transactionHash={transactionHash} />
           )}
         </div>
       </div>

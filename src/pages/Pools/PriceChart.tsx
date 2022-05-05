@@ -1,17 +1,9 @@
-import React, { useState } from "react";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-} from "recharts";
-import { Token } from "@uniswap/sdk-core";
+import React, { useState } from 'react';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { Token } from '@uniswap/sdk-core';
 
-import { usePoolPriceData } from "../../hooks/usePoolPriceData";
-import ChartPeriodSelector from "../../ui/ChartPeriodSelector";
+import { usePoolPriceData } from '../../hooks/usePoolPriceData';
+import ChartPeriodSelector from '../../ui/ChartPeriodSelector';
 
 interface Props {
   address: string;
@@ -27,7 +19,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
     address,
     quoteToken,
     baseToken,
-    period
+    period,
   );
 
   const handlePeriod = (days: number) => {
@@ -35,21 +27,14 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
   };
 
   if (!priceData || !priceData.length) {
-    return (
-      <div className="text-slate-500 dark:text-slate-200">
-        Loading price data...
-      </div>
-    );
+    return <div className="text-slate-500 dark:text-slate-200">Loading price data...</div>;
   }
 
   return (
     <div className="w-full flex flex-col flex-wrap items-start my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
       <ChartPeriodSelector current={period} onSelect={handlePeriod} />
-      <ResponsiveContainer width={"100%"} height={200}>
-        <LineChart
-          data={priceData}
-          margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        >
+      <ResponsiveContainer width={'100%'} height={200}>
+        <LineChart data={priceData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
           <XAxis dataKey="date" />
           <YAxis
             width={100}
@@ -58,13 +43,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           />
           <Tooltip />
           <Legend />
-          <Line
-            type="monotone"
-            dot={false}
-            dataKey="price"
-            stroke="#8884d8"
-            strokeWidth={2}
-          />
+          <Line type="monotone" dot={false} dataKey="price" stroke="#8884d8" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
       <table className="m-2 w-1/2">
@@ -79,25 +58,16 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           </tr>
           <tr>
             <td className="text-slate-500 dark:text-slate-200">Mean</td>
-            <td className="text-slate-800 dark:text-slate-400">
-              {meanPrice.toFixed(8)}
-            </td>
+            <td className="text-slate-800 dark:text-slate-400">{meanPrice.toFixed(8)}</td>
           </tr>
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">
-              Standard deviation
-            </td>
-            <td className="text-slate-800 dark:text-slate-400">
-              {stdev.toFixed(8)}
-            </td>
+            <td className="text-slate-500 dark:text-slate-200">Standard deviation</td>
+            <td className="text-slate-800 dark:text-slate-400">{stdev.toFixed(8)}</td>
           </tr>
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">
-              Optimal range
-            </td>
+            <td className="text-slate-500 dark:text-slate-200">Optimal range</td>
             <td className="text-slate-800 dark:text-slate-400">
-              {(meanPrice - stdev).toFixed(8)} -{" "}
-              {(meanPrice + stdev).toFixed(8)}
+              {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
             </td>
           </tr>
         </tbody>

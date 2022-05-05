@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -11,18 +11,18 @@ import {
   Tooltip,
   Legend,
   ReferenceLine,
-} from "recharts";
-import { tickToPrice } from "@uniswap/v3-sdk";
-import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
+} from 'recharts';
+import { tickToPrice } from '@uniswap/v3-sdk';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { usePoolPriceData } from "../../hooks/usePoolPriceData";
-import { usePoolLiquidityData } from "../../hooks/usePoolLiquidityData";
-import Menu from "../../ui/Menu";
-import Icon from "../../ui/Icon";
-import ChartPeriodSelector from "../../ui/ChartPeriodSelector";
+import { usePoolPriceData } from '../../hooks/usePoolPriceData';
+import { usePoolLiquidityData } from '../../hooks/usePoolLiquidityData';
+import Menu from '../../ui/Menu';
+import Icon from '../../ui/Icon';
+import ChartPeriodSelector from '../../ui/ChartPeriodSelector';
 
 interface Props {
   chainId: number | undefined;
@@ -33,31 +33,20 @@ interface Props {
   quoteToken: Token;
 }
 
-function RangeData({
-  chainId,
-  pool,
-  tickLower,
-  tickUpper,
-  quoteToken,
-  baseToken,
-}: Props) {
+function RangeData({ chainId, pool, tickLower, tickUpper, quoteToken, baseToken }: Props) {
   const [menuOpened, setMenuOpened] = useState(false);
   const [period, setPeriod] = useState<number>(30);
 
   const [chart, setChart] = useState(0);
 
-  const poolAddress = Pool.getAddress(
-    quoteToken,
-    baseToken,
-    pool.fee
-  ).toLowerCase();
+  const poolAddress = Pool.getAddress(quoteToken, baseToken, pool.fee).toLowerCase();
 
   const { priceData, minPrice, maxPrice, meanPrice, stdev } = usePoolPriceData(
     chainId || 1,
     poolAddress,
     quoteToken,
     baseToken,
-    period
+    period,
   );
 
   const liquidityData = usePoolLiquidityData(
@@ -65,7 +54,7 @@ function RangeData({
     poolAddress,
     quoteToken,
     baseToken,
-    pool
+    pool,
   );
 
   const [priceLower, priceUpper] = useMemo(() => {
@@ -74,9 +63,7 @@ function RangeData({
     }
 
     const convertToPrice = (tick: number) => {
-      return parseFloat(
-        tickToPrice(quoteToken, baseToken, tick).toSignificant(8)
-      );
+      return parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8));
     };
 
     return [convertToPrice(tickLower), convertToPrice(tickUpper)];
@@ -99,15 +86,12 @@ function RangeData({
     setPeriod(days);
   };
 
-  const chartTitles = ["Price", "Liquidity"];
+  const chartTitles = ['Price', 'Liquidity'];
 
   return (
     <div className="w-full flex flex-col flex-wrap items-center mt-8 border border-slate-200 dark:border-slate-700 rounded p-2">
       <div className="mb-2">
-        <button
-          className="text-lg text-center"
-          onClick={() => setMenuOpened(!menuOpened)}
-        >
+        <button className="text-lg text-center" onClick={() => setMenuOpened(!menuOpened)}>
           <span>{chartTitles[chart]}</span>
           <Icon className="pl-1 text-xl" icon={faCaretDown} />
         </button>
@@ -122,11 +106,8 @@ function RangeData({
       {chart === 0 && (
         <div className="w-full flex flex-col">
           <ChartPeriodSelector current={period} onSelect={handlePeriod} />
-          <ResponsiveContainer width={"100%"} height={200}>
-            <LineChart
-              data={priceData}
-              margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-            >
+          <ResponsiveContainer width={'100%'} height={200}>
+            <LineChart data={priceData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
               <XAxis dataKey="date" />
               <YAxis width={100} mirror={true} domain={domain} />
               <Tooltip />
@@ -144,50 +125,31 @@ function RangeData({
                 ifOverflow="extendDomain"
               />
               <Brush dataKey="date" height={30} stroke="#3390d6" />
-              <Line
-                type="monotone"
-                dot={false}
-                dataKey="price"
-                stroke="#3390d6"
-                strokeWidth={2}
-              />
+              <Line type="monotone" dot={false} dataKey="price" stroke="#3390d6" strokeWidth={2} />
             </LineChart>
           </ResponsiveContainer>
           <table className="w-full">
             <tbody>
               <tr>
                 <td className="text-slate-500 dark:text-slate-200">Min.</td>
-                <td className="text-slate-800 dark:text-slate-400">
-                  {minPrice}
-                </td>
+                <td className="text-slate-800 dark:text-slate-400">{minPrice}</td>
               </tr>
               <tr>
                 <td className="text-slate-500 dark:text-slate-200">Max.</td>
-                <td className="text-slate-800 dark:text-slate-400">
-                  {maxPrice}
-                </td>
+                <td className="text-slate-800 dark:text-slate-400">{maxPrice}</td>
               </tr>
               <tr>
                 <td className="text-slate-500 dark:text-slate-200">Mean</td>
-                <td className="text-slate-800 dark:text-slate-400">
-                  {meanPrice.toFixed(8)}
-                </td>
+                <td className="text-slate-800 dark:text-slate-400">{meanPrice.toFixed(8)}</td>
               </tr>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">
-                  Standard deviation
-                </td>
-                <td className="text-slate-800 dark:text-slate-400">
-                  {stdev.toFixed(8)}
-                </td>
+                <td className="text-slate-500 dark:text-slate-200">Standard deviation</td>
+                <td className="text-slate-800 dark:text-slate-400">{stdev.toFixed(8)}</td>
               </tr>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">
-                  Optimal range
-                </td>
+                <td className="text-slate-500 dark:text-slate-200">Optimal range</td>
                 <td className="text-slate-800 dark:text-slate-400">
-                  {(meanPrice - stdev).toFixed(8)} -{" "}
-                  {(meanPrice + stdev).toFixed(8)}
+                  {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
                 </td>
               </tr>
             </tbody>
@@ -196,22 +158,14 @@ function RangeData({
       )}
 
       {chart === 1 && (
-        <ResponsiveContainer width={"100%"} height={200}>
-          <AreaChart
-            data={liquidityData}
-            margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-          >
+        <ResponsiveContainer width={'100%'} height={200}>
+          <AreaChart data={liquidityData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
             <XAxis dataKey="price" domain={domain} />
             <YAxis hide={true} />
             <Tooltip />
             <Legend />
             <Brush dataKey="price" height={30} stroke="#3390d6" />
-            <Area
-              dataKey="liquidity"
-              fill="#3390d6"
-              fillOpacity={0.9}
-              stroke="#3390d6"
-            />
+            <Area dataKey="liquidity" fill="#3390d6" fillOpacity={0.9} stroke="#3390d6" />
             <ReferenceLine
               x={priceLower}
               stroke="#9a3b38"

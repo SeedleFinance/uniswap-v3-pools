@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 
 export interface TokenProps {
   name?: string | undefined;
@@ -10,14 +10,14 @@ function TokenLabel({ name, symbol, wrapped }: TokenProps) {
   const label = useMemo(() => {
     const symbolOrName = symbol || name;
     if (!symbolOrName) {
-      return "";
+      return '';
     }
 
-    if (symbolOrName.startsWith("WETH") && !wrapped) {
-      return "ETH";
+    if (symbolOrName.startsWith('WETH') && !wrapped) {
+      return 'ETH';
     }
-    if (symbolOrName.startsWith("WMATIC") && !wrapped) {
-      return "MATIC";
+    if (symbolOrName.startsWith('WMATIC') && !wrapped) {
+      return 'MATIC';
     }
     return symbolOrName;
   }, [name, symbol, wrapped]);

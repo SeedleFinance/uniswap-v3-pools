@@ -1,8 +1,8 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import PoolsPage from "./pages/Pools";
-import AddLiquidityPage from "./pages/AddLiquidity/index";
+import PoolsPage from './pages/Pools';
+import AddLiquidityPage from './pages/AddLiquidity/index';
 
 function PageBody() {
   // TODO: Add a Not found page
@@ -14,10 +14,7 @@ function PageBody() {
           element={<AddLiquidityPage tab="new" />}
         />
         <Route path="/add/new" element={<AddLiquidityPage tab="new" />} />
-        <Route
-          path="/add/existing"
-          element={<AddLiquidityPage tab="existing" />}
-        />
+        <Route path="/add/existing" element={<AddLiquidityPage tab="existing" />} />
         <Route path="/" element={<PoolsPage />} />
       </Routes>
     </Router>

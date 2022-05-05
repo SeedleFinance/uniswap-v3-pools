@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
-import { ApolloProvider } from "@apollo/client/react";
+import React, { ReactNode } from 'react';
+import { ApolloProvider } from '@apollo/client/react';
 
-import { mainnetClient } from "./apollo/client";
+import { mainnetClient } from './apollo/client';
 
 interface Props {
   children: ReactNode;

@@ -1,14 +1,14 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo } from 'react';
 
-import { useAddress } from "./AddressProvider";
-import Account from "./Account";
-import GlobalCurrencySelector from "./GlobalCurrencySelector";
-import ThemeSelector from "./ThemeSelector";
-import PageBody from "./PageBody";
-import Footer from "./Footer";
-import Landing from "./Landing";
-import { useAppSettings } from "./AppSettingsProvider";
-import { CurrencyConversionsProvider } from "./CurrencyConversionsProvider";
+import { useAddress } from './AddressProvider';
+import Account from './Account';
+import GlobalCurrencySelector from './GlobalCurrencySelector';
+import ThemeSelector from './ThemeSelector';
+import PageBody from './PageBody';
+import Footer from './Footer';
+import Landing from './Landing';
+import { useAppSettings } from './AppSettingsProvider';
+import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
 
 interface ThemeWrapperProps {
   theme: string;
@@ -28,13 +28,12 @@ function Container() {
 
   const computedTheme = useMemo(() => {
     if (
-      theme === "dark" ||
-      (theme === "" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
+      theme === 'dark' ||
+      (theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
-      return "dark";
+      return 'dark';
     } else {
-      return "light";
+      return 'light';
     }
   }, [theme]);
 
@@ -56,10 +55,7 @@ function Container() {
                 <img
                   className="mr-2"
                   alt="Seedle logo - a seedling"
-                  src={new URL(
-                    "../public/icon32.png",
-                    import.meta.url
-                  ).toString()}
+                  src={new URL('../public/icon32.png', import.meta.url).toString()}
                 />
                 <span className="hidden sm:block">Seedle</span>
               </a>

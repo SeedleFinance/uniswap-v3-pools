@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, ReactNode } from "react";
+import React, { useEffect, useRef, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -16,9 +16,9 @@ function Menu({ children, className, onClose }: Props) {
       }
     };
 
-    document.body.addEventListener("click", handler, true);
+    document.body.addEventListener('click', handler, true);
     return function cleanup() {
-      document.body.removeEventListener("click", handler, true);
+      document.body.removeEventListener('click', handler, true);
     };
   }, [onClose]);
 

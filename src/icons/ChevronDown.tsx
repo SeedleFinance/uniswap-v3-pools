@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface Props {
   className: string;
@@ -13,12 +13,7 @@ function ChevronDown({ className }: Props) {
       stroke="currentColor"
       className={className}
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="M19 9l-7 7-7-7"
-      ></path>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
     </svg>
   );
 }
