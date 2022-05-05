@@ -1,32 +1,20 @@
-import React, { useMemo, useState } from "react";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Token, Price, CurrencyAmount } from "@uniswap/sdk-core";
-import {
-  tickToPrice,
-  Pool as UniPool,
-  Position as UniPosition,
-} from "@uniswap/v3-sdk";
+import React, { useMemo, useState } from 'react';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
+import { tickToPrice, Pool as UniPool, Position as UniPosition } from '@uniswap/v3-sdk';
 
-import {
-  useTransactions,
-  FormattedPoolTransaction,
-} from "../../hooks/useTransactions";
-import {
-  useTransactionTotals,
-  useReturnValue,
-  useAPR,
-  useFeeAPY,
-} from "../../hooks/calculations";
-import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
-import { WETH9 } from "../../constants";
+import { useTransactions, FormattedPoolTransaction } from '../../hooks/useTransactions';
+import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
+import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import { WETH9 } from '../../constants';
 
-import Positions from "./Positions";
-import PositionStatuses from "./PositionStatuses";
-import PriceChart from "./PriceChart";
-import LiquidityChart from "./LiquidityChart";
-import ChevronDown from "../../icons/ChevronDown";
-import ChevronUp from "../../icons/ChevronUp";
-import PoolButton from "../..//ui/PoolButton";
+import Positions from './Positions';
+import PositionStatuses from './PositionStatuses';
+import PriceChart from './PriceChart';
+import LiquidityChart from './LiquidityChart';
+import ChevronDown from '../../icons/ChevronDown';
+import ChevronUp from '../../icons/ChevronUp';
+import PoolButton from '../..//ui/PoolButton';
 
 interface PoolProps {
   address: string;
@@ -61,11 +49,7 @@ function Pool({
 
   const { token0, token1 } = entity;
 
-  const transactions: FormattedPoolTransaction[] = useTransactions(
-    address,
-    token0,
-    token1
-  );
+  const transactions: FormattedPoolTransaction[] = useTransactions(address, token0, token1);
 
   const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
@@ -86,16 +70,8 @@ function Pool({
     }
 
     return positions.map((position) => {
-      const priceLower = tickToPrice(
-        quoteToken,
-        baseToken,
-        position.entity.tickLower
-      );
-      const priceUpper = tickToPrice(
-        quoteToken,
-        baseToken,
-        position.entity.tickUpper
-      );
+      const priceLower = tickToPrice(quoteToken, baseToken, position.entity.tickLower);
+      const priceUpper = tickToPrice(quoteToken, baseToken, position.entity.tickUpper);
 
       return {
         ...position,
@@ -104,7 +80,7 @@ function Pool({
         transactions: transactions.filter(
           (tx: FormattedPoolTransaction) =>
             tx.tickLower === position.entity.tickLower &&
-            tx.tickUpper === position.entity.tickUpper
+            tx.tickUpper === position.entity.tickUpper,
         ),
       };
     });
@@ -119,21 +95,17 @@ function Pool({
     return positionsWithPricesAndTransactions.reduce(
       (
         txs: FormattedPoolTransaction[],
-        { transactions }: { transactions: FormattedPoolTransaction[] }
+        { transactions }: { transactions: FormattedPoolTransaction[] },
       ) => {
         txs.push(...transactions);
         return txs;
       },
-      []
+      [],
     );
   }, [positionsWithPricesAndTransactions]);
 
-  const {
-    totalMintValue,
-    totalBurnValue,
-    totalCollectValue,
-    totalTransactionCost,
-  } = useTransactionTotals(transactionsInPositions, baseToken, entity);
+  const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
+    useTransactionTotals(transactionsInPositions, baseToken, entity);
 
   const { returnValue, returnPercent } = useReturnValue(
     baseToken,
@@ -141,21 +113,18 @@ function Pool({
     totalBurnValue,
     totalCollectValue,
     totalTransactionCost,
-    totalValue
+    totalValue,
   );
 
   const totalFees = totalCollectValue.add(poolUncollectedFees);
 
   const apr = useAPR(transactionsInPositions, returnPercent, rawPoolLiquidity);
 
-  const feeAPY = useFeeAPY(
-    entity,
-    baseToken,
-    [poolUncollectedFees],
-    transactionsInPositions
-  );
+  const feeAPY = useFeeAPY(entity, baseToken, [poolUncollectedFees], transactionsInPositions);
 
-  const toggleExpand = () => setExpanded(!expanded);
+  const toggleExpand = () => {
+    setExpanded(!expanded);
+  };
 
   if (!baseToken || !quoteToken || !entity) {
     return (
@@ -166,33 +135,32 @@ function Pool({
   }
 
   return (
-    <div className="my-4 p-4 border rounded-md border-slate-200 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500 cursor-pointer">
-      <div className="flex justify-between">
-        <div className="text-2xl text-slate-600 dark:text-slate-300 py-2 flex items-baseline">
-          <PoolButton
-            baseToken={baseToken}
-            quoteToken={quoteToken}
-            fee={entity.fee / 10000}
-            showNetwork={true}
-            onClick={toggleExpand}
-          />
-          {expanded && (
-            <a
-              className="px-2"
-              href={`https://info.uniswap.org/#/pools/${address}`}
-            >
-              ↗
-            </a>
-          )}
-        </div>
-        <div className="flex flex-col items-center w-48">
-          <PositionStatuses
-            tickCurrent={entity.tickCurrent}
-            positions={positions.map(({ entity }) => entity)}
-            onClick={toggleExpand}
-          />
-          <div className="text-lg rounded-md text-slate-600 dark:text-slate-300">
-            {convertToGlobalFormatted(totalValue)}{" "}
+    <div className="my-4 p-4 border rounded-md border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 w-full">
+      <div onClick={toggleExpand} className="w-full cursor-pointer">
+        <div className="flex justify-between">
+          <div className="text-2xl text-slate-600 dark:text-slate-300 py-2 flex items-baseline">
+            <PoolButton
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              fee={entity.fee / 10000}
+              showNetwork={true}
+              onClick={() => {}}
+            />
+            {expanded && (
+              <a className="px-2" href={`https://info.uniswap.org/#/pools/${address}`}>
+                ↗
+              </a>
+            )}
+          </div>
+          <div className="flex flex-col items-center w-48">
+            <PositionStatuses
+              tickCurrent={entity.tickCurrent}
+              positions={positions.map(({ entity }) => entity)}
+              onClick={toggleExpand}
+            />
+            <div className="text-lg rounded-md text-slate-600 dark:text-slate-300">
+              {convertToGlobalFormatted(totalValue)}{' '}
+            </div>
           </div>
         </div>
       </div>
@@ -234,38 +202,27 @@ function Pool({
             <tbody>
               <tr>
                 <td>
-                  {poolPrice.toFixed(6)}{" "}
-                  {baseToken.equals(WETH9[baseToken.chainId])
-                    ? "ETH"
-                    : baseToken.symbol}
+                  {poolPrice.toFixed(6)}{' '}
+                  {baseToken.equals(WETH9[baseToken.chainId]) ? 'ETH' : baseToken.symbol}
                 </td>
                 <td>{convertToGlobalFormatted(liquidity)}</td>
                 <td>
-                  {convertToGlobalFormatted(totalFees)} (uncl.{" "}
+                  {convertToGlobalFormatted(totalFees)} (uncl.{' '}
                   {convertToGlobalFormatted(poolUncollectedFees)})
                 </td>
                 <td>
-                  <div
-                    className={feeAPY < 0 ? "text-red-500" : "text-green-500"}
-                  >
+                  <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>
                     {feeAPY.toFixed(2)}%
                   </div>
                 </td>
 
                 <td>
-                  <div
-                    className={
-                      returnValue.lessThan(0)
-                        ? "text-red-500"
-                        : "text-green-500"
-                    }
-                  >
-                    {convertToGlobalFormatted(returnValue)} (
-                    {returnPercent.toFixed(2)}%)
+                  <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
+                    {convertToGlobalFormatted(returnValue)} ({returnPercent.toFixed(2)}%)
                   </div>
                 </td>
                 <td>
-                  <div className={apr < 0 ? "text-red-500" : "text-green-500"}>
+                  <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>
                     {apr.toFixed(2)}%
                   </div>
                 </td>
@@ -279,9 +236,7 @@ function Pool({
                 className="flex items-center focus:outline-none"
                 onClick={() => setShowPriceChart(!showPriceChart)}
               >
-                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
-                  Price
-                </span>
+                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">Price</span>
                 <span className="mx-2">
                   {showPriceChart ? (
                     <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
@@ -291,11 +246,7 @@ function Pool({
                 </span>
               </button>
               {showPriceChart && (
-                <PriceChart
-                  address={address}
-                  baseToken={baseToken}
-                  quoteToken={quoteToken}
-                />
+                <PriceChart address={address} baseToken={baseToken} quoteToken={quoteToken} />
               )}
             </div>
 

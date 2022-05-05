@@ -1,16 +1,15 @@
-import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 
-import { CombinedPoolsProvider, usePools } from "../../CombinedPoolsProvider";
-import { PoolState } from "../../hooks/usePoolsState";
-import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
-import Pool from "./Pool";
-import FilterClosedToggle from "./FilterClosedToggle";
-import DownloadCSV from "./DownloadCSV";
+import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
+import { PoolState } from '../../hooks/usePoolsState';
+import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import Pool from './Pool';
+import FilterClosedToggle from './FilterClosedToggle';
+import DownloadCSV from './DownloadCSV';
 
 function Pools() {
-  const { convertToGlobal, formatCurrencyWithSymbol } =
-    useCurrencyConversions();
+  const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
 
   const { loading, empty, pools } = usePools();
 
@@ -48,7 +47,7 @@ function Pools() {
 
         return [totalLiquidity, totalUncollectedFees];
       },
-      [0, 0]
+      [0, 0],
     );
   }, [loading, pools, convertToGlobal]);
 
@@ -84,28 +83,19 @@ function Pools() {
             <div className="md:text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
-            <div className="text-md text-slate-500 dark:text-slate-400">
-              Total Liquidity
-            </div>
+            <div className="text-md text-slate-500 dark:text-slate-400">Total Liquidity</div>
           </div>
           <div className="border border-slate-200 dark:border-slate-700 rounded-md p-2 md:p-6 mx-2 flex-1">
             <div className="md:text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
-            <div className="text-md text-slate-500 dark:text-slate-400">
-              Total Uncollected Fees
-            </div>
+            <div className="text-md text-slate-500 dark:text-slate-400">Total Uncollected Fees</div>
           </div>
           <div className="border border-slate-200 dark:border-slate-700 rounded-md p-2 md:p-6 mx-2 flex-1">
             <div className="md:text-2xl text-slate-600 dark:text-slate-300 my-1 font-bold">
-              {formatCurrencyWithSymbol(
-                totalLiquidity + totalUncollectedFees,
-                1
-              )}
+              {formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, 1)}
             </div>
-            <div className="text-md text-slate-500 dark:text-slate-400">
-              Total Value
-            </div>
+            <div className="text-md text-slate-500 dark:text-slate-400">Total Value</div>
           </div>
         </div>
       </div>
@@ -146,7 +136,7 @@ function Pools() {
                 liquidity={poolLiquidity}
                 poolUncollectedFees={poolUncollectedFees}
               />
-            )
+            ),
           )
         )}
       </div>
