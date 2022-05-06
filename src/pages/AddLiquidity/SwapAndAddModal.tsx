@@ -94,6 +94,7 @@ function SwapAndAddModal({
       token0,
       token0Allowance,
       getApprovalAmount(token0PreswapAmount, token0Amount),
+      wrapped,
     );
   }, [chainId, token0, token0PreswapAmount, token0Amount, token0Allowance, route, tokenApproving]);
 
@@ -107,6 +108,7 @@ function SwapAndAddModal({
       token1,
       token1Allowance,
       getApprovalAmount(token1PreswapAmount, token1Amount),
+      wrapped,
     );
   }, [chainId, token1, token1PreswapAmount, token1Amount, token1Allowance, route, tokenApproving]);
 
