@@ -1,0 +1,29 @@
+/* Default input styles */
+.input {
+  @apply border-0 bg-slate-200 focus:outline-2 focus:outline-blue-600 transition-colors duration-150;
+}
+
+/* Small */
+.input--sm {
+  @apply bg-emerald-400;
+}
+
+/* Medium */
+.input--md {
+  @apply bg-red-400;
+}
+
+/* Large */
+.input--lg {
+  @apply bg-white;
+}
+
+/* Extra large */
+.input--xl {
+  @apply bg-slate-100 text-xl;
+}
+
+/* Outlined */
+.input--outlined {
+  @apply border-2 bg-transparent px-4;
+}

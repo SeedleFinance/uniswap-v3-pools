@@ -6,7 +6,7 @@ import GlobalCurrencySelector from './GlobalCurrencySelector';
 import ThemeSelector from './ThemeSelector';
 import PageBody from './PageBody';
 import Footer from './Footer';
-import Landing from './Landing';
+import Landing from './pages/Landing';
 import { useAppSettings } from './AppSettingsProvider';
 import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
 
