@@ -2,7 +2,7 @@ import React from 'react';
 
 function Footer() {
   return (
-    <footer className="my-16 flex flex-col md:flex-row w-full justify-center text-gray-600 dark:text-gray-300 text-center">
+    <footer className="my-16 flex flex-col md:flex-row w-full justify-center text-high text-center text-0.875">
       <div className="px-4">
         <a className="" href="https://twitter.com/seedleFinance">
           Twitter
@@ -20,7 +20,7 @@ function Footer() {
       </div>
       <div className="px-4">
         <a className="" href="https://seedle.frill.co">
-          Suggest a feature
+          Roadmap
         </a>
       </div>
     </footer>

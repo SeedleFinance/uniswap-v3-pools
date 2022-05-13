@@ -11,13 +11,13 @@ import { useAppSettings } from './AppSettingsProvider';
 import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
 
 interface ThemeWrapperProps {
-  theme: string;
+  theme: 'light' | 'dark';
   children: ReactNode;
 }
 function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
   return (
     <div id="theme-wrapper" className={theme}>
-      <div className="max-w-full bg-white dark:bg-slate-900">{children}</div>
+      <div className="max-w-full bg-canvas-light">{children}</div>
     </div>
   );
 }
@@ -50,7 +50,7 @@ function Container() {
       <ThemeWrapper theme={computedTheme}>
         <div className="min-h-screen lg:container mx-auto pb-4 p-4">
           <div className="w-full py-4 mb-4 flex justify-between">
-            <h2 className="flex items-center text-3xl font-bold text-slate-800 dark:text-slate-100">
+            <h2 className="flex items-center text-1.5 font-bold text-high">
               <a className="flex sm:w-3/5" href="https://www.seedle.finance">
                 <img
                   className="mr-2"

@@ -1,6 +1,6 @@
 /* Default input styles */
 .input {
-  @apply border-0 bg-slate-200 focus:outline-2 focus:outline-blue-600 transition-colors duration-150;
+  @apply border-0 text-1 bg-surface-10 text-medium focus:outline-2 focus:outline-blue-600 transition-colors duration-150 px-2 w-full;
 }
 
 /* Small */
@@ -20,7 +20,7 @@
 
 /* Extra large */
 .input--xl {
-  @apply bg-slate-100 text-xl;
+  @apply text-1.125 px-6 py-4 rounded-md;
 }
 
 /* Outlined */

@@ -228,7 +228,7 @@ function SwapAndAddModal({
                   handleApprove(token0, getApprovalAmount(token0PreswapAmount, token0Amount))
                 }
                 tabIndex={8}
-                compact={true}
+                size="sm"
                 className="mr-2"
               >
                 Approve {token0.symbol}
@@ -239,7 +239,7 @@ function SwapAndAddModal({
                   handleApprove(token1, getApprovalAmount(token1PreswapAmount, token1Amount))
                 }
                 tabIndex={8}
-                compact={true}
+                size="sm"
                 className="mr-2"
               >
                 Approve {token1.symbol}

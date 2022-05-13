@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { usePools } from '../../CombinedPoolsProvider';
+import { Button } from '../../ui/Button';
 
 function DownloadCSV() {
   const { pools } = usePools();
@@ -65,14 +66,9 @@ function DownloadCSV() {
   };
 
   return (
-    <div>
-      <button
-        className="text-blue-500 dark:text-blue-200 p-2 bg-slate-100 dark:bg-slate-700 rounded focus:outline-none"
-        onClick={() => handleDownload()}
-      >
-        Download CSV
-      </button>
-    </div>
+    <Button variant="secondary" onClick={handleDownload}>
+      Download CSV
+    </Button>
   );
 }
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useWeb3React } from '@web3-react/core';
 
-import { injectedConnector } from '../../utils/connectors';
 import Footer from '../../Footer';
 import Input from '../../ui/Input';
 
@@ -31,16 +30,10 @@ function Landing() {
     window.location.href = url.href;
   };
 
-  const handleConnectWallet = () => {
-    activate(injectedConnector, (err) => {
-      console.error(err);
-    });
-  };
-
   return (
     <div className="h-screen flex flex-col items-center py-4 mx-auto lg:container">
       <div className="w-full py-4 mb-4 flex justify-between">
-        <h2 className="flex items-center text-3xl font-bold text-slate-800 dark:text-slate-100">
+        <h2 className="flex items-center text-1.5 font-bold text-high">
           <a className="flex sm:w-3/5" href="https://www.seedle.finance">
             <img
               className="mr-2"
@@ -56,22 +49,21 @@ function Landing() {
         </div>
       </div>
       <div className="flex flex-col items-center justify-center px-4 mx-auto flex-1 w-full">
-        <h2 className="flex flex-col items-center text-3xl font-bold my-4">
-          <div className="text-6xl text-slate-900 text-center">
-            Track performance <br />
-            of Uniswap V3 Positions
-          </div>
-        </h2>
+        <h1 className="text-center text-high text-4.75 font-bold leading-tight tracking-tighter">
+          Track performance <br />
+          on Uniswap V3
+        </h1>
         <form onSubmit={handleSubmit} className="m-4 my flex items-center justify-center w-1/2">
           <Input
-            className="text-xl text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 p-2 border border-slate-200 dark:border-slate-700 rounded-md mx-2 md:w-4/5 focus:outline-none focus:border-slate-800 dark:focus:border-slate-400"
+            className="text-center max-w-xl"
             size="xl"
             value={addresses.join(' ')}
             onChange={handleInput}
             placeholder="Enter any ENS name or Ethereum address"
           />
         </form>
-
+      </div>
+      <div className="mt-auto">
         <Footer />
       </div>
     </div>

@@ -5,6 +5,7 @@ import { injectedConnector } from './utils/connectors';
 import { BLOCK_EXPLORER_URL } from './constants';
 import useENS from './hooks/useENS';
 import Davatar from '@davatar/react';
+import { Button } from './ui/Button';
 
 interface AccountProps {
   address: string | null | undefined;
@@ -44,12 +45,12 @@ function Account({ address }: AccountProps) {
 
   if (!address || !address.length) {
     return (
-      <button
-        className="p-2 rounded-md border focus:outline-none border-slate-200 dark:border-slate-700 focus:border-slate-400 text-slate-800 dark:text-slate-100 flex flex-shrink-0"
+      <Button
+        className="p-2 bg-brand-primary hover:bg-brand-light text-inverted transition-colors duration-150 font-medium ease-out px-4 border-0"
         onClick={connectWallet}
       >
         Connect Wallet
-      </button>
+      </Button>
     );
   }
 
