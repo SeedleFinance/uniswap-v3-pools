@@ -96,7 +96,16 @@ function SwapAndAddModal({
       getApprovalAmount(token0PreswapAmount, token0Amount),
       wrapped,
     );
-  }, [chainId, token0, token0PreswapAmount, token0Amount, token0Allowance, route, tokenApproving]);
+  }, [
+    chainId,
+    token0,
+    token0PreswapAmount,
+    token0Amount,
+    token0Allowance,
+    route,
+    tokenApproving,
+    wrapped,
+  ]);
 
   const token1NeedApproval = useMemo(() => {
     if (!chainId || !token1 || !route || tokenApproving) {
@@ -110,7 +119,16 @@ function SwapAndAddModal({
       getApprovalAmount(token1PreswapAmount, token1Amount),
       wrapped,
     );
-  }, [chainId, token1, token1PreswapAmount, token1Amount, token1Allowance, route, tokenApproving]);
+  }, [
+    chainId,
+    token1,
+    token1PreswapAmount,
+    token1Amount,
+    token1Allowance,
+    route,
+    tokenApproving,
+    wrapped,
+  ]);
 
   const [swapInput, swapOutput] = useMemo(() => {
     if (!route || !route.trade || !route.trade.swaps) {
