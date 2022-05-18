@@ -8,10 +8,10 @@ export const injectedConnector = new InjectedConnector({
 export const getNetworkConnector = () =>
   new NetworkConnector({
     urls: {
-      1: 'https://eth-mainnet.alchemyapi.io/v2/7O6zke8iSiT3vQ3v6AtHWjHwKfRGweLA',
-      10: 'https://opt-mainnet.g.alchemy.com/v2/ttmmWYRIVUD0PQdugBEx0DrlTEZWe875',
+      1: 'https://eth-mainnet.alchemyapi.io/v2/saJ_d7L6OvoZ3t6jL7ewhv7ONWWi_J29',
+      10: 'https://opt-mainnet.g.alchemy.com/v2/bEw3og1rC9BHAidSjH24d18OEPFnEyCC',
       42161: 'https://arb-mainnet.g.alchemy.com/v2/NWcnXFqOG71YPZkuE1irr-grCof6fKhF',
-      137: 'https://polygon-mainnet.g.alchemy.com/v2/lCvu19Bqq56PSIOBlMI5u7PGZVjwBYw3',
+      137: 'https://polygon-mainnet.g.alchemy.com/v2/Fjjq6qMa4rJR-U4jk9KdyoAwY0pdR9KL',
     },
     defaultChainId: 1,
   });
