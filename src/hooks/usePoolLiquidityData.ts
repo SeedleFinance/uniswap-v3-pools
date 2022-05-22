@@ -45,7 +45,7 @@ export function usePoolLiquidityData(
   );
 
   const pivot = allTicks.findIndex(({ tick }: { tick: number }) => tick > pool.tickCurrent) - 1;
-  if (pivot === -1) {
+  if (pivot === -2) {
     return [];
   }
   const activeTick = {
