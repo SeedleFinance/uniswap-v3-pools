@@ -9,6 +9,7 @@ import FilterClosedToggle from './FilterClosedToggle';
 import DownloadCSV from './DownloadCSV';
 import Card from '../../ui/Card';
 import { Button } from '../../ui/Button';
+import Plus from '../../icons/Plus';
 
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
@@ -55,46 +56,57 @@ function Pools() {
 
   if (loading) {
     return (
-      <div className="h-full my-16 flex items-center justify-center">
-        <div className="text-center text-2xl text-slate-400 dark:text-slate-100">
-          Loading pools...
+      <div>
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <div className="bg-surface-10 rounded w-64 h-12"></div>
+            <div className="bg-surface-10 rounded-md w-64 h-4 mt-4"></div>
+          </div>
+          <div className="bg-surface-10 rounded w-96 h-20"></div>
         </div>
+        <div className="bg-surface-10 rounded w-full h-20 mt-12"></div>
+        <div className="bg-surface-10 rounded w-full h-20 mt-4"></div>
       </div>
     );
   }
 
   return (
     <div className="w-full">
-      <div className="flex flex-col-reverse md:flex-row md:justify-between">
-        <div className="flex-flex-col text-high">
-          <h1 className="text-3 font-bold">Positions</h1>
-          <div>A list of your Uniswap V3 positions.</div>
+      <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
+        <div className="hidden md:flex flex-col text-high">
+          <h1 className="text-2.75 font-bold tracking-tighter leading-tight">Positions</h1>
+          <div className="text-medium">A list of your Uniswap V3 positions.</div>
         </div>
 
         <div className="flex">
           <Card>
-            <div className="text-2 my-1 font-bold">
+            <div className="text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
-            <div>Total Liquidity</div>
+            <div className="text-medium">Total Liquidity</div>
           </Card>
           <Card className="ml-4">
-            <div className="text-2 my-1 font-bold">
+            <div className="text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
-            <div>Total Uncollected Fees</div>
+            <div className="text-medium">Total Uncollected Fees</div>
           </Card>
           <Card className="ml-4">
-            <div className="text-2 my-1 font-bold">
+            <div className="text-1.75 my-1 font-semibold text-brand-dark-primary">
               {formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, 1)}
             </div>
-            <div>Total Value</div>
+            <div className="text-medium">Total Value</div>
           </Card>
         </div>
       </div>
       <div className="w-full mt-8">
         <div className="flex justify-between items-center">
-          <Button href="/add/new">Add liquidity</Button>
+          <Button href="/add/new" size="md">
+            <div className="flex items-center">
+              <Plus />
+              <span className="ml-1">New Position</span>
+            </div>
+          </Button>
           <div className="flex">
             <div className="ml-2">
               <FilterClosedToggle />
@@ -105,7 +117,7 @@ function Pools() {
           </div>
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full mt-4">
         {empty ? (
           <div className="py-4 mt-12 rounded-lg">
             <div className="text-center text-1 md:text-1.125 text-low m-8">

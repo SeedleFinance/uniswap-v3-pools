@@ -66,7 +66,7 @@ function DownloadCSV() {
   };
 
   return (
-    <Button variant="secondary" onClick={handleDownload}>
+    <Button variant="secondary" size="md" onClick={handleDownload}>
       Download CSV
     </Button>
   );

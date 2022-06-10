@@ -135,3 +135,16 @@ export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
   42161: 'https://arbiscan.io',
   137: 'https://polygonscan.com',
 };
+
+export const ROUTES = {
+  HOME: '/',
+};
+
+export const EXTERNAL_LINKS = {
+  ABOUT: 'https://',
+  TWITTER: 'https://twitter.com/seedleFinance',
+  GITHUB: '"https://github.com/laktek/uniswap-v3-pools',
+  GITCOIN: 'https://gitcoin.co/grants/4385/seedle-finance',
+  ROADMAP: '"https://seedle.frill.co"',
+  LEARN: '',
+};

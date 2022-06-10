@@ -1,8 +1,8 @@
 import React, { useRef, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import Icon from './Icon';
-import { UnstyledButton } from './Button';
+import Icon from '../Icon/Icon';
+import { UnstyledButton } from '../Button';
 
 interface Props {
   children: ReactNode;

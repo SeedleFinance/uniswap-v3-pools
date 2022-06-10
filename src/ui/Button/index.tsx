@@ -70,7 +70,7 @@ export const Button: React.FC<ButtonProps> = ({
   type = 'submit',
   disabled = false,
   variant = 'primary',
-  size = 'lg',
+  size = 'md',
   href,
 }: ButtonProps) => {
   return (

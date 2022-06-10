@@ -23,11 +23,9 @@ function TokenLabel({ name, symbol, wrapped }: TokenProps) {
   }, [name, symbol, wrapped]);
 
   return (
-    <div className="inline">
-      <span className="pr-1" title={name}>
-        {label}
-      </span>
-    </div>
+    <span className="pr-1 font-medium text-high text-1" title={name}>
+      {label}
+    </span>
   );
 }
 

@@ -8,7 +8,7 @@ interface Props {
 
 function Toggle({ label, onChange, checked }: Props) {
   return (
-    <label className="flex items-center cursor-pointer">
+    <label className="flex items-center cursor-pointer text-0.875">
       <style
         dangerouslySetInnerHTML={{
           __html: `.toggle-checkbox:checked ~ .dot { transform: translateX(75%); background-color: #fff; }`,

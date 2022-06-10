@@ -4,6 +4,7 @@ import { Token } from '@uniswap/sdk-core';
 
 import { usePoolPriceData } from '../../hooks/usePoolPriceData';
 import ChartPeriodSelector from '../../ui/ChartPeriodSelector';
+import LoadingSpinner from '../../ui/Spinner';
 
 interface Props {
   address: string;
@@ -27,7 +28,7 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
   };
 
   if (!priceData || !priceData.length) {
-    return <div className="text-slate-500 dark:text-slate-200">Loading price data...</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -35,11 +36,12 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
       <ChartPeriodSelector current={period} onSelect={handlePeriod} />
       <ResponsiveContainer width={'100%'} height={200}>
         <LineChart data={priceData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
-          <XAxis dataKey="date" />
+          <XAxis dataKey="date" tick={{ fontSize: 13 }} />
           <YAxis
             width={100}
             mirror={true}
             domain={[minPrice - minPrice * 0.1, maxPrice + maxPrice * 0.1]}
+            tick={{ fontSize: 13 }}
           />
           <Tooltip />
           <Legend />

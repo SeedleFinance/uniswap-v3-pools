@@ -15,10 +15,10 @@ import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import Transaction from './Transaction';
 import TransferModal from './TransferModal';
 import TokenLabel from '../../ui/TokenLabel';
-import Alert, { AlertLevel } from '../../ui/Alert';
-import Menu from '../../ui/Menu';
+import Alert, { AlertLevel } from '../../ui/Alert/Alert';
+import Menu from '../../ui/Menu/Menu';
 import RangeVisual from './RangeVisual';
-import Icon from '../../ui/Icon';
+import Icon from '../../ui/Icon/Icon';
 import TransactionModal from '../../ui/TransactionModal';
 
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants';
@@ -330,7 +330,7 @@ function Position({
               <Icon size="lg" icon={faEllipsis} />
             </button>
             {showActions && (
-              <Menu onClose={() => setShowActions(false)} className="w-32 top-8">
+              <Menu onClose={() => setShowActions(false)} className="w-32 top-8 shadow-lg">
                 <button className="text-left my-1" onClick={handleTransactions}>
                   Transactions
                 </button>

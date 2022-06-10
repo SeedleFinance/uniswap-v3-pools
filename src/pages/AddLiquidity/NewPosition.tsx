@@ -13,8 +13,8 @@ import { getNetworkConnector } from '../../utils/connectors';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import PoolButton from '../../ui/PoolButton';
 import TokenLabel from '../../ui/TokenLabel';
-import Alert, { AlertLevel } from '../../ui/Alert';
-import { Button, UnstyledButton } from '../../ui/Button';
+import Alert, { AlertLevel } from '../../ui/Alert/Alert';
+import { Button } from '../../ui/Button';
 import Toggle from '../../ui/Toggle';
 import ChartButton from './ChartButton';
 import FeeTierData from './FeeTierData';
@@ -617,7 +617,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   };
 
   return (
-    <div className="w-full flex text-slate-600 dark:text-slate-300">
+    <div className="w-full flex text-high">
       <div className="lg:w-1/2">
         <div className="flex flex-col my-2">
           <div className="text-xl">Pair</div>
@@ -791,9 +791,9 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             </Button>
           )}
 
-          <UnstyledButton onClick={onCancel} tabIndex={9}>
+          <Button variant="ghost" onClick={onCancel} tabIndex={9}>
             Cancel
-          </UnstyledButton>
+          </Button>
 
           {alert && (
             <Alert level={alert.level} onHide={resetAlert}>

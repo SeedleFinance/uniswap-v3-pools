@@ -2,8 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { Token } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 
-import Modal from '../../ui/Modal';
+import Modal from '../../ui/Modal/Modal';
 import { Button, UnstyledButton } from '../../ui/Button';
+import { ROUTES } from '../../constants';
 
 interface Props {
   tokenId: BigNumber;
@@ -43,7 +44,7 @@ function TransferModal({ tokenId, baseToken, quoteToken, onCancel, onComplete }:
 
   return (
     <Modal title={'Transfer Position'}>
-      <form action="/" onSubmit={handleTransfer}>
+      <form action={ROUTES.HOME} onSubmit={handleTransfer}>
         {!askConfirm ? (
           <>
             <div>

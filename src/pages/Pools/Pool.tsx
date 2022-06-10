@@ -12,9 +12,10 @@ import Positions from './Positions';
 import PositionStatuses from './PositionStatuses';
 import PriceChart from './PriceChart';
 import LiquidityChart from './LiquidityChart';
-import ChevronDown from '../../icons/ChevronDown';
-import ChevronUp from '../../icons/ChevronUp';
-import PoolButton from '../..//ui/PoolButton';
+import ChevronDown from '../../icons/ChevronDown/ChevronDown';
+import ChevronUp from '../../icons/ChevronUp/ChevronUp';
+import PoolButton from '../../ui/PoolButton';
+import LoadingSpinner from '../../ui/Spinner';
 
 interface PoolProps {
   address: string;
@@ -129,16 +130,16 @@ function Pool({
   if (!baseToken || !quoteToken || !entity) {
     return (
       <div className="my-4 p-4 border rounded-md">
-        <div className="text-slate-400 dark:text-slate-200">Loading...</div>
+        <LoadingSpinner />
       </div>
     );
   }
 
   return (
-    <div className="my-4 p-4 border rounded-md border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 w-full">
+    <div className="my-8 p-8 border rounded-md border-element-10 hover:border-element-30 w-full">
       <div onClick={toggleExpand} className="w-full cursor-pointer">
         <div className="flex justify-between">
-          <div className="text-2xl text-slate-600 dark:text-slate-300 py-2 flex items-baseline">
+          <div className="text-2xl text-medium py-2 flex items-start">
             <PoolButton
               baseToken={baseToken}
               quoteToken={quoteToken}
@@ -154,14 +155,14 @@ function Pool({
               </button>
             )}
           </div>
-          <div className="flex flex-col items-center w-48">
+          <div className="flex items-center">
             <PositionStatuses
               tickCurrent={entity.tickCurrent}
               positions={positions.map(({ entity }) => entity)}
               onClick={toggleExpand}
             />
-            <div className="text-lg rounded-md text-slate-600 dark:text-slate-300">
-              {convertToGlobalFormatted(totalValue)}{' '}
+            <div className="text-lg rounded-md text-high ml-2 font-medium">
+              {convertToGlobalFormatted(totalValue)}
             </div>
           </div>
         </div>
@@ -169,7 +170,7 @@ function Pool({
 
       {expanded && (
         <>
-          <table className="table-auto w-3/4 mt-4  text-slate-600 dark:text-slate-300">
+          <table className="table-auto w-full mt-4 text-high">
             <thead>
               <tr className="text-left">
                 <th className="pb-4">Current Price</th>
@@ -235,15 +236,15 @@ function Pool({
           <div className="flex flex-col my-4">
             <div className="flex flex-col items-start mb-4">
               <button
-                className="flex items-center focus:outline-none"
+                className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowPriceChart(!showPriceChart)}
               >
-                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">Price</span>
+                <span className="text-lg font-bold">Price</span>
                 <span className="mx-2">
                   {showPriceChart ? (
-                    <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                    <ChevronUp className="h-4 w-4 stroke-2" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                    <ChevronDown className="h-4 w-4 stroke-2" />
                   )}
                 </span>
               </button>
@@ -254,17 +255,15 @@ function Pool({
 
             <div className="flex flex-col items-start mb-4">
               <button
-                className="flex items-center focus:outline-none"
+                className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowLiquidityChart(!showLiquidityChart)}
               >
-                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
-                  Liquidity
-                </span>
+                <span className="text-lg font-bold">Liquidity</span>
                 <span className="mx-2">
                   {showLiquidityChart ? (
-                    <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                    <ChevronUp className="h-4 w-4 stroke-2" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                    <ChevronDown className="h-4 w-4 stroke-2" />
                   )}
                 </span>
               </button>
@@ -280,17 +279,15 @@ function Pool({
 
             <div className="flex flex-col items-start">
               <button
-                className="flex items-center focus:outline-none"
+                className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowPositions(!showPositions)}
               >
-                <span className="text-lg text-slate-800 dark:text-slate-400 font-bold">
-                  Positions
-                </span>
+                <span className="text-lg font-bold">Positions</span>
                 <span className="mx-2">
                   {showPositions ? (
-                    <ChevronUp className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                    <ChevronUp className="h-4 w-4 stroke-2" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 stroke-2 text-slate-800 dark:text-slate-400" />
+                    <ChevronDown className="h-4 w-4 stroke-2" />
                   )}
                 </span>
               </button>

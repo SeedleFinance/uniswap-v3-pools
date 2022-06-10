@@ -20,7 +20,7 @@
 
 /* Extra large */
 .input--xl {
-  @apply text-1.125 px-6 py-4 rounded-md;
+  @apply text-1.125 px-4 py-3 rounded-md;
 }
 
 /* Outlined */

@@ -44,14 +44,7 @@ function Account({ address }: AccountProps) {
   }, [chainId]);
 
   if (!address || !address.length) {
-    return (
-      <Button
-        className="p-2 bg-brand-primary hover:bg-brand-light text-inverted transition-colors duration-150 font-medium ease-out px-4 border-0"
-        onClick={connectWallet}
-      >
-        Connect Wallet
-      </Button>
-    );
+    return <Button onClick={connectWallet}>Connect Wallet</Button>;
   }
 
   return (

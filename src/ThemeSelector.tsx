@@ -2,8 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { faCaretDown, faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
 
 import { useAppSettings } from './AppSettingsProvider';
-import Icon from './ui/Icon';
-import Menu from './ui/Menu';
+import Icon from './ui/Icon/Icon';
+import Menu from './ui/Menu/Menu';
 
 function ThemeSelector() {
   const { theme, setTheme } = useAppSettings();
@@ -22,7 +22,7 @@ function ThemeSelector() {
   };
 
   return (
-    <div className="p-2 mx-1 md:mx-2 rounded-md border border-slate-200 dark:border-slate-700 relative text-gray-800 dark:text-slate-200 flex flex-shrink-0">
+    <div className="p-3 mx-1 md:mx-2 rounded-md border border-slate-200 dark:border-slate-700 relative text-gray-800 dark:text-slate-200 flex flex-shrink-0">
       <button
         className="flex items-center focus:outline-none"
         onClick={() => setSelectorExpanded(!selectorExpanded)}
@@ -32,7 +32,7 @@ function ThemeSelector() {
       </button>
 
       {selectorExpanded && (
-        <Menu onClose={() => setSelectorExpanded(false)} className="top-12 left-0 w-32">
+        <Menu onClose={() => setSelectorExpanded(false)} className="top-12 left-0 w-32 shadow-lg">
           <button
             className="flex items-center justify-between w-24 my-1"
             onClick={() => handleSelection('light')}

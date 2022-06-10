@@ -27,6 +27,7 @@ const Input: React.FC<InputProps> = ({
       type={type}
       placeholder={placeholder}
       value={value}
+      autoComplete="off"
       onChange={onChange}
       className={classNames(
         className,

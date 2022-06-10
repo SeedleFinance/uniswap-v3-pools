@@ -1,7 +1,7 @@
 import React from 'react';
 import { faChartLine } from '@fortawesome/free-solid-svg-icons';
 
-import Icon from '../../ui/Icon';
+import Icon from '../../ui/Icon/Icon';
 
 interface Props {
   selected: boolean;

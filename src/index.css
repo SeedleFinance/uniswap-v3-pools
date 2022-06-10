@@ -1,12 +1,14 @@
 @tailwind base;
-
 @tailwind components;
-
 @tailwind utilities;
 
 @layer base {
   /* default light theme */
   .light {
+    /* Base colors */
+    --color-white: #fff;
+    --color-black: #000;
+
     --color-text-high: #161413;
     --color-text-medium: #37383a;
     --color-text-low: #7f879c;
@@ -51,6 +53,10 @@
 
   /* dark theme */
   .dark {
+    /* Base colors */
+    --color-white: #fff;
+    --color-black: #ccc;
+
     /* Text colors */
     --color-text-high: #fff;
     --color-text-medium: #ccc;
@@ -86,7 +92,7 @@
 
     /* Elements */
     --color-element-0: #e7e7ed;
-    --color-element-10: #e5e5ee;
+    --color-element-10: #40444a;
     --color-element-20: #a3a3a9;
     --color-element-30: #aaaab4;
     --color-element-40: #7d7d7e;

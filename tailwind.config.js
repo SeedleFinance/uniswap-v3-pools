@@ -2,6 +2,15 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: 'class',
   theme: {
+    container: {
+      screens: {
+        sm: '600px',
+        md: '728px',
+        lg: '984px',
+        xl: '1200px',
+        '2xl': '1320px',
+      },
+    },
     extend: {
       /* default theme */
       textColor: {
@@ -59,6 +68,9 @@ module.exports = {
         },
       },
       colors: {
+        white: 'var(--color-white)',
+        black: 'var(--color-black)',
+
         brand: {
           primary: 'var(--color-brand-primary)',
           dark: 'var(--color-brand-dark)',
@@ -88,6 +100,33 @@ module.exports = {
             light: 'var(--color-blue-light)',
           },
         },
+        surface: {
+          0: 'var(--color-surface-0)',
+          5: 'var(--color-surface-05)',
+          10: 'var(--color-surface-10)',
+          20: 'var(--color-surface-20)',
+          30: 'var(--color-surface-30)',
+          40: 'var(--color-surface-40)',
+          50: 'var(--color-surface-50)',
+          60: 'var(--color-surface-60)',
+          70: 'var(--color-surface-70)',
+          80: 'var(--color-surface-80)',
+          90: 'var(--color-surface-90)',
+          dark: {
+            0: 'var(--color-surface-0)',
+            5: 'var(--color-surface-05)',
+            10: 'var(--color-surface-10)',
+            20: 'var(--color-surface-20)',
+            30: 'var(--color-surface-30)',
+            40: 'var(--color-surface-40)',
+            50: 'var(--color-surface-50)',
+            60: 'var(--color-surface-60)',
+            70: 'var(--color-surface-70)',
+            80: 'var(--color-surface-80)',
+            90: 'var(--color-surface-90)',
+          },
+        },
+
         element: {
           0: 'var(--color-element-0)',
           10: 'var(--color-element-10)',
@@ -125,7 +164,7 @@ module.exports = {
       /* heading sizes */
       3: '3rem', // 48px
       3.375: '3.375rem', // 56px
-      4.75: '4.75rem', // 76px
+      4.75: '4.5rem', // 72px
     },
   },
   variants: {

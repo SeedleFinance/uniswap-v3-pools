@@ -6,7 +6,7 @@ import { SwapToRatioRoute } from '@uniswap/smart-order-router';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import TokenLabel from '../../ui/TokenLabel';
 import TokenLogo from '../../ui/TokenLogo';
-import Modal from '../../ui/Modal';
+import Modal from '../../ui/Modal/Modal';
 import { Button, UnstyledButton } from '../../ui/Button';
 import { formatInput } from '../../utils/numbers';
 import { tokenAmountNeedApproval, getApprovalAmount } from './utils';

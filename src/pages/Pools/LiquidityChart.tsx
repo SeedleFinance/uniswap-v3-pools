@@ -13,6 +13,7 @@ import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
 import { usePoolLiquidityData } from '../../hooks/usePoolLiquidityData';
+import LoadingSpinner from '../../ui/Spinner';
 
 interface Props {
   address: string;
@@ -31,7 +32,7 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
   );
 
   if (!liquidityData || !liquidityData.length) {
-    return <div className="text-slate-500 dark:text-slate-200">Loading liquidity data...</div>;
+    return <LoadingSpinner />;
   }
 
   return (

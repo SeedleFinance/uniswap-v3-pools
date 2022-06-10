@@ -1,26 +1,38 @@
 import React from 'react';
+import { EXTERNAL_LINKS } from './constants';
+
+import Github from './icons/Github';
+import Twitter from './icons/Twitter';
 
 function Footer() {
   return (
-    <footer className="my-16 flex flex-col md:flex-row w-full justify-center text-high text-center text-0.875">
-      <div className="px-4">
-        <a className="" href="https://twitter.com/seedleFinance">
-          Twitter
-        </a>
+    <footer className="my-8 flex justify-between items-center w-full text-0.9375 text-high">
+      <div className="my-2">
+        <div className="flex font-medium">
+          <div>
+            <a className="" href={EXTERNAL_LINKS.ABOUT}>
+              About
+            </a>
+          </div>
+          <div className="pl-8">
+            <a className="" href={EXTERNAL_LINKS.GITCOIN}>
+              Donate
+            </a>
+          </div>
+          <div className="pl-8">
+            <a className="" href={EXTERNAL_LINKS.ROADMAP}>
+              Roadmap
+            </a>
+          </div>
+        </div>
+        <span className="text-0.75 text-low">Copyright 2022</span>
       </div>
-      <div className="px-4">
-        <a className="" href="https://github.com/laktek/uniswap-v3-pools">
-          GitHub
+      <div className="flex">
+        <a href={EXTERNAL_LINKS.TWITTER}>
+          <Twitter />
         </a>
-      </div>
-      <div className="px-4">
-        <a className="" href="https://gitcoin.co/grants/4385/seedle-finance">
-          Donate
-        </a>
-      </div>
-      <div className="px-4">
-        <a className="" href="https://seedle.frill.co">
-          Roadmap
+        <a href={EXTERNAL_LINKS.GITHUB} className="ml-2">
+          <Github />
         </a>
       </div>
     </footer>
