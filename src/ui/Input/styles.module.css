@@ -1,26 +1,26 @@
 /* Default input styles */
 .input {
-  @apply border-0 text-1 bg-surface-10 text-medium focus:outline-2 focus:outline-blue-600 transition-colors duration-150 px-2 w-full;
+  @apply border-0 text-1 bg-surface-10 text-medium focus:outline-2 focus:outline-blue-600 transition-colors duration-150 px-2 w-full rounded-md;
 }
 
 /* Small */
 .input--sm {
-  @apply bg-emerald-400;
+  @apply p-1;
 }
 
 /* Medium */
 .input--md {
-  @apply bg-red-400;
+  @apply px-2 py-1;
 }
 
 /* Large */
 .input--lg {
-  @apply bg-white;
+  @apply px-4 py-3;
 }
 
 /* Extra large */
 .input--xl {
-  @apply text-1.125 px-4 py-3 rounded-md;
+  @apply text-1.125 px-4 py-3;
 }
 
 /* Outlined */

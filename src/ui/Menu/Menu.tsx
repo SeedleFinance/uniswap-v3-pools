@@ -25,7 +25,7 @@ function Menu({ children, className, onClose }: Props) {
   return (
     <div
       ref={wrapperEl}
-      className={`absolute z-50 p-2 rounded-md border border-slate-200 dark:border-slate-700  bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 flex flex-col ${className}`}
+      className={`absolute z-50 p-2 rounded-md border bg-surface-0 border-element-10 text-high flex flex-col ${className}`}
     >
       {children}
     </div>

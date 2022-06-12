@@ -89,7 +89,7 @@ function DepositInput({
 
   return (
     <div className="w-full flex flex-wrap items-start border rounded p-2 my-2 relative">
-      <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-800 border rounded">
+      <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-surface-20 border border-element-10 rounded">
         <TokenLogo name={token.name} address={token.address} />
         <TokenLabel name={token.name} symbol={token.symbol} wrapped={wrapped} />
       </div>
@@ -120,7 +120,7 @@ function DepositInput({
       </div>
       {disabled && (
         <div className="absolute w-full -m-2 py-4 px-2 h-full bg-white bg-opacity-90 dark:bg-slate-700">
-          <div className="text-sm text-center text-slate-600 dark:text-slate-300">
+          <div className="text-sm text-center text-medium">
             The market price is outside your specified price range. Single-asset deposit only.
           </div>
         </div>

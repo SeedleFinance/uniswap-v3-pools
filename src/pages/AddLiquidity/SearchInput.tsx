@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { debounce } from 'lodash';
+import Input from '../../ui/Input';
 
 interface Props {
   onChange: (value: string) => void;
@@ -7,20 +8,15 @@ interface Props {
 
 function SearchInput({ onChange }: Props) {
   const debouncedOnChange = useRef(debounce(onChange, 500)).current;
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleInput = (ev: { target: any }) => {
-    const { value } = ev.target;
+  const handleInput = () => {
+    const value = inputRef.current!.value;
+
     debouncedOnChange(value);
   };
 
-  return (
-    <input
-      className="w-full rounded border border-slate-200 dark:border-slate-700 p-2 focus:outline-none focus:border-gray-500 bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 w-full"
-      type="text"
-      placeholder="Search by tokens"
-      onChange={handleInput}
-    />
-  );
+  return <Input ref={inputRef} size="lg" placeholder="Search tokens" onChange={handleInput} />;
 }
 
 export default SearchInput;

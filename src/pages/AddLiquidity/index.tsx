@@ -138,24 +138,23 @@ function AddLiquidity({ tab }: Props) {
 
   return (
     <div className="w-full flex flex-col p-4">
-      <div className="py-4 mb-4 flex items-center text-2xl w-2/12">
+      <div className="py-4 mb-4 flex items-center">
         <Link
           to="/"
-          className="flex justify-center text-gray-500 w-8 h-8 mr-4 rounded-full hover:bg-gray-200"
+          className="flex justify-center items-center text-high w-8 h-8 flex-shrink-0 mr-4 rounded-full hover:bg-surface-20"
         >
           <span>←</span>
         </Link>
-        <div className="text-slate-600 dark:text-slate-300">Add Liquidity</div>
+        <h1 className="text-2 text-high font-bold tracking-tighter leading-tight">Add Liquidity</h1>
       </div>
-
       <div className="md:w-1/2">
         <SearchInput onChange={setSearchInput} />
       </div>
 
       <div className="w-full py-4 my-4">
-        <div className="flex border-b border-slate-200 dark:border-slate-700">
+        <div className="flex border-b border-element-10">
           <button
-            className={`p-2 mr-2 border-b-4 focus:outline-none text-slate-600 dark:text-slate-300 ${
+            className={`p-2 mr-2 border-b-4 focus:outline-none text-medium ${
               selectedTab === 'new' ? 'border-green-500' : 'border-transparent'
             }`}
             onClick={handleNewTabClick}
@@ -163,7 +162,7 @@ function AddLiquidity({ tab }: Props) {
             New
           </button>
           <button
-            className={`p-2 border-b-4 focus:outline-none text-slate-600 dark:text-slate-300 ${
+            className={`p-2 border-b-4 focus:outline-none text-medium ${
               selectedTab === 'existing' ? 'border-green-500' : 'border-transparent'
             }`}
             onClick={handleExistingTabClick}
