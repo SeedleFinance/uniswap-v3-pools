@@ -6,6 +6,7 @@ import { Pool } from '@uniswap/v3-sdk';
 
 import { useGasFee } from './useGasFee';
 import { WETH9, MATIC } from '../constants';
+import { TxTypes } from '../enums';
 
 export function useTransactionTotals(transactions: any[], baseToken: Token, pool: Pool) {
   const chainId = baseToken.chainId;
@@ -24,11 +25,11 @@ export function useTransactionTotals(transactions: any[], baseToken: Token, pool
         const txValue = pool.token0.equals(baseToken)
           ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
           : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
-        if (tx.type === 'mint') {
+        if (tx.transactionType === TxTypes.Add) {
           totalMintValue = totalMintValue.add(txValue);
-        } else if (tx.type === 'burn') {
+        } else if (tx.type === TxTypes.Remove) {
           totalBurnValue = totalBurnValue.add(txValue);
-        } else if (tx.type === 'collect') {
+        } else if (tx.type === TxTypes.Collect) {
           totalCollectValue = totalCollectValue.add(txValue);
         }
 

@@ -5,6 +5,7 @@ import format from 'date-fns/format';
 
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import TokenSymbol from '../../ui/TokenLabel';
+import { TxTypes } from '../../enums';
 
 import { BLOCK_EXPLORER_URL } from '../../constants';
 
@@ -13,11 +14,9 @@ export interface TransactionProps {
   pool: Pool;
   baseToken: Token;
   timestamp: number;
-  type: string;
+  transactionType: string;
   amount0: CurrencyAmount<Token>;
   amount1: CurrencyAmount<Token>;
-  priceLower: Price<Token, Token>;
-  priceUpper: Price<Token, Token>;
   gas: { costCurrency: CurrencyAmount<Token> };
 }
 
@@ -26,11 +25,9 @@ function Transaction({
   pool,
   baseToken,
   timestamp,
-  type,
+  transactionType,
   amount0,
   amount1,
-  priceLower,
-  priceUpper,
   gas,
 }: TransactionProps) {
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
@@ -59,13 +56,13 @@ function Transaction({
     return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
   }, [totalLiquidity, pool, baseToken, amount0, amount1]);
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = (type: TxTypes) => {
     switch (type) {
-      case 'mint':
+      case TxTypes.Add:
         return 'Add liquidity';
-      case 'burn':
+      case TxTypes.Remove:
         return 'Remove liquidity';
-      case 'collect':
+      case TxTypes.Collect:
         return 'Collect fees';
     }
   };
@@ -77,7 +74,7 @@ function Transaction({
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
-      <td>{getTypeLabel(type)}</td>
+      <td>{getTypeLabel(transactionType)}</td>
       <td>
         <div>
           <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}({percent0}%)

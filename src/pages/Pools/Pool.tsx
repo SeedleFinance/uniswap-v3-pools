@@ -3,7 +3,6 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
 import { tickToPrice, Pool as UniPool, Position as UniPosition } from '@uniswap/v3-sdk';
 
-import { useTransactions, FormattedPoolTransaction } from '../../hooks/useTransactions';
 import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import { WETH9 } from '../../constants';
@@ -33,6 +32,7 @@ interface PoolProps {
     positionLiquidity?: CurrencyAmount<Token>;
     uncollectedFees: CurrencyAmount<Token>[];
     positionUncollectedFees: CurrencyAmount<Token>;
+    transactions: any[];
   }[];
 }
 
@@ -50,8 +50,6 @@ function Pool({
 
   const { token0, token1 } = entity;
 
-  const transactions: FormattedPoolTransaction[] = useTransactions(address, token0, token1);
-
   const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
   const [showPriceChart, setShowPriceChart] = useState(false);
@@ -65,48 +63,20 @@ function Pool({
     return entity.priceOf(quoteToken);
   }, [quoteToken, entity]);
 
-  const positionsWithPricesAndTransactions = useMemo(() => {
-    if (!positions || !positions.length || !baseToken || !quoteToken) {
-      return [];
-    }
-
-    return positions.map((position) => {
-      const priceLower = tickToPrice(quoteToken, baseToken, position.entity.tickLower);
-      const priceUpper = tickToPrice(quoteToken, baseToken, position.entity.tickUpper);
-
-      return {
-        ...position,
-        priceLower,
-        priceUpper,
-        transactions: transactions.filter(
-          (tx: FormattedPoolTransaction) =>
-            tx.tickLower === position.entity.tickLower &&
-            tx.tickUpper === position.entity.tickUpper,
-        ),
-      };
-    });
-  }, [positions, baseToken, quoteToken, transactions]);
-
   const totalValue = useMemo(() => {
     return liquidity.add(poolUncollectedFees);
   }, [liquidity, poolUncollectedFees]);
 
-  // TODO: refactor how transactions are fetched (to account for closed positions)
-  const transactionsInPositions = useMemo(() => {
-    return positionsWithPricesAndTransactions.reduce(
-      (
-        txs: FormattedPoolTransaction[],
-        { transactions }: { transactions: FormattedPoolTransaction[] },
-      ) => {
-        txs.push(...transactions);
-        return txs;
-      },
-      [],
-    );
-  }, [positionsWithPricesAndTransactions]);
+  const poolTransactions = useMemo(() => {
+    return positions.reduce((txs: any[], { transactions }: any) => {
+      txs.push(...transactions);
+      return txs;
+    }, []);
+  }, [positions]);
+  console.log(poolTransactions);
 
   const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
-    useTransactionTotals(transactionsInPositions, baseToken, entity);
+    useTransactionTotals(poolTransactions, baseToken, entity);
 
   const { returnValue, returnPercent } = useReturnValue(
     baseToken,
@@ -119,9 +89,9 @@ function Pool({
 
   const totalFees = totalCollectValue.add(poolUncollectedFees);
 
-  const apr = useAPR(transactionsInPositions, returnPercent, rawPoolLiquidity);
+  const apr = useAPR(poolTransactions, returnPercent, rawPoolLiquidity);
 
-  const feeAPY = useFeeAPY(entity, baseToken, [poolUncollectedFees], transactionsInPositions);
+  const feeAPY = useFeeAPY(entity, baseToken, [poolUncollectedFees], poolTransactions);
 
   const toggleExpand = () => {
     setExpanded(!expanded);
@@ -294,7 +264,7 @@ function Pool({
 
               {showPositions && (
                 <Positions
-                  positions={positionsWithPricesAndTransactions}
+                  positions={positions}
                   pool={entity}
                   baseToken={baseToken}
                   quoteToken={quoteToken}
