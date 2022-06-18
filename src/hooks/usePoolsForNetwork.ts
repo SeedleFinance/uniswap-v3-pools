@@ -7,6 +7,7 @@ import { useAppSettings } from '../AppSettingsProvider';
 import { useAddress } from '../AddressProvider';
 import { getQuoteAndBaseToken } from '../utils/tokens';
 import { calcGasCost } from '../utils/gas';
+import { TxTypes } from '../enums';
 
 import {
   useFetchPositions,
@@ -15,6 +16,26 @@ import {
   PoolStateV2,
   TransactionV2,
 } from './useFetchPositions';
+
+function reconcileTransactions(chainId: number, txs: any[]) {
+  let prevRemoveTx = null;
+  // we need to reconcile collects with corresponding removes to adjust the liquidity.
+  return txs.map((tx) => {
+    if (tx.transactionType === TxTypes.Remove) {
+      prevRemoveTx = tx;
+      return tx;
+    } else if (tx.transactionType === TxTypes.Collect && prevRemoveTx.timestamp === tx.timestamp) {
+      return {
+        ...tx,
+        amount0: tx.amount0.subtract(prevRemoveTx.amount0),
+        amount1: tx.amount1.subtract(prevRemoveTx.amount1),
+        gas: calcGasCost(chainId, '0', '0'),
+      };
+    } else {
+      return tx;
+    }
+  });
+}
 
 export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const { filterClosed } = useAppSettings();
@@ -121,10 +142,19 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
 
           poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
 
-          const formattedTransactions = transactions
+          let formattedTransactions = transactions
             .map(
-              ({ transactionType, amount0, amount1, gas, gasPrice, timestamp }: TransactionV2) => {
+              ({
+                transactionHash,
+                transactionType,
+                amount0,
+                amount1,
+                gas,
+                gasPrice,
+                timestamp,
+              }: TransactionV2) => {
                 return {
+                  id: transactionHash,
                   transactionType,
                   timestamp: BigNumber.from(timestamp).toNumber(),
                   amount0: CurrencyAmount.fromRawAmount(token0, BigNumber.from(amount0)),
@@ -134,6 +164,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
               },
             )
             .sort((a, b) => a.timestamp - b.timestamp);
+          formattedTransactions = reconcileTransactions(chainId, formattedTransactions);
 
           return {
             id: positionId,

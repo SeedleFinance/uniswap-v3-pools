@@ -152,7 +152,7 @@ function Pools() {
                 baseToken={baseToken}
                 positions={positions}
                 rawPoolLiquidity={rawPoolLiquidity}
-                liquidity={poolLiquidity}
+                poolLiquidity={poolLiquidity}
                 poolUncollectedFees={poolUncollectedFees}
               />
             ),

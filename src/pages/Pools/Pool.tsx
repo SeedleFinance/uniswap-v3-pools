@@ -22,7 +22,7 @@ interface PoolProps {
   quoteToken: Token;
   baseToken: Token;
   rawPoolLiquidity: BigNumber;
-  liquidity: CurrencyAmount<Token>;
+  poolLiquidity: CurrencyAmount<Token>;
   poolUncollectedFees: CurrencyAmount<Token>;
   positions: {
     id: BigNumber;
@@ -42,7 +42,7 @@ function Pool({
   quoteToken,
   baseToken,
   positions,
-  liquidity,
+  poolLiquidity,
   rawPoolLiquidity,
   poolUncollectedFees,
 }: PoolProps) {
@@ -59,13 +59,12 @@ function Pool({
     if (!quoteToken || !entity) {
       return 0;
     }
-
     return entity.priceOf(quoteToken);
   }, [quoteToken, entity]);
 
   const totalValue = useMemo(() => {
-    return liquidity.add(poolUncollectedFees);
-  }, [liquidity, poolUncollectedFees]);
+    return poolLiquidity.add(poolUncollectedFees);
+  }, [poolLiquidity, poolUncollectedFees]);
 
   const poolTransactions = useMemo(() => {
     return positions.reduce((txs: any[], { transactions }: any) => {
@@ -73,7 +72,6 @@ function Pool({
       return txs;
     }, []);
   }, [positions]);
-  console.log(poolTransactions);
 
   const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
     useTransactionTotals(poolTransactions, baseToken, entity);
@@ -178,7 +176,7 @@ function Pool({
                   {poolPrice.toFixed(6)}{' '}
                   {baseToken.equals(WETH9[baseToken.chainId]) ? 'ETH' : baseToken.symbol}
                 </td>
-                <td>{convertToGlobalFormatted(liquidity)}</td>
+                <td>{convertToGlobalFormatted(poolLiquidity)}</td>
                 <td>
                   {convertToGlobalFormatted(totalFees)} (uncl.{' '}
                   {convertToGlobalFormatted(poolUncollectedFees)})
