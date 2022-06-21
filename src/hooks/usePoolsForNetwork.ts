@@ -24,7 +24,11 @@ function reconcileTransactions(chainId: number, txs: any[]) {
     if (tx.transactionType === TxTypes.Remove) {
       prevRemoveTx = tx;
       return tx;
-    } else if (tx.transactionType === TxTypes.Collect && prevRemoveTx.timestamp === tx.timestamp) {
+    } else if (
+      prevRemoveTx &&
+      tx.transactionType === TxTypes.Collect &&
+      prevRemoveTx.timestamp === tx.timestamp
+    ) {
       return {
         ...tx,
         amount0: tx.amount0.subtract(prevRemoveTx.amount0),
@@ -143,6 +147,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
           poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
 
           let formattedTransactions = transactions
+            .filter(({ transactionType }) => transactionType !== TxTypes.Transfer)
             .map(
               ({
                 transactionHash,
@@ -156,10 +161,10 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
                 return {
                   id: transactionHash,
                   transactionType,
-                  timestamp: BigNumber.from(timestamp).toNumber(),
+                  timestamp: BigNumber.from(timestamp || '0x60d953c7').toNumber(),
                   amount0: CurrencyAmount.fromRawAmount(token0, BigNumber.from(amount0)),
                   amount1: CurrencyAmount.fromRawAmount(token1, BigNumber.from(amount1)),
-                  gas: calcGasCost(chainId, gas, gasPrice),
+                  gas: gas ? calcGasCost(chainId, gas, gasPrice) : calcGasCost(chainId, '0', '0'),
                 };
               },
             )
@@ -181,6 +186,8 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
 
       return {
         ...pool,
+        key: pool.address,
+        address: pool.address.toLowerCase(),
         entity,
         baseToken,
         quoteToken,
