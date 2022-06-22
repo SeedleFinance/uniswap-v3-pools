@@ -1,11 +1,10 @@
 import React, { ReactNode, useContext, useMemo } from 'react';
 
-import { PoolState } from './hooks/usePoolsState';
 import { usePoolsForNetwork } from './hooks/usePoolsForNetwork';
 import { usePerpV2 } from './hooks/usePerpV2';
 
 const PoolsContext = React.createContext({
-  pools: [] as PoolState[],
+  pools: [] as any[],
   loading: true,
   empty: false,
 });

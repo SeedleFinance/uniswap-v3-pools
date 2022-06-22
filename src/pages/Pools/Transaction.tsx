@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Price, Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 import format from 'date-fns/format';
 

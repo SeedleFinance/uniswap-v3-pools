@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
-import { tickToPrice, Pool as UniPool, Position as UniPosition } from '@uniswap/v3-sdk';
+import { Pool as UniPool, Position as UniPosition } from '@uniswap/v3-sdk';
 
 import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
@@ -47,8 +47,6 @@ function Pool({
   poolUncollectedFees,
 }: PoolProps) {
   const { convertToGlobalFormatted } = useCurrencyConversions();
-
-  const { token0, token1 } = entity;
 
   const [expanded, setExpanded] = useState(false);
   const [showPositions, setShowPositions] = useState(false);
