@@ -46,7 +46,7 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
         </div>
       </div>
       {fee && (
-        <span className="rounded-md bg-gray-200 text-high ml-1 px-1 font-medium">{fee}%</span>
+        <span className="rounded-md bg-gray-400 text-inverted ml-1 px-1 font-medium">{fee}%</span>
       )}
       {showNetwork && (
         <div className={`rounded-md ml-2 px-1 text-0.875 ${chainColor}`}>
