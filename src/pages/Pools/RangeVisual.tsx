@@ -28,7 +28,7 @@ function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: R
     [tickLower, tickUpper] = [tickUpper, tickLower];
   }
 
-  const barWidth = 250;
+  const barWidth = 220;
   const scale = barWidth / (rangeEnd - rangeStart);
   const beforeRangeWidth = Math.abs((tickLower - rangeStart) * scale);
   const rangeWidth = Math.abs((tickUpper - tickLower) * scale);
@@ -36,14 +36,14 @@ function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: R
 
   return (
     <div
-      className="flex border rounded bg-gray-200"
-      style={{ position: 'relative', width: `${barWidth}px`, height: '16px' }}
+      className="flex bg-gray-300"
+      style={{ position: 'relative', width: `${barWidth}px`, height: '10px' }}
     >
       <div
-        className="bg-blue-400"
+        className="bg-blue-600"
         style={{
           position: 'absolute',
-          height: '14px',
+          height: '10px',
           left: `${beforeRangeWidth}px`,
           width: `${rangeWidth.toFixed(2)}px`,
         }}
@@ -52,7 +52,7 @@ function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: R
         className="bg-red-400"
         style={{
           width: '2px',
-          height: '14px',
+          height: '10px',
           position: 'absolute',
           left: `${currentTickDistance.toFixed(2)}px`,
         }}

@@ -141,7 +141,7 @@ function Position({
 
   const getStatusColor = (status: PositionStatus) => {
     const colors = {
-      [PositionStatus.Inactive]: 'text-gray-500',
+      [PositionStatus.Inactive]: 'text-medium',
       [PositionStatus.InRange]: 'text-green-500',
       [PositionStatus.OutRange]: 'text-yellow-500',
     };
@@ -257,10 +257,12 @@ function Position({
 
   return (
     <>
-      <tr className={positionStatus === PositionStatus.Inactive ? 'text-gray-500' : ''}>
+      <tr className={positionStatus === PositionStatus.Inactive ? 'text-low' : ''}>
         <td className="flex flex-col justify-between border-t border-slate-200 dark:border-slate-700 py-4">
-          <div className="text-lg font-bold">{formattedRange}</div>
-          <div className={`text-md ${getStatusColor(positionStatus)}`}>{statusLabel} </div>
+          <div className="text-lg text-0.8125 py-2">
+            <span className="font-bold text-high">Range:</span> {formattedRange}
+          </div>
+          <div className={`text-0.75 ${getStatusColor(positionStatus)}`}>{statusLabel} </div>
           <RangeVisual
             tickCurrent={pool.tickCurrent}
             tickLower={entity.tickLower}

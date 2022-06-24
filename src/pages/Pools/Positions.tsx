@@ -13,7 +13,7 @@ interface Props {
 
 function Positions({ positions, pool, baseToken, quoteToken }: Props) {
   return (
-    <div className="w-full flex flex-col my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
+    <div className="w-full flex flex-col my-2 border border-slate-200 dark:border-slate-700 rounded py-4 px-6">
       <table className="table-auto w-full  text-slate-600 dark:text-slate-300">
         <thead>
           <tr className="text-left">
