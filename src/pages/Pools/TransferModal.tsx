@@ -3,7 +3,7 @@ import { Token } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import Modal from '../../ui/Modal/Modal';
-import { Button, UnstyledButton } from '../../ui/Button';
+import { Button } from '../../ui/Button';
 import { ROUTES } from '../../constants';
 
 interface Props {
@@ -77,19 +77,13 @@ function TransferModal({ tokenId, baseToken, quoteToken, onCancel, onComplete }:
         )}
 
         <div>
-          <Button
-            type="submit"
-            tabIndex={3}
-            compact={true}
-            className="mr-2"
-            disabled={isTransferDisabled}
-          >
+          <Button type="submit" tabIndex={3} className="mr-2" disabled={isTransferDisabled}>
             Transfer
           </Button>
 
-          <UnstyledButton onClick={handleCancel} tabIndex={4}>
+          <Button onClick={handleCancel} variant="ghost" tabIndex={4}>
             Cancel
-          </UnstyledButton>
+          </Button>
         </div>
       </form>
     </Modal>

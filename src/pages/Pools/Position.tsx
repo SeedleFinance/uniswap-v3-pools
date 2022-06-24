@@ -332,7 +332,10 @@ function Position({
               <Icon size="lg" icon={faEllipsis} />
             </button>
             {showActions && (
-              <Menu onClose={() => setShowActions(false)} className="w-32 top-8 shadow-lg">
+              <Menu
+                onClose={() => setShowActions(false)}
+                className="w-32 top-8 shadow-lg text-0.875"
+              >
                 <button className="text-left my-1" onClick={handleTransactions}>
                   Transactions
                 </button>
@@ -356,9 +359,11 @@ function Position({
                         Reposition
                       </button>
                       */}
-                      <button className="text-left my-1" onClick={handleTransfer}>
-                        Transfer
-                      </button>
+                      <div>
+                        <button className="text-left my-1" onClick={handleTransfer}>
+                          Transfer
+                        </button>
+                      </div>
                       <button className="text-left text-red-500 my-1" onClick={handleRemove}>
                         Remove
                       </button>
