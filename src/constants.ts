@@ -138,10 +138,13 @@ export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
 
 export const ROUTES = {
   HOME: '/',
+  ADD: '/add',
+  ADD_NEW: '/add/new',
+  ADD_EXISTING: '/add/existing',
+  ABOUT: '/about',
 };
 
 export const EXTERNAL_LINKS = {
-  ABOUT: 'https://',
   TWITTER: 'https://twitter.com/seedleFinance',
   GITHUB: '"https://github.com/laktek/uniswap-v3-pools',
   GITCOIN: 'https://gitcoin.co/grants/4385/seedle-finance',

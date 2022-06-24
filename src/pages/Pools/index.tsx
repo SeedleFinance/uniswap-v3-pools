@@ -10,6 +10,7 @@ import DownloadCSV from './DownloadCSV';
 import Card from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import Plus from '../../icons/Plus';
+import { ROUTES } from '../../constants';
 
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
@@ -124,7 +125,7 @@ function Pools() {
               This address do not have any Uniswap LP positions.
             </div>
             <Link
-              to="/add/new"
+              to={ROUTES.ADD_NEW}
               className="block text-center text-1.125 text-blue-primary font-medium m-8"
             >
               + Add Liquidity

@@ -1,8 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import AboutPage from './pages/About';
 import PoolsPage from './pages/Pools';
+
 import AddLiquidityPage from './pages/AddLiquidity/index';
+
 import { ROUTES } from './constants';
 
 function PageBody() {
@@ -11,12 +14,13 @@ function PageBody() {
     <Router>
       <Routes>
         <Route
-          path="/add/:quoteTokenSymbol/:baseTokenSymbol/:fee"
+          path={`${ROUTES.ADD}/:quoteTokenSymbol/:baseTokenSymbol/:fee`}
           element={<AddLiquidityPage tab="new" />}
         />
-        <Route path="/add/new" element={<AddLiquidityPage tab="new" />} />
-        <Route path="/add/existing" element={<AddLiquidityPage tab="existing" />} />
+        <Route path={ROUTES.ADD_NEW} element={<AddLiquidityPage tab="new" />} />
+        <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
         <Route path={ROUTES.HOME} element={<PoolsPage />} />
+        <Route path={ROUTES.ABOUT} element={<AboutPage />} />
       </Routes>
     </Router>
   );

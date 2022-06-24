@@ -13,6 +13,7 @@ import { usePoolsForNetwork } from '../../hooks/usePoolsForNetwork';
 import { getQuoteAndBaseToken } from '../../utils/tokens';
 import { injectedConnector } from '../../utils/connectors';
 import { loadTokens, findTokens, TokenListItem } from './utils';
+import { ROUTES } from '../../constants';
 
 interface Props {
   tab: string;
@@ -140,7 +141,7 @@ function AddLiquidity({ tab }: Props) {
     <div className="w-full flex flex-col p-4">
       <div className="py-4 mb-4 flex items-center">
         <Link
-          to="/"
+          to={ROUTES.HOME}
           className="flex justify-center items-center text-high w-8 h-8 flex-shrink-0 mr-4 rounded-full hover:bg-surface-20"
         >
           <span>←</span>

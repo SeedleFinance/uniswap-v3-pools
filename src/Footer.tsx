@@ -1,5 +1,5 @@
 import React from 'react';
-import { EXTERNAL_LINKS } from './constants';
+import { EXTERNAL_LINKS, ROUTES } from './constants';
 
 import Github from './icons/Github';
 import Twitter from './icons/Twitter';
@@ -10,7 +10,7 @@ function Footer() {
       <div className="my-2">
         <div className="flex font-medium">
           <div>
-            <a className="" href={EXTERNAL_LINKS.ABOUT}>
+            <a className="cursor-pointer" href={ROUTES.ABOUT}>
               About
             </a>
           </div>
