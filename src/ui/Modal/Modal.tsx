@@ -2,7 +2,7 @@ import React, { useRef, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Icon from '../Icon/Icon';
-import { UnstyledButton } from '../Button';
+import { Button } from '../Button';
 
 interface Props {
   children: ReactNode;
@@ -37,9 +37,9 @@ const Modal = ({ title, children, className, onClose }: Props) => {
         <header className="flex flex-row justify-between items-start pb-3">
           <h2 className="text-2xl">{title}</h2>
           {onClose && (
-            <UnstyledButton onClick={() => onClose(false)}>
+            <Button variant="ghost" onClick={() => onClose(false)}>
               <Icon icon={faTimesCircle} />
-            </UnstyledButton>
+            </Button>
           )}
         </header>
         {children}

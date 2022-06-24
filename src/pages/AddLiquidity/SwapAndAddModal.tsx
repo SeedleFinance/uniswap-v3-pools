@@ -7,7 +7,7 @@ import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import TokenLabel from '../../ui/TokenLabel';
 import TokenLogo from '../../ui/TokenLogo';
 import Modal from '../../ui/Modal/Modal';
-import { Button, UnstyledButton } from '../../ui/Button';
+import { Button } from '../../ui/Button';
 import { formatInput } from '../../utils/numbers';
 import { tokenAmountNeedApproval, getApprovalAmount } from './utils';
 
@@ -245,13 +245,13 @@ function SwapAndAddModal({
                 Approve {token1.symbol}
               </Button>
             ) : (
-              <Button onClick={onComplete} tabIndex={8} compact={true} className="mr-2">
+              <Button onClick={onComplete} tabIndex={8} className="mr-2">
                 Complete Transaction
               </Button>
             )}
-            <UnstyledButton onClick={onCancel} tabIndex={9}>
+            <Button onClick={onCancel} tabIndex={9} variant="ghost">
               Cancel
-            </UnstyledButton>
+            </Button>
           </div>
         </div>
       )}
