@@ -758,7 +758,6 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               }
               disabled={transactionPending}
               tabIndex={8}
-              compact={true}
               className="mr-2"
             >
               Approve {baseToken.symbol}
