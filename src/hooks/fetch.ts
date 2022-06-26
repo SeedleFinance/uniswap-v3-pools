@@ -36,6 +36,24 @@ export interface PoolStateV2 {
   tick: number;
 }
 
+interface UncollectedFeesInputPosition {
+  tokenId: number;
+  tickLower: number;
+  tickUpper: number;
+}
+
+interface UncollectedFeesInput {
+  address: string;
+  currentTick: string;
+  positions: UncollectedFeesInputPosition[];
+}
+
+interface UncollectedFeesResult {
+  tokenId: number;
+  tickLower: number;
+  tickUpper: number;
+}
+
 export function useFetchPositions(
   chainId: number,
   addresses: string[],
@@ -123,4 +141,36 @@ export function useFetchPools(
   }, [chainId, addresses]);
 
   return { loading, poolStates };
+}
+
+export function useFetchUncollectedFees(
+  chainId: number,
+  pools: UncollectedFeesInput[],
+): { loading: boolean; uncollectedFees: UncollectedFeesResult[][] } {
+  const [loading, setLoading] = useState(true);
+  const [uncollectedFees, setUncollectedFees] = useState([]);
+
+  useEffect(() => {
+    const _call = async () => {
+      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/fees';
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ chainId, pools }),
+      });
+      if (!res.ok) {
+        return;
+      }
+
+      const results = await res.json();
+
+      setUncollectedFees(results);
+      setLoading(false);
+    };
+
+    if (pools.length) {
+      _call();
+    }
+  }, [chainId, pools]);
+
+  return { loading, uncollectedFees };
 }

@@ -12,9 +12,10 @@ import { TxTypes } from '../enums';
 import {
   useFetchPositions,
   useFetchPools,
+  useFetchUncollectedFees,
   PositionStateV2,
   TransactionV2,
-} from './useFetchPositions';
+} from './fetch';
 
 function reconcileTransactions(chainId: number, txs: any[]) {
   let prevRemoveTx = null;
@@ -79,6 +80,38 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const poolAddresses = useMemo(() => Object.keys(positionsByPool), [positionsByPool]);
   const { loading: poolsLoading, poolStates: pools } = useFetchPools(chainId, poolAddresses);
 
+  const uncollectedFeesParams = useMemo(() => {
+    if (!pools || !positionsByPool) {
+      return [];
+    }
+    return pools
+      .map(({ address, tick }) => {
+        const positions = positionsByPool[address.toLowerCase()]
+          .filter(({ liquidity }) => !liquidity.isZero())
+          .map(({ tickLower, tickUpper, positionId, liquidity }) => {
+            return { tokenId: positionId, tickLower, tickUpper };
+          });
+        return { address, currentTick: tick, positions };
+      })
+      .filter(({ positions }) => positions.length);
+  }, [pools, positionsByPool]);
+
+  const { loading: feesLoading, uncollectedFees } = useFetchUncollectedFees(
+    chainId,
+    uncollectedFeesParams,
+  );
+
+  const uncollectedFeesByTokenId = useMemo(() => {
+    if (!uncollectedFees || feesLoading) {
+      return [];
+    }
+    const fees = {};
+    uncollectedFees.flat().forEach(({ tokenId, amount0, amount1 }) => {
+      fees[tokenId] = [amount0, amount1];
+    });
+    return fees;
+  }, [uncollectedFees, feesLoading]);
+
   const poolsWithPositions = useMemo(() => {
     if (!pools.length || !Object.keys(positionsByPool).length) {
       return [];
@@ -140,9 +173,10 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
 
             poolLiquidity = poolLiquidity.add(positionLiquidity);
 
+            const rawUncollectedFees = uncollectedFeesByTokenId[positionId] || ['0', '0'];
             const uncollectedFees = [
-              CurrencyAmount.fromRawAmount(entity.token0, '0'),
-              CurrencyAmount.fromRawAmount(entity.token1, '0'),
+              CurrencyAmount.fromRawAmount(entity.token0, rawUncollectedFees[0]),
+              CurrencyAmount.fromRawAmount(entity.token1, rawUncollectedFees[1]),
             ];
 
             const positionUncollectedFees = entity.token0.equals(baseToken)
@@ -202,7 +236,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
         };
       })
       .filter(({ positions }) => (filterClosed ? positions.length > 0 : true));
-  }, [pools, positionsByPool, filterClosed, chainId]);
+  }, [pools, positionsByPool, uncollectedFeesByTokenId, filterClosed, chainId]);
 
   return { loading: queryLoading || poolsLoading, pools: poolsWithPositions };
 }
