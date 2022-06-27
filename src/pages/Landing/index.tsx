@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
 
 import Footer from '../../Footer';
 import Input from '../../ui/Input';
@@ -11,7 +10,6 @@ import { ROUTES } from '../../constants';
 import Logo from '../../ui/Logo';
 
 function Landing() {
-  const { activate } = useWeb3React('injected');
   const [addresses, setAddresses] = useState<string[]>([]);
   const { injectedAddress } = useAddress();
 

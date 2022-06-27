@@ -19,9 +19,9 @@ export interface PositionStateV2 {
   positionId: number;
   tickLower: number;
   tickUpper: number;
-  poolAddress: string;
+  pool: string;
   owner: string;
-  positionLiquidity: BigNumber;
+  liquidity: BigNumber;
   transactions: TransactionV2[];
 }
 
@@ -44,14 +44,14 @@ interface UncollectedFeesInputPosition {
 
 interface UncollectedFeesInput {
   address: string;
-  currentTick: string;
+  currentTick: number;
   positions: UncollectedFeesInputPosition[];
 }
 
 interface UncollectedFeesResult {
   tokenId: number;
-  tickLower: number;
-  tickUpper: number;
+  amount0: number;
+  amount1: number;
 }
 
 export function useFetchPositions(
@@ -59,7 +59,7 @@ export function useFetchPositions(
   addresses: string[],
 ): { loading: boolean; positionStates: PositionStateV2[] } {
   const [loading, setLoading] = useState(true);
-  const [positionStates, setPositionStates] = useState([]);
+  const [positionStates, setPositionStates] = useState<PositionStateV2[]>([]);
 
   useEffect(() => {
     const _call = async () => {
@@ -74,12 +74,12 @@ export function useFetchPositions(
 
       const results = await res.json();
 
-      const positions = [];
+      const positions: PositionStateV2[] = [];
       results.forEach((resultsByAddress: any[], idx: number) => {
         resultsByAddress.forEach((result: any) => {
           // calculate position liquidity
           let positionLiquidity = BigNumber.from(0);
-          result.transactions.forEach(({ transactionType, liquidity }) => {
+          result.transactions.forEach(({ transactionType, liquidity }: any) => {
             if (transactionType === TxTypes.Add) {
               positionLiquidity = positionLiquidity.add(BigNumber.from(liquidity));
             } else if (transactionType === TxTypes.Remove) {

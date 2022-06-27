@@ -18,7 +18,7 @@ import {
 } from './fetch';
 
 function reconcileTransactions(chainId: number, txs: any[]) {
-  let prevRemoveTx = null;
+  let prevRemoveTx: TransactionV2 | null = null;
   // we need to reconcile collects with corresponding removes to adjust the liquidity.
   return txs.map((tx) => {
     if (tx.transactionType === TxTypes.Remove) {
@@ -51,7 +51,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   );
 
   const positionsByPool = useMemo((): {
-    [key: string]: PositionState[];
+    [key: string]: PositionStateV2[];
   } => {
     if (!allPositions.length) {
       return {};
@@ -105,7 +105,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
     if (!uncollectedFees || feesLoading) {
       return [];
     }
-    const fees = {};
+    const fees: { [id: number]: number[] } = {};
     uncollectedFees.flat().forEach(({ tokenId, amount0, amount1 }) => {
       fees[tokenId] = [amount0, amount1];
     });
@@ -155,7 +155,12 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
               return null;
             }
 
-            const positionEntity = new Position({ pool: entity, liquidity, tickLower, tickUpper });
+            const positionEntity = new Position({
+              pool: entity,
+              liquidity: liquidity.toString(),
+              tickLower,
+              tickUpper,
+            });
             const priceLower = tickToPrice(quoteToken, baseToken, tickLower);
             const priceUpper = tickToPrice(quoteToken, baseToken, tickUpper);
 
@@ -201,8 +206,8 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
                     id: transactionHash,
                     transactionType,
                     timestamp: BigNumber.from(timestamp || '0x60d953c7').toNumber(),
-                    amount0: CurrencyAmount.fromRawAmount(token0, BigNumber.from(amount0)),
-                    amount1: CurrencyAmount.fromRawAmount(token1, BigNumber.from(amount1)),
+                    amount0: CurrencyAmount.fromRawAmount(token0, amount0),
+                    amount1: CurrencyAmount.fromRawAmount(token1, amount1),
                     gas: gas ? calcGasCost(chainId, gas, gasPrice) : calcGasCost(chainId, '0', '0'),
                   };
                 },
@@ -220,7 +225,8 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
               positionUncollectedFees,
               transactions: formattedTransactions,
             };
-          });
+          })
+          .filter((position) => position !== null);
 
         return {
           ...pool,

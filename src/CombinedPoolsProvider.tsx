@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useMemo } from 'react';
 
 import { usePoolsForNetwork } from './hooks/usePoolsForNetwork';
-import { usePerpV2 } from './hooks/usePerpV2';
+//import { usePerpV2 } from './hooks/usePerpV2';
 
 const PoolsContext = React.createContext({
   pools: [] as any[],

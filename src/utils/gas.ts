@@ -9,7 +9,7 @@ export function calcGasCost(chainId: ChainID, gasUsed: string, gasPrice: string)
   const price = BigNumber.from(gasPrice);
   const cost = used.mul(price);
   const costCurrency = CurrencyAmount.fromRawAmount(
-    chainId === 137 ? MATIC[chainId] : WETH9[chainId],
+    chainId === ChainID.Matic ? MATIC[chainId] : WETH9[chainId],
     cost.toString(),
   );
 
