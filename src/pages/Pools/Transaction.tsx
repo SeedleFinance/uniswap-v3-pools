@@ -14,7 +14,7 @@ export interface TransactionProps {
   pool: Pool;
   baseToken: Token;
   timestamp: number;
-  transactionType: string;
+  transactionType: TxTypes;
   amount0: CurrencyAmount<Token>;
   amount1: CurrencyAmount<Token>;
   gas: { costCurrency: CurrencyAmount<Token> };

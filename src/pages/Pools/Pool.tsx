@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
-import { Pool as UniPool, Position as UniPosition } from '@uniswap/v3-sdk';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Pool as UniPool } from '@uniswap/v3-sdk';
 
 import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
@@ -24,16 +24,17 @@ interface PoolProps {
   rawPoolLiquidity: BigNumber;
   poolLiquidity: CurrencyAmount<Token>;
   poolUncollectedFees: CurrencyAmount<Token>;
-  positions: {
-    id: BigNumber;
-    entity: UniPosition;
-    priceLower?: Price<Token, Token>;
-    priceUpper?: Price<Token, Token>;
-    positionLiquidity?: CurrencyAmount<Token>;
-    uncollectedFees: CurrencyAmount<Token>[];
-    positionUncollectedFees: CurrencyAmount<Token>;
-    transactions: any[];
-  }[];
+  positions: any[];
+  // positions: {
+  //   id: number;
+  //   entity: UniPosition;
+  //   priceLower?: Price<Token, Token>;
+  //   priceUpper?: Price<Token, Token>;
+  //   positionLiquidity?: CurrencyAmount<Token>;
+  //   uncollectedFees: CurrencyAmount<Token>[];
+  //   positionUncollectedFees: CurrencyAmount<Token>;
+  //   transactions: any[];
+  // }[];
 }
 
 function Pool({

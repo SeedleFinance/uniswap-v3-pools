@@ -1,4 +1,6 @@
 import React from 'react';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Position } from '@uniswap/v3-sdk';
 
 import { usePools } from '../../CombinedPoolsProvider';
 import { Button } from '../../ui/Button';
@@ -22,19 +24,21 @@ function DownloadCSV() {
     ].join(',');
     const positionData = pools
       .map(({ positions }) =>
-        positions.map((pos) => ({
-          id: pos.id,
-          chainId: pos.entity.pool.token0.chainId,
-          token0: pos.entity.pool.token0.symbol,
-          token1: pos.entity.pool.token1.symbol,
-          feeTier: pos.entity.pool.fee,
-          tickLower: pos.entity.tickLower,
-          tickUpper: pos.entity.tickUpper,
-          liquidity0: pos.entity.amount0.toSignificant(16),
-          liquidity1: pos.entity.amount1.toSignificant(16),
-          fees0: pos.uncollectedFees[0].toSignificant(16),
-          fees1: pos.uncollectedFees[1].toSignificant(16),
-        })),
+        positions.map(
+          (pos: { id: number; entity: Position; uncollectedFees: CurrencyAmount<Token>[] }) => ({
+            id: pos.id,
+            chainId: pos.entity.pool.token0.chainId,
+            token0: pos.entity.pool.token0.symbol,
+            token1: pos.entity.pool.token1.symbol,
+            feeTier: pos.entity.pool.fee,
+            tickLower: pos.entity.tickLower,
+            tickUpper: pos.entity.tickUpper,
+            liquidity0: pos.entity.amount0.toSignificant(16),
+            liquidity1: pos.entity.amount1.toSignificant(16),
+            fees0: pos.uncollectedFees[0].toSignificant(16),
+            fees1: pos.uncollectedFees[1].toSignificant(16),
+          }),
+        ),
       )
       .flat();
 

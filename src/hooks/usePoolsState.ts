@@ -19,15 +19,15 @@ export interface PoolState {
   poolLiquidity: CurrencyAmount<Token>;
   rawPoolLiquidity: BigNumber;
   poolUncollectedFees: CurrencyAmount<Token>;
-  positions: {
-    id: BigNumber;
+  positions: ({
+    id: number;
     entity: Position;
     priceLower?: Price<Token, Token>;
     priceUpper?: Price<Token, Token>;
     positionLiquidity?: CurrencyAmount<Token>;
     uncollectedFees: CurrencyAmount<Token>[];
     positionUncollectedFees: CurrencyAmount<Token>;
-  }[];
+  } | null)[];
 }
 
 export function usePoolsState(
