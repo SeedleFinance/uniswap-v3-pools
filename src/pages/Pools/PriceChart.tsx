@@ -32,10 +32,10 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
   }
 
   return (
-    <div className="w-full flex flex-col flex-wrap items-start my-2 border border-slate-200 dark:border-slate-700 rounded p-2">
+    <div className="w-full flex flex-col flex-wrap items-start">
       <ChartPeriodSelector current={period} onSelect={handlePeriod} />
-      <ResponsiveContainer width={'100%'} height={200}>
-        <LineChart data={priceData} margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={priceData} margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
           <XAxis dataKey="date" tick={{ fontSize: 13 }} />
           <YAxis
             width={100}
@@ -48,27 +48,27 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           <Line type="monotone" dot={false} dataKey="price" stroke="#8884d8" strokeWidth={2} />
         </LineChart>
       </ResponsiveContainer>
-      <table className="m-2 w-1/2">
-        <tbody className="text-0.875 text-medium">
+      <table className="w-1/2">
+        <tbody className="text-0.875 text-high">
           <tr>
-            <td>Min.</td>
-            <td>{minPrice}</td>
+            <td>Min:</td>
+            <td className="text-low">{minPrice}</td>
           </tr>
           <tr>
-            <td>Max.</td>
-            <td>{maxPrice}</td>
+            <td>Max:</td>
+            <td className="text-low">{maxPrice}</td>
           </tr>
           <tr>
-            <td>Mean</td>
-            <td>{meanPrice.toFixed(8)}</td>
+            <td>Mean:</td>
+            <td className="text-low">{meanPrice.toFixed(8)}</td>
           </tr>
           <tr>
-            <td>Standard deviation</td>
-            <td>{stdev.toFixed(8)}</td>
+            <td>Standard deviation:</td>
+            <td className="text-low">{stdev.toFixed(8)}</td>
           </tr>
           <tr>
-            <td>Optimal range</td>
-            <td>
+            <td>Optimal range:</td>
+            <td className="text-low">
               {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
             </td>
           </tr>

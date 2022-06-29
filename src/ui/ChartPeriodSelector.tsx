@@ -9,7 +9,7 @@ interface PeriodButtonProps {
 function PeriodButton({ label, selected, onClick }: PeriodButtonProps) {
   return (
     <button
-      className={`py-1 px-2  ${selected ? 'border-b-4 border-slate-400' : 'pb-2'}`}
+      className={`py-1 px-2  ${selected ? 'border-b-4 border-element-30' : 'pb-2'}`}
       onClick={onClick}
     >
       {label}
@@ -25,7 +25,7 @@ interface Props {
 function ChartPeriodSelector({ current, onSelect }: Props) {
   return (
     <div className="w-full flex justify-end">
-      <div className="flex justify-between border rounded border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-400 p-2">
+      <div className="flex justify-between border rounded border-element-50 text-medium text-0.875 px-2 py-1">
         <PeriodButton label="24h" onClick={() => onSelect(0)} selected={current === 0} />
         <PeriodButton label="7d" onClick={() => onSelect(7)} selected={current === 7} />
         <PeriodButton label="14d" onClick={() => onSelect(14)} selected={current === 14} />
