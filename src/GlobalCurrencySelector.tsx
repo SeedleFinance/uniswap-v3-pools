@@ -15,7 +15,7 @@ function GlobalCurrencySelector() {
   };
 
   return (
-    <div className="p-2 mx-1 md:mx-2 rounded-md border border-element-10 text-high relative flex flex-shrink-0">
+    <div className="py-2 px-4 mx-1 md:mx-2 rounded-md border border-element-10 text-high relative flex flex-shrink-0">
       <button
         className="focus:outline-none font-medium"
         onClick={() => setSelectorExpanded(!selectorExpanded)}
