@@ -5,7 +5,7 @@
 
 /* Button variants */
 .button--primary {
-  @apply p-2 bg-brand-primary hover:bg-brand-light transition-colors duration-150 ease-out text-inverted rounded-md focus:outline-none px-4;
+  @apply p-2 bg-brand-primary hover:bg-brand-light transition-colors duration-150 ease-out text-white rounded-md focus:outline-none px-4;
 }
 
 .button--secondary {
