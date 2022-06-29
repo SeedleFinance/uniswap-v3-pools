@@ -9,18 +9,13 @@ function Footer() {
     <footer className="my-8 flex justify-between items-center w-full text-0.9375 text-high">
       <div className="my-2">
         <div className="flex font-medium">
-          {/* <div>
-            <a className="cursor-pointer" href={ROUTES.ABOUT}>
-              About
-            </a>
-          </div> */}
           <div>
-            <a className="" href={EXTERNAL_LINKS.GITCOIN}>
+            <a href={EXTERNAL_LINKS.GITCOIN} target="_blank">
               Donate
             </a>
           </div>
           <div className="pl-8">
-            <a className="" href={EXTERNAL_LINKS.ROADMAP}>
+            <a href={EXTERNAL_LINKS.ROADMAP} target="_blank">
               Roadmap
             </a>
           </div>

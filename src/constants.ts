@@ -146,8 +146,7 @@ export const ROUTES = {
 
 export const EXTERNAL_LINKS = {
   TWITTER: 'https://twitter.com/seedleFinance',
-  GITHUB: '"https://github.com/laktek/uniswap-v3-pools',
+  GITHUB: 'https://github.com/laktek/uniswap-v3-pools',
   GITCOIN: 'https://gitcoin.co/grants/4385/seedle-finance',
-  ROADMAP: '"https://seedle.frill.co"',
-  LEARN: '',
+  ROADMAP: 'https://seedle.frill.co',
 };
