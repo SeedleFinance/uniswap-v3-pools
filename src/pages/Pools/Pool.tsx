@@ -103,7 +103,7 @@ function Pool({
   }
 
   return (
-    <div className="my-8 p-8 border rounded-md border-element-10 hover:border-element-30 w-full">
+    <div className="my-4 py-4 px-8 border rounded-md border-element-10 hover:border-element-30 w-full">
       <div onClick={toggleExpand} className="w-full cursor-pointer">
         <div className="flex justify-between">
           <div className="text-2xl text-medium py-2 flex items-start">
