@@ -1,5 +1,5 @@
 import React from 'react';
-import { EXTERNAL_LINKS, ROUTES } from './constants';
+import { EXTERNAL_LINKS } from './constants';
 
 import Github from './icons/Github';
 import Twitter from './icons/Twitter';

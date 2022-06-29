@@ -1,10 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { faCaretDown, faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
 
 import { useAppSettings } from './AppSettingsProvider';
 import SunIcon from './icons/Sun';
 import MoonIcon from './icons/Moon';
-import { Button } from './ui/Button';
 import Menu from './ui/Menu/Menu';
 import SystemIcon from './icons/SystemIcon';
 
