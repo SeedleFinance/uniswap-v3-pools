@@ -8,7 +8,7 @@ function FilterClosedToggle() {
   return (
     <div className="p-2 rounded">
       <Toggle
-        label="Show closed positions"
+        label="Closed positions"
         onChange={() => setFilterClosed(!filterClosed)}
         checked={!filterClosed}
       />
