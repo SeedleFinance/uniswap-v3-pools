@@ -32,14 +32,14 @@ function Landing() {
 
   return (
     <div className="h-screen flex flex-col items-center py-4 mx-auto lg:container p-4">
-      <div className="w-full py-4 mb-4 flex justify-between">
+      <div className="w-full mb-4 flex justify-between">
         <h2 className="flex items-center text-1.5 font-bold text-high">
           <a href={ROUTES.HOME}>
             <Logo />
           </a>
         </h2>
         <div className="md:w-2/5 flex justify-end items-center">
-          <ThemeSelector />
+          <ThemeSelector className="mr-1" />
           <Account address={injectedAddress} />
         </div>
       </div>

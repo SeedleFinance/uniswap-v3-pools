@@ -49,26 +49,26 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
         </LineChart>
       </ResponsiveContainer>
       <table className="m-2 w-1/2">
-        <tbody>
+        <tbody className="text-0.875 text-medium">
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">Min.</td>
-            <td className="text-slate-800 dark:text-slate-400">{minPrice}</td>
+            <td>Min.</td>
+            <td>{minPrice}</td>
           </tr>
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">Max.</td>
-            <td className="text-slate-800 dark:text-slate-400">{maxPrice}</td>
+            <td>Max.</td>
+            <td>{maxPrice}</td>
           </tr>
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">Mean</td>
-            <td className="text-slate-800 dark:text-slate-400">{meanPrice.toFixed(8)}</td>
+            <td>Mean</td>
+            <td>{meanPrice.toFixed(8)}</td>
           </tr>
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">Standard deviation</td>
-            <td className="text-slate-800 dark:text-slate-400">{stdev.toFixed(8)}</td>
+            <td>Standard deviation</td>
+            <td>{stdev.toFixed(8)}</td>
           </tr>
           <tr>
-            <td className="text-slate-500 dark:text-slate-200">Optimal range</td>
-            <td className="text-slate-800 dark:text-slate-400">
+            <td>Optimal range</td>
+            <td>
               {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
             </td>
           </tr>

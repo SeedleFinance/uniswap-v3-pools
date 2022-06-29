@@ -5,8 +5,13 @@ import SunIcon from './icons/Sun';
 import MoonIcon from './icons/Moon';
 import Menu from './ui/Menu/Menu';
 import SystemIcon from './icons/SystemIcon';
+import classNames from 'classnames';
 
-function ThemeSelector() {
+interface ThemeSelectorProps {
+  className?: string;
+}
+
+function ThemeSelector({ className }: ThemeSelectorProps) {
   const { theme, setTheme } = useAppSettings();
   const [selectorExpanded, setSelectorExpanded] = useState(false);
 
@@ -23,7 +28,12 @@ function ThemeSelector() {
   };
 
   return (
-    <div className="p-3 mx-1 md:mx-2 rounded-md border relative border-element-10 text-high flex flex-shrink-0">
+    <div
+      className={classNames(
+        'p-3 rounded-md border relative border-element-10 text-high flex flex-shrink-0',
+        className,
+      )}
+    >
       <button
         className="flex items-center focus:outline-none"
         onClick={() => setSelectorExpanded(!selectorExpanded)}

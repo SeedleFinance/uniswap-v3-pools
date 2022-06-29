@@ -139,11 +139,11 @@ function Pool({
         <>
           <table className="table-auto w-full mt-4 text-high">
             <thead>
-              <tr className="text-left">
-                <th className="pb-4">Current Price</th>
-                <th className="pb-4">Total Liquidity</th>
-                <th className="pb-4">Total Fees</th>
-                <th className="pb-4">
+              <tr className="text-left align-top">
+                <th className="pb-1">Current Price</th>
+                <th className="pb-1">Total Liquidity</th>
+                <th className="pb-1">Total Fees</th>
+                <th className="pb-1">
                   <span
                     className="underline underline-offset-1 decoration-dotted cursor-help"
                     title="annualized fees earned over liquidity"

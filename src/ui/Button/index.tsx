@@ -14,7 +14,7 @@ interface ButtonProps {
   onMouseOver?: () => void;
   onMouseOut?: () => void;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'lg' | 'md' | 'sm';
+  size?: 'lg' | 'md' | 'sm' | 'xs';
   href?: string;
 }
 
@@ -76,10 +76,10 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <ButtonComponent
       className={classNames(
-        styles['button'],
-        styles[`button--${variant}`],
-        styles[`button--${size}`],
         className,
+        styles['button'],
+        styles[`button--${size}`],
+        styles[`button--${variant}`],
       )}
       onClick={onClick}
       type={type}

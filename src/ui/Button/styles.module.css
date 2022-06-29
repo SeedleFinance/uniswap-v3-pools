@@ -13,11 +13,15 @@
 }
 
 /* Unstyled button */
-.button-ghost {
-  @apply rounded-md shadow-inner focus:shadow-md border border-solid border-gray-600 focus:border-gray-800 text-gray-900;
+.button--ghost {
+  @apply bg-transparent p-0;
 }
 
 /* Button sizes */
+
+.button-xs {
+  @apply p-0;
+}
 
 /* note sm - replaces the current compact button */
 .button--sm {

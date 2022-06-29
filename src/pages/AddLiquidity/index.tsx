@@ -138,7 +138,7 @@ function AddLiquidity({ tab }: Props) {
   };
 
   return (
-    <div className="w-full flex flex-col p-4">
+    <div className="w-full flex flex-col">
       <div className="py-4 mb-4 flex items-center">
         <Link
           to={ROUTES.HOME}
@@ -172,7 +172,7 @@ function AddLiquidity({ tab }: Props) {
           </button>
         </div>
 
-        <div className="py-4 px-2">
+        <div className="py-4">
           {selectedBaseToken !== null && selectedQuoteToken !== null && selectedFee != null ? (
             <NewPosition
               baseToken={selectedBaseToken as Token}

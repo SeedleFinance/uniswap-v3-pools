@@ -29,10 +29,11 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
   const [chainName, chainColor, chainLogoName] = getChainNameAndColor(baseToken.chainId);
   return (
     <Button
-      className="flex items-center p-1 focus:border-0"
+      className="flex items-center focus:border-0 p-0"
       tabIndex={tabIndex || 0}
       onClick={onClick}
       variant="ghost"
+      size="xs"
     >
       <div className="flex mr-2 items-center">
         <TokenLogo chain={chainLogoName} name={quoteToken.name} address={quoteToken.address} />
@@ -46,7 +47,9 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
         </div>
       </div>
       {fee && (
-        <span className="rounded-md bg-gray-400 text-inverted ml-1 px-1 font-medium">{fee}%</span>
+        <span className="rounded-md bg-gray-400 text-inverted text-0.875 ml-1 px-1 font-medium">
+          {fee}%
+        </span>
       )}
       {showNetwork && (
         <div className={`rounded-md ml-2 px-1 text-0.875 ${chainColor}`}>
