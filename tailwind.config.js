@@ -18,6 +18,8 @@ module.exports = {
         medium: 'var(--color-text-medium)',
         low: 'var(--color-text-low)',
         inverted: 'var(--color-text-inverted)',
+        white: 'var(--color-text-white)',
+        black: 'var(--color-text-black)',
 
         /* dark theme */
         dark: {
@@ -25,6 +27,8 @@ module.exports = {
           medium: 'var(--color-text-medium)',
           low: 'var(--color-text-low)',
           inverted: 'var(--color-text-inverted)',
+          white: 'var(--color-text-white)',
+          black: 'var(--color-text-black)',
         },
       },
 
