@@ -106,11 +106,23 @@
 }
 
 html {
+  display: flex;
   font-family: 'Inter', -apple-system, Helvetica Neue, sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+  line-height: 1.5;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 *,

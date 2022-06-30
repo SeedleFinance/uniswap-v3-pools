@@ -11,6 +11,7 @@ import { useAppSettings } from './AppSettingsProvider';
 import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
 import { ROUTES } from './constants';
 import Logo from './ui/Logo';
+import classNames from 'classnames';
 
 interface ThemeWrapperProps {
   theme: 'light' | 'dark';
@@ -18,8 +19,8 @@ interface ThemeWrapperProps {
 }
 function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
   return (
-    <div id="theme-wrapper" className={theme}>
-      <div className="max-w-full bg-canvas-light">{children}</div>
+    <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
+      <div className="max-w-full bg-canvas-light h-full">{children}</div>
     </div>
   );
 }
@@ -50,13 +51,11 @@ function Container() {
   return (
     <CurrencyConversionsProvider>
       <ThemeWrapper theme={computedTheme}>
-        <div className="min-h-screen lg:container mx-auto pb-4 p-4">
+        <div className="h-full lg:container mx-auto pb-4 p-4">
           <div className="w-full py-4 mb-8 flex justify-between items-center">
-            <h2 className="flex items-center text-1.5 font-bold text-high">
-              <a href={ROUTES.HOME}>
-                <Logo />
-              </a>
-            </h2>
+            <a href={ROUTES.HOME}>
+              <Logo />
+            </a>
             <div className="md:w-2/5 flex justify-end">
               <ThemeSelector />
               <GlobalCurrencySelector />
