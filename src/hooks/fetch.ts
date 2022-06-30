@@ -103,9 +103,11 @@ export function useFetchPositions(
       setLoading(false);
     };
 
-    if (addresses.length) {
-      _call();
+    if (!addresses.length) {
+      setLoading(false);
+      setPositionStates([]);
     }
+    _call();
   }, [chainId, addresses]);
 
   return { loading, positionStates };
@@ -135,9 +137,11 @@ export function useFetchPools(
       setLoading(false);
     };
 
-    if (addresses.length) {
-      _call();
+    if (!addresses.length) {
+      setPoolStates([]);
+      setLoading(false);
     }
+    _call();
   }, [chainId, addresses]);
 
   return { loading, poolStates };
