@@ -111,6 +111,10 @@ function Pools() {
           <div className="flex">
             <FilterClosedToggle />
             <div className="hidden md:flex ml-2">
+              Last Updated <b>5 mins</b> ago
+              <span>⟳</span>
+            </div>
+            <div className="hidden md:flex ml-2">
               <DownloadCSV />
             </div>
           </div>
