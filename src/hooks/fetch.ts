@@ -69,6 +69,10 @@ export function useFetchPositions(
         body: JSON.stringify({ chainId, addresses }),
       });
       if (!res.ok) {
+        const errors = await res.json();
+        console.error(errors);
+        setPositionStates([]);
+        setLoading(false);
         return;
       }
 
@@ -128,6 +132,11 @@ export function useFetchPools(
         body: JSON.stringify({ chainId, addresses }),
       });
       if (!res.ok) {
+        const errors = await res.json();
+        console.error(errors);
+        setPoolStates([]);
+        setLoading(false);
+
         return;
       }
 
@@ -162,6 +171,11 @@ export function useFetchUncollectedFees(
         body: JSON.stringify({ chainId, pools }),
       });
       if (!res.ok) {
+        const errors = await res.json();
+        console.error(errors);
+        setUncollectedFees([]);
+        setLoading(false);
+
         return;
       }
 
