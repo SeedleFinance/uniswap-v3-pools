@@ -35,28 +35,32 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
       variant="ghost"
       size="xs"
     >
-      <div className="flex mr-2 items-center">
-        <TokenLogo chain={chainLogoName} name={quoteToken.name} address={quoteToken.address} />
-        <TokenLogo chain={chainLogoName} name={baseToken.name} address={baseToken.address} />
-      </div>
-      <div className="flex flex-col mx-2 mt-1">
-        <div>
-          <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
-          <span className="px-1">/</span>
-          <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+      <div className="flex">
+        <div className="flex mr-2 items-center">
+          <TokenLogo chain={chainLogoName} name={quoteToken.name} address={quoteToken.address} />
+          <TokenLogo chain={chainLogoName} name={baseToken.name} address={baseToken.address} />
+        </div>
+        <div className="flex flex-col mx-2 mt-1">
+          <div>
+            <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
+            <span className="px-1">/</span>
+            <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+          </div>
         </div>
       </div>
-      {fee && (
-        <span className="rounded-md bg-gray-400 text-inverted text-0.875 ml-1 px-1 font-medium">
-          {fee}%
-        </span>
-      )}
-      {showNetwork && (
-        <div className={`rounded-md ml-2 px-1 text-0.875 ${chainColor}`}>
-          {chainName}
-          {baseToken.symbol === 'vUSD' ? ' / PerpV2' : ''}
-        </div>
-      )}
+      <div className="flex">
+        {fee && (
+          <span className="rounded-md bg-gray-400 text-inverted text-0.875 ml-1 px-1 font-medium">
+            {fee}%
+          </span>
+        )}
+        {showNetwork && (
+          <div className={`hidden md:block rounded-md ml-2 px-1 text-0.875 ${chainColor}`}>
+            {chainName}
+            {baseToken.symbol === 'vUSD' ? ' / PerpV2' : ''}
+          </div>
+        )}
+      </div>
     </Button>
   );
 }

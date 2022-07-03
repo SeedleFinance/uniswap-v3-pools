@@ -103,7 +103,7 @@ function Pool({
   }
 
   return (
-    <div className="my-4 py-4 px-8 border rounded-md border-element-10 hover:border-element-30 w-full">
+    <div className="my-4 py-4 px-3 md:px-8 border rounded-md border-element-10 hover:border-element-30 w-full">
       <div onClick={toggleExpand} className="w-full cursor-pointer">
         <div className="flex justify-between">
           <div className="text-2xl text-medium py-2 flex items-start">
@@ -122,7 +122,7 @@ function Pool({
               </button>
             )}
           </div>
-          <div className="flex items-center">
+          <div className="flex flex-col-reverse md:flex-row items-end md:items-center">
             <PositionStatuses
               tickCurrent={entity.tickCurrent}
               positions={positions.map(({ entity }) => entity)}
