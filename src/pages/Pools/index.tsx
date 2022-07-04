@@ -6,6 +6,7 @@ import { PoolState } from '../../hooks/usePoolsState';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import Pool from './Pool';
 import FilterClosedToggle from './FilterClosedToggle';
+import LastUpdatedStamp from './LastUpdatedStamp';
 import DownloadCSV from './DownloadCSV';
 import Card from '../../ui/Card';
 import { Button } from '../../ui/Button';
@@ -15,7 +16,7 @@ import { ROUTES } from '../../constants';
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
 
-  const { loading, empty, pools } = usePools();
+  const { loading, empty, pools, lastLoaded, refresh } = usePools();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -111,8 +112,7 @@ function Pools() {
           <div className="flex">
             <FilterClosedToggle />
             <div className="hidden md:flex ml-2">
-              Last Updated <b>5 mins</b> ago
-              <span>⟳</span>
+              <LastUpdatedStamp lastLoaded={lastLoaded} refresh={refresh} />
             </div>
             <div className="hidden md:flex ml-2">
               <DownloadCSV />

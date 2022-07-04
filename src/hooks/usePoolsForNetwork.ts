@@ -41,7 +41,7 @@ function reconcileTransactions(chainId: number, txs: any[]) {
   });
 }
 
-export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
+export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterClosed = false) {
   const { filterClosed } = useAppSettings();
   const { addresses } = useAddress();
 
@@ -99,6 +99,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const { loading: feesLoading, uncollectedFees } = useFetchUncollectedFees(
     chainId,
     uncollectedFeesParams,
+    timestamp,
   );
 
   const uncollectedFeesByTokenId = useMemo(() => {

@@ -33,7 +33,7 @@ function AddLiquidity({ tab }: Props) {
     }
   }, [activate, active]);
 
-  const { pools } = usePoolsForNetwork(chainId || 1, true);
+  const { pools } = usePoolsForNetwork(chainId || 1, +new Date(), true);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
   const [selectedTab, setSelectedTab] = useState('new');
