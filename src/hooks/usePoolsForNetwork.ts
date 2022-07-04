@@ -48,6 +48,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
   const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
     chainId,
     addresses,
+    timestamp,
   );
 
   const positionsByPool = useMemo((): {
@@ -99,7 +100,6 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
   const { loading: feesLoading, uncollectedFees } = useFetchUncollectedFees(
     chainId,
     uncollectedFeesParams,
-    timestamp,
   );
 
   const uncollectedFeesByTokenId = useMemo(() => {

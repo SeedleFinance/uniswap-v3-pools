@@ -57,6 +57,7 @@ interface UncollectedFeesResult {
 export function useFetchPositions(
   chainId: number,
   addresses: string[],
+  timestamp: number,
 ): { loading: boolean; positionStates: PositionStateV2[] } {
   const [loading, setLoading] = useState(true);
   const [positionStates, setPositionStates] = useState<PositionStateV2[]>([]);
@@ -66,7 +67,7 @@ export function useFetchPositions(
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/positions';
       const res = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify({ chainId, addresses }),
+        body: JSON.stringify({ chainId, addresses, timestamp }),
       });
       if (!res.ok) {
         const errors = await res.json();
@@ -111,8 +112,9 @@ export function useFetchPositions(
       setLoading(false);
       setPositionStates([]);
     }
+
     _call();
-  }, [chainId, addresses]);
+  }, [chainId, addresses, timestamp]);
 
   return { loading, positionStates };
 }
@@ -159,7 +161,6 @@ export function useFetchPools(
 export function useFetchUncollectedFees(
   chainId: number,
   pools: UncollectedFeesInput[],
-  timestamp: number,
 ): { loading: boolean; uncollectedFees: UncollectedFeesResult[][] } {
   const [loading, setLoading] = useState(true);
   const [uncollectedFees, setUncollectedFees] = useState([]);
@@ -169,7 +170,7 @@ export function useFetchUncollectedFees(
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/fees';
       const res = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify({ chainId, pools, timestamp }),
+        body: JSON.stringify({ chainId, pools }),
       });
       if (!res.ok) {
         const errors = await res.json();
@@ -189,7 +190,7 @@ export function useFetchUncollectedFees(
     if (pools.length) {
       _call();
     }
-  }, [chainId, pools, timestamp]);
+  }, [chainId, pools]);
 
   return { loading, uncollectedFees };
 }
