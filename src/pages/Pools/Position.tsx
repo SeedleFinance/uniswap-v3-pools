@@ -311,16 +311,16 @@ function Position({
             )}
           </div>
         </td>
-        <td className="py-4">
+        <td className="px-4 py-4">
           <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY.toFixed(2)}%</div>
         </td>
 
-        <td className="py-4">
+        <td className="px-4 py-4">
           <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
             {convertToGlobalFormatted(returnValue)}
           </div>
         </td>
-        <td className="py-4">
+        <td className="px-4 py-4">
           <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>{apr.toFixed(2)}%</div>
         </td>
 

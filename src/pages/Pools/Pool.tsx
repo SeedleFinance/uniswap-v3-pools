@@ -141,10 +141,10 @@ function Pool({
             <table className="table-auto w-full mt-4 text-high text-0.8125 border border-element-10">
               <thead className="bg-surface-10">
                 <tr className="text-left align-middle">
-                  <th className="pb-1 px-4 py-2">Current Price</th>
-                  <th className="pb-1 px-4 py-2">Total Liquidity</th>
-                  <th className="pb-1 px-4 py-2">Total Fees</th>
-                  <th className="pb-1 px-4 py-2">
+                  <th className="pb-3 px-4 py-3">Current Price</th>
+                  <th className="pb-3 px-4 py-3">Total Liquidity</th>
+                  <th className="pb-3 px-4 py-3">Total Fees</th>
+                  <th className="pb-3 px-4 py-3">
                     <span
                       className="underline underline-offset-1 decoration-dotted cursor-help"
                       title="annualized fees earned over liquidity"
@@ -152,7 +152,7 @@ function Pool({
                       Fee APY
                     </span>
                   </th>
-                  <th className="pb-1 px-4 py-2">
+                  <th className="pb-3 px-4 py-3">
                     <span
                       className="underline underline-offset-1 decoration-dotted cursor-help"
                       title="liquidity gain + fees - gas cost"
@@ -160,7 +160,7 @@ function Pool({
                       Net Return
                     </span>
                   </th>
-                  <th className="pb-1 px-4 py-2">
+                  <th className="pb-3 px-4 py-3">
                     <span
                       className="underline underline-offset-1 decoration-dotted cursor-help"
                       title="Net Annual Percentage Yield"
