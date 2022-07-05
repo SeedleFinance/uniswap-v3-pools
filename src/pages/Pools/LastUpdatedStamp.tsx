@@ -15,6 +15,14 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
     return () => clearInterval(intervalID);
   }, []);
 
+  // auto-refresh every 10 mins
+  useEffect(() => {
+    const autoRefreshDelay = 1000 * 60 * 10; //every 10 mins
+    if (tick - lastLoaded > autoRefreshDelay) {
+      refresh();
+    }
+  }, [tick, lastLoaded, refresh]);
+
   const lastLoadedTimestamp = useMemo(() => {
     if (tick > -1) {
       return formatDistanceToNow(new Date(lastLoaded), { addSuffix: false, includeSeconds: true });
