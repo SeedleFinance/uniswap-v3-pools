@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Props {
@@ -8,34 +8,18 @@ interface Props {
 }
 
 function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
-  const [lastLoadedTimestamp, setLastLoadedTimestamp] = useState('');
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    let intervalID: ReturnType<typeof setInterval> | null = null;
+    const intervalID = setInterval(() => setTick(+new Date()), 1000 * 60);
+    return () => clearInterval(intervalID);
+  }, []);
 
-    const _call = () => {
-      const fn = () => {
-        if (intervalID) {
-          clearInterval(intervalID);
-        }
-        setLastLoadedTimestamp(
-          formatDistanceToNow(new Date(lastLoaded), { addSuffix: false, includeSeconds: true }),
-        );
-
-        // keep calling the function on interval
-        intervalID = setInterval(fn, 1000 * 60);
-      };
-
-      // first run
-      fn();
-    };
-
-    if (!lastLoaded) {
-      return;
+  const lastLoadedTimestamp = useMemo(() => {
+    if (tick > -1) {
+      return formatDistanceToNow(new Date(lastLoaded), { addSuffix: false, includeSeconds: true });
     }
-
-    _call();
-  }, [lastLoaded]);
+  }, [tick, lastLoaded]);
 
   return (
     <div className="text-0.875 p-2">
