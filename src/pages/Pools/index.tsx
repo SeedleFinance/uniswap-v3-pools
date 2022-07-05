@@ -16,7 +16,7 @@ import { ROUTES } from '../../constants';
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
 
-  const { loading, empty, pools, lastLoaded, refresh } = usePools();
+  const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -110,10 +110,14 @@ function Pools() {
             </div>
           </Button>
           <div className="flex">
-            <FilterClosedToggle />
-            <div className="hidden md:flex ml-2">
-              <LastUpdatedStamp lastLoaded={lastLoaded} refresh={refresh} />
+            <div className="md:flex ml-2">
+              <LastUpdatedStamp
+                loading={loading || refreshingList}
+                lastLoaded={lastLoaded}
+                refresh={refresh}
+              />
             </div>
+            <FilterClosedToggle />
             <div className="hidden md:flex ml-2">
               <DownloadCSV />
             </div>

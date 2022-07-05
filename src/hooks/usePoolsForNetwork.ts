@@ -82,7 +82,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
   const { loading: poolsLoading, poolStates: pools } = useFetchPools(chainId, poolAddresses);
 
   const uncollectedFeesParams = useMemo(() => {
-    if (!pools || !positionsByPool) {
+    if (!pools.length || !Object.keys(positionsByPool).length) {
       return [];
     }
     return pools
