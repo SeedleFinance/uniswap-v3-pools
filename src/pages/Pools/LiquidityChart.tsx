@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  Brush,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, Brush, XAxis, YAxis, Tooltip } from 'recharts';
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
@@ -42,7 +33,6 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
           <XAxis dataKey="price" />
           <YAxis hide={true} />
           <Tooltip />
-          <Legend />
           <Brush dataKey="price" height={30} stroke="#3390d6" />
           <Area dataKey="liquidity" fill="#3390d6" fillOpacity={0.9} stroke="#3390d6" />
         </AreaChart>

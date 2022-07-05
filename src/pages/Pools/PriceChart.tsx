@@ -15,6 +15,7 @@ import { usePoolPriceData } from '../../hooks/usePoolPriceData';
 import ChartPeriodSelector from '../../ui/ChartPeriodSelector';
 import LoadingSpinner from '../../ui/Spinner';
 import { useAppSettings } from '../../AppSettingsProvider';
+import Card from '../../ui/Card';
 
 interface Props {
   address: string;
@@ -69,30 +70,63 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           />
         </LineChart>
       </ResponsiveContainer>
-      {/* <table className="w-1/2">
+      <div className="flex w-full flex-wrap text-0.75">
+        <Card className="mx-2 my-1 justify-center shadow-sm">
+          <div className="font-bold text-1">{minPrice}</div>
+          <h3>Min Price</h3>
+        </Card>
+        <Card className="mx-2 my-1 justify-center shadow-sm">
+          <div className="font-bold text-1">{maxPrice}</div>
+          <h3>Max Price</h3>
+        </Card>
+        <Card className="mx-2 my-1 justify-center shadow-sm">
+          <div className="font-bold text-1">{meanPrice.toFixed(8)}</div>
+          <h3>Average Price</h3>
+        </Card>
+        <Card className="mx-2 my-1 justify-center shadow-sm">
+          <div className="font-bold text-1">{stdev.toFixed(8)}</div>
+          <h3>Standard Deviation</h3>
+        </Card>
+        <Card className="mx-2 my-1 justify-center shadow-sm">
+          <div className="font-bold text-1">
+            {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
+          </div>
+          <h3>Optimal range</h3>
+        </Card>
+      </div>
+      {/* <table className="w-full table-auto border border-element-10">
         <tbody className="text-0.875 text-high">
-          <tr>
-            <td>Min:</td>
-            <td className="text-low">{minPrice}</td>
-          </tr>
-          <tr>
-            <td>Max:</td>
-            <td className="text-low">{maxPrice}</td>
-          </tr>
-          <tr>
-            <td>Mean:</td>
-            <td className="text-low">{meanPrice.toFixed(8)}</td>
-          </tr>
-          <tr>
-            <td>Standard deviation:</td>
-            <td className="text-low">{stdev.toFixed(8)}</td>
-          </tr>
-          <tr>
-            <td>Optimal range:</td>
-            <td className="text-low">
-              {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
-            </td>
-          </tr>
+          <thead>
+            <tr>
+              <td>Min:</td>
+            </tr>
+            <tr>
+              <td>Max:</td>
+            </tr>
+            <tr>
+              <td>Mean:</td>
+            </tr>
+            <tr>
+              <td>Standard deviation:</td>
+            </tr>
+            <tr></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="text-low">{maxPrice}</td>
+            </tr>
+            <tr>
+              <td className="text-low">{meanPrice.toFixed(8)}</td>
+            </tr>
+            <tr>
+              <td className="text-low">{stdev.toFixed(8)}</td>
+            </tr>
+            <tr>
+              <td className="text-low">
+                {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
+              </td>
+            </tr>
+          </tbody>
         </tbody>
       </table> */}
     </div>
