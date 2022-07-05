@@ -24,8 +24,8 @@ interface Props {
 
 function ChartPeriodSelector({ current, onSelect }: Props) {
   return (
-    <div className="w-full flex justify-end">
-      <div className="flex justify-between border rounded border-element-50 text-medium text-0.875 px-2 py-1">
+    <div className="hidden md:flex w-full justify-end">
+      <div className="flex justify-between border rounded border-element-10 text-medium text-0.75 px-2">
         <PeriodButton label="24h" onClick={() => onSelect(0)} selected={current === 0} />
         <PeriodButton label="7d" onClick={() => onSelect(7)} selected={current === 7} />
         <PeriodButton label="14d" onClick={() => onSelect(14)} selected={current === 14} />

@@ -29,7 +29,7 @@ function Toggle({ label, onChange, checked }: Props) {
         ></div>
         <div className="dot absolute w-4 h-4 bg-white rounded-full shadow left-1 top-1 transition"></div>
       </div>
-      <div className="ml-3 text-medium">{label}</div>
+      <div className="ml-2 text-medium">{label}</div>
     </label>
   );
 }

@@ -13,15 +13,15 @@ interface Props {
 
 function Positions({ positions, pool, baseToken, quoteToken }: Props) {
   return (
-    <div className="w-full flex flex-col my-2 border border-slate-200 dark:border-slate-700 rounded py-4 px-6">
-      <table className="table-auto w-full text-high">
-        <thead>
-          <tr className="text-left">
-            <th className="pb-4">Range</th>
-            <th className="pb-4">Distribution</th>
-            <th className="pb-4">Liquidity</th>
-            <th className="pb-4">Uncl. fees</th>
-            <th className="pb-4">
+    <div className="w-full overflow-x-auto flex flex-col my-4 border border-element-10">
+      <table className="table-auto w-full text-high text-0.875">
+        <thead className="bg-surface-10">
+          <tr className="text-left text-0.875 align-middle">
+            <th className="pb-4 px-4 py-2">Range</th>
+            <th className="pb-4 px-4 py-2">Distribution</th>
+            <th className="pb-4 px-4 py-2">Liquidity</th>
+            <th className="pb-4 px-4 py-2">Uncl. fees</th>
+            <th className="pb-4 px-4 py-2">
               <span
                 className="underline underline-offset-1 decoration-dotted cursor-help"
                 title="annualized fees earned over liquidity"
@@ -29,7 +29,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 Fee APY
               </span>
             </th>
-            <th className="pb-4">
+            <th className="pb-4 px-4 py-2">
               <span
                 className="underline underline-offset-1 decoration-dotted cursor-help"
                 title="liquidity gain + fees - gas cost"
@@ -37,7 +37,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 Net Return
               </span>
             </th>
-            <th className="pb-4">
+            <th className="pb-4 px-4 py-2">
               <span
                 style={{ borderBottom: '1px dotted', cursor: 'help' }}
                 title="Net Annual Percentage Yield"
@@ -45,10 +45,10 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 Net APY
               </span>
             </th>
-            <th className="pb-4"></th>
+            <th className="pb-4 px-4 py-2"></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-0.875 align-middle">
           {positions.map((position) => (
             <Position
               key={position.id.toString()}

@@ -664,7 +664,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             </div>
           </div>
 
-          <div className="text-sm py-1 text-center">
+          <div className="py-1 text-center">
             Current price:{' '}
             <button onClick={handleCurrentPriceClick} className="font-bold">
               {currentPrice}&nbsp;

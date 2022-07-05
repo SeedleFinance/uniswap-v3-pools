@@ -258,8 +258,8 @@ function Position({
   return (
     <>
       <tr className={positionStatus === PositionStatus.Inactive ? 'text-low' : ''}>
-        <td className="flex flex-col justify-between border-t border-slate-200 dark:border-slate-700 py-4">
-          <div className="text-lg text-0.8125 py-2">
+        <td className="flex flex-col justify-between border-t border-slate-200 dark:border-slate-700 px-4 py-4">
+          <div className="text-lg text-0.8125 py-2 flex flex-col">
             <span className="font-bold text-high">Range:</span> {formattedRange}
           </div>
           <div className={`text-0.75 ${getStatusColor(positionStatus)}`}>{statusLabel} </div>
@@ -271,7 +271,7 @@ function Position({
             flip={pool.token0.equals(baseToken)}
           />
         </td>
-        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 px-4 py-4">
           <div>
             <TokenLabel symbol={pool.token0.symbol} />: {entity.amount0.toSignificant(4)}({percent0}
             %)
@@ -281,14 +281,14 @@ function Position({
             %)
           </div>
         </td>
-        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 px-4 py-4">
           <div>
             {positionLiquidity
               ? convertToGlobalFormatted(positionLiquidity)
               : formatCurrencyWithSymbol(0, 1)}
           </div>
         </td>
-        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
+        <td className="border-t  border-slate-200 dark:border-slate-700 px-4 py-4">
           <div className="flex flex-col items-start justify-center">
             <button
               style={{ borderBottom: '1px dotted' }}
@@ -297,7 +297,7 @@ function Position({
               {convertToGlobalFormatted(positionUncollectedFees)}
             </button>
             {expandedUncollectedFees ? (
-              <div className="flex flex-col text-sm">
+              <div className="flex flex-col">
                 <div>
                   {uncollectedFees[0]?.toFixed(6)} <TokenLabel symbol={pool.token0.symbol} />
                 </div>
@@ -314,16 +314,16 @@ function Position({
           <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY.toFixed(2)}%</div>
         </td>
 
-        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
           <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
             {convertToGlobalFormatted(returnValue)}
           </div>
         </td>
-        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
           <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>{apr.toFixed(2)}%</div>
         </td>
 
-        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
+        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
           <div className="flex my-2 justify-end relative">
             <button
               className="text-slate-500 dark:text-slate-200 mr-2"

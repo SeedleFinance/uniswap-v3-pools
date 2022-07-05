@@ -137,68 +137,72 @@ function Pool({
 
       {expanded && (
         <>
-          <table className="table-auto w-full mt-4 text-high">
-            <thead>
-              <tr className="text-left align-top">
-                <th className="pb-1">Current Price</th>
-                <th className="pb-1">Total Liquidity</th>
-                <th className="pb-1">Total Fees</th>
-                <th className="pb-1">
-                  <span
-                    className="underline underline-offset-1 decoration-dotted cursor-help"
-                    title="annualized fees earned over liquidity"
-                  >
-                    Fee APY
-                  </span>
-                </th>
-                <th className="pb-4">
-                  <span
-                    className="underline underline-offset-1 decoration-dotted cursor-help"
-                    title="liquidity gain + fees - gas cost"
-                  >
-                    Net Return
-                  </span>
-                </th>
-                <th className="pb-4">
-                  <span
-                    className="underline underline-offset-1 decoration-dotted cursor-help"
-                    title="Net Annual Percentage Yield"
-                  >
-                    Net APY
-                  </span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  {poolPrice.toFixed(6)}{' '}
-                  {baseToken.equals(WETH9[baseToken.chainId]) ? 'ETH' : baseToken.symbol}
-                </td>
-                <td>{convertToGlobalFormatted(poolLiquidity)}</td>
-                <td>
-                  {convertToGlobalFormatted(totalFees)} (uncl.{' '}
-                  {convertToGlobalFormatted(poolUncollectedFees)})
-                </td>
-                <td>
-                  <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>
-                    {feeAPY.toFixed(2)}%
-                  </div>
-                </td>
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full mt-4 text-high text-0.8125 border border-element-10">
+              <thead className="bg-surface-10">
+                <tr className="text-left align-middle">
+                  <th className="pb-1 px-4 py-2">Current Price</th>
+                  <th className="pb-1 px-4 py-2">Total Liquidity</th>
+                  <th className="pb-1 px-4 py-2">Total Fees</th>
+                  <th className="pb-1 px-4 py-2">
+                    <span
+                      className="underline underline-offset-1 decoration-dotted cursor-help"
+                      title="annualized fees earned over liquidity"
+                    >
+                      Fee APY
+                    </span>
+                  </th>
+                  <th className="pb-1 px-4 py-2">
+                    <span
+                      className="underline underline-offset-1 decoration-dotted cursor-help"
+                      title="liquidity gain + fees - gas cost"
+                    >
+                      Net Return
+                    </span>
+                  </th>
+                  <th className="pb-1 px-4 py-2">
+                    <span
+                      className="underline underline-offset-1 decoration-dotted cursor-help"
+                      title="Net Annual Percentage Yield"
+                    >
+                      Net APY
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="text-0.8175 align-top">
+                <tr>
+                  <td className="px-4 py-4">
+                    {poolPrice.toFixed(6)}{' '}
+                    <span className="font-medium">
+                      {baseToken.equals(WETH9[baseToken.chainId]) ? 'ETH' : baseToken.symbol}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">{convertToGlobalFormatted(poolLiquidity)}</td>
+                  <td className="px-4 py-4">
+                    {convertToGlobalFormatted(totalFees)} (uncl.{' '}
+                    {convertToGlobalFormatted(poolUncollectedFees)})
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>
+                      {feeAPY.toFixed(2)}%
+                    </div>
+                  </td>
 
-                <td>
-                  <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
-                    {convertToGlobalFormatted(returnValue)} ({returnPercent.toFixed(2)}%)
-                  </div>
-                </td>
-                <td>
-                  <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>
-                    {apr.toFixed(2)}%
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <td className="px-4 py-4">
+                    <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
+                      {convertToGlobalFormatted(returnValue)} ({returnPercent.toFixed(2)}%)
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>
+                      {apr.toFixed(2)}%
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
           <div className="flex flex-col my-4">
             <div className="flex flex-col items-start mb-4">
@@ -206,7 +210,7 @@ function Pool({
                 className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowPriceChart(!showPriceChart)}
               >
-                <span className="text-lg font-bold">Price</span>
+                <span className="text-0.875 font-bold">Price</span>
                 <span className="mx-2">
                   {showPriceChart ? (
                     <ChevronUp className="h-4 w-4 stroke-2" />
@@ -225,7 +229,7 @@ function Pool({
                 className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowLiquidityChart(!showLiquidityChart)}
               >
-                <span className="text-lg font-bold">Liquidity</span>
+                <span className="text-0.875 font-bold">Liquidity</span>
                 <span className="mx-2">
                   {showLiquidityChart ? (
                     <ChevronUp className="h-4 w-4 stroke-2" />
@@ -249,7 +253,7 @@ function Pool({
                 className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowPositions(!showPositions)}
               >
-                <span className="text-lg font-bold">Positions</span>
+                <span className="text-0.875 font-bold">Positions</span>
                 <span className="mx-2">
                   {showPositions ? (
                     <ChevronUp className="h-4 w-4 stroke-2" />

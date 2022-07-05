@@ -109,9 +109,7 @@ function Pools() {
             </div>
           </Button>
           <div className="flex">
-            <div className="ml-2">
-              <FilterClosedToggle />
-            </div>
+            <FilterClosedToggle />
             <div className="hidden md:flex ml-2">
               <DownloadCSV />
             </div>

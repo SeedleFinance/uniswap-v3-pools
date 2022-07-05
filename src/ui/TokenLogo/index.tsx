@@ -22,7 +22,7 @@ function TokenLogo({ chain, name, address, className }: Props) {
   return (
     <img
       ref={imgEl}
-      className={`w-8 h-8 rounded-full bg-white text-sm ${className}`}
+      className={`w-7 h-7 md:w-8 md:h-8 rounded-full bg-white text-sm ${className}`}
       alt={`${name} logo`}
       src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${
         chain || 'ethereum'

@@ -28,7 +28,7 @@ function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: R
     [tickLower, tickUpper] = [tickUpper, tickLower];
   }
 
-  const barWidth = 220;
+  const barWidth = 150;
   const scale = barWidth / (rangeEnd - rangeStart);
   const beforeRangeWidth = Math.abs((tickLower - rangeStart) * scale);
   const rangeWidth = Math.abs((tickUpper - tickLower) * scale);
