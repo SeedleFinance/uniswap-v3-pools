@@ -22,6 +22,7 @@ import Icon from '../../ui/Icon/Icon';
 import TransactionModal from '../../ui/TransactionModal';
 
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants';
+import classNames from 'classnames';
 
 export interface PositionProps {
   id: BigNumber;
@@ -255,13 +256,12 @@ function Position({
     return null;
   }
 
+  const positionTextColor = positionStatus === PositionStatus.Inactive ? 'text-low' : '';
+
   return (
     <>
-      <tr className={positionStatus === PositionStatus.Inactive ? 'text-low' : ''}>
-        <td className="flex flex-col justify-between border-t border-slate-200 dark:border-slate-700 px-4 py-4">
-          <div className="text-lg text-0.8125 py-2 flex flex-col">
-            <span className="font-bold text-high">Range:</span> {formattedRange}
-          </div>
+      <tr className={classNames(positionTextColor, 'border-b text-0.8125')}>
+        <td className="flex flex-col justify-between px-4 py-4">
           <div className={`text-0.75 ${getStatusColor(positionStatus)}`}>{statusLabel} </div>
           <RangeVisual
             tickCurrent={pool.tickCurrent}
@@ -270,8 +270,9 @@ function Position({
             tickSpacing={pool.tickSpacing}
             flip={pool.token0.equals(baseToken)}
           />
+          <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
         </td>
-        <td className="border-t border-slate-200 dark:border-slate-700 px-4 py-4">
+        <td className="px-4 py-4">
           <div>
             <TokenLabel symbol={pool.token0.symbol} />: {entity.amount0.toSignificant(4)}({percent0}
             %)
@@ -281,17 +282,17 @@ function Position({
             %)
           </div>
         </td>
-        <td className="border-t border-slate-200 dark:border-slate-700 px-4 py-4">
+        <td className="px-4 py-4">
           <div>
             {positionLiquidity
               ? convertToGlobalFormatted(positionLiquidity)
               : formatCurrencyWithSymbol(0, 1)}
           </div>
         </td>
-        <td className="border-t  border-slate-200 dark:border-slate-700 px-4 py-4">
+        <td className="px-4 py-4">
           <div className="flex flex-col items-start justify-center">
             <button
-              style={{ borderBottom: '1px dotted' }}
+              style={{ borderBottom: '1px dotted border-element-20' }}
               onClick={() => setExpandedUncollectedFees(!expandedUncollectedFees)}
             >
               {convertToGlobalFormatted(positionUncollectedFees)}
@@ -310,25 +311,22 @@ function Position({
             )}
           </div>
         </td>
-        <td className="border-t  border-slate-200 dark:border-slate-700 py-4">
+        <td className="py-4">
           <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY.toFixed(2)}%</div>
         </td>
 
-        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
+        <td className="py-4">
           <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
             {convertToGlobalFormatted(returnValue)}
           </div>
         </td>
-        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
+        <td className="py-4">
           <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>{apr.toFixed(2)}%</div>
         </td>
 
-        <td className="border-t border-slate-200 dark:border-slate-700 py-4">
+        <td className="py-4">
           <div className="flex my-2 justify-end relative">
-            <button
-              className="text-slate-500 dark:text-slate-200 mr-2"
-              onClick={() => setShowActions(!showActions)}
-            >
+            <button className="mr-2" onClick={() => setShowActions(!showActions)}>
               <Icon size="lg" icon={faEllipsis} />
             </button>
             {showActions && (
@@ -353,7 +351,7 @@ function Position({
                       Collect fees
                     </button>
                     */}
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-1 mt-1">
+                    <div className="pt-1 mt-1">
                       {/*
                       <button className="text-left my-1" onClick={}>
                         Reposition

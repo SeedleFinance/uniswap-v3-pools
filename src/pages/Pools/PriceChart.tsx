@@ -72,26 +72,26 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
       </ResponsiveContainer>
       <div className="flex w-full flex-wrap text-0.75">
         <Card className="mx-2 my-1 justify-center shadow-sm">
-          <div className="font-bold text-1">{minPrice}</div>
           <h3>Min Price</h3>
+          <div className="font-bold text-1">{minPrice}</div>
         </Card>
         <Card className="mx-2 my-1 justify-center shadow-sm">
-          <div className="font-bold text-1">{maxPrice}</div>
           <h3>Max Price</h3>
+          <div className="font-bold text-1">{maxPrice}</div>
         </Card>
         <Card className="mx-2 my-1 justify-center shadow-sm">
-          <div className="font-bold text-1">{meanPrice.toFixed(8)}</div>
           <h3>Average Price</h3>
+          <div className="font-bold text-1">{meanPrice.toFixed(8)}</div>
         </Card>
         <Card className="mx-2 my-1 justify-center shadow-sm">
-          <div className="font-bold text-1">{stdev.toFixed(8)}</div>
           <h3>Standard Deviation</h3>
+          <div className="font-bold text-1">{stdev.toFixed(8)}</div>
         </Card>
         <Card className="mx-2 my-1 justify-center shadow-sm">
+          <h3>Optimal range</h3>
           <div className="font-bold text-1">
             {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
           </div>
-          <h3>Optimal range</h3>
         </Card>
       </div>
       {/* <table className="w-full table-auto border border-element-10">
