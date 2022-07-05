@@ -34,14 +34,15 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
       {loading ? (
         <span>Loading...</span>
       ) : (
-        <span>
-          Last Updated <b>{lastLoadedTimestamp}</b> ago
-        </span>
+        <>
+          <span>
+            Last Updated <b>{lastLoadedTimestamp}</b> ago
+          </span>
+          <button className="ml-1" onClick={() => refresh()}>
+            ⟳
+          </button>
+        </>
       )}
-
-      <button className="ml-1" onClick={() => refresh()}>
-        ⟳
-      </button>
     </div>
   );
 }

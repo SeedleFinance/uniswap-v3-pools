@@ -64,6 +64,8 @@ export function useFetchPositions(
 
   useEffect(() => {
     const _call = async () => {
+      setLoading(true);
+
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/positions';
       const res = await fetch(url, {
         method: 'POST',
@@ -128,6 +130,8 @@ export function useFetchPools(
 
   useEffect(() => {
     const _call = async () => {
+      setLoading(true);
+
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/pools';
       const res = await fetch(url, {
         method: 'POST',
@@ -167,6 +171,8 @@ export function useFetchUncollectedFees(
 
   useEffect(() => {
     const _call = async () => {
+      setLoading(true);
+
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/fees';
       const res = await fetch(url, {
         method: 'POST',

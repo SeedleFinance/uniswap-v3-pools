@@ -245,5 +245,5 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
       .filter(({ positions }) => (filterClosed ? positions.length > 0 : true));
   }, [pools, positionsByPool, uncollectedFeesByTokenId, filterClosed, chainId]);
 
-  return { loading: queryLoading || poolsLoading, pools: poolsWithPositions };
+  return { loading: queryLoading || poolsLoading, feesLoading, pools: poolsWithPositions };
 }
