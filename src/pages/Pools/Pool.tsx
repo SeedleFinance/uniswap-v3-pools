@@ -138,7 +138,7 @@ function Pool({
       {expanded && (
         <>
           <div className="overflow-x-auto">
-            <table className="table-auto w-full mt-4 text-high text-0.8125 border border-element-10">
+            <table className="table-auto w-full mt-4 text-high text-0.875 border border-element-10">
               <thead className="bg-surface-10">
                 <tr className="text-left align-middle">
                   <th className="pb-3 px-4 py-3">Current Price</th>
@@ -210,7 +210,7 @@ function Pool({
                 className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowPriceChart(!showPriceChart)}
               >
-                <span className="text-0.875 font-bold">Price</span>
+                <span className="text-1 font-bold">Price</span>
                 <span className="mx-2">
                   {showPriceChart ? (
                     <ChevronUp className="h-4 w-4 stroke-2" />
@@ -229,7 +229,7 @@ function Pool({
                 className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowLiquidityChart(!showLiquidityChart)}
               >
-                <span className="text-0.875 font-bold">Liquidity</span>
+                <span className="text-1 font-bold">Liquidity</span>
                 <span className="mx-2">
                   {showLiquidityChart ? (
                     <ChevronUp className="h-4 w-4 stroke-2" />
@@ -253,7 +253,7 @@ function Pool({
                 className="flex items-center focus:outline-none text-high"
                 onClick={() => setShowPositions(!showPositions)}
               >
-                <span className="text-0.875 font-bold">Positions</span>
+                <span className="text-1 font-bold">Positions</span>
                 <span className="mx-2">
                   {showPositions ? (
                     <ChevronUp className="h-4 w-4 stroke-2" />

@@ -30,15 +30,15 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
   }, [tick, lastLoaded]);
 
   return (
-    <div className="text-0.875 p-2">
+    <div className="text-0.875 p-2 text-high">
       {loading ? (
         <span>Loading...</span>
       ) : (
         <>
           <span>
-            Last Updated <b>{lastLoadedTimestamp}</b> ago
+            Last Updated <span className="font-semibold">{lastLoadedTimestamp}</span> ago
           </span>
-          <button className="ml-1" onClick={() => refresh()}>
+          <button className="ml-1" onClick={refresh}>
             ⟳
           </button>
         </>
