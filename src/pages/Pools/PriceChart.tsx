@@ -82,14 +82,14 @@ function PriceChart({ address, quoteToken, baseToken }: Props) {
           <h3>Average Price</h3>
           <div className="font-bold text-1">{meanPrice.toFixed(8)}</div>
         </Card>
-        <Card className="mx-2 my-1 justify-center shadow-sm">
-          <h3>Standard Deviation</h3>
-          <div className="font-bold text-1">{stdev.toFixed(8)}</div>
-        </Card>
+
         <Card className="mx-2 my-1 justify-center shadow-sm">
           <h3>Optimal range</h3>
           <div className="font-bold text-1">
             {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
+          </div>
+          <div className="flex">
+            <span>(SD: {stdev.toFixed(8)})</span>
           </div>
         </Card>
       </div>
