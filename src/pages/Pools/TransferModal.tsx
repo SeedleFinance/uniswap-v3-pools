@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import Modal from '../../ui/Modal/Modal';
 import { Button } from '../../ui/Button';
 import { ROUTES } from '../../constants';
+import Input from '../../ui/Input';
 
 interface Props {
   tokenId: BigNumber;
@@ -47,7 +48,7 @@ function TransferModal({ tokenId, baseToken, quoteToken, onCancel, onComplete }:
       <form action={ROUTES.HOME} onSubmit={handleTransfer}>
         {!askConfirm ? (
           <>
-            <div>
+            <div className="text-medium">
               Transfer the position{' '}
               <span className="font-bold">
                 {quoteToken.symbol} / {baseToken.symbol} ({tokenId.toString()})
@@ -55,12 +56,10 @@ function TransferModal({ tokenId, baseToken, quoteToken, onCancel, onComplete }:
               to a different account.
             </div>
             <div className="my-4">
-              <input
-                className="w-full focus:outline-none text-lg p-2 bg-white dark:bg-slate-900 border rounded border-gray-400"
+              <Input
                 type="text"
                 value={address}
                 placeholder={'Enter the account address or ENS name'}
-                tabIndex={2}
                 onChange={handleInput}
               />
             </div>
@@ -76,13 +75,12 @@ function TransferModal({ tokenId, baseToken, quoteToken, onCancel, onComplete }:
           </div>
         )}
 
-        <div>
-          <Button type="submit" tabIndex={3} className="mr-2" disabled={isTransferDisabled}>
-            Transfer
-          </Button>
-
-          <Button onClick={handleCancel} variant="ghost" tabIndex={4}>
+        <div className="flex">
+          <Button onClick={handleCancel} variant="secondary" tabIndex={4}>
             Cancel
+          </Button>
+          <Button type="submit" tabIndex={3} className="ml-2" disabled={isTransferDisabled}>
+            Transfer
           </Button>
         </div>
       </form>

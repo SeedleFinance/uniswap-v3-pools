@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import styles from './styles.module.css';
 
 interface InputProps {
-  size: 'xl' | 'lg' | 'md' | 'sm' | 'xs';
   value?: string;
   onChange(e: React.ChangeEvent<HTMLInputElement>): void;
   className?: string;
+  size?: 'xl' | 'lg' | 'md' | 'sm' | 'xs';
   type?: 'text' | 'number' | 'email' | 'tel' | 'password' | 'hidden';
   placeholder?: string;
   variant?: 'filled' | 'outlined';

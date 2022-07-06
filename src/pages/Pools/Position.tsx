@@ -271,7 +271,7 @@ function Position({
 
   return (
     <>
-      <tr className={classNames(positionTextColor, 'border-b text-0.8125')}>
+      <tr className={classNames(positionTextColor, 'border-b border-element-10 text-0.8125')}>
         <td className="flex flex-col justify-between px-4 py-4">
           <div className={`text-0.75 ${getStatusColor(positionStatus)}`}>{statusLabel} </div>
           <RangeVisual
