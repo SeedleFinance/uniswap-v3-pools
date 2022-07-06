@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from 'react';
+import { useFloating, autoUpdate } from '@floating-ui/react-dom';
+import { FloatingPortal } from '@floating-ui/react-dom-interactions';
 import { useWeb3React } from '@web3-react/core';
 import { useNavigate } from 'react-router-dom';
 import { BigNumber } from '@ethersproject/bignumber';
@@ -23,6 +25,7 @@ import TransactionModal from '../../ui/TransactionModal';
 
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants';
 import classNames from 'classnames';
+import { Button } from '../../ui/Button';
 
 export interface PositionProps {
   id: BigNumber;
@@ -65,6 +68,12 @@ function Position({
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
   const [alert, setAlert] = useState<{ message: string; level: AlertLevel } | null>(null);
+
+  const { reference: triggerRef, floating } = useFloating({
+    whileElementsMounted: autoUpdate,
+    placement: 'top',
+    strategy: 'absolute',
+  });
 
   const { percent0, percent1 } = useMemo(() => {
     if (!baseToken || !pool || !entity || !positionLiquidity || positionLiquidity.equalTo(0)) {
@@ -258,6 +267,8 @@ function Position({
 
   const positionTextColor = positionStatus === PositionStatus.Inactive ? 'text-low' : '';
 
+  const portalId = id.toString();
+
   return (
     <>
       <tr className={classNames(positionTextColor, 'border-b text-0.8125')}>
@@ -321,55 +332,51 @@ function Position({
           </div>
         </td>
         <td className="px-4 py-4">
-          <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>{apr.toFixed(2)}%</div>
+          <div
+            className={
+              apr < 0 ? 'text-red-500 hidden md:block ' : 'text-green-500 hidden md:block '
+            }
+          >
+            {apr.toFixed(2)}%
+          </div>
         </td>
-
         <td className="py-4">
-          <div className="flex my-2 justify-end relative">
-            <button className="mr-2" onClick={() => setShowActions(!showActions)}>
+          <div id={`menu-${portalId}`}>
+            <Button variant="ghost" ref={triggerRef} onClick={() => setShowActions(!showActions)}>
               <Icon size="lg" icon={faEllipsis} />
-            </button>
-            {showActions && (
-              <Menu
-                onClose={() => setShowActions(false)}
-                className="w-32 top-8 shadow-lg text-0.875"
-              >
-                <button className="text-left my-1" onClick={handleTransactions}>
-                  Transactions
-                </button>
-                {isPerp ? (
-                  <button className="text-left my-1" onClick={handlePerp}>
-                    Manage
+            </Button>
+          </div>
+          <div ref={floating}>
+            <FloatingPortal id={`menu-${portalId}`}>
+              {showActions && (
+                <Menu onClose={() => setShowActions(false)} className="w-32 shadow-lg text-0.875">
+                  <button className="text-left my-1" onClick={handleTransactions}>
+                    Transactions
                   </button>
-                ) : (
-                  <>
-                    <button className="text-left my-1" onClick={handleAddLiquidity}>
-                      Add Liquidity
+                  {isPerp ? (
+                    <button className="text-left my-1" onClick={handlePerp}>
+                      Manage
                     </button>
-                    {/*
-                    <button className="text-left my-1" onClick={}>
-                      Collect fees
-                    </button>
-                    */}
-                    <div className="pt-1 mt-1">
-                      {/*
-                      <button className="text-left my-1" onClick={}>
-                        Reposition
+                  ) : (
+                    <>
+                      <button className="text-left my-1" onClick={handleAddLiquidity}>
+                        Add Liquidity
                       </button>
-                      */}
-                      <div>
-                        <button className="text-left my-1" onClick={handleTransfer}>
-                          Transfer
+                      <div className="pt-1 mt-1">
+                        <div>
+                          <button className="text-left my-1" onClick={handleTransfer}>
+                            Transfer
+                          </button>
+                        </div>
+                        <button className="text-left text-red-500 my-1" onClick={handleRemove}>
+                          Remove
                         </button>
                       </div>
-                      <button className="text-left text-red-500 my-1" onClick={handleRemove}>
-                        Remove
-                      </button>
-                    </div>
-                  </>
-                )}
-              </Menu>
-            )}
+                    </>
+                  )}
+                </Menu>
+              )}
+            </FloatingPortal>
           </div>
         </td>
       </tr>

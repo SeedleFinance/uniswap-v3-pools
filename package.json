@@ -10,6 +10,8 @@
     "@ethersproject/providers": "^5.1.2",
     "@ethersproject/strings": "^5.1.0",
     "@ethersproject/units": "^5.2.0",
+    "@floating-ui/react-dom": "^0.7.2",
+    "@floating-ui/react-dom-interactions": "^0.6.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^6.0.0",
     "@fortawesome/react-fontawesome": "^0.1.15",

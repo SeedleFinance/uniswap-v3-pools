@@ -13,7 +13,7 @@ interface Props {
 
 function Positions({ positions, pool, baseToken, quoteToken }: Props) {
   return (
-    <div className="w-full overflow-x-auto flex flex-col my-4 border border-element-10">
+    <div className="w-full flex overflow-x-auto flex-col my-4 border border-element-10">
       <table className="table-auto w-full text-high text-0.875">
         <thead className="bg-surface-10">
           <tr className="text-left text-0.875 align-top">
@@ -37,7 +37,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 Net Return
               </span>
             </th>
-            <th className="pb-3 px-4 py-3">
+            <th className="hidden md:block pb-3 px-4 py-3">
               <span
                 // style={{ borderBottom: '1px dotted', cursor: 'help' }}
                 title="Net Annual Percentage Yield"
