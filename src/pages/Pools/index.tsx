@@ -110,7 +110,7 @@ function Pools() {
             </div>
           </Button>
           <div className="flex">
-            <div className="md:flex ml-2">
+            <div className="md:flex items-center ml-2">
               <LastUpdatedStamp
                 loading={loading || refreshingList}
                 lastLoaded={lastLoaded}

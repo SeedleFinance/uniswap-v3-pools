@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import IconRefresh from '../../icons/Refresh';
+import { Button } from '../../ui/Button';
+import LoadingSpinner from '../../ui/Spinner';
 
 interface Props {
   loading: boolean;
@@ -30,18 +33,20 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
   }, [tick, lastLoaded]);
 
   return (
-    <div className="text-0.875 p-2 text-high">
+    <div className="flex items-center text-0.875 text-medium">
       {loading ? (
-        <span>Loading...</span>
+        <span>
+          <LoadingSpinner size={20} />
+        </span>
       ) : (
-        <>
+        <div className="flex items-center">
           <span>
             Last Updated <span className="font-semibold">{lastLoadedTimestamp}</span> ago
           </span>
           <button className="ml-1" onClick={refresh}>
-            ⟳
+            <IconRefresh />
           </button>
-        </>
+        </div>
       )}
     </div>
   );
