@@ -68,8 +68,8 @@ function Container() {
             </ul>
           </div>
         )}
-        <div className="h-full lg:container mx-auto pb-4 p-4">
-          <div className="w-full py-4 mb-8 flex justify-between items-center">
+        <div className="h-full lg:container mx-auto pb-4 p-4  flex flex-col items-stretch">
+          <div className="w-full py-4 mb-1 md:mb-8 flex justify-between items-center">
             <a href={ROUTES.HOME}>
               <Logo />
             </a>
@@ -96,10 +96,10 @@ function Container() {
               </Button>
             </div>
           </div>
-          <PageBody />
-          <div>
-            <Footer />
+          <div className="w-full h-full">
+            <PageBody />
           </div>
+          <Footer />
         </div>
       </ThemeWrapper>
     </CurrencyConversionsProvider>

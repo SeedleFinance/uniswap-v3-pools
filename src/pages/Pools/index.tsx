@@ -62,11 +62,11 @@ function Pools() {
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <div className="bg-surface-10 rounded w-64 h-12"></div>
-            <div className="bg-surface-10 rounded-md w-64 h-4 mt-4"></div>
+            <div className="bg-surface-10 rounded-sm w-64 h-4 mt-4"></div>
           </div>
-          <div className="bg-surface-10 rounded w-96 h-20"></div>
+          <div className="bg-surface-10 rounded w-96 h-20 ml-4"></div>
         </div>
-        <div className="bg-surface-10 rounded w-full h-20 mt-12"></div>
+        <div className="bg-surface-10 rounded w-full h-20 mt-8"></div>
         <div className="bg-surface-10 rounded w-full h-20 mt-4"></div>
       </div>
     );
@@ -91,7 +91,9 @@ function Pools() {
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Total Uncollected Fees</div>
+            <div className="text-0.875 md:text-1 text-medium">
+              <span className="hidden md:inline-block">Total</span> Uncollected Fees
+            </div>
           </Card>
           <Card className="ml-1 md:ml-4">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-brand-dark-primary">
@@ -101,7 +103,7 @@ function Pools() {
           </Card>
         </div>
       </div>
-      <div className="w-full mt-8">
+      <div className="w-full mt-4 md:mt-8">
         <div className="flex justify-between items-center">
           <Button href="/add/new" size="md">
             <div className="flex items-center">
@@ -109,8 +111,8 @@ function Pools() {
               <span className="ml-1">New Position</span>
             </div>
           </Button>
-          <div className="flex">
-            <div className="md:flex items-center ml-2">
+          <div className="flex flex-col-reverse items-end md:flex-row md:items-center">
+            <div className="items-center ml-2 flex">
               <LastUpdatedStamp
                 loading={loading || refreshingList}
                 lastLoaded={lastLoaded}
@@ -118,7 +120,7 @@ function Pools() {
               />
             </div>
             <FilterClosedToggle />
-            <div className="hidden md:flex ml-2">
+            <div className="ml-2 hidden md:flex">
               <DownloadCSV />
             </div>
           </div>

@@ -33,15 +33,15 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
   }, [tick, lastLoaded]);
 
   return (
-    <div className="flex items-center text-0.875 text-medium">
+    <div className="flex items-center text-0.75 md:text-0.875 text-medium">
       {loading ? (
         <span>
-          <LoadingSpinner size={20} />
+          <LoadingSpinner size={20} color="text-high" />
         </span>
       ) : (
         <div className="flex items-center">
           <span>
-            Last Updated <span className="font-semibold">{lastLoadedTimestamp}</span> ago
+            Updated <span>{lastLoadedTimestamp}</span> ago
           </span>
           <button className="ml-1" onClick={refresh}>
             <IconRefresh />

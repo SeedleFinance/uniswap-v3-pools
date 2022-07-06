@@ -6,8 +6,8 @@ import Twitter from './icons/Twitter';
 
 function Footer() {
   return (
-    <footer className="my-8 flex justify-between items-center w-full text-0.9375 text-high">
-      <div className="my-2">
+    <footer className="my-2 flex justify-between items-center w-full text-0.9375 text-high">
+      <div>
         <div className="flex font-medium">
           <div>
             <a href={EXTERNAL_LINKS.GITCOIN} target="_blank" rel="noreferrer">
