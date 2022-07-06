@@ -7,7 +7,6 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  Area,
 } from 'recharts';
 import { Token } from '@uniswap/sdk-core';
 

@@ -57,16 +57,19 @@ interface UncollectedFeesResult {
 export function useFetchPositions(
   chainId: number,
   addresses: string[],
+  timestamp: number,
 ): { loading: boolean; positionStates: PositionStateV2[] } {
   const [loading, setLoading] = useState(true);
   const [positionStates, setPositionStates] = useState<PositionStateV2[]>([]);
 
   useEffect(() => {
     const _call = async () => {
+      setLoading(true);
+
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/positions';
       const res = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify({ chainId, addresses }),
+        body: JSON.stringify({ chainId, addresses, timestamp }),
       });
       if (!res.ok) {
         const errors = await res.json();
@@ -111,8 +114,9 @@ export function useFetchPositions(
       setLoading(false);
       setPositionStates([]);
     }
+
     _call();
-  }, [chainId, addresses]);
+  }, [chainId, addresses, timestamp]);
 
   return { loading, positionStates };
 }
@@ -126,6 +130,8 @@ export function useFetchPools(
 
   useEffect(() => {
     const _call = async () => {
+      setLoading(true);
+
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/pools';
       const res = await fetch(url, {
         method: 'POST',
@@ -165,6 +171,8 @@ export function useFetchUncollectedFees(
 
   useEffect(() => {
     const _call = async () => {
+      setLoading(true);
+
       const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/fees';
       const res = await fetch(url, {
         method: 'POST',

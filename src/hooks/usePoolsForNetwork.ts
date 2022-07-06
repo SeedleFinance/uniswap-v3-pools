@@ -41,13 +41,14 @@ function reconcileTransactions(chainId: number, txs: any[]) {
   });
 }
 
-export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
+export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterClosed = false) {
   const { filterClosed } = useAppSettings();
   const { addresses } = useAddress();
 
   const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
     chainId,
     addresses,
+    timestamp,
   );
 
   const positionsByPool = useMemo((): {
@@ -81,7 +82,7 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
   const { loading: poolsLoading, poolStates: pools } = useFetchPools(chainId, poolAddresses);
 
   const uncollectedFeesParams = useMemo(() => {
-    if (!pools || !positionsByPool) {
+    if (!pools.length || !Object.keys(positionsByPool).length) {
       return [];
     }
     return pools
@@ -244,5 +245,5 @@ export function usePoolsForNetwork(chainId: number, noFilterClosed = false) {
       .filter(({ positions }) => (filterClosed ? positions.length > 0 : true));
   }, [pools, positionsByPool, uncollectedFeesByTokenId, filterClosed, chainId]);
 
-  return { loading: queryLoading || poolsLoading, pools: poolsWithPositions };
+  return { loading: queryLoading || poolsLoading, feesLoading, pools: poolsWithPositions };
 }
