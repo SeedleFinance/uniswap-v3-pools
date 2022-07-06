@@ -24,14 +24,14 @@ const Modal = ({ title, children, className, onClose }: Props) => {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 h-screen flex flex-col items-center justify-center"
+      className="fixed inset-0 h-screen flex flex-col items-center justify-center p-4"
       onKeyUp={handleKeyup}
     >
       <div className="fixed h-screen w-full bg-slate-800 bg-opacity-75"></div>
       <div
         ref={containerEl}
         tabIndex={0}
-        className={`w-1/2 max-w-screen-sm bg-surface-5 shadow-md p-4 md:p-12 z-10 rounded-lg focus:outline-none ${className}`}
+        className={`w-full md:w-1/2 max-w-screen-sm bg-surface-5 shadow-md p-4 md:p-12 z-10 rounded-lg focus:outline-none ${className}`}
       >
         <header className="flex flex-row justify-between items-start pb-3">
           <h2 className="text-1.75 font-bold text-high">{title}</h2>
