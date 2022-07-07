@@ -15,6 +15,9 @@ import ChevronDown from '../../icons/ChevronDown/ChevronDown';
 import ChevronUp from '../../icons/ChevronUp/ChevronUp';
 import PoolButton from '../../ui/PoolButton';
 import LoadingSpinner from '../../ui/Spinner';
+import Tooltip from '../../ui/Tooltip';
+import IconHelper from '../../icons/Helper';
+import { LABELS } from '../../content/tooltip';
 
 interface PoolProps {
   address: string;
@@ -141,32 +144,32 @@ function Pool({
             <table className="table-auto w-full mt-4 text-high text-0.875 border border-element-10">
               <thead className="bg-surface-10">
                 <tr className="text-left align-middle">
-                  <th className="pb-3 px-4 py-3">Current Price</th>
-                  <th className="pb-3 px-4 py-3">Total Liquidity</th>
-                  <th className="pb-3 px-4 py-3">Total Fees</th>
+                  <th className="pb-3 px-4 py-3 whitespace-nowrap">Current Price</th>
+                  <th className="pb-3 px-4 py-3 whitespace-nowrap">Total Liquidity</th>
+                  <th className="pb-3 px-4 py-3 whitespace-nowrap">Total Fees</th>
                   <th className="pb-3 px-4 py-3">
-                    <span
-                      className="underline underline-offset-1 decoration-dotted cursor-help"
-                      title="annualized fees earned over liquidity"
-                    >
-                      Fee APY
-                    </span>
+                    <Tooltip label={LABELS.FEE_APY} placement="top">
+                      <span className="flex items-center cursor-default whitespace-nowrap">
+                        Fee APY
+                        <IconHelper className="ml-1" />
+                      </span>
+                    </Tooltip>
                   </th>
                   <th className="pb-3 px-4 py-3">
-                    <span
-                      className="underline underline-offset-1 decoration-dotted cursor-help"
-                      title="liquidity gain + fees - gas cost"
-                    >
-                      Net Return
-                    </span>
+                    <Tooltip label={LABELS.NET_RETURN} placement="top-start">
+                      <span className="flex items-center cursor-default whitespace-nowrap">
+                        Net Return
+                        <IconHelper className="ml-1" />
+                      </span>
+                    </Tooltip>
                   </th>
                   <th className="pb-3 px-4 py-3">
-                    <span
-                      className="underline underline-offset-1 decoration-dotted cursor-help"
-                      title="Net Annual Percentage Yield"
-                    >
-                      Net APY
-                    </span>
+                    <Tooltip label={LABELS.NET_APY} placement="top">
+                      <span className="flex items-center cursor-default whitespace-nowrap">
+                        Net APY
+                        <IconHelper className="ml-1" />
+                      </span>
+                    </Tooltip>
                   </th>
                 </tr>
               </thead>

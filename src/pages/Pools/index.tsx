@@ -76,7 +76,7 @@ function Pools() {
     <div className="w-full">
       <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
         <div className="hidden md:flex w-1/2 flex-col text-high">
-          <h1 className="text-2.75 font-bold tracking-tighter leading-tight">Positions</h1>
+          <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Positions</h1>
           <div className="text-medium">A list of your Uniswap V3 positions.</div>
         </div>
 
