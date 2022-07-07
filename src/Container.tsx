@@ -59,11 +59,12 @@ function Container() {
       <ThemeWrapper theme={computedTheme}>
         {showMobileMenu && (
           <div className="md:hidden w-4/5 bg-surface-0 fixed top-0 left-0 bottom-0 border-r border-element-10 p-10 z-50">
-            <div className="text-high text-1.25 font-medium">Menu (WIP)</div>
+            <div className="text-high text-1.25 font-medium">Menu</div>
             <ul>
-              <li className="py-4">{theme}</li>
-              <li className="py-4">
-                <GlobalCurrencySelector />
+              <li className="py-4">Network: {theme}</li>
+              <li className="py-4">Theme: {theme}</li>
+              <li className="py-4 flex items-center">
+                Currency: <GlobalCurrencySelector />
               </li>
             </ul>
           </div>

@@ -41,7 +41,7 @@ function Landing() {
           <Account address={injectedAddress} />
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center px-4 mx-auto flex-1 w-full md:mt-8">
+      <div className="flex flex-col items-center justify-center px-4 py-4 mx-auto flex-1 w-full md:mt-8">
         <h1 className="text-center text-high text-2 sm:text-3 lg:text-4.75 font-bold leading-tight tracking-tighter">
           Powerful Insights for <br />
           Uniswap positions

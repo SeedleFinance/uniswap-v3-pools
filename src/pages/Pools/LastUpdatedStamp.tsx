@@ -33,7 +33,7 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
   }, [tick, lastLoaded]);
 
   return (
-    <div className="flex items-center text-0.75 md:text-0.875 text-medium">
+    <div className="flex items-center text-0.75 text-medium">
       {loading ? (
         <span>
           <LoadingSpinner size={20} color="text-high" />
