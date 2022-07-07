@@ -340,7 +340,7 @@ function Position({
             {apr.toFixed(2)}%
           </div>
         </td>
-        <td className="py-4">
+        <td className="py-4 hidden md:table-cell">
           <div id={`menu-${portalId}`}>
             <Button variant="ghost" ref={triggerRef} onClick={() => setShowActions(!showActions)}>
               <Icon size="lg" icon={faEllipsis} />
