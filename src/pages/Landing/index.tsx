@@ -61,8 +61,8 @@ function Landing() {
       </div>
       <div className="flex flex-col md:flex-row justify-between items-center my-4 w-full flex-1">
         <div className="w-full lg:max-w-sm sm:mr-4 px-8 py-16 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
-          <h3 className="text-1.5 lg:text-2 font-semibold tracking-tighter">$150M+</h3>
-          <span>Over $150M actively managed through Seedle.</span>
+          <h3 className="text-1.5 lg:text-2 font-semibold tracking-tighter">Deep Insights</h3>
+          <span>Compare performance across multiple pools at once.</span>
         </div>
         <div className="w-full lg:max-w-sm sm:mr-4 px-8 py-16 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
           <h3 className="text-1.5 lg:text-2 font-semibold tracking-tighter">Multi Network</h3>
