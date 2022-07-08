@@ -12,7 +12,7 @@ interface PositionStatusesProps {
 
 function PositionStatuses({ tickCurrent, positions, onClick }: PositionStatusesProps) {
   const statusColor = {
-    [PositionStatus.Inactive]: 'bg-gray-500',
+    [PositionStatus.Inactive]: 'bg-surface-40',
     [PositionStatus.InRange]: 'bg-brand-primary',
     [PositionStatus.OutRange]: 'bg-yellow-500',
   };
