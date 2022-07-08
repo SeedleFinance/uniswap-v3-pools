@@ -16,15 +16,15 @@ interface Props {
 
 function Positions({ positions, pool, baseToken, quoteToken }: Props) {
   return (
-    <div className="w-full flex overflow-x-auto flex-col my-4 border border-element-10">
-      <table className="table-auto w-full text-high text-0.875">
-        <thead className="bg-surface-10">
+    <div className="w-full flex overflow-x-auto flex-col my-4">
+      <table className="table-auto w-full text-high text-0.875 rounded-md">
+        <thead className="border-b border-element-10 bg-surface-5">
           <tr className="text-left text-0.875 align-top">
-            <th className="pb-3 px-4 py-3 whitespace-nowrap">Range</th>
-            <th className="pb-3 px-4 py-3 whitespace-nowrap">Distribution</th>
-            <th className="pb-3 px-4 py-3 whitespace-nowrap">Liquidity</th>
-            <th className="pb-3 px-4 py-3 whitespace-nowrap">Uncl. fees</th>
-            <th className="pb-3 px-4 py-3">
+            <th className="pb-5 px-4 py-5 whitespace-nowrap">Range</th>
+            <th className="pb-5 px-4 py-5 whitespace-nowrap">Distribution</th>
+            <th className="pb-5 px-4 py-5 whitespace-nowrap">Liquidity</th>
+            <th className="pb-5 px-4 py-5 whitespace-nowrap">Uncl. fees</th>
+            <th className="pb-5 px-4 py-5">
               <Tooltip label={LABELS.FEE_APY} placement="top">
                 <span className="flex items-center cursor-default whitespace-nowrap">
                   Fee APY
@@ -32,7 +32,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 </span>
               </Tooltip>
             </th>
-            <th className="pb-3 px-4 py-3">
+            <th className="pb-5 px-4 py-5">
               <Tooltip label={LABELS.NET_RETURN} placement="top">
                 <span className="flex items-center cursor-default whitespace-nowrap">
                   Net Return
@@ -40,7 +40,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 </span>
               </Tooltip>
             </th>
-            <th className="hidden md:block pb-3 px-4 py-3">
+            <th className="hidden md:block pb-5 px-4 py-5">
               <Tooltip label={LABELS.NET_APY} placement="top">
                 <span className="flex items-center cursor-default whitespace-nowrap">
                   Net Return

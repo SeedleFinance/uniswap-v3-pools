@@ -141,8 +141,8 @@ function Pool({
       {expanded && (
         <>
           <div className="overflow-x-auto">
-            <table className="table-auto w-full mt-4 text-high text-0.875 border border-element-10">
-              <thead className="bg-surface-10">
+            <table className="table-auto w-full mt-4 text-high text-0.875 rounded-md">
+              <thead className="border-b border-element-10 bg-surface-5">
                 <tr className="text-left align-middle">
                   <th className="pb-3 px-4 py-3 whitespace-nowrap">Current Price</th>
                   <th className="pb-3 px-4 py-3 whitespace-nowrap">Total Liquidity</th>

@@ -273,7 +273,9 @@ function Position({
     <>
       <tr className={classNames(positionTextColor, 'border-b border-element-10 text-0.8125')}>
         <td className="flex flex-col justify-between px-4 py-4">
-          <div className={`text-0.75 ${getStatusColor(positionStatus)}`}>{statusLabel} </div>
+          <div className={`text-0.875 py-2 font-medium ${getStatusColor(positionStatus)}`}>
+            {statusLabel}{' '}
+          </div>
           <RangeVisual
             tickCurrent={pool.tickCurrent}
             tickLower={entity.tickLower}
@@ -384,14 +386,14 @@ function Position({
       {showTransactions && (
         <tr>
           <td colSpan={4}>
-            <table className="table-auto border-separate w-full my-2">
-              <thead>
+            <table className="table-auto border-separate w-full my-2 px-4 -ml-4 mt-6">
+              <thead className="bg-surface-5">
                 <tr className="text-left">
-                  <th>Timestamp</th>
-                  <th>Type</th>
-                  <th>Distribution</th>
-                  <th>Liquidity</th>
-                  <th>Gas cost</th>
+                  <th className="px-3 py-2">Timestamp</th>
+                  <th className="px-4 py-2">Type</th>
+                  <th className="px-4 py-2">Distribution</th>
+                  <th className="px-4 py-2">Liquidity</th>
+                  <th className="px-4 py-2">Gas cost</th>
                 </tr>
               </thead>
               {transactions.map((tx: any) => (

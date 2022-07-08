@@ -69,13 +69,13 @@ function Transaction({
 
   return (
     <tr>
-      <td>
+      <td className="px-4 py-2">
         <a href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${id}`} className="text-blue-500">
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
       <td>{getTypeLabel(transactionType)}</td>
-      <td>
+      <td className="px-4 py-2">
         <div>
           <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}({percent0}%)
         </div>
@@ -83,7 +83,7 @@ function Transaction({
           <TokenSymbol symbol={pool.token1.symbol} />: {amount1.toFixed(4)}({percent1}%)
         </div>
       </td>
-      <td>
+      <td className="px-4 py-2">
         {totalLiquidity !== 0
           ? convertToGlobalFormatted(totalLiquidity)
           : formatCurrencyWithSymbol(0, 1)}
