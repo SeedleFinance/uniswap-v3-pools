@@ -28,7 +28,7 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
 
   const lastLoadedTimestamp = useMemo(() => {
     if (tick > -1) {
-      return formatDistanceToNow(new Date(lastLoaded), { addSuffix: false, includeSeconds: true });
+      return formatDistanceToNow(new Date(lastLoaded), { addSuffix: false, includeSeconds: false });
     }
   }, [tick, lastLoaded]);
 

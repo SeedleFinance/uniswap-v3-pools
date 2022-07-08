@@ -60,16 +60,16 @@ function Landing() {
           />
         </form>
       </div>
-      <div className="flex flex-col md:flex-row justify-between items-center my-4 w-full flex-1">
+      <div className="flex flex-col md:flex-row justify-between items-start my-4 w-full flex-1">
         <div className="w-full lg:max-w-sm sm:mr-4 px-8 py-16 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
           <h3 className="text-1.5 lg:text-2 font-semibold tracking-tighter">Deep Insights</h3>
           <span>Compare performance across multiple pools at once.</span>
         </div>
-        <div className="w-full lg:max-w-sm sm:mr-4 px-8 py-16 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
+        <div className="w-full lg:max-w-sm sm:mr-4 px-8 mt-6 md:mt-0 py-16 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
           <h3 className="text-1.5 lg:text-2 font-semibold tracking-tighter">Multi Network</h3>
           <span>Seedle supports Ethereum, Polygon, Optimism and Abritrum.</span>
         </div>
-        <div className="w-full lg:max-w-sm px-8 py-16 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
+        <div className="w-full lg:max-w-sm px-8 py-16 mt-6 md:mt-0 rounded-lg flex items-center text-center justify-center flex-col text-high bg-gradient-to-b from-surface-10 to-transparent">
           <h3 className="text-1.5 lg:text-2 font-semibold tracking-tighter">Future Proof</h3>
           <span>We’re developing Seedle to be the best in–class defi pool manager.</span>
         </div>
