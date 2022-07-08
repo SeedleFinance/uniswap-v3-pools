@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 
 interface RangeVisualProps {
@@ -6,9 +7,17 @@ interface RangeVisualProps {
   tickUpper: number;
   tickSpacing: number;
   flip: boolean;
+  className?: string;
 }
 
-function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: RangeVisualProps) {
+function RangeVisual({
+  tickCurrent,
+  tickLower,
+  tickUpper,
+  tickSpacing,
+  flip,
+  className,
+}: RangeVisualProps) {
   let spaceMultiplier = 10;
   if (tickSpacing === 200) {
     spaceMultiplier = 10;
@@ -36,7 +45,7 @@ function RangeVisual({ tickCurrent, tickLower, tickUpper, tickSpacing, flip }: R
 
   return (
     <div
-      className="flex bg-gray-300"
+      className={classNames('flex bg-surface-30', className)}
       style={{ position: 'relative', width: `${barWidth}px`, height: '10px' }}
     >
       <div

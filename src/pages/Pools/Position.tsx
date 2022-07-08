@@ -26,6 +26,10 @@ import TransactionModal from '../../ui/TransactionModal';
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants';
 import classNames from 'classnames';
 import { Button } from '../../ui/Button';
+import Helper from '../../icons/Helper';
+import Tooltip from '../../ui/Tooltip';
+import { LABELS } from '../../content/tooltip';
+import Warning from '../../icons/Warning';
 
 export interface PositionProps {
   id: BigNumber;
@@ -273,15 +277,28 @@ function Position({
     <>
       <tr className={classNames(positionTextColor, 'border-b border-element-10 text-0.8125')}>
         <td className="flex flex-col justify-between px-4 py-4">
-          <div className={`text-0.875 py-2 font-medium ${getStatusColor(positionStatus)}`}>
-            {statusLabel}{' '}
+          <div
+            className={`text-0.875  font-medium flex items-center pointer ${getStatusColor(
+              positionStatus,
+            )}`}
+          >
+            {statusLabel}
+            {positionStatus === 2 && (
+              <Tooltip label={LABELS.POSITION.OUT_OF_RANGE} placement="top">
+                <div className="pointer">
+                  <Warning className="ml-2 bg-yellow-500" />
+                </div>
+              </Tooltip>
+            )}
           </div>
+
           <RangeVisual
             tickCurrent={pool.tickCurrent}
             tickLower={entity.tickLower}
             tickUpper={entity.tickUpper}
             tickSpacing={pool.tickSpacing}
             flip={pool.token0.equals(baseToken)}
+            className="mt-2"
           />
           <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
         </td>
