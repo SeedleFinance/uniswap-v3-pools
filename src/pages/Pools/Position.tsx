@@ -26,7 +26,6 @@ import TransactionModal from '../../ui/TransactionModal';
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants';
 import classNames from 'classnames';
 import { Button } from '../../ui/Button';
-import Helper from '../../icons/Helper';
 import Tooltip from '../../ui/Tooltip';
 import { LABELS } from '../../content/tooltip';
 import Warning from '../../icons/Warning';

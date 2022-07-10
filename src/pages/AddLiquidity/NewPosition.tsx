@@ -362,14 +362,16 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         provider: chainWeb3React.library,
       });
 
-      const token0Balance = rangeReverse
-        ? toCurrencyAmount(baseToken, baseAmount, depositWrapped)
-        : toCurrencyAmount(quoteToken, quoteAmount, depositWrapped);
-      const token1Balance = rangeReverse
-        ? toCurrencyAmount(quoteToken, quoteAmount, depositWrapped)
-        : toCurrencyAmount(baseToken, baseAmount, depositWrapped);
-
-      const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
+      let token0Balance, token1Balance, matchingPosition;
+      if (rangeReverse) {
+        token0Balance = toCurrencyAmount(baseToken, baseAmount, depositWrapped);
+        token1Balance = toCurrencyAmount(quoteToken, quoteAmount, depositWrapped);
+        matchingPosition = findMatchingPosition(positions, fee, tickUpper, tickLower);
+      } else {
+        token0Balance = toCurrencyAmount(quoteToken, quoteAmount, depositWrapped);
+        token1Balance = toCurrencyAmount(baseToken, baseAmount, depositWrapped);
+        matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
+      }
 
       const addLiquidityOptions: any = {};
       if (matchingPosition) {
@@ -398,6 +400,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         addLiquidityOptions,
       };
 
+      console.log(opts);
       const routerResult = await router.routeToRatio(
         token0Balance,
         token1Balance,

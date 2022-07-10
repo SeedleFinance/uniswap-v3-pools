@@ -35,7 +35,7 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     if (initalLoading) {
       setInitialLoading(loading);
     }
-  }, [loading]);
+  }, [initalLoading, loading]);
 
   const refreshingList = useMemo(() => {
     return loading || feesLoading;

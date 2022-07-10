@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import IconRefresh from '../../icons/Refresh';
-import { Button } from '../../ui/Button';
 import LoadingSpinner from '../../ui/Spinner';
 
 interface Props {

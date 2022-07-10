@@ -7,7 +7,6 @@ import { AppSettingsProvider } from './AppSettingsProvider';
 import Container from './Container';
 
 function App() {
-  // bump
   return (
     <Web3CombinedProvider>
       <SubgraphProvider>

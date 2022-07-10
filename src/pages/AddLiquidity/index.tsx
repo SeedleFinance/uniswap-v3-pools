@@ -33,7 +33,10 @@ function AddLiquidity({ tab }: Props) {
     }
   }, [activate, active]);
 
-  const { pools } = usePoolsForNetwork(chainId || 1, +new Date(), true);
+  // keep timestamp static
+  // This page ends up being re-rendered this prevents it
+  const timestamp = 1234;
+  const { pools } = usePoolsForNetwork(chainId || 1, timestamp, true);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
   const [selectedTab, setSelectedTab] = useState('new');

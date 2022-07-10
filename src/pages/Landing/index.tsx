@@ -8,7 +8,6 @@ import { useAddress } from '../../AddressProvider';
 import Account from '../../Account';
 import { ROUTES } from '../../constants';
 import Logo from '../../ui/Logo';
-import Tooltip from '../../ui/Tooltip';
 
 function Landing() {
   const [addresses, setAddresses] = useState<string[]>([]);
