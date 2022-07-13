@@ -142,6 +142,7 @@ export const ROUTES = {
   ADD_NEW: '/add/new',
   ADD_EXISTING: '/add/existing',
   ABOUT: '/about',
+  POOL_DETAILS: '/pool',
 };
 
 export const EXTERNAL_LINKS = {

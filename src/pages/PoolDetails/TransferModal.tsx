@@ -3,7 +3,7 @@ import { Token } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import Modal from '../../ui/Modal/Modal';
-import { Button } from '../../ui/Button';
+import Button from '../../ui/Button';
 import { ROUTES } from '../../constants';
 import Input from '../../ui/Input';
 

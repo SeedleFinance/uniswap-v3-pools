@@ -6,11 +6,10 @@ import { getPositionStatus, PositionStatus } from '../../../utils/positionStatus
 
 interface PositionStatusesProps {
   tickCurrent: number;
-  positions: Position[] | undefined;
-  onClick: () => void;
+  positions: Position[];
 }
 
-function PositionStatuses({ tickCurrent, positions, onClick }: PositionStatusesProps) {
+function PositionStatuses({ tickCurrent, positions }: PositionStatusesProps) {
   const statusColor = {
     [PositionStatus.Inactive]: 'bg-surface-40',
     [PositionStatus.InRange]: 'bg-brand-primary',
@@ -21,7 +20,7 @@ function PositionStatuses({ tickCurrent, positions, onClick }: PositionStatusesP
   }
 
   return (
-    <button onClick={onClick} className="flex">
+    <>
       {positions.map((position, idx) => (
         <div
           key={idx}
@@ -31,7 +30,7 @@ function PositionStatuses({ tickCurrent, positions, onClick }: PositionStatusesP
           )}
         />
       ))}
-    </button>
+    </>
   );
 }
 

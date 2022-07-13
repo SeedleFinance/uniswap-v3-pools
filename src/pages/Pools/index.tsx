@@ -1,22 +1,28 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
 import { PoolState } from '../../hooks/usePoolsState';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
-import Pool from './Pool';
-import FilterClosedToggle from './FilterClosedToggle';
-import LastUpdatedStamp from './LastUpdatedStamp';
-import DownloadCSV from './DownloadCSV';
+
+import Button from '../../ui/Button';
 import Card from '../../ui/Card';
-import { Button } from '../../ui/Button';
+import DownloadCSV from '../../ui/DownloadCSV';
+import FilterClosedToggle from './FilterClosedToggle';
+import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Plus from '../../icons/Plus';
+import PoolButton from '../../ui/PoolButton';
+import PositionStatuses from './PositionStatuses';
+
 import { ROUTES } from '../../constants';
 
 function Pools() {
-  const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { convertToGlobal, formatCurrencyWithSymbol, convertToGlobalFormatted } =
+    useCurrencyConversions();
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
+
+  console.log('pools', pools);
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -73,99 +79,108 @@ function Pools() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
         <div className="hidden md:flex w-1/2 flex-col text-high">
           <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Positions</h1>
           <div className="text-medium">A list of your Uniswap V3 positions.</div>
         </div>
-
-        <div className="flex w-full">
+        <div className="flex w-full lg:w-2/3 xl:w-1/2">
           <Card>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
             <div className="text-0.875 md:text-1 text-medium">Total Liquidity</div>
           </Card>
-          <Card className="ml-1 md:ml-4">
+          <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">
-              <span className="hidden md:inline-block">Total</span> Uncollected Fees
-            </div>
+            <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
-          <Card className="ml-1 md:ml-4">
-            <div className="text-1.25 md:text-1.75 my-1 font-semibold text-brand-dark-primary">
+          <Card className="ml-1 md:ml-2">
+            <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Total Value</div>
+            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>
-      <div className="w-full mt-4 md:mt-8">
+      <div className="w-full mt-5 md:mt-10">
         <div className="flex justify-between items-center">
-          <Button href="/add/new" size="md">
-            <div className="flex items-center">
-              <Plus />
-              <span className="ml-1">New Position</span>
-            </div>
-          </Button>
-          <div className="flex flex-col-reverse items-end md:flex-row md:items-center">
-            <div className="items-center ml-2 flex">
-              <LastUpdatedStamp
-                loading={loading || refreshingList}
-                lastLoaded={lastLoaded}
-                refresh={refresh}
-              />
-            </div>
-            <FilterClosedToggle />
+          <FilterClosedToggle />
+          <div className="flex">
             <div className="ml-2 hidden md:flex">
               <DownloadCSV />
             </div>
+            <Button href="/add/new" size="md" className="ml-2">
+              <div className="flex items-center -ml-1">
+                <Plus />
+                <span className="ml-1">New Position</span>
+              </div>
+            </Button>
           </div>
         </div>
       </div>
-      <div className="w-full mt-4">
+      <div className="w-full flex-col mt-4 flex justify-center">
         {empty ? (
-          <div className="py-4 mt-12 rounded-lg">
-            <div className="text-center text-1 md:text-1.125 text-low m-8">
-              This address do not have any Uniswap LP positions.
+          <div className="py-12 rounded-lg">
+            <div className="text-center text-1 md:text-1 text-low mt-4">
+              This address has no position history.
             </div>
             <Link
               to={ROUTES.ADD_NEW}
-              className="block text-center text-1.125 text-blue-primary font-medium m-8"
+              className="block text-center text-1 text-blue-primary font-medium py-2"
             >
               + Add Liquidity
             </Link>
           </div>
         ) : (
-          sortedPools.map(
-            ({
-              key,
-              address,
-              entity,
-              quoteToken,
-              baseToken,
-              rawPoolLiquidity,
-              poolLiquidity,
-              poolUncollectedFees,
-              positions,
-            }: PoolState) => (
-              <Pool
-                key={key}
-                address={address}
-                entity={entity}
-                quoteToken={quoteToken}
-                baseToken={baseToken}
-                positions={positions}
-                rawPoolLiquidity={rawPoolLiquidity}
-                poolLiquidity={poolLiquidity}
-                poolUncollectedFees={poolUncollectedFees}
-              />
-            ),
-          )
+          <>
+            {sortedPools.map(
+              ({
+                entity,
+                quoteToken,
+                baseToken,
+                positions,
+                address,
+                key,
+                poolLiquidity,
+                poolUncollectedFees,
+              }: PoolState) => (
+                <Link
+                  key={key}
+                  to={`${ROUTES.POOL_DETAILS}/${address}`}
+                  className="flex justify-between text-2xl text-medium px-4 py-4 md:py-6 border-b border-element-10 hover:bg-surface-5 transition-colors cursor-pointer"
+                >
+                  <PoolButton
+                    baseToken={baseToken}
+                    quoteToken={quoteToken}
+                    fee={entity.fee / 10000}
+                    showNetwork={true}
+                    onClick={() => {}}
+                  />
+                  <div className="flex items-center">
+                    <PositionStatuses
+                      tickCurrent={entity.tickCurrent}
+                      positions={positions.map(({ entity }) => entity)}
+                    />
+                    <div className="text-lg rounded-md text-high ml-2 font-medium">
+                      {convertToGlobalFormatted(poolLiquidity.add(poolUncollectedFees))}
+                    </div>
+                  </div>
+                </Link>
+              ),
+            )}
+          </>
         )}
+      </div>
+      <div className="justify-end flex mt-4">
+        <LastUpdatedStamp
+          loading={loading || refreshingList}
+          lastLoaded={lastLoaded}
+          refresh={refresh}
+        />
       </div>
     </div>
   );

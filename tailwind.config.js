@@ -170,6 +170,11 @@ module.exports = {
       3.375: '3.375rem', // 56px
       4.75: '4.5rem', // 72px
     },
+    boxShadow: {
+      lg: '0px 4px 8px rgba(0, 0, 0, 0.25)',
+      md: '0px 2px 14px 0px rgba(60, 63, 66, 0.12)',
+      sm: '0px 4px 44px rgba(60, 63, 66, 0.14)',
+    },
   },
   variants: {
     extend: {},

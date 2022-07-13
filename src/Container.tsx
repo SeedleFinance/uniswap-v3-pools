@@ -12,7 +12,7 @@ import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
 import { ROUTES } from './constants';
 import Logo from './ui/Logo';
 import classNames from 'classnames';
-import { Button } from './ui/Button';
+import Button from './ui/Button';
 
 interface ThemeWrapperProps {
   theme: 'light' | 'dark';

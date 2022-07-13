@@ -25,7 +25,7 @@ import TransactionModal from '../../ui/TransactionModal';
 
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../constants';
 import classNames from 'classnames';
-import { Button } from '../../ui/Button';
+import Button from '../../ui/Button';
 import Helper from '../../icons/Helper';
 import Tooltip from '../../ui/Tooltip';
 import { LABELS } from '../../content/tooltip';
@@ -83,6 +83,7 @@ function Position({
     if (!baseToken || !pool || !entity || !positionLiquidity || positionLiquidity.equalTo(0)) {
       return { percent0: '0', percent1: '0' };
     }
+
     const [value0, value1] = pool.token0.equals(baseToken)
       ? [entity.amount0, pool.priceOf(pool.token1).quote(entity.amount1)]
       : [pool.priceOf(pool.token0).quote(entity.amount0), entity.amount1];

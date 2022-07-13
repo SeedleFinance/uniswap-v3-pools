@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import IconRefresh from '../../icons/Refresh';
-import { Button } from '../../ui/Button';
-import LoadingSpinner from '../../ui/Spinner';
+import IconRefresh from '../icons/Refresh';
+import LoadingSpinner from './Spinner';
+import classNames from 'classnames';
 
 interface Props {
   loading: boolean;
   lastLoaded: number;
   refresh: () => void;
+  className?: string;
 }
 
-function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
+function LastUpdatedStamp({ loading, lastLoaded, refresh, className }: Props) {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -33,13 +34,13 @@ function LastUpdatedStamp({ loading, lastLoaded, refresh }: Props) {
   }, [tick, lastLoaded]);
 
   return (
-    <div className="flex items-center text-0.75 text-medium">
+    <div className={'flex items-center text-0.6875 text-medium'}>
       {loading ? (
         <span>
           <LoadingSpinner size={20} color="text-high" />
         </span>
       ) : (
-        <div className="flex items-center">
+        <div className={classNames('flex items-center', className)}>
           <span>
             Updated <span>{lastLoadedTimestamp}</span> ago
           </span>

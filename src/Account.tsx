@@ -5,7 +5,7 @@ import { injectedConnector } from './utils/connectors';
 import { BLOCK_EXPLORER_URL } from './constants';
 import useENS from './hooks/useENS';
 import Davatar from '@davatar/react';
-import { Button } from './ui/Button';
+import Button from './ui/Button';
 
 interface AccountProps {
   address: string | null | undefined;
