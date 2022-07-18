@@ -195,6 +195,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
               .filter(({ transactionType }) => transactionType !== TxTypes.Transfer)
               .map(
                 ({
+                  id
                   transactionHash,
                   transactionType,
                   amount0,
@@ -204,9 +205,9 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
                   timestamp,
                 }: TransactionV2) => {
                   return {
-                    id: transactionHash,
+                    id,
                     transactionType,
-                    timestamp: BigNumber.from(timestamp || '0x60d953c7').toNumber(),
+                    timestamp: BigNumber.from(timestamp || '0').toNumber(),
                     amount0: CurrencyAmount.fromRawAmount(token0, amount0),
                     amount1: CurrencyAmount.fromRawAmount(token1, amount1),
                     gas: gas ? calcGasCost(chainId, gas, gasPrice) : calcGasCost(chainId, '0', '0'),

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { uniqBy } from 'lodash';
 import { BigNumber } from '@ethersproject/bignumber';
 
 import { TxTypes } from '../enums';
@@ -86,7 +87,9 @@ export function useFetchPositions(
         resultsByAddress.forEach((result: any) => {
           // calculate position liquidity
           let positionLiquidity = BigNumber.from(0);
-          result.transactions.forEach(({ transactionType, liquidity }: any) => {
+          // remove duplicate transactions
+          const txs = uniqBy(result.transactions, 'id');
+          txs.forEach(({ transactionType, liquidity }: any) => {
             if (transactionType === TxTypes.Add) {
               positionLiquidity = positionLiquidity.add(BigNumber.from(liquidity));
             } else if (transactionType === TxTypes.Remove) {
