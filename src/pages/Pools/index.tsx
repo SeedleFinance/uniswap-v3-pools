@@ -22,8 +22,6 @@ function Pools() {
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
 
-  console.log('pools', pools);
-
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
     if (loading) {
