@@ -51,7 +51,6 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
             <th className="pb-3 px-4 py-3"></th>
           </tr>
         </thead>
-        {console.log({ positions })}
         <tbody className="text-0.875 align-middle">
           {positions.map((position) => (
             <Position

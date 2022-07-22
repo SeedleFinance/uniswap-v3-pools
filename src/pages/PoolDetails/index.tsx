@@ -14,6 +14,8 @@ import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Pool from './Pool';
 import Positions from './Positions';
 import ChartLayout from './Chart';
+import { tickToPrice } from '@uniswap/v3-sdk';
+import { formatInput } from '../../utils/numbers';
 
 const PoolDetailsPage = () => {
   const { loading, pools } = usePools();
@@ -30,6 +32,28 @@ const PoolDetailsPage = () => {
     return pools.filter((pool) => pool.address === id)[0];
   }, [loading, pools, id]);
 
+  const {
+    key,
+    address,
+    entity,
+    quoteToken,
+    baseToken,
+    positions,
+    rawPoolLiquidity,
+    poolLiquidity,
+    poolUncollectedFees,
+  } = pool;
+
+  const currentPrice = useMemo(() => {
+    if (!pool || !baseToken || !quoteToken) {
+      return '0';
+    }
+    const { tick } = pool;
+    const price = parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8));
+
+    return price;
+  }, [pool, baseToken, quoteToken]);
+
   if (!pool?.positions) {
     return (
       <div>
@@ -44,20 +68,6 @@ const PoolDetailsPage = () => {
       </div>
     );
   }
-
-  const {
-    key,
-    address,
-    entity,
-    quoteToken,
-    baseToken,
-    positions,
-    rawPoolLiquidity,
-    poolLiquidity,
-    poolUncollectedFees,
-  } = pool;
-
-  const currentPrice = convertToGlobal(poolLiquidity).toFixed(6); // todo - memoise this?
 
   return (
     <div className="flex flex-col w-full">

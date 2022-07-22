@@ -107,8 +107,6 @@ function Pool({
     );
   }
 
-  console.log('total liquid', convertToGlobal(poolLiquidity));
-
   return (
     <>
       <div className="overflow-x-auto bg-surface-0 shadow-sm mt-4 rounded-lg">
