@@ -16,10 +16,18 @@ interface ChartLayoutProps {
   quoteToken: Token;
   baseToken: Token;
   entity: any;
+  currentPrice: string;
   className?: string;
 }
 
-function ChartLayout({ address, quoteToken, baseToken, className, entity }: ChartLayoutProps) {
+function ChartLayout({
+  address,
+  quoteToken,
+  baseToken,
+  className,
+  entity,
+  currentPrice,
+}: ChartLayoutProps) {
   const [period, setPeriod] = useState<number>(7);
   const [showChartType, setShowChartType] = React.useState<'price' | 'liquidity'>('price');
 
@@ -60,6 +68,11 @@ function ChartLayout({ address, quoteToken, baseToken, className, entity }: Char
   return (
     <div className={classNames('flex flex-col md:flex-row', className)}>
       <div className="flex flex-col text-0.75 shadow-sm bg-surface-0 rounded-lg p-4 w-full md:w-1/4">
+        <div className="mx-2 my-1 justify-center">
+          <span className="text-medium text-0.875">Current Price</span>
+          <div className="font-medium text-1.25 text-high">{currentPrice}</div>
+        </div>
+
         <div className="mx-2 my-1 justify-center">
           <span className="text-medium text-0.875">Min Price</span>
           <div className="font-medium text-1.25 text-high">{minPrice}</div>

@@ -142,6 +142,7 @@ const PoolDetailsPage = () => {
           baseToken={baseToken}
           quoteToken={quoteToken}
           entity={entity}
+          currentPrice={currentPrice}
           className="mt-4"
         />
       </div>
