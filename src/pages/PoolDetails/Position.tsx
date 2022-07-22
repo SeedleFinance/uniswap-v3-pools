@@ -403,8 +403,8 @@ function Position({
 
       {showTransactions && (
         <tr>
-          <td colSpan={4}>
-            <table className="table-auto border-separate w-full my-2 px-4 -ml-4 mt-6">
+          <td colSpan={12}>
+            <table className="table-auto w-full border-separate w-full my-2 px-4 -ml-4 mt-6">
               <thead className="bg-surface-5">
                 <tr className="text-left">
                   <th className="px-3 py-2">Timestamp</th>

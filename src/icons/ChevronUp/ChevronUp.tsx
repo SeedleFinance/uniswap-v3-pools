@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Props {
-  className: string;
+  className?: string;
 }
 
 function ChevronUp({ className }: Props) {
