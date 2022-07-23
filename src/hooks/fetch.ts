@@ -5,6 +5,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { TxTypes } from '../enums';
 
 export interface TransactionV2 {
+  id: string;
   tokenId: number;
   amount0: string;
   amount1: string;

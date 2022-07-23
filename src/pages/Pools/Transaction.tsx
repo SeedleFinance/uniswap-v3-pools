@@ -11,6 +11,7 @@ import { BLOCK_EXPLORER_URL } from '../../constants';
 
 export interface TransactionProps {
   id: string;
+  transactionHash: string;
   pool: Pool;
   baseToken: Token;
   timestamp: number;
@@ -22,6 +23,7 @@ export interface TransactionProps {
 
 function Transaction({
   id,
+  transactionHash,
   pool,
   baseToken,
   timestamp,
@@ -70,7 +72,10 @@ function Transaction({
   return (
     <tr>
       <td className="px-4 py-2">
-        <a href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${id}`} className="text-blue-500">
+        <a
+          href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${transactionHash}`}
+          className="text-blue-500"
+        >
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
         </a>
       </td>
