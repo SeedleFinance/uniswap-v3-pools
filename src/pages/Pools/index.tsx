@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
 import { PoolState } from '../../hooks/usePoolsState';
@@ -13,14 +14,18 @@ import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Plus from '../../icons/Plus';
 import PoolButton from '../../ui/PoolButton';
 import PositionStatuses from './PositionStatuses';
+import Tooltip from '../../ui/Tooltip';
+import IconHelper from '../../icons/Helper';
 
 import { ROUTES } from '../../constants';
+import { LABELS } from '../../content/tooltip';
 
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol, convertToGlobalFormatted } =
     useCurrencyConversions();
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
+  const navigate = useNavigate();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -60,6 +65,10 @@ function Pools() {
     );
   }, [loading, pools, convertToGlobal]);
 
+  function handleRowClick(address: string) {
+    navigate(`${ROUTES.POOL_DETAILS}/${address}`);
+  }
+
   if (loading) {
     return (
       <div>
@@ -88,7 +97,7 @@ function Pools() {
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Total Liquidity</div>
+            <div className="text-0.875 md:text-1 text-mediumsw">Total Liquidity</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
@@ -135,41 +144,62 @@ function Pools() {
           </div>
         ) : (
           <>
-            {sortedPools.map(
-              ({
-                entity,
-                quoteToken,
-                baseToken,
-                positions,
-                address,
-                key,
-                poolLiquidity,
-                poolUncollectedFees,
-              }: PoolState) => (
-                <Link
-                  key={key}
-                  to={`${ROUTES.POOL_DETAILS}/${address}`}
-                  className="flex justify-between text-2xl text-medium px-4 py-4 md:py-6 border-b border-element-10 hover:bg-surface-5 transition-colors cursor-pointer"
-                >
-                  <PoolButton
-                    baseToken={baseToken}
-                    quoteToken={quoteToken}
-                    fee={entity.fee / 10000}
-                    showNetwork={true}
-                    onClick={() => {}}
-                  />
-                  <div className="flex items-center">
-                    <PositionStatuses
-                      tickCurrent={entity.tickCurrent}
-                      positions={positions.map(({ entity }) => entity)}
-                    />
-                    <div className="text-lg rounded-md text-high ml-2 font-medium">
-                      {convertToGlobalFormatted(poolLiquidity.add(poolUncollectedFees))}
-                    </div>
-                  </div>
-                </Link>
-              ),
-            )}
+            <table className="table-auto w-full text-high text-0.875">
+              <thead className="border-b border-element-10">
+                <tr className="text-left align-middle">
+                  <th className="px-6 py-4 whitespace-nowrap font-medium">Pool</th>
+                  <th className="px-6 py-4 whitespace-nowrap font-medium text-right">
+                    <Tooltip label={LABELS.LIQUIDITY} placement="top-end">
+                      <span className="flex items-center justify-end">
+                        Total Liquidity
+                        <IconHelper className="ml-1" />
+                      </span>
+                    </Tooltip>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedPools.map(
+                  ({
+                    entity,
+                    quoteToken,
+                    baseToken,
+                    positions,
+                    address,
+                    key,
+                    poolLiquidity,
+                    poolUncollectedFees,
+                  }: PoolState) => (
+                    <tr
+                      onClick={() => handleRowClick(address)}
+                      key={key}
+                      className="hover:bg-surface-5 cursor-pointer"
+                    >
+                      <td className="px-6 py-8 whitespace-nowrap">
+                        <PoolButton
+                          baseToken={baseToken}
+                          quoteToken={quoteToken}
+                          fee={entity.fee / 10000}
+                          showNetwork={true}
+                          onClick={() => {}}
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-end">
+                          <PositionStatuses
+                            tickCurrent={entity.tickCurrent}
+                            positions={positions.map(({ entity }) => entity)}
+                          />
+                          <div className="text-lg rounded-md text-high ml-2 font-medium text-right">
+                            {convertToGlobalFormatted(poolLiquidity.add(poolUncollectedFees))}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
           </>
         )}
       </div>

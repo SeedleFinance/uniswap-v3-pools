@@ -7,10 +7,15 @@ interface IconProps {
 
 const Helper: React.FC<IconProps> = ({ className }) => {
   return (
-    <div className={classNames('bg-surface-40 rounded-full text-inverted', className)}>
+    <div
+      className={classNames(
+        'bg-surface-40 rounded-full text-inverted flex-shrink-0 w-4 h-4 flex justify-center items-center',
+        className,
+      )}
+    >
       <svg
         fill="none"
-        height="17"
+        height="16"
         viewBox="0 0 16 16"
         width="16"
         xmlns="http://www.w3.org/2000/svg"
