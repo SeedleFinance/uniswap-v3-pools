@@ -191,7 +191,7 @@ function Pools() {
                             positions={positions.map(({ entity }) => entity)}
                           />
                           <div className="text-lg rounded-md text-high ml-2 font-medium text-right">
-                            {convertToGlobalFormatted(poolLiquidity.add(poolUncollectedFees))}
+                            {convertToGlobalFormatted(poolLiquidity)}
                           </div>
                         </div>
                       </td>

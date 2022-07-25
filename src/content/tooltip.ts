@@ -5,5 +5,5 @@ export const LABELS = {
   POSITION: {
     OUT_OF_RANGE: 'This position is not earning fees',
   },
-  LIQUIDITY: 'The total net gain for a position including fees',
+  LIQUIDITY: 'Total liquidity for a position, excluding fees',
 };
