@@ -16,7 +16,7 @@ interface ChartLayoutProps {
   quoteToken: Token;
   baseToken: Token;
   entity: any;
-  currentPrice: string;
+  currentPrice: string | number;
   className?: string;
 }
 
@@ -108,7 +108,7 @@ function ChartLayout({
           <button
             onClick={() => handleClickChangeGraph('liquidity')}
             className={`ml-2 px-2 uppercase font-medium ${
-              showChartType === 'liquidity' ? 'text-high' : 'text-low'
+              showChartType === 'liquidity' ? 'bg-purple-light' : 'text-low'
             }`}
           >
             Liquidity

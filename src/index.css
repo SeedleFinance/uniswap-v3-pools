@@ -9,6 +9,8 @@
     --color-white: #fff;
     --color-black: #000;
 
+    --color-purple: #8882d5;
+
     --color-text-high: #161413;
     --color-text-medium: #878ea1;
     --color-text-low: #7f879c;
@@ -58,6 +60,8 @@
     /* Base colors */
     --color-white: #fff;
     --color-black: #ccc;
+
+    --color-purple: #c1bdfc;
 
     /* Text colors */
     --color-text-high: #fff;

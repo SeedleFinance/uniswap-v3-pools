@@ -89,11 +89,14 @@ module.exports = {
         pink: {
           dark: 'var(--color-pink-dark)',
           light: 'var(--color-pink-light)',
-
-          dark: {
-            dark: 'var(--color-pink-dark)',
-            light: 'var(--color-pink-light)',
-          },
+        },
+        purple: {
+          dark: 'var(--color-purple-dark)',
+          light: 'var(--color-purple-light)',
+        },
+        purple: {
+          dark: 'var(--color-purple-dark)',
+          light: 'var(--color-purple-light)',
         },
         blue: {
           primary: 'var(--color-blue-primary)',
