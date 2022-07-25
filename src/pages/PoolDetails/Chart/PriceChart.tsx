@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   Tooltip,
   XAxis,
+  YAxis,
 } from 'recharts';
 import { useAppSettings } from '../../../AppSettingsProvider';
 import { usePoolPriceData } from '../../../hooks/usePoolPriceData';
@@ -52,6 +53,16 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
     );
   }
 
+  const sortedByPrice = [...priceData].sort((a: any, b: any) => a.price - b.price);
+  const min = sortedByPrice[0].price;
+  const max = sortedByPrice[sortedByPrice.length - 1].price;
+
+  const buffer = 0.2; // 20% buffer on each axis
+
+  const minPriceWithBuffer = min - (max - min) * buffer;
+  const maxPriceWithBuffer = max + (max - min) * buffer;
+  const yDomain = [minPriceWithBuffer, maxPriceWithBuffer];
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <ComposedChart data={priceData} margin={{ top: 0, right: 0, bottom: 20, left: 0 }}>
@@ -66,11 +77,20 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
           vertical={false}
           stroke={theme === 'light' ? '#e7e7ed' : '#40444a'}
         />
+
         <XAxis
           dataKey="date"
           tick={{ fontSize: 12, fill: '#7f879c' }}
           stroke={theme === 'light' ? '#e5e5ee' : '40444a'}
-          padding={{ left: 15, right: 15 }}
+          padding={{ left: 0, right: 15 }}
+        />
+        <YAxis
+          tick={{ fontSize: 12, fill: '#7f879c' }}
+          stroke={theme === 'light' ? '#e5e5ee' : '40444a'}
+          domain={yDomain}
+          axisLine={false}
+          padding={{ top: 0, bottom: 0 }}
+          tick={false}
         />
         <Tooltip content={<CustomTooltip />} />
         <Line

@@ -33,6 +33,16 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
     );
   }
 
+  const sortedByLiquidity = [...liquidityData].sort((a: any, b: any) => a.price - b.price);
+  const min = sortedByLiquidity[0].price;
+  const max = sortedByLiquidity[sortedByLiquidity.length - 1].price;
+
+  const buffer = 0.2; // 20% buffer on each axis
+
+  const minPriceWithBuffer = min - (max - min) * buffer;
+  const maxPriceWithBuffer = max + (max - min) * buffer;
+  const yDomain = [minPriceWithBuffer, maxPriceWithBuffer];
+
   function CustomTooltip({ active, payload = '', label = '' }: any) {
     if (payload && active) {
       return (
@@ -53,7 +63,7 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
           tick={{ fontSize: 12, fill: '#7f879c' }}
           stroke={theme === 'light' ? '#e5e5ee' : '#ccc'}
         />
-        <YAxis hide={true} />
+        <YAxis hide={true} domain={yDomain} />
         <Tooltip content={<CustomTooltip />} />
         <Brush dataKey="price" height={30} stroke="#8882D5" />
         <Area dataKey="liquidity" fill="#8882D5" fillOpacity={0.9} stroke="#8882D5" />
