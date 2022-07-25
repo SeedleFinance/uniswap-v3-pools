@@ -44,7 +44,11 @@ function Account({ address }: AccountProps) {
   }, [chainId]);
 
   if (!address || !address.length) {
-    return <Button onClick={connectWallet}>Connect Wallet</Button>;
+    return (
+      <Button onClick={connectWallet} className="ml-2">
+        Connect Wallet
+      </Button>
+    );
   }
 
   return (

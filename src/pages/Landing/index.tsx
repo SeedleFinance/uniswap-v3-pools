@@ -32,15 +32,6 @@ function Landing() {
 
   return (
     <div className="flex flex-col items-center py-4 mx-auto lg:container p-4 h-full">
-      <div className="w-full mb-4 flex justify-between py-4">
-        <a href={ROUTES.HOME}>
-          <Logo />
-        </a>
-        <div className="md:w-2/5 flex justify-end items-center">
-          <ThemeSelector className="mr-1" />
-          <Account address={injectedAddress} />
-        </div>
-      </div>
       <div className="flex flex-col items-center justify-center px-4 py-4 mx-auto flex-1 w-full md:mt-8">
         <h1 className="text-center text-high text-2 sm:text-3 lg:text-4.75 font-bold leading-tight tracking-tighter">
           Powerful Insights for <br />
@@ -73,7 +64,6 @@ function Landing() {
           <span>We’re developing Seedle to be the best in–class defi pool manager.</span>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
