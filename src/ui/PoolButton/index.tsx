@@ -37,7 +37,7 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
       size="xs"
     >
       <div className="flex items-center">
-        <div className="flex mr-1 items-center">
+        <div className="flex flex-shrink-0 mr-1 items-center">
           <TokenLogo
             chain={chainLogoName}
             name={quoteToken.name}

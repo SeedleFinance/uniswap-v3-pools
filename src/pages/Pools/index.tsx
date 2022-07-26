@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import JSBI from 'jsbi';
 
 import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
 import { PoolState } from '../../hooks/usePoolsState';
@@ -188,7 +189,10 @@ function Pools() {
                         <div className="flex items-center justify-end">
                           <PositionStatuses
                             tickCurrent={entity.tickCurrent}
-                            positions={positions.map(({ entity }) => entity)}
+                            positions={positions
+                              .map(({ entity }) => entity)
+                              .filter(({ liquidity }) => JSBI.notEqual(liquidity, JSBI.BigInt(0)))}
+                            allPositionsCounter={positions.length}
                           />
                           <div className="text-lg rounded-md text-high ml-2 font-medium text-right">
                             {convertToGlobalFormatted(poolLiquidity)}
