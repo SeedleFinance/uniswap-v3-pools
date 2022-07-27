@@ -117,6 +117,8 @@ export function useFetchPositions(
     if (!addresses.length) {
       setLoading(false);
       setPositionStates([]);
+
+      return;
     }
 
     _call();
@@ -150,7 +152,11 @@ export function useFetchPools(
         return;
       }
 
-      const pools = await res.json();
+      let pools = await res.json();
+
+      // FIXME: this is a sign of server-side issue (eg: pools not indexed correctly)
+      // filter empty pools
+      pools = pools.filter((pool) => pool);
 
       setPoolStates(pools);
       setLoading(false);
@@ -159,7 +165,10 @@ export function useFetchPools(
     if (!addresses.length) {
       setPoolStates([]);
       setLoading(false);
+
+      return;
     }
+
     _call();
   }, [chainId, addresses]);
 

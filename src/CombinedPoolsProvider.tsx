@@ -27,9 +27,27 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     feesLoading,
   } = usePoolsForNetwork(1, lastLoaded);
 
+  const {
+    loading: polygonLoading,
+    pools: polygonPools,
+    feesLoading: polygonFeesLoading,
+  } = usePoolsForNetwork(137, lastLoaded);
+
+  const {
+    loading: optimismLoading,
+    pools: optimismPools,
+    feesLoading: optimismFeesLoading,
+  } = usePoolsForNetwork(10, lastLoaded);
+
+  const {
+    loading: arbitrumLoading,
+    pools: arbitrumPools,
+    feesLoading: arbitrumFeesLoading,
+  } = usePoolsForNetwork(42161, lastLoaded);
+
   const loading = useMemo(() => {
-    return mainnetLoading;
-  }, [mainnetLoading]);
+    return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading;
+  }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
 
   useEffect(() => {
     if (initalLoading) {
@@ -42,8 +60,8 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
   }, [loading, feesLoading]);
 
   const pools = useMemo(() => {
-    return [...mainnetPools];
-  }, [mainnetPools]);
+    return [...mainnetPools, ...polygonPools, ...optimismPools, ...arbitrumPools];
+  }, [mainnetPools, polygonPools, optimismPools, arbitrumPools]);
 
   const empty = useMemo(() => {
     if (loading) {
