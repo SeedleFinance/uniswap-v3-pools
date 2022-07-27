@@ -25,7 +25,7 @@ function PositionStatuses({ tickCurrent, positions, allPositionsCounter }: Posit
   const positionCounter = allPositionsCounter - positions.length;
 
   return (
-    <>
+    <div className="flex justify-end items-center">
       {positionCounter > 0 && (
         <div className="text-0.75 font-medium text-low mr-2">{positionCounter} Closed</div>
       )}
@@ -40,7 +40,7 @@ function PositionStatuses({ tickCurrent, positions, allPositionsCounter }: Posit
           />
         </span>
       ))}
-    </>
+    </div>
   );
 }
 

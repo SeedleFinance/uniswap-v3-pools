@@ -8,7 +8,7 @@ interface Props {
   address: string | undefined;
   className?: string | undefined;
   chain?: string | undefined;
-  size?: 'sm' | 'lg';
+  size?: 'xs' | 'sm' | 'lg';
 }
 
 function TokenLogo({ chain, name, address, className, size = 'sm' }: Props) {

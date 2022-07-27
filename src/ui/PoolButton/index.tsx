@@ -12,7 +12,7 @@ interface Props {
   onClick: () => void;
   tabIndex?: number;
   showNetwork?: boolean;
-  size?: 'sm' | 'lg';
+  size?: 'xs' | 'sm' | 'lg';
 }
 
 function getChainNameAndColor(chainId: number) {
@@ -59,7 +59,7 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
           </div>
         </div>
       </div>
-      <div className="flex">
+      <div className="hidden md:flex">
         {fee && (
           <span className="rounded-md bg-gray-400 text-inverted text-0.8125 ml-1 px-1 font-medium">
             {fee}%

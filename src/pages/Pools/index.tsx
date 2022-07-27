@@ -93,12 +93,12 @@ function Pools() {
           <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Positions</h1>
           <div className="text-medium">A list of your Uniswap V3 positions.</div>
         </div>
-        <div className="flex w-full lg:w-2/3 xl:w-1/2">
+        <div className="flex w-full lg:w-2/3 xl:w-1/2 overflow-x-auto md:overflow-x-visible py-2">
           <Card>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-mediumsw">Total Liquidity</div>
+            <div className="text-0.875 md:text-1 text-medium">Total Liquidity</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
@@ -176,17 +176,18 @@ function Pools() {
                       key={key}
                       className="hover:bg-surface-5 cursor-pointer"
                     >
-                      <td className="px-6 py-8 whitespace-nowrap">
+                      <td className="px-2 py-4 md:px-6 md:py-8 md:whitespace-nowrap">
                         <PoolButton
                           baseToken={baseToken}
                           quoteToken={quoteToken}
                           fee={entity.fee / 10000}
                           showNetwork={true}
+                          size="xs"
                           onClick={() => {}}
                         />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-end">
+                        <div className="flex flex-col-reverse items-end md:flex-row md:justify-end">
                           <PositionStatuses
                             tickCurrent={entity.tickCurrent}
                             positions={positions

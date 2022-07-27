@@ -2,6 +2,10 @@
   @apply w-7 h-7 md:w-8 md:h-8 rounded-full bg-white text-0.875 text-high;
 }
 
+.logo--xs {
+  @apply w-5 h-5 md:w-10 md:h-10;
+}
+
 .logo--lg {
   @apply w-8 h-8 md:w-10 md:h-10;
 }

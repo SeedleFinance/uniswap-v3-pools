@@ -7,7 +7,7 @@ export interface TokenProps {
   name?: string | undefined;
   symbol?: string | undefined;
   wrapped?: boolean;
-  size?: 'sm' | 'lg';
+  size?: 'xs' | 'sm' | 'lg';
   className?: string;
 }
 
