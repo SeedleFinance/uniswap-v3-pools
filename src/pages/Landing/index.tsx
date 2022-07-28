@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
+import createPersistedState from 'use-persisted-state';
 
-import Footer from '../../Footer';
 import Input from '../../ui/Input';
+import Popover from '../../ui/Popover';
+import { EXTERNAL_LINKS } from '../../constants';
 
-import ThemeSelector from '../../ThemeSelector';
-import { useAddress } from '../../AddressProvider';
-import Account from '../../Account';
-import { ROUTES } from '../../constants';
-import Logo from '../../ui/Logo';
+const usePopoverState = createPersistedState('popover');
 
 function Landing() {
   const [addresses, setAddresses] = useState<string[]>([]);
-  const { injectedAddress } = useAddress();
+  const [showPopover, setShowPopover] = usePopoverState(true);
 
   const handleInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = ev.target;
@@ -30,8 +28,20 @@ function Landing() {
     window.location.href = url.href;
   };
 
+  function handleClickHidePopover() {
+    setShowPopover(false);
+  }
+
   return (
     <div className="flex flex-col items-center py-4 mx-auto lg:container p-4 h-full">
+      {showPopover && (
+        <Popover
+          title="Help Grow Seedle"
+          description="Join over 2,000 contributers helping us build Seedle."
+          href={EXTERNAL_LINKS.GITCOIN}
+          onClose={handleClickHidePopover}
+        />
+      )}
       <div className="flex flex-col items-center justify-center px-4 py-4 mx-auto flex-1 w-full md:mt-8">
         <h1 className="text-center text-high text-2 sm:text-3 lg:text-4.75 font-bold leading-tight tracking-tighter">
           Powerful Insights for <br />
