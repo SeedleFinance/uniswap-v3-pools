@@ -43,7 +43,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
             <th className="hidden md:block pb-5 px-4 py-5">
               <Tooltip label={LABELS.NET_APY} placement="top">
                 <span className="flex items-center cursor-default whitespace-nowrap">
-                  Net Return
+                  Net APY
                   <IconHelper className="ml-1" />
                 </span>
               </Tooltip>
