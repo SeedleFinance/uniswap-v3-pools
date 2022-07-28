@@ -1,13 +1,17 @@
 import React, { useRef } from 'react';
+import classNames from 'classnames';
+
+import styles from './styles.module.css';
 
 interface Props {
   name: string | undefined;
   address: string | undefined;
   className?: string | undefined;
   chain?: string | undefined;
+  size?: 'xs' | 'sm' | 'lg';
 }
 
-function TokenLogo({ chain, name, address, className }: Props) {
+function TokenLogo({ chain, name, address, className, size = 'sm' }: Props) {
   const imgEl = useRef<HTMLImageElement>(null);
   const showFallbackImage = () => {
     if (imgEl.current) {
@@ -22,7 +26,7 @@ function TokenLogo({ chain, name, address, className }: Props) {
   return (
     <img
       ref={imgEl}
-      className={`w-7 h-7 md:w-8 md:h-8 rounded-full bg-white text-sm ${className}`}
+      className={classNames(styles['logo'], styles[`logo--${size}`], className)}
       alt={`${name} logo`}
       src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${
         chain || 'ethereum'

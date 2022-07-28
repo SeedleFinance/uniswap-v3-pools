@@ -6,7 +6,7 @@ import GlobalCurrencySelector from './GlobalCurrencySelector';
 import ThemeSelector from './ThemeSelector';
 import PageBody from './PageBody';
 import Footer from './Footer';
-import Landing from './pages/Landing';
+
 import { useAppSettings } from './AppSettingsProvider';
 import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
 import { ROUTES } from './constants';
@@ -40,14 +40,6 @@ function Container() {
     }
   }, [theme]);
 
-  if (!addresses.length) {
-    return (
-      <ThemeWrapper theme={computedTheme}>
-        <Landing />
-      </ThemeWrapper>
-    );
-  }
-
   return (
     <CurrencyConversionsProvider>
       <ThemeWrapper theme={computedTheme}>
@@ -58,7 +50,7 @@ function Container() {
             </a>
             <div className="md:w-2/5 flex justify-end">
               <ThemeSelector />
-              <GlobalCurrencySelector />
+              {addresses.length > 0 && <GlobalCurrencySelector />}
               <Account address={injectedAddress} />
             </div>
           </div>

@@ -2,8 +2,8 @@ import React from 'react';
 import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Position } from '@uniswap/v3-sdk';
 
-import { usePools } from '../../CombinedPoolsProvider';
-import { Button } from '../../ui/Button';
+import { usePools } from '../CombinedPoolsProvider';
+import Button from './Button';
 
 function DownloadCSV() {
   const { pools } = usePools();

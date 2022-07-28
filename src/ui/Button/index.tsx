@@ -68,7 +68,7 @@ export const ButtonComponent = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
@@ -103,3 +103,5 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   },
 );
+
+export default Button;

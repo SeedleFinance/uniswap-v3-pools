@@ -14,7 +14,7 @@ import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import PoolButton from '../../ui/PoolButton';
 import TokenLabel from '../../ui/TokenLabel';
 import Alert, { AlertLevel } from '../../ui/Alert/Alert';
-import { Button } from '../../ui/Button';
+import Button from '../../ui/Button';
 import Toggle from '../../ui/Toggle';
 import ChartButton from './ChartButton';
 import FeeTierData from './FeeTierData';

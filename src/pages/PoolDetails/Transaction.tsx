@@ -8,6 +8,7 @@ import TokenSymbol from '../../ui/TokenLabel';
 import { TxTypes } from '../../enums';
 
 import { BLOCK_EXPLORER_URL } from '../../constants';
+import IconNewWindow from '../../icons/NewWindow';
 
 export interface TransactionProps {
   id: string;
@@ -74,9 +75,10 @@ function Transaction({
       <td className="px-4 py-2">
         <a
           href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${transactionHash}`}
-          className="text-blue-500"
+          className="flex items-center text-blue-500"
         >
           {format(new Date(timestamp * 1000), "yyyy-MM-dd'T'HH:mm:ss")}
+          <IconNewWindow className="ml-2" />
         </a>
       </td>
       <td>{getTypeLabel(transactionType)}</td>

@@ -1,0 +1,7 @@
+.label--sm {
+  @apply text-inherit;
+}
+
+.label--lg {
+  @apply text-1.25;
+}

@@ -3,7 +3,7 @@ import { Token } from '@uniswap/sdk-core';
 
 import TokenLogo from '../TokenLogo';
 import TokenLabel from '../TokenLabel';
-import { Button } from '../Button';
+import Button from '../Button';
 
 interface Props {
   baseToken: Token;
@@ -12,6 +12,7 @@ interface Props {
   onClick: () => void;
   tabIndex?: number;
   showNetwork?: boolean;
+  size?: 'xs' | 'sm' | 'lg';
 }
 
 function getChainNameAndColor(chainId: number) {
@@ -25,7 +26,7 @@ function getChainNameAndColor(chainId: number) {
   return chains[chainId] || chains[1];
 }
 
-function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork }: Props) {
+function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork, size }: Props) {
   const [chainName, chainColor, chainLogoName] = getChainNameAndColor(baseToken.chainId);
   return (
     <Button
@@ -36,19 +37,29 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
       size="xs"
     >
       <div className="flex items-center">
-        <div className="flex mr-1 items-center">
-          <TokenLogo chain={chainLogoName} name={quoteToken.name} address={quoteToken.address} />
-          <TokenLogo chain={chainLogoName} name={baseToken.name} address={baseToken.address} />
+        <div className="flex flex-shrink-0 mr-1 items-center">
+          <TokenLogo
+            chain={chainLogoName}
+            name={quoteToken.name}
+            address={quoteToken.address}
+            size={size}
+          />
+          <TokenLogo
+            chain={chainLogoName}
+            name={baseToken.name}
+            address={baseToken.address}
+            size={size}
+          />
         </div>
         <div className="flex flex-col mx-1">
           <div>
-            <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} />
+            <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} size={size} />
             <span className="px-1">/</span>
-            <TokenLabel name={baseToken.name} symbol={baseToken.symbol} />
+            <TokenLabel name={baseToken.name} symbol={baseToken.symbol} size={size} />
           </div>
         </div>
       </div>
-      <div className="flex">
+      <div className="hidden md:flex">
         {fee && (
           <span className="rounded-md bg-gray-400 text-inverted text-0.8125 ml-1 px-1 font-medium">
             {fee}%

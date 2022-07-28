@@ -5,7 +5,7 @@ import { injectedConnector } from './utils/connectors';
 import { BLOCK_EXPLORER_URL } from './constants';
 import useENS from './hooks/useENS';
 import Davatar from '@davatar/react';
-import { Button } from './ui/Button';
+import Button from './ui/Button';
 
 interface AccountProps {
   address: string | null | undefined;
@@ -44,7 +44,11 @@ function Account({ address }: AccountProps) {
   }, [chainId]);
 
   if (!address || !address.length) {
-    return <Button onClick={connectWallet}>Connect Wallet</Button>;
+    return (
+      <Button onClick={connectWallet} className="ml-2">
+        Connect Wallet
+      </Button>
+    );
   }
 
   return (

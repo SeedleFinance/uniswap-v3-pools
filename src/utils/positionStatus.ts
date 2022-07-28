@@ -7,6 +7,10 @@ export enum PositionStatus {
   OutRange,
 }
 export function getPositionStatus(tickCurrent: number, position: Position): PositionStatus {
+  if (!position.liquidity) {
+    return PositionStatus.Inactive;
+  }
+
   if (BigNumber.from(position.liquidity.toString()).isZero()) {
     return PositionStatus.Inactive;
   } else {

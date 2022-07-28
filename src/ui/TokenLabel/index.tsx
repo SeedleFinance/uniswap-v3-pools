@@ -1,12 +1,17 @@
 import React, { useMemo } from 'react';
+import classNames from 'classnames';
+
+import styles from './styles.module.css';
 
 export interface TokenProps {
   name?: string | undefined;
   symbol?: string | undefined;
   wrapped?: boolean;
+  size?: 'xs' | 'sm' | 'lg';
+  className?: string;
 }
 
-function TokenLabel({ name, symbol, wrapped }: TokenProps) {
+function TokenLabel({ name, symbol, wrapped, size = 'sm', className }: TokenProps) {
   const label = useMemo(() => {
     const symbolOrName = symbol || name;
     if (!symbolOrName) {
@@ -23,7 +28,10 @@ function TokenLabel({ name, symbol, wrapped }: TokenProps) {
   }, [name, symbol, wrapped]);
 
   return (
-    <span className="pr-1 font-medium text-high text-1" title={name}>
+    <span
+      className={classNames('pr-1 font-medium text-high', styles[`label--${size}`], className)}
+      title={name}
+    >
       {label}
     </span>
   );

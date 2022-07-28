@@ -16,9 +16,9 @@ interface Props {
 
 function Positions({ positions, pool, baseToken, quoteToken }: Props) {
   return (
-    <div className="w-full flex overflow-x-auto flex-col my-4">
-      <table className="table-auto w-full text-high text-0.875 rounded-md">
-        <thead className="border-b border-element-10 bg-surface-5">
+    <div className="w-full flex overflow-x-auto flex-col my-4 rounded-lg bg-surface-0 shadow-sm">
+      <table className="table-auto w-full text-high text-0.875">
+        <thead className="border-b border-element-10">
           <tr className="text-left text-0.875 align-top">
             <th className="pb-5 px-4 py-5 whitespace-nowrap">Range</th>
             <th className="pb-5 px-4 py-5 whitespace-nowrap">Distribution</th>
@@ -43,7 +43,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
             <th className="hidden md:block pb-5 px-4 py-5">
               <Tooltip label={LABELS.NET_APY} placement="top">
                 <span className="flex items-center cursor-default whitespace-nowrap">
-                  Net Return
+                  Net APY
                   <IconHelper className="ml-1" />
                 </span>
               </Tooltip>

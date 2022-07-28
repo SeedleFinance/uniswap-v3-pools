@@ -89,11 +89,14 @@ module.exports = {
         pink: {
           dark: 'var(--color-pink-dark)',
           light: 'var(--color-pink-light)',
-
-          dark: {
-            dark: 'var(--color-pink-dark)',
-            light: 'var(--color-pink-light)',
-          },
+        },
+        purple: {
+          dark: 'var(--color-purple-dark)',
+          light: 'var(--color-purple-light)',
+        },
+        purple: {
+          dark: 'var(--color-purple-dark)',
+          light: 'var(--color-purple-light)',
         },
         blue: {
           primary: 'var(--color-blue-primary)',
@@ -169,6 +172,11 @@ module.exports = {
       3: '3rem', // 48px
       3.375: '3.375rem', // 56px
       4.75: '4.5rem', // 72px
+    },
+    boxShadow: {
+      lg: '0px 4px 8px rgba(0, 0, 0, 0.25)',
+      md: '0px 2px 14px 0px rgba(60, 63, 66, 0.12)',
+      sm: '0px 4px 44px rgba(60, 63, 66, 0.14)',
     },
   },
   variants: {

@@ -8,7 +8,7 @@ const Card: React.FC<CardProps> = ({ children, className }) => {
   return (
     <div
       className={classNames(
-        'shadow-lg flex flex-col flex-1 p-3 md:p-5 rounded-lg text-high border border-element-10',
+        'shadow-md bg-surface-0 flex flex-col flex-1 p-4 rounded-lg text-high',
         className,
       )}
     >

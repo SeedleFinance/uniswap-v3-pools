@@ -1,22 +1,32 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import JSBI from 'jsbi';
 
 import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
 import { PoolState } from '../../hooks/usePoolsState';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
-import Pool from './Pool';
-import FilterClosedToggle from './FilterClosedToggle';
-import LastUpdatedStamp from './LastUpdatedStamp';
-import DownloadCSV from './DownloadCSV';
+
+import Button from '../../ui/Button';
 import Card from '../../ui/Card';
-import { Button } from '../../ui/Button';
+import DownloadCSV from '../../ui/DownloadCSV';
+import FilterClosedToggle from './FilterClosedToggle';
+import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Plus from '../../icons/Plus';
+import PoolButton from '../../ui/PoolButton';
+import PositionStatuses from './PositionStatuses';
+import Tooltip from '../../ui/Tooltip';
+import IconHelper from '../../icons/Helper';
+
 import { ROUTES } from '../../constants';
+import { LABELS } from '../../content/tooltip';
 
 function Pools() {
-  const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { convertToGlobal, formatCurrencyWithSymbol, convertToGlobalFormatted } =
+    useCurrencyConversions();
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
+  const navigate = useNavigate();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -56,6 +66,10 @@ function Pools() {
     );
   }, [loading, pools, convertToGlobal]);
 
+  function handleRowClick(address: string) {
+    navigate(`${ROUTES.POOL_DETAILS}/${address}`);
+  }
+
   if (loading) {
     return (
       <div>
@@ -73,99 +87,133 @@ function Pools() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full h-full">
       <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
         <div className="hidden md:flex w-1/2 flex-col text-high">
           <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Positions</h1>
           <div className="text-medium">A list of your Uniswap V3 positions.</div>
         </div>
-
-        <div className="flex w-full">
+        <div className="flex w-full lg:w-2/3 xl:w-1/2 overflow-x-auto md:overflow-x-visible py-2">
           <Card>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalLiquidity, 1)}
             </div>
             <div className="text-0.875 md:text-1 text-medium">Total Liquidity</div>
           </Card>
-          <Card className="ml-1 md:ml-4">
+          <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalUncollectedFees, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">
-              <span className="hidden md:inline-block">Total</span> Uncollected Fees
-            </div>
+            <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
-          <Card className="ml-1 md:ml-4">
-            <div className="text-1.25 md:text-1.75 my-1 font-semibold text-brand-dark-primary">
+          <Card className="ml-1 md:ml-2">
+            <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, 1)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Total Value</div>
+            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>
-      <div className="w-full mt-4 md:mt-8">
+      <div className="w-full mt-5 md:mt-10">
         <div className="flex justify-between items-center">
-          <Button href="/add/new" size="md">
-            <div className="flex items-center">
-              <Plus />
-              <span className="ml-1">New Position</span>
-            </div>
-          </Button>
-          <div className="flex flex-col-reverse items-end md:flex-row md:items-center">
-            <div className="items-center ml-2 flex">
-              <LastUpdatedStamp
-                loading={loading || refreshingList}
-                lastLoaded={lastLoaded}
-                refresh={refresh}
-              />
-            </div>
-            <FilterClosedToggle />
+          <FilterClosedToggle />
+          <div className="flex">
             <div className="ml-2 hidden md:flex">
               <DownloadCSV />
             </div>
+            <Button href="/add/new" size="md" className="ml-2">
+              <div className="flex items-center -ml-1">
+                <Plus />
+                <span className="ml-1">New Position</span>
+              </div>
+            </Button>
           </div>
         </div>
       </div>
-      <div className="w-full mt-4">
+      <div className="w-full flex-col mt-4 flex justify-center">
         {empty ? (
-          <div className="py-4 mt-12 rounded-lg">
-            <div className="text-center text-1 md:text-1.125 text-low m-8">
-              This address do not have any Uniswap LP positions.
+          <div className="py-12 rounded-lg">
+            <div className="text-center text-1 md:text-1 text-low mt-4">
+              This address has no position history.
             </div>
             <Link
               to={ROUTES.ADD_NEW}
-              className="block text-center text-1.125 text-blue-primary font-medium m-8"
+              className="block text-center text-1 text-blue-primary font-medium py-2"
             >
               + Add Liquidity
             </Link>
           </div>
         ) : (
-          sortedPools.map(
-            ({
-              key,
-              address,
-              entity,
-              quoteToken,
-              baseToken,
-              rawPoolLiquidity,
-              poolLiquidity,
-              poolUncollectedFees,
-              positions,
-            }: PoolState) => (
-              <Pool
-                key={key}
-                address={address}
-                entity={entity}
-                quoteToken={quoteToken}
-                baseToken={baseToken}
-                positions={positions}
-                rawPoolLiquidity={rawPoolLiquidity}
-                poolLiquidity={poolLiquidity}
-                poolUncollectedFees={poolUncollectedFees}
-              />
-            ),
-          )
+          <>
+            <table className="table-auto w-full text-high text-0.875">
+              <thead className="border-b border-element-10">
+                <tr className="text-left align-middle">
+                  <th className="px-6 py-4 whitespace-nowrap font-medium">Pool</th>
+                  <th className="px-6 py-4 whitespace-nowrap font-medium text-right">
+                    <Tooltip label={LABELS.LIQUIDITY} placement="top-end">
+                      <span className="flex items-center justify-end">
+                        Total Liquidity
+                        <IconHelper className="ml-1" />
+                      </span>
+                    </Tooltip>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedPools.map(
+                  ({
+                    entity,
+                    quoteToken,
+                    baseToken,
+                    positions,
+                    address,
+                    key,
+                    poolLiquidity,
+                    poolUncollectedFees,
+                  }: PoolState) => (
+                    <tr
+                      onClick={() => handleRowClick(address)}
+                      key={key}
+                      className="hover:bg-surface-5 cursor-pointer"
+                    >
+                      <td className="px-2 py-4 md:px-6 md:py-8 md:whitespace-nowrap">
+                        <PoolButton
+                          baseToken={baseToken}
+                          quoteToken={quoteToken}
+                          fee={entity.fee / 10000}
+                          showNetwork={true}
+                          size="xs"
+                          onClick={() => {}}
+                        />
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex flex-col-reverse items-end md:flex-row md:justify-end">
+                          <PositionStatuses
+                            tickCurrent={entity.tickCurrent}
+                            positions={positions
+                              .map(({ entity }) => entity)
+                              .filter(({ liquidity }) => JSBI.notEqual(liquidity, JSBI.BigInt(0)))}
+                            allPositionsCounter={positions.length}
+                          />
+                          <div className="text-lg rounded-md text-high ml-2 font-medium text-right">
+                            {convertToGlobalFormatted(poolLiquidity)}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+          </>
         )}
+      </div>
+      <div className="justify-end flex mt-4">
+        <LastUpdatedStamp
+          loading={loading || refreshingList}
+          lastLoaded={lastLoaded}
+          refresh={refresh}
+        />
       </div>
     </div>
   );

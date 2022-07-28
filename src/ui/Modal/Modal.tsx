@@ -2,7 +2,7 @@ import React, { useRef, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import Icon from '../Icon/Icon';
-import { Button } from '../Button';
+import Button from '../Button';
 
 interface Props {
   children: ReactNode;
