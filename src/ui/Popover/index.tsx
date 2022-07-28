@@ -28,13 +28,14 @@ const Popover = ({ title, description, className, href, onClose }: Props) => {
           <h2 className="text-1 font-semibold text-high py-1">{title}</h2>
           <p className="text-0.875 text-medium">{description}</p>
           <div className="mt-2">
-            <Link
-              to={href}
+            <a
+              href={href}
               target="_blank"
               className="text-0.8125 font-medium text-blue-primary border-b border-blue-light"
+              rel="noreferrer"
             >
               Contribute
-            </Link>
+            </a>
           </div>
         </div>
       </div>
