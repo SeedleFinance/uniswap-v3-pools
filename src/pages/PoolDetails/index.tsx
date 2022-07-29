@@ -18,20 +18,19 @@ import { tickToPrice } from '@uniswap/v3-sdk';
 import { formatInput } from '../../utils/numbers';
 
 const PoolDetailsPage = () => {
-  const { loading, pools } = usePools();
+  const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobal } = useCurrencyConversions();
   const { id } = useParams();
-  const { loading: loadingPools, lastLoaded, refresh, refreshingList } = usePools();
   const navigate = useNavigate();
 
   // Select a single pool
   const pool = useMemo(() => {
-    if (loading) {
+    if (loadingPools) {
       return [];
     }
 
-    return pools.filter((pool) => pool.address === id)[0];
-  }, [loading, pools, id]);
+    return pools.find((pool) => pool.address === id);
+  }, [loadingPools, pools, id]);
 
   const {
     key,
@@ -95,8 +94,7 @@ const PoolDetailsPage = () => {
           />
           <div className="hidden lg:flex flex-col ml-6 mt-8 md:-mt-3">
             <span className="text-medium text-0.6875">
-              Current Price ({baseToken.equals(WETH9[baseToken.chainId]) ? 'ETH' : baseToken.symbol}
-              )
+              Current Price ({baseToken.symbol === 'WETH' ? 'ETH' : baseToken.symbol})
             </span>
             <span className="text-1.25 lg:text-2 font-semibold text-high">{currentPrice}</span>
           </div>
@@ -167,12 +165,4 @@ const PoolDetailsPage = () => {
   );
 };
 
-function PoolDetailsPageWrapped() {
-  return (
-    <CombinedPoolsProvider>
-      <PoolDetailsPage />
-    </CombinedPoolsProvider>
-  );
-}
-
-export default PoolDetailsPageWrapped;
+export default PoolDetailsPage;

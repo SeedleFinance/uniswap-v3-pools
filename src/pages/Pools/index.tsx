@@ -219,12 +219,4 @@ function Pools() {
   );
 }
 
-function PoolsWrapped() {
-  return (
-    <CombinedPoolsProvider>
-      <Pools />
-    </CombinedPoolsProvider>
-  );
-}
-
-export default PoolsWrapped;
+export default Pools;
