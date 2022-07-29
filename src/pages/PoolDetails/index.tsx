@@ -26,33 +26,21 @@ const PoolDetailsPage = () => {
   // Select a single pool
   const pool = useMemo(() => {
     if (loadingPools) {
-      return [];
+      return null;
     }
 
     return pools.find((pool) => pool.address === id);
   }, [loadingPools, pools, id]);
 
-  const {
-    key,
-    address,
-    entity,
-    quoteToken,
-    baseToken,
-    positions,
-    rawPoolLiquidity,
-    poolLiquidity,
-    poolUncollectedFees,
-  } = pool;
-
   const currentPrice = useMemo(() => {
-    if (!pool || !baseToken || !quoteToken) {
+    if (!pool) {
       return '0';
     }
-    const { tick } = pool;
+    const { tick, baseToken, quoteToken } = pool;
     const price = parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8));
 
     return price;
-  }, [pool, baseToken, quoteToken]);
+  }, [pool]);
 
   function handleClickBack() {
     navigate(-1);
@@ -72,6 +60,18 @@ const PoolDetailsPage = () => {
       </div>
     );
   }
+
+  const {
+    key,
+    address,
+    entity,
+    quoteToken,
+    baseToken,
+    positions,
+    rawPoolLiquidity,
+    poolLiquidity,
+    poolUncollectedFees,
+  } = pool;
 
   return (
     <div className="flex flex-col w-full">

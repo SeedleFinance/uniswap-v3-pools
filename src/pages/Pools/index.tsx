@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import JSBI from 'jsbi';
 
 import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
@@ -27,6 +27,7 @@ function Pools() {
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -67,7 +68,7 @@ function Pools() {
   }, [loading, pools, convertToGlobal]);
 
   function handleRowClick(address: string) {
-    navigate(`${ROUTES.POOL_DETAILS}/${address}`);
+    navigate(`${ROUTES.POOL_DETAILS}/${address}${location.search}`);
   }
 
   if (loading) {
