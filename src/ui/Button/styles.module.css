@@ -1,0 +1,43 @@
+/* Base button styles */
+.button {
+  @apply flex flex-shrink-0 justify-center items-center font-medium text-high rounded-md focus:outline-none p-2 border border-transparent focus:border-dotted focus:border-gray-200 dark:focus:border-white appearance-none;
+}
+
+/* Button variants */
+.button--primary {
+  @apply p-2 bg-brand-primary hover:bg-brand-light transition-colors duration-150 ease-out text-white rounded-md focus:outline-none px-4;
+}
+
+.button--secondary {
+  @apply bg-surface-20 hover:bg-surface-40;
+}
+
+/* Unstyled button */
+.button--ghost {
+  @apply bg-transparent p-0;
+}
+
+/* Button sizes */
+
+.button-xs {
+  @apply p-0;
+}
+
+/* note sm - replaces the current compact button */
+.button--sm {
+  @apply px-2 py-1 text-0.875;
+}
+
+/* Button Sizes */
+.button--md {
+  @apply text-0.875 px-4 py-2;
+}
+
+.button--lg {
+  @apply px-4;
+}
+
+/* other */
+.button--disabled {
+  @apply opacity-50;
+}

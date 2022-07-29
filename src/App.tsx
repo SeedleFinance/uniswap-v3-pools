@@ -12,9 +12,7 @@ function App() {
       <SubgraphProvider>
         <AddressProvider>
           <AppSettingsProvider>
-            <div className="App">
-              <Container />
-            </div>
+            <Container />
           </AppSettingsProvider>
         </AddressProvider>
       </SubgraphProvider>

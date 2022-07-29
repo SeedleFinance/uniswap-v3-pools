@@ -1,0 +1,29 @@
+/* Default input styles */
+.input {
+  @apply border-0 text-1 bg-surface-10 text-medium focus:outline-2 focus:outline-blue-600 transition-colors duration-150 px-2 w-full rounded-md;
+}
+
+/* Small */
+.input--sm {
+  @apply p-1;
+}
+
+/* Medium */
+.input--md {
+  @apply px-2 py-1;
+}
+
+/* Large */
+.input--lg {
+  @apply px-4 py-3;
+}
+
+/* Extra large */
+.input--xl {
+  @apply text-1.125 text-high px-4 py-3 border-2 border-element-0 transition-colors duration-150 focus:bg-surface-20 focus:shadow-md focus:placeholder-current;
+}
+
+/* Outlined */
+.input--outlined {
+  @apply border-2 bg-transparent px-4;
+}

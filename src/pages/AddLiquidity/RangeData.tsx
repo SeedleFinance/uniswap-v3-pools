@@ -20,8 +20,8 @@ import { Pool } from '@uniswap/v3-sdk';
 
 import { usePoolPriceData } from '../../hooks/usePoolPriceData';
 import { usePoolLiquidityData } from '../../hooks/usePoolLiquidityData';
-import Menu from '../../ui/Menu';
-import Icon from '../../ui/Icon';
+import Menu from '../../ui/Menu/Menu';
+import Icon from '../../ui/Icon/Icon';
 import ChartPeriodSelector from '../../ui/ChartPeriodSelector';
 
 interface Props {
@@ -131,24 +131,24 @@ function RangeData({ chainId, pool, tickLower, tickUpper, quoteToken, baseToken 
           <table className="w-full">
             <tbody>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">Min.</td>
-                <td className="text-slate-800 dark:text-slate-400">{minPrice}</td>
+                <td className="text-high">Min</td>
+                <td className="text-medium">{minPrice}</td>
               </tr>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">Max.</td>
-                <td className="text-slate-800 dark:text-slate-400">{maxPrice}</td>
+                <td className="text-high">Max</td>
+                <td className="text-medium">{maxPrice}</td>
               </tr>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">Mean</td>
-                <td className="text-slate-800 dark:text-slate-400">{meanPrice.toFixed(8)}</td>
+                <td className="text-high">Mean</td>
+                <td className="text-medium">{meanPrice.toFixed(8)}</td>
               </tr>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">Standard deviation</td>
-                <td className="text-slate-800 dark:text-slate-400">{stdev.toFixed(8)}</td>
+                <td className="text-high">Standard deviation</td>
+                <td className="text-medium">{stdev.toFixed(8)}</td>
               </tr>
               <tr>
-                <td className="text-slate-500 dark:text-slate-200">Optimal range</td>
-                <td className="text-slate-800 dark:text-slate-400">
+                <td className="text-high">Optimal range</td>
+                <td className="text-medium">
                   {(meanPrice - stdev).toFixed(8)} - {(meanPrice + stdev).toFixed(8)}
                 </td>
               </tr>

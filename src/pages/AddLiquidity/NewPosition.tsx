@@ -13,8 +13,8 @@ import { getNetworkConnector } from '../../utils/connectors';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import PoolButton from '../../ui/PoolButton';
 import TokenLabel from '../../ui/TokenLabel';
-import Alert, { AlertLevel } from '../../ui/Alert';
-import { Button, UnstyledButton } from '../../ui/Button';
+import Alert, { AlertLevel } from '../../ui/Alert/Alert';
+import Button from '../../ui/Button';
 import Toggle from '../../ui/Toggle';
 import ChartButton from './ChartButton';
 import FeeTierData from './FeeTierData';
@@ -362,14 +362,16 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         provider: chainWeb3React.library,
       });
 
-      const token0Balance = rangeReverse
-        ? toCurrencyAmount(baseToken, baseAmount, depositWrapped)
-        : toCurrencyAmount(quoteToken, quoteAmount, depositWrapped);
-      const token1Balance = rangeReverse
-        ? toCurrencyAmount(quoteToken, quoteAmount, depositWrapped)
-        : toCurrencyAmount(baseToken, baseAmount, depositWrapped);
-
-      const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
+      let token0Balance, token1Balance, matchingPosition;
+      if (rangeReverse) {
+        token0Balance = toCurrencyAmount(baseToken, baseAmount, depositWrapped);
+        token1Balance = toCurrencyAmount(quoteToken, quoteAmount, depositWrapped);
+        matchingPosition = findMatchingPosition(positions, fee, tickUpper, tickLower);
+      } else {
+        token0Balance = toCurrencyAmount(quoteToken, quoteAmount, depositWrapped);
+        token1Balance = toCurrencyAmount(baseToken, baseAmount, depositWrapped);
+        matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
+      }
 
       const addLiquidityOptions: any = {};
       if (matchingPosition) {
@@ -398,6 +400,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         addLiquidityOptions,
       };
 
+      console.log(opts);
       const routerResult = await router.routeToRatio(
         token0Balance,
         token1Balance,
@@ -617,7 +620,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   };
 
   return (
-    <div className="w-full flex text-slate-600 dark:text-slate-300">
+    <div className="w-full flex text-high">
       <div className="lg:w-1/2">
         <div className="flex flex-col my-2">
           <div className="text-xl">Pair</div>
@@ -664,7 +667,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             </div>
           </div>
 
-          <div className="text-sm py-1 text-center">
+          <div className="py-1 text-center">
             Current price:{' '}
             <button onClick={handleCurrentPriceClick} className="font-bold">
               {currentPrice}&nbsp;
@@ -742,7 +745,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               onClick={onSwapAndAddLiquidity}
               disabled={transactionPending}
               tabIndex={8}
-              compact={true}
+              size="sm"
               className="mr-2"
             >
               Swap & Add
@@ -758,7 +761,6 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               }
               disabled={transactionPending}
               tabIndex={8}
-              compact={true}
               className="mr-2"
             >
               Approve {baseToken.symbol}
@@ -774,7 +776,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               }
               disabled={transactionPending}
               tabIndex={8}
-              compact={true}
+              size="sm"
               className="mr-2"
             >
               Approve {quoteToken.symbol}
@@ -784,16 +786,16 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               onClick={onAddLiquidity}
               disabled={transactionPending}
               tabIndex={8}
-              compact={true}
+              size="sm"
               className="mr-2"
             >
               Add Liquidity
             </Button>
           )}
 
-          <UnstyledButton onClick={onCancel} tabIndex={9}>
+          <Button variant="ghost" onClick={onCancel} tabIndex={9}>
             Cancel
-          </UnstyledButton>
+          </Button>
 
           {alert && (
             <Alert level={alert.level} onHide={resetAlert}>

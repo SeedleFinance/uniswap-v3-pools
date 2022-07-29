@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { compact, isEqualWith } from 'lodash';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Contract } from '@ethersproject/contracts';
-import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Position, Pool, tickToPrice } from '@uniswap/v3-sdk';
 
 import { PositionState } from './useQueryPositions';
 import { Q128 } from '../constants';
 import { getQuoteAndBaseToken } from '../utils/tokens';
 import { multiplyIn256 } from '../utils/numbers';
+import { CustomPosition } from '../types/seedle';
 
 export interface PoolState {
   key: string;
@@ -19,15 +20,7 @@ export interface PoolState {
   poolLiquidity: CurrencyAmount<Token>;
   rawPoolLiquidity: BigNumber;
   poolUncollectedFees: CurrencyAmount<Token>;
-  positions: {
-    id: BigNumber;
-    entity: Position;
-    priceLower?: Price<Token, Token>;
-    priceUpper?: Price<Token, Token>;
-    positionLiquidity?: CurrencyAmount<Token>;
-    uncollectedFees: CurrencyAmount<Token>[];
-    positionUncollectedFees: CurrencyAmount<Token>;
-  }[];
+  positions: CustomPosition[];
 }
 
 export function usePoolsState(

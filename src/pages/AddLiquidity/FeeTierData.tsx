@@ -7,8 +7,8 @@ import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
 import { useFeeTierData } from '../../hooks/useFeeTierData';
-import Menu from '../../ui/Menu';
-import Icon from '../../ui/Icon';
+import Menu from '../../ui/Menu/Menu';
+import Icon from '../../ui/Icon/Icon';
 
 interface Props {
   chainId: number | undefined;

@@ -3,6 +3,7 @@ import { Token } from '@uniswap/sdk-core';
 
 import { PoolState } from '../../hooks/usePoolsState';
 import PoolButton from '../../ui/PoolButton';
+import LoadingSpinner from '../../ui/Spinner';
 
 interface Props {
   pools: PoolState[];
@@ -35,7 +36,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
   }, [pools, filter]);
 
   if (!pools.length) {
-    return <div className="text-slate-600 dark:text-slate-300">Loading pools...</div>;
+    return <LoadingSpinner />;
   }
 
   return (

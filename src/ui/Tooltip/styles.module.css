@@ -1,0 +1,3 @@
+.tooltip {
+  @apply absolute top-0 left-0 bg-surface-0 text-high font-medium text-0.6875 py-1 px-2 rounded-sm pointer-events-none shadow-md;
+}

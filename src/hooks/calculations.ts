@@ -6,6 +6,7 @@ import { Pool } from '@uniswap/v3-sdk';
 
 import { useGasFee } from './useGasFee';
 import { WETH9, MATIC } from '../constants';
+import { TxTypes } from '../enums';
 
 export function useTransactionTotals(transactions: any[], baseToken: Token, pool: Pool) {
   const chainId = baseToken.chainId;
@@ -24,11 +25,11 @@ export function useTransactionTotals(transactions: any[], baseToken: Token, pool
         const txValue = pool.token0.equals(baseToken)
           ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
           : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
-        if (tx.type === 'mint') {
+        if (tx.transactionType === TxTypes.Add) {
           totalMintValue = totalMintValue.add(txValue);
-        } else if (tx.type === 'burn') {
+        } else if (tx.transactionType === TxTypes.Remove) {
           totalBurnValue = totalBurnValue.add(txValue);
-        } else if (tx.type === 'collect') {
+        } else if (tx.transactionType === TxTypes.Collect) {
           totalCollectValue = totalCollectValue.add(txValue);
         }
 
@@ -145,18 +146,18 @@ export function useFeeAPY(
 
     transactions.forEach(
       ({
-        type,
+        transactionType,
         amount0,
         amount1,
         timestamp,
       }: {
-        type: string;
+        transactionType: TxTypes;
         amount0: CurrencyAmount<Token>;
         amount1: CurrencyAmount<Token>;
         timestamp: number;
       }) => {
         let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
-        if (type === 'mint') {
+        if (transactionType === TxTypes.Add) {
           if (
             periodLiquidityAdded.lessThan(zeroAmount) ||
             periodLiquidityAdded.equalTo(zeroAmount)
@@ -164,9 +165,9 @@ export function useFeeAPY(
             periodStart = new Date(timestamp * 1000);
           }
           periodLiquidityAdded = periodLiquidityAdded.add(liquidity);
-        } else if (type === 'burn') {
+        } else if (transactionType === TxTypes.Remove) {
           periodLiquidityRemoved = periodLiquidityRemoved.add(liquidity);
-        } else if (type === 'collect') {
+        } else if (transactionType === TxTypes.Collect) {
           const periodEnd = new Date(timestamp * 1000);
           const periodYield = calcPeriodYield(
             liquidity,

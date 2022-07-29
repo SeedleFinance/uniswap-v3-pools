@@ -1,13 +1,15 @@
-import React, { ReactNode, useContext, useMemo } from 'react';
+import React, { ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
-import { PoolState } from './hooks/usePoolsState';
 import { usePoolsForNetwork } from './hooks/usePoolsForNetwork';
-import { usePerpV2 } from './hooks/usePerpV2';
+//import { usePerpV2 } from './hooks/usePerpV2';
 
 const PoolsContext = React.createContext({
-  pools: [] as PoolState[],
+  pools: [] as any[],
   loading: true,
   empty: false,
+  lastLoaded: +new Date(),
+  refreshingList: false,
+  refresh: () => {},
 });
 export const usePools = () => useContext(PoolsContext);
 
@@ -16,28 +18,75 @@ interface Props {
 }
 
 export const CombinedPoolsProvider = ({ children }: Props) => {
-  const { loading: mainnetLoading, pools: mainnetPools } = usePoolsForNetwork(1);
-  const { loading: optimismLoading, pools: optimismPools } = usePoolsForNetwork(10);
-  const { loading: arbitrumLoading, pools: arbitrumPools } = usePoolsForNetwork(42161);
-  const { loading: polygonLoading, pools: polygonPools } = usePoolsForNetwork(137);
-  const { loading: perpLoading, pools: perpPools } = usePerpV2(10);
+  const [initalLoading, setInitialLoading] = useState(true);
+  const [lastLoaded, setLastLoaded] = useState(+new Date());
+
+  const {
+    loading: mainnetLoading,
+    pools: mainnetPools,
+    feesLoading: mainnetFeesLoading,
+  } = usePoolsForNetwork(1, lastLoaded);
+
+  const {
+    loading: polygonLoading,
+    pools: polygonPools,
+    feesLoading: polygonFeesLoading,
+  } = usePoolsForNetwork(137, lastLoaded);
+
+  const {
+    loading: optimismLoading,
+    pools: optimismPools,
+    feesLoading: optimismFeesLoading,
+  } = usePoolsForNetwork(10, lastLoaded);
+
+  const {
+    loading: arbitrumLoading,
+    pools: arbitrumPools,
+    feesLoading: arbitrumFeesLoading,
+  } = usePoolsForNetwork(42161, lastLoaded);
 
   const loading = useMemo(() => {
-    return mainnetLoading || optimismLoading || arbitrumLoading || polygonLoading || perpLoading;
-  }, [mainnetLoading, optimismLoading, arbitrumLoading, polygonLoading, perpLoading]);
+    return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading;
+  }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
+
+  const feesLoading = useMemo(() => {
+    return mainnetFeesLoading || polygonFeesLoading || optimismFeesLoading || arbitrumFeesLoading;
+  }, [mainnetFeesLoading, polygonFeesLoading, optimismFeesLoading, arbitrumFeesLoading]);
+
+  useEffect(() => {
+    if (initalLoading) {
+      setInitialLoading(loading);
+    }
+  }, [initalLoading, loading]);
+
+  const refreshingList = useMemo(() => {
+    return loading || feesLoading;
+  }, [loading, feesLoading]);
 
   const pools = useMemo(() => {
-    return [...mainnetPools, ...arbitrumPools, ...optimismPools, ...polygonPools, ...perpPools];
-  }, [mainnetPools, arbitrumPools, optimismPools, polygonPools, perpPools]);
+    return [...mainnetPools, ...polygonPools, ...optimismPools, ...arbitrumPools];
+  }, [mainnetPools, polygonPools, optimismPools, arbitrumPools]);
 
-  const empty = useMemo(() => !loading && !pools.length, [loading, pools]);
+  const empty = useMemo(() => {
+    if (loading) {
+      return false;
+    }
+    return !pools.length;
+  }, [loading, pools]);
+
+  const refresh = () => {
+    setLastLoaded(+new Date());
+  };
 
   return (
     <PoolsContext.Provider
       value={{
         pools,
         empty,
-        loading,
+        loading: initalLoading,
+        lastLoaded,
+        refreshingList,
+        refresh,
       }}
     >
       {children}

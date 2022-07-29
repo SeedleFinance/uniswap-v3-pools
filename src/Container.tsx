@@ -6,18 +6,23 @@ import GlobalCurrencySelector from './GlobalCurrencySelector';
 import ThemeSelector from './ThemeSelector';
 import PageBody from './PageBody';
 import Footer from './Footer';
-import Landing from './Landing';
+
 import { useAppSettings } from './AppSettingsProvider';
 import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
+import { EXTERNAL_LINKS, ROUTES } from './constants';
+import Logo from './ui/Logo';
+import classNames from 'classnames';
+import Popover from './ui/Popover';
 
 interface ThemeWrapperProps {
-  theme: string;
+  theme: 'light' | 'dark';
   children: ReactNode;
 }
 function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
+  console.log('theme wrapper loaded');
   return (
-    <div id="theme-wrapper" className={theme}>
-      <div className="max-w-full bg-white dark:bg-slate-900">{children}</div>
+    <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
+      <div className="max-w-full bg-canvas-light h-full">{children}</div>
     </div>
   );
 }
@@ -37,41 +42,29 @@ function Container() {
     }
   }, [theme]);
 
-  if (!addresses.length) {
-    return (
-      <ThemeWrapper theme={computedTheme}>
-        <Landing />
-      </ThemeWrapper>
-    );
-  }
-
   return (
     <CurrencyConversionsProvider>
       <ThemeWrapper theme={computedTheme}>
-        <div className="min-h-screen lg:container mx-auto pb-4 p-4">
-          <div className="w-full py-4 mb-4 flex justify-between">
-            <h2 className="flex items-center text-3xl font-bold text-slate-800 dark:text-slate-100">
-              <a className="flex sm:w-3/5" href="https://www.seedle.finance">
-                <img
-                  className="mr-2"
-                  alt="Seedle logo - a seedling"
-                  src={new URL('../public/icon32.png', import.meta.url).toString()}
-                />
-                <span className="hidden sm:block">Seedle</span>
-              </a>
-            </h2>
+        <div className="h-full lg:container mx-auto pb-4 p-4  flex flex-col items-stretch">
+          <div className="w-full py-4 mb-1 md:mb-8 flex justify-between items-center">
+            <a href={ROUTES.HOME}>
+              <Logo />
+            </a>
             <div className="md:w-2/5 flex justify-end">
               <ThemeSelector />
-              <GlobalCurrencySelector />
+              {addresses.length > 0 && <GlobalCurrencySelector />}
               <Account address={injectedAddress} />
             </div>
           </div>
-          <div>
-            <div>
-              <PageBody />
-            </div>
-            <Footer />
+          <div className="w-full h-full">
+            <Popover
+              title="Help Grow Seedle"
+              description="Join over 2000+ contributers who have donated towards building Seedle."
+              href={EXTERNAL_LINKS.GITCOIN}
+            />
+            <PageBody />
           </div>
+          <Footer />
         </div>
       </ThemeWrapper>
     </CurrencyConversionsProvider>

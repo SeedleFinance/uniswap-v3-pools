@@ -6,8 +6,8 @@ import { SwapToRatioRoute } from '@uniswap/smart-order-router';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import TokenLabel from '../../ui/TokenLabel';
 import TokenLogo from '../../ui/TokenLogo';
-import Modal from '../../ui/Modal';
-import { Button, UnstyledButton } from '../../ui/Button';
+import Modal from '../../ui/Modal/Modal';
+import Button from '../../ui/Button';
 import { formatInput } from '../../utils/numbers';
 import { tokenAmountNeedApproval, getApprovalAmount } from './utils';
 
@@ -248,7 +248,7 @@ function SwapAndAddModal({
                   handleApprove(token0, getApprovalAmount(token0PreswapAmount, token0Amount))
                 }
                 tabIndex={8}
-                compact={true}
+                size="sm"
                 className="mr-2"
               >
                 Approve {token0.symbol}
@@ -259,19 +259,19 @@ function SwapAndAddModal({
                   handleApprove(token1, getApprovalAmount(token1PreswapAmount, token1Amount))
                 }
                 tabIndex={8}
-                compact={true}
+                size="sm"
                 className="mr-2"
               >
                 Approve {token1.symbol}
               </Button>
             ) : (
-              <Button onClick={onComplete} tabIndex={8} compact={true} className="mr-2">
+              <Button onClick={onComplete} tabIndex={8} className="mr-2">
                 Complete Transaction
               </Button>
             )}
-            <UnstyledButton onClick={onCancel} tabIndex={9}>
+            <Button onClick={onCancel} tabIndex={9} variant="ghost">
               Cancel
-            </UnstyledButton>
+            </Button>
           </div>
         </div>
       )}

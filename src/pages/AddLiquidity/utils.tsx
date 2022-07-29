@@ -236,5 +236,5 @@ export function findPositionById(positions: any[], id: string | null) {
     return null;
   }
 
-  return positions.find((pos) => pos.id.eq(BigNumber.from(id)));
+  return positions.find((pos) => BigNumber.from(pos.id).eq(BigNumber.from(id)));
 }

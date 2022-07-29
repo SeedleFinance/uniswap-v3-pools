@@ -5,6 +5,7 @@ import { injectedConnector } from './utils/connectors';
 import { BLOCK_EXPLORER_URL } from './constants';
 import useENS from './hooks/useENS';
 import Davatar from '@davatar/react';
+import Button from './ui/Button';
 
 interface AccountProps {
   address: string | null | undefined;
@@ -44,20 +45,17 @@ function Account({ address }: AccountProps) {
 
   if (!address || !address.length) {
     return (
-      <button
-        className="p-2 rounded-md border focus:outline-none border-slate-200 dark:border-slate-700 focus:border-slate-400 text-slate-800 dark:text-slate-100 flex flex-shrink-0"
-        onClick={connectWallet}
-      >
+      <Button onClick={connectWallet} className="ml-2">
         Connect Wallet
-      </button>
+      </Button>
     );
   }
 
   return (
     <>
-      <div className="p-2 mx-1 rounded-md border border-slate-200 dark:border-slate-700 flex items-center flex flex-shrink-0">
+      <div className="p-2 mx-1 rounded-md border border-element-10 items-center flex flex-shrink-0">
         <img
-          className={`w-6 h-6 mr-1 rounded-full bg-white dark:bg-slate-800 text-sm`}
+          className={`w-6 h-6 mr-1 rounded-full bg-surface-0 text-sm`}
           alt={`${chainName} logo`}
           src={
             chainName !== 'unknown'
@@ -70,7 +68,7 @@ function Account({ address }: AccountProps) {
             <Davatar size={20} address={address} generatedAvatarType="jazzicon" />
           </div>
           <a
-            className="text-slate-600 dark:text-slate-300"
+            className="text-high"
             href={`${BLOCK_EXPLORER_URL[chainId as number]}/address/${address}`}
           >
             {ensName || truncatedAddress}

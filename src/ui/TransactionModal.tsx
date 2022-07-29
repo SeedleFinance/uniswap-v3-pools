@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { BLOCK_EXPLORER_URL } from '../constants';
-import Modal from './Modal';
+import Modal from './Modal/Modal';
 
 interface Props {
   chainId: number | undefined;
