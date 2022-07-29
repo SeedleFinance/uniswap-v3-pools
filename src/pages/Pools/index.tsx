@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import JSBI from 'jsbi';
 
-import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
+import { usePools } from '../../CombinedPoolsProvider';
 import { PoolState } from '../../hooks/usePoolsState';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Pool as UniPool } from '@uniswap/v3-sdk';
@@ -34,18 +34,7 @@ function Pool({
   rawPoolLiquidity,
   poolUncollectedFees,
 }: PoolProps) {
-  const { convertToGlobalFormatted, convertToGlobal } = useCurrencyConversions();
-
-  const [showPositions, setShowPositions] = useState(false);
-  const [showPriceChart, setShowPriceChart] = useState(false);
-  const [showLiquidityChart, setShowLiquidityChart] = useState(false);
-
-  const poolPrice = useMemo(() => {
-    if (!quoteToken || !entity) {
-      return 0;
-    }
-    return entity.priceOf(quoteToken);
-  }, [quoteToken, entity]);
+  const { convertToGlobalFormatted } = useCurrencyConversions();
 
   const totalValue = useMemo(() => {
     return poolLiquidity.add(poolUncollectedFees);

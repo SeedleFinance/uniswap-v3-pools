@@ -9,4 +9,5 @@ export interface CustomPosition {
   positionLiquidity?: CurrencyAmount<Token>;
   uncollectedFees: CurrencyAmount<Token>[];
   positionUncollectedFees: CurrencyAmount<Token>;
+  transactions: any[];
 }

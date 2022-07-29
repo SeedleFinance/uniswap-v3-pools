@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
-import { WETH9 } from '@uniswap/sdk-core';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { ROUTES } from '../../constants';
-import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
+
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import { usePools } from '../../CombinedPoolsProvider';
 
 import BackArrow from '../../icons/LeftArrow';
 import Card from '../../ui/Card';
@@ -15,7 +14,6 @@ import Pool from './Pool';
 import Positions from './Positions';
 import ChartLayout from './Chart';
 import { tickToPrice } from '@uniswap/v3-sdk';
-import { formatInput } from '../../utils/numbers';
 
 const PoolDetailsPage = () => {
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();

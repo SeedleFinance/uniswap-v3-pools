@@ -41,7 +41,3 @@ function PageBody() {
 }
 
 export default PageBody;
-
-const TestPage = () => {
-  return <div>Test</div>;
-};

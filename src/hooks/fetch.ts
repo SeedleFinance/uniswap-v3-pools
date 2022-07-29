@@ -154,10 +154,6 @@ export function useFetchPools(
 
       let pools = await res.json();
 
-      // FIXME: this is a sign of server-side issue (eg: pools not indexed correctly)
-      // filter empty pools
-      pools = pools.filter((pool) => pool);
-
       setPoolStates(pools);
       setLoading(false);
     };
