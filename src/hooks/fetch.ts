@@ -153,6 +153,8 @@ export function useFetchPools(
       }
 
       let pools = await res.json();
+      // FIXME! Pools should not be null
+      pools = pools.filter((pool) => pool);
 
       setPoolStates(pools);
       setLoading(false);
