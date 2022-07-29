@@ -9,7 +9,6 @@ import { usePoolPriceData } from '../../../hooks/usePoolPriceData';
 import LiquidityChart from './LiquidityChart';
 import PriceChart from './PriceChart';
 import ChartPeriodSelector from '../../../ui/ChartPeriodSelector';
-import Button from '../../../ui/Button';
 
 interface ChartLayoutProps {
   address: string;

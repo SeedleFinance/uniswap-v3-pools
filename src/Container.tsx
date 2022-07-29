@@ -9,15 +9,17 @@ import Footer from './Footer';
 
 import { useAppSettings } from './AppSettingsProvider';
 import { CurrencyConversionsProvider } from './CurrencyConversionsProvider';
-import { ROUTES } from './constants';
+import { EXTERNAL_LINKS, ROUTES } from './constants';
 import Logo from './ui/Logo';
 import classNames from 'classnames';
+import Popover from './ui/Popover';
 
 interface ThemeWrapperProps {
   theme: 'light' | 'dark';
   children: ReactNode;
 }
 function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
+  console.log('theme wrapper loaded');
   return (
     <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
       <div className="max-w-full bg-canvas-light h-full">{children}</div>
@@ -55,6 +57,11 @@ function Container() {
             </div>
           </div>
           <div className="w-full h-full">
+            <Popover
+              title="Help Grow Seedle"
+              description="Join over 2000+ contributers who have donated towards building Seedle."
+              href={EXTERNAL_LINKS.GITCOIN}
+            />
             <PageBody />
           </div>
           <Footer />
