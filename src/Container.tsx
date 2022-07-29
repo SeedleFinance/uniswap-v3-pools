@@ -19,7 +19,6 @@ interface ThemeWrapperProps {
   children: ReactNode;
 }
 function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
-  console.log('theme wrapper loaded');
   return (
     <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
       <div className="max-w-full bg-canvas-light h-full">{children}</div>

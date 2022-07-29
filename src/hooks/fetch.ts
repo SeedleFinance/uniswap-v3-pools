@@ -202,9 +202,14 @@ export function useFetchUncollectedFees(
       setLoading(false);
     };
 
-    if (pools.length) {
-      _call();
+    if (!pools.length) {
+      setUncollectedFees([]);
+      setLoading(false);
+
+      return;
     }
+
+    _call();
   }, [chainId, pools]);
 
   return { loading, uncollectedFees };
