@@ -151,3 +151,8 @@ a {
 a:focus {
   outline: 0;
 }
+
+/* Force Rainbow wallet wrapper to be 100% height */
+#theme-wrapper > div > div {
+  height: 100%;
+}
