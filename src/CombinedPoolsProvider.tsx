@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const CombinedPoolsProvider = ({ children }: Props) => {
-  const [initalLoading, setInitialLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [lastLoaded, setLastLoaded] = useState(+new Date());
 
   const {
@@ -54,10 +54,10 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
   }, [mainnetFeesLoading, polygonFeesLoading, optimismFeesLoading, arbitrumFeesLoading]);
 
   useEffect(() => {
-    if (initalLoading) {
-      setInitialLoading(loading);
+    if (initialLoading && !loading) {
+      setInitialLoading(false);
     }
-  }, [initalLoading, loading]);
+  }, [initialLoading, loading]);
 
   const refreshingList = useMemo(() => {
     return loading || feesLoading;
@@ -83,7 +83,7 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
       value={{
         pools,
         empty,
-        loading: initalLoading,
+        loading: initialLoading,
         lastLoaded,
         refreshingList,
         refresh,
