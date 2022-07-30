@@ -17,7 +17,7 @@ import { tickToPrice } from '@uniswap/v3-sdk';
 
 const PoolDetailsPage = () => {
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
-  const { convertToGlobal } = useCurrencyConversions();
+  const { convertToGlobalFormatted } = useCurrencyConversions();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -100,13 +100,13 @@ const PoolDetailsPage = () => {
         <div className="flex lg:ml-6 w-full lg:w-1/3">
           <Card className="md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
-              {convertToGlobal(poolUncollectedFees).toFixed(2)}
+              {convertToGlobalFormatted(poolUncollectedFees)}
             </div>
             <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
-              {(convertToGlobal(poolUncollectedFees) + convertToGlobal(poolLiquidity)).toFixed(2)}
+              {convertToGlobalFormatted(poolUncollectedFees.add(poolLiquidity))}
             </div>
             <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
