@@ -15,6 +15,7 @@ import { chains, wagmiClient } from './rainbow';
 interface ThemeWrapperProps {
   children: ReactNode;
 }
+
 function ThemeWrapper({ children }: ThemeWrapperProps) {
   const { theme } = useAppSettings();
 
@@ -35,6 +36,35 @@ function ThemeWrapper({ children }: ThemeWrapperProps) {
   );
 }
 
+const RainbowKitWithTheme = ({ children }: { children: ReactNode }) => {
+  const { theme } = useAppSettings();
+
+  const computedTheme = useMemo(() => {
+    if (
+      theme === 'dark' ||
+      (theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      return darkTheme({
+        accentColor: '#4cce57',
+        borderRadius: 'small',
+        fontStack: 'system',
+      });
+    } else {
+      return lightTheme({
+        accentColor: '#4cce57',
+        borderRadius: 'small',
+        fontStack: 'system',
+      });
+    }
+  }, [theme]);
+
+  return (
+    <RainbowKitProvider chains={chains} theme={computedTheme}>
+      ) {children}
+    </RainbowKitProvider>
+  );
+};
+
 function App() {
   return (
     <Web3CombinedProvider>
@@ -43,16 +73,9 @@ function App() {
           <AppSettingsProvider>
             <ThemeWrapper>
               <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider
-                  chains={chains}
-                  theme={lightTheme({
-                    accentColor: '#4cce57',
-                    borderRadius: 'small',
-                    fontStack: 'system',
-                  })}
-                >
+                <RainbowKitWithTheme>
                   <Container />
-                </RainbowKitProvider>
+                </RainbowKitWithTheme>
               </WagmiConfig>
             </ThemeWrapper>
           </AppSettingsProvider>
