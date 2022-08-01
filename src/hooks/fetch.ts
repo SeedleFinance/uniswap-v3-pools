@@ -13,8 +13,11 @@ export interface TransactionV2 {
   liquidity: string;
   transactionHash: string;
   timestamp: string;
-  gas: string;
-  gasPrice: string;
+  gas?: string;
+  gasPrice?: string;
+  gasUsed?: string;
+  effectiveGasPrice?: string;
+  l1Fee?: string;
 }
 
 export interface PositionStateV2 {
