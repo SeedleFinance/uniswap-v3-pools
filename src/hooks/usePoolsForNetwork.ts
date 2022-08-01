@@ -201,7 +201,10 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
                   amount0,
                   amount1,
                   gas,
+                  gasUsed,
                   gasPrice,
+                  effectiveGasPrice,
+                  l1Fee,
                   timestamp,
                 }: TransactionV2) => {
                   return {
@@ -211,7 +214,12 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
                     timestamp: BigNumber.from(timestamp || '0').toNumber(),
                     amount0: CurrencyAmount.fromRawAmount(token0, amount0),
                     amount1: CurrencyAmount.fromRawAmount(token1, amount1),
-                    gas: gas ? calcGasCost(chainId, gas, gasPrice) : calcGasCost(chainId, '0', '0'),
+                    gas: calcGasCost(
+                      chainId,
+                      gasUsed || gas || '0',
+                      effectiveGasPrice || gasPrice || '0',
+                      l1Fee,
+                    ),
                   };
                 },
               )

@@ -8,4 +8,5 @@ export enum TxTypes {
 export enum ChainID {
   Mainnet = 1,
   Matic = 137,
+  Optimism = 10,
 }
