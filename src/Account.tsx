@@ -1,4 +1,5 @@
 import React from 'React';
+import Davatar from '@davatar/react';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import Button from './ui/Button';
@@ -60,7 +61,8 @@ const Account = () => {
                     </Button>
                   </div>
                   <Button onClick={openAccountModal} variant="outline" type="button" size="lg">
-                    {account.displayName}
+                    <Davatar size={16} address={account.address} generatedAvatarType="jazzicon" />
+                    <span className="ml-1">{account.displayName}</span>
                     <span className="hidden md:block">
                       {account.displayBalance ? ` (${account.displayBalance})` : ''}
                     </span>
