@@ -60,7 +60,7 @@ const RainbowKitWithTheme = ({ children }: { children: ReactNode }) => {
 
   return (
     <RainbowKitProvider chains={chains} theme={computedTheme}>
-      ) {children}
+      {children}
     </RainbowKitProvider>
   );
 };

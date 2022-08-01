@@ -33,33 +33,37 @@ const Account = () => {
                 );
               }
               return (
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <Button variant="outline" onClick={openChainModal} type="button" size="lg">
-                    {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
-                          borderRadius: 999,
-                          overflow: 'hidden',
-                          marginRight: 4,
-                        }}
-                      >
-                        {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    {chain.name}
-                  </Button>
+                <div className="flex gap-2">
+                  <div className="hidden md:block">
+                    <Button variant="outline" onClick={openChainModal} type="button" size="lg">
+                      {chain.hasIcon && (
+                        <div
+                          style={{
+                            background: chain.iconBackground,
+                            width: 12,
+                            height: 12,
+                            borderRadius: 999,
+                            overflow: 'hidden',
+                            marginRight: 4,
+                          }}
+                        >
+                          {chain.iconUrl && (
+                            <img
+                              alt={chain.name ?? 'Chain icon'}
+                              src={chain.iconUrl}
+                              style={{ width: 12, height: 12 }}
+                            />
+                          )}
+                        </div>
+                      )}
+                      {chain.name}
+                    </Button>
+                  </div>
                   <Button onClick={openAccountModal} variant="outline" type="button" size="lg">
                     {account.displayName}
-                    {account.displayBalance ? ` (${account.displayBalance})` : ''}
+                    <span className="hidden md:block">
+                      {account.displayBalance ? ` (${account.displayBalance})` : ''}
+                    </span>
                   </Button>
                 </div>
               );

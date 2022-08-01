@@ -23,12 +23,10 @@ function Container() {
           <a href={ROUTES.HOME}>
             <Logo />
           </a>
-          <div className="md:w-2/5 flex justify-end">
+          <div className="flex justify-end gap-1 md:gap-2">
             <ThemeSelector />
             {addresses.length > 0 && <GlobalCurrencySelector />}
-            <div className="ml-2">
-              <Account />
-            </div>
+            <Account />
           </div>
         </div>
         <div className="w-full h-full">

@@ -33,11 +33,11 @@
 
 /* Button Sizes */
 .button--md {
-  @apply text-0.875 px-4 py-2 h-9;
+  @apply text-0.8125 md:text-0.875 px-4 py-2 h-9;
 }
 
 .button--lg {
-  @apply px-4 h-10;
+  @apply text-0.875 md:text-1 px-4 h-10;
 }
 
 /* other */
