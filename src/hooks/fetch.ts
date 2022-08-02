@@ -106,6 +106,7 @@ export function useFetchPositions(
 
           positions.push({
             ...result,
+            transactions: txs,
             liquidity: positionLiquidity,
             uncollectedFees,
             owner: addresses[idx],
