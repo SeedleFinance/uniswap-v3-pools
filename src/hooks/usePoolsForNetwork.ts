@@ -246,8 +246,8 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
           .filter((position) => position !== null);
 
         const currencyPoolUncollectedFees = [
-          CurrencyAmount.fromRawAmount(entity.token0, rawPoolUncollectedFees[0]),
-          CurrencyAmount.fromRawAmount(entity.token1, rawPoolUncollectedFees[1]),
+          CurrencyAmount.fromRawAmount(entity.token0, rawPoolUncollectedFees[0].toString()),
+          CurrencyAmount.fromRawAmount(entity.token1, rawPoolUncollectedFees[1].toString()),
         ];
 
         return {
