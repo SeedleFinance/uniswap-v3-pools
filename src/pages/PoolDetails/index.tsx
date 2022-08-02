@@ -45,9 +45,23 @@ const PoolDetailsPage = () => {
     return price;
   }, [pool]);
 
+  const {
+    key,
+    address,
+    entity,
+    quoteToken,
+    baseToken,
+    positions,
+    rawPoolLiquidity,
+    poolLiquidity,
+    poolUncollectedFees,
+  } = pool;
+
   function handleClickBack() {
     navigate(-1);
   }
+
+  function handleClickDownloadCSV() {}
 
   if (!pool?.positions) {
     return (
@@ -63,23 +77,6 @@ const PoolDetailsPage = () => {
       </div>
     );
   }
-
-  const {
-    key,
-    address,
-    entity,
-    quoteToken,
-    baseToken,
-    positions,
-    rawPoolLiquidity,
-    poolLiquidity,
-    poolUncollectedFees,
-  } = pool;
-
-  function handleClickDownloadCSV() {}
-
-  console.log('quoteToken', quoteToken.symbol);
-  console.log('baseToken', baseToken.symbol);
 
   return (
     <div className="flex flex-col w-full">

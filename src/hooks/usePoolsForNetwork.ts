@@ -151,6 +151,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
 
         const positions = positionsByPool[pool.address.toLowerCase()]
           .filter(({ liquidity }) => (filterClosed ? !liquidity.isZero() : true))
+          .sort((a, b) => b.liquidity.sub(a.liquidity).toNumber())
           .map(({ positionId, liquidity, tickLower, tickUpper, transactions }) => {
             if (!liquidity || !tickLower || !tickUpper) {
               return null;
