@@ -15,8 +15,8 @@ function Footer() {
             </a>
           </div>
           <div className="pl-8">
-            <a href={EXTERNAL_LINKS.ROADMAP} target="_blank" rel="noreferrer">
-              Roadmap
+            <a href={EXTERNAL_LINKS.FEEDBACK} target="_blank" rel="noreferrer">
+              Feedback
             </a>
           </div>
         </div>
