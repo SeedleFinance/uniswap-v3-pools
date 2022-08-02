@@ -147,11 +147,12 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
 
         let rawPoolLiquidity = BigNumber.from(0);
         let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
+        let rawPoolUncollectedFees = [BigNumber.from(0), BigNumber.from(0)];
         let poolUncollectedFees = CurrencyAmount.fromRawAmount(baseToken, 0);
 
         const positions = positionsByPool[pool.address.toLowerCase()]
           .filter(({ liquidity }) => (filterClosed ? !liquidity.isZero() : true))
-          .sort((a, b) => b.liquidity.sub(a.liquidity).toNumber())
+          .sort((a, b) => (b.liquidity.gte(a.liquidity) ? 1 : -1))
           .map(({ positionId, liquidity, tickLower, tickUpper, transactions }) => {
             if (!liquidity || !tickLower || !tickUpper) {
               return null;
@@ -190,6 +191,10 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
               ? entity.priceOf(entity.token1).quote(uncollectedFees[1]).add(uncollectedFees[0])
               : entity.priceOf(entity.token0).quote(uncollectedFees[0]).add(uncollectedFees[1]);
 
+            rawPoolUncollectedFees = [
+              rawPoolUncollectedFees[0].add(BigNumber.from(rawUncollectedFees[0])),
+              rawPoolUncollectedFees[1].add(BigNumber.from(rawUncollectedFees[1])),
+            ];
             poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
 
             let formattedTransactions = transactions
@@ -240,6 +245,11 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
           })
           .filter((position) => position !== null);
 
+        const currencyPoolUncollectedFees = [
+          CurrencyAmount.fromRawAmount(entity.token0, rawPoolUncollectedFees[0]),
+          CurrencyAmount.fromRawAmount(entity.token1, rawPoolUncollectedFees[1]),
+        ];
+
         return {
           ...pool,
           key: pool.address,
@@ -250,6 +260,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
           rawPoolLiquidity,
           poolLiquidity,
           poolUncollectedFees,
+          currencyPoolUncollectedFees,
           positions,
         };
       })
