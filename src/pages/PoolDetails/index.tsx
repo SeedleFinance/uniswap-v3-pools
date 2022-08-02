@@ -40,6 +40,18 @@ const PoolDetailsPage = () => {
     return price;
   }, [pool]);
 
+  const {
+    key,
+    address,
+    entity,
+    quoteToken,
+    baseToken,
+    positions,
+    rawPoolLiquidity,
+    poolLiquidity,
+    poolUncollectedFees,
+  } = pool;
+
   function handleClickBack() {
     navigate(-1);
   }
@@ -58,18 +70,6 @@ const PoolDetailsPage = () => {
       </div>
     );
   }
-
-  const {
-    key,
-    address,
-    entity,
-    quoteToken,
-    baseToken,
-    positions,
-    rawPoolLiquidity,
-    poolLiquidity,
-    poolUncollectedFees,
-  } = pool;
 
   return (
     <div className="flex flex-col w-full">
