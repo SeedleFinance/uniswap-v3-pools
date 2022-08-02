@@ -20,6 +20,7 @@ interface PoolProps {
   baseToken: Token;
   rawPoolLiquidity: BigNumber;
   poolLiquidity: CurrencyAmount<Token>;
+  currencyPoolUncollectedFees: CurrencyAmount<Token>[];
   poolUncollectedFees: CurrencyAmount<Token>;
   positions: CustomPosition[];
 }
@@ -32,6 +33,7 @@ function Pool({
   positions,
   poolLiquidity,
   rawPoolLiquidity,
+  currencyPoolUncollectedFees,
   poolUncollectedFees,
 }: PoolProps) {
   const { convertToGlobalFormatted } = useCurrencyConversions();
@@ -49,26 +51,16 @@ function Pool({
 
   // total distribution – from all positions
   const distribution = useMemo(() => {
-    return positions.reduce((total: any, { entity }): {
-      symbol: string;
-      amount: number;
-    }[] => {
-      let amount0 = {
-        symbol: entity.pool.token0.symbol!,
-        amount: total[entity.pool.token0.symbol!] || 0 + Number(entity.amount0.toSignificant(6)),
-      };
+    let amount0 = CurrencyAmount.fromRawAmount(entity.token0, '0');
+    let amount1 = CurrencyAmount.fromRawAmount(entity.token1, '0');
 
-      let amount1 = {
-        symbol: entity.pool.token1.symbol!,
-        amount: total[entity.pool.token0.symbol!] || 0 + Number(entity.amount1.toSignificant(6)),
-      };
+    positions.forEach((position) => {
+      amount0 = amount0.add(position.entity.amount0);
+      amount1 = amount1.add(position.entity.amount1);
+    });
 
-      return [amount0, amount1] as {
-        symbol: string;
-        amount: number;
-      }[];
-    }, []);
-  }, [positions]);
+    return [amount0, amount1];
+  }, [entity, positions]);
 
   const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
     useTransactionTotals(poolTransactions, baseToken, entity);
@@ -86,7 +78,7 @@ function Pool({
 
   const apr = useAPR(poolTransactions, returnPercent, rawPoolLiquidity);
 
-  const feeAPY = useFeeAPY(entity, baseToken, [poolUncollectedFees], poolTransactions);
+  const feeAPY = useFeeAPY(entity, baseToken, currencyPoolUncollectedFees, poolTransactions);
 
   if (!baseToken || !quoteToken || !entity) {
     return (
@@ -134,10 +126,10 @@ function Pool({
           <tbody className="text-0.875 align-wtop">
             <tr>
               <td className="px-4 py-6 flex flex-col font-medium">
-                {distribution.map((token: any, i: number) => (
-                  <div className="flex px-2" key={token.symbol}>
-                    <TokenLabel symbol={token.symbol} size="sm" />
-                    {token.amount}
+                {distribution.map((token: any) => (
+                  <div className="flex px-2" key={token.currency.symbol}>
+                    <TokenLabel symbol={token.currency.symbol} size="sm" />
+                    {token.toSignificant(6)}
                   </div>
                 ))}
               </td>
