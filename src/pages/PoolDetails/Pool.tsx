@@ -20,6 +20,7 @@ interface PoolProps {
   baseToken: Token;
   rawPoolLiquidity: BigNumber;
   poolLiquidity: CurrencyAmount<Token>;
+  currencyPoolUncollectedFees: CurrencyAmount<Token>[];
   poolUncollectedFees: CurrencyAmount<Token>;
   positions: CustomPosition[];
 }
@@ -32,6 +33,7 @@ function Pool({
   positions,
   poolLiquidity,
   rawPoolLiquidity,
+  currencyPoolUncollectedFees,
   poolUncollectedFees,
 }: PoolProps) {
   const { convertToGlobalFormatted } = useCurrencyConversions();
@@ -86,7 +88,7 @@ function Pool({
 
   const apr = useAPR(poolTransactions, returnPercent, rawPoolLiquidity);
 
-  const feeAPY = useFeeAPY(entity, baseToken, [poolUncollectedFees], poolTransactions);
+  const feeAPY = useFeeAPY(entity, baseToken, currencyPoolUncollectedFees, poolTransactions);
 
   if (!baseToken || !quoteToken || !entity) {
     return (

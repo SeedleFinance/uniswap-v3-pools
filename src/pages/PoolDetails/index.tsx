@@ -54,6 +54,7 @@ const PoolDetailsPage = () => {
     positions,
     rawPoolLiquidity,
     poolLiquidity,
+    currencyPoolUncollectedFees,
     poolUncollectedFees,
   } = pool;
 
@@ -165,6 +166,7 @@ const PoolDetailsPage = () => {
           positions={positions}
           rawPoolLiquidity={rawPoolLiquidity}
           poolLiquidity={poolLiquidity}
+          currencyPoolUncollectedFees={currencyPoolUncollectedFees}
           poolUncollectedFees={poolUncollectedFees}
         />
       </div>
