@@ -87,9 +87,10 @@ export function useAPR(transactions: any, returnPercent: number, liquidity: BigN
       return 0;
     }
 
-    const startDate = new Date(transactions[0].timestamp * 1000);
+    const sortedTxs = transactions.sort((a, b) => a.timestamp - b.timestamp);
+    const startDate = new Date(sortedTxs[0].timestamp * 1000);
     const endDate = liquidity.isZero()
-      ? new Date(transactions[transactions.length - 1].timestamp * 1000)
+      ? new Date(sortedTxs[sortedTxs.length - 1].timestamp * 1000)
       : new Date();
     const secondsSince = differenceInSeconds(endDate, startDate);
     const yearInSeconds = 365 * 24 * 60 * 60;
@@ -139,12 +140,14 @@ export function useFeeAPY(
       return zeroAmount;
     }
 
+    const sortedTxs = transactions.sort((a, b) => a.timestamp - b.timestamp);
+
     const periodYieldsPerSecond = [];
     let periodLiquidityAdded = zeroAmount;
     let periodLiquidityRemoved = zeroAmount;
     let periodStart = new Date();
 
-    transactions.forEach(
+    sortedTxs.forEach(
       ({
         transactionType,
         amount0,
