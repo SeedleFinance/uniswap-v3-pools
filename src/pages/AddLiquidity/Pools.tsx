@@ -4,6 +4,7 @@ import { Token } from '@uniswap/sdk-core';
 import { PoolState } from '../../hooks/usePoolsState';
 import PoolButton from '../../ui/PoolButton';
 import LoadingSpinner from '../../ui/Spinner';
+import useCSV from '../../hooks/useCSV';
 
 interface Props {
   pools: PoolState[];
@@ -12,6 +13,8 @@ interface Props {
 }
 
 function Pools({ pools, onPoolClick, filter }: Props) {
+  const handleDownloadCSV = useCSV();
+
   const filteredPools = useMemo(() => {
     if (filter.length < 2) {
       return pools;

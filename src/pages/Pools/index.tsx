@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import JSBI from 'jsbi';
@@ -9,7 +9,6 @@ import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
-import DownloadCSV from '../../ui/DownloadCSV';
 import FilterClosedToggle from './FilterClosedToggle';
 import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Plus from '../../icons/Plus';
@@ -18,8 +17,12 @@ import PositionStatuses from './PositionStatuses';
 import Tooltip from '../../ui/Tooltip';
 import IconHelper from '../../icons/Helper';
 
+import { useCSV } from '../../hooks/useCSV';
 import { ROUTES } from '../../constants';
 import { LABELS } from '../../content/tooltip';
+import DropdownMenu from '../../ui/DropdownMenu';
+import IconOptions from '../../icons/Options';
+import IconDownload from '../../icons/Download';
 
 function Pools() {
   const { convertToGlobal, formatCurrencyWithSymbol, convertToGlobalFormatted } =
@@ -28,6 +31,7 @@ function Pools() {
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
   const navigate = useNavigate();
   const location = useLocation();
+  const handleDownloadCSV = useCSV();
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -119,15 +123,25 @@ function Pools() {
         <div className="flex justify-between items-center">
           <FilterClosedToggle />
           <div className="flex">
-            <div className="ml-2 hidden md:flex">
-              <DownloadCSV />
-            </div>
             <Button href="/add/new" size="md" className="ml-2">
               <div className="flex items-center -ml-1">
                 <Plus />
                 <span className="ml-1">New Position</span>
               </div>
             </Button>
+            <DropdownMenu
+              options={[
+                {
+                  label: 'Download CSV',
+                  cb: handleDownloadCSV,
+                  icon: <IconDownload />,
+                },
+              ]}
+            >
+              <Button variant="ghost">
+                <IconOptions />
+              </Button>
+            </DropdownMenu>
           </div>
         </div>
       </div>
