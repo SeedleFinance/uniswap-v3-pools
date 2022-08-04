@@ -24,13 +24,7 @@ interface PriceChartProps {
 const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken, period }) => {
   const { theme } = useAppSettings();
 
-  const { priceData, minPrice, maxPrice } = usePoolPriceData(
-    baseToken.chainId,
-    address,
-    quoteToken,
-    baseToken,
-    period,
-  );
+  const { priceData } = usePoolPriceData(baseToken.chainId, address, quoteToken, baseToken, period);
 
   function CustomTooltip({ active, payload = '', label = '' }: any) {
     if (payload && active) {
@@ -85,7 +79,6 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
           padding={{ left: 0, right: 15 }}
         />
         <YAxis
-          tick={{ fontSize: 12, fill: '#7f879c' }}
           stroke={theme === 'light' ? '#e5e5ee' : '40444a'}
           domain={yDomain}
           axisLine={false}

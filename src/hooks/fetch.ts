@@ -13,8 +13,11 @@ export interface TransactionV2 {
   liquidity: string;
   transactionHash: string;
   timestamp: string;
-  gas: string;
-  gasPrice: string;
+  gas?: string;
+  gasPrice?: string;
+  gasUsed?: string;
+  effectiveGasPrice?: string;
+  l1Fee?: string;
 }
 
 export interface PositionStateV2 {
@@ -153,10 +156,8 @@ export function useFetchPools(
       }
 
       let pools = await res.json();
-
-      // FIXME: this is a sign of server-side issue (eg: pools not indexed correctly)
-      // filter empty pools
-      pools = pools.filter((pool) => pool);
+      // FIXME! Pools should not be null
+      pools = pools.filter((pool: any) => pool);
 
       setPoolStates(pools);
       setLoading(false);
@@ -206,9 +207,14 @@ export function useFetchUncollectedFees(
       setLoading(false);
     };
 
-    if (pools.length) {
-      _call();
+    if (!pools.length) {
+      setUncollectedFees([]);
+      setLoading(false);
+
+      return;
     }
+
+    _call();
   }, [chainId, pools]);
 
   return { loading, uncollectedFees };

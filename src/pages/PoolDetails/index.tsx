@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
-import { WETH9 } from '@uniswap/sdk-core';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import { ROUTES } from '../../constants';
-import { CombinedPoolsProvider, usePools } from '../../CombinedPoolsProvider';
+
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import { usePools } from '../../CombinedPoolsProvider';
 
 import BackArrow from '../../icons/LeftArrow';
 import Card from '../../ui/Card';
@@ -15,45 +14,36 @@ import Pool from './Pool';
 import Positions from './Positions';
 import ChartLayout from './Chart';
 import { tickToPrice } from '@uniswap/v3-sdk';
-import { formatInput } from '../../utils/numbers';
+import DropdownMenu from '../../ui/DropdownMenu';
+import IconDownload from '../../icons/Download';
+import Button from '../../ui/Button';
+import IconOptions from '../../icons/Options';
+import Plus from '../../icons/Plus';
 
 const PoolDetailsPage = () => {
-  const { loading, pools } = usePools();
-  const { convertToGlobal } = useCurrencyConversions();
+  const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
+  const { convertToGlobalFormatted } = useCurrencyConversions();
   const { id } = useParams();
-  const { loading: loadingPools, lastLoaded, refresh, refreshingList } = usePools();
   const navigate = useNavigate();
 
   // Select a single pool
   const pool = useMemo(() => {
-    if (loading) {
-      return [];
+    if (loadingPools) {
+      return null;
     }
 
-    return pools.filter((pool) => pool.address === id)[0];
-  }, [loading, pools, id]);
-
-  const {
-    key,
-    address,
-    entity,
-    quoteToken,
-    baseToken,
-    positions,
-    rawPoolLiquidity,
-    poolLiquidity,
-    poolUncollectedFees,
-  } = pool;
+    return pools.find((pool) => pool.address === id);
+  }, [loadingPools, pools, id]);
 
   const currentPrice = useMemo(() => {
-    if (!pool || !baseToken || !quoteToken) {
+    if (!pool) {
       return '0';
     }
-    const { tick } = pool;
+    const { tick, baseToken, quoteToken } = pool;
     const price = parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8));
 
     return price;
-  }, [pool, baseToken, quoteToken]);
+  }, [pool]);
 
   function handleClickBack() {
     navigate(-1);
@@ -73,6 +63,23 @@ const PoolDetailsPage = () => {
       </div>
     );
   }
+
+  const {
+    key,
+    address,
+    entity,
+    quoteToken,
+    baseToken,
+    positions,
+    rawPoolLiquidity,
+    poolLiquidity,
+    poolUncollectedFees,
+  } = pool;
+
+  function handleClickDownloadCSV() {}
+
+  console.log('quoteToken', quoteToken.symbol);
+  console.log('baseToken', baseToken.symbol);
 
   return (
     <div className="flex flex-col w-full">
@@ -95,8 +102,7 @@ const PoolDetailsPage = () => {
           />
           <div className="hidden lg:flex flex-col ml-6 mt-8 md:-mt-3">
             <span className="text-medium text-0.6875">
-              Current Price ({baseToken.equals(WETH9[baseToken.chainId]) ? 'ETH' : baseToken.symbol}
-              )
+              Current Price ({baseToken.symbol === 'WETH' ? 'ETH' : baseToken.symbol})
             </span>
             <span className="text-1.25 lg:text-2 font-semibold text-high">{currentPrice}</span>
           </div>
@@ -104,13 +110,13 @@ const PoolDetailsPage = () => {
         <div className="flex lg:ml-6 w-full lg:w-1/3">
           <Card className="md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
-              {convertToGlobal(poolUncollectedFees).toFixed(2)}
+              {convertToGlobalFormatted(poolUncollectedFees)}
             </div>
             <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
-              {(convertToGlobal(poolUncollectedFees) + convertToGlobal(poolLiquidity)).toFixed(2)}
+              {convertToGlobalFormatted(poolUncollectedFees.add(poolLiquidity))}
             </div>
             <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
@@ -124,8 +130,30 @@ const PoolDetailsPage = () => {
             refresh={refresh}
             className="text-0.75"
           />
-          <div className="ml-2 hidden md:flex">
-            <DownloadCSV />
+          <div className="flex items-center">
+            <Button
+              href={`/add/existing/${quoteToken.symbol}/${baseToken.symbol}`}
+              size="md"
+              className="ml-2"
+            >
+              <div className="flex items-center -ml-1">
+                <Plus />
+                <span className="ml-1">Add Liquidity</span>
+              </div>
+            </Button>
+            <DropdownMenu
+              options={[
+                {
+                  label: 'Download CSV',
+                  cb: handleClickDownloadCSV,
+                  icon: <IconDownload />,
+                },
+              ]}
+            >
+              <Button variant="ghost">
+                <IconOptions />
+              </Button>
+            </DropdownMenu>
           </div>
         </div>
       </div>
@@ -167,12 +195,4 @@ const PoolDetailsPage = () => {
   );
 };
 
-function PoolDetailsPageWrapped() {
-  return (
-    <CombinedPoolsProvider>
-      <PoolDetailsPage />
-    </CombinedPoolsProvider>
-  );
-}
-
-export default PoolDetailsPageWrapped;
+export default PoolDetailsPage;

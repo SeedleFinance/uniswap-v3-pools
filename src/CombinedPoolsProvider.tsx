@@ -18,13 +18,13 @@ interface Props {
 }
 
 export const CombinedPoolsProvider = ({ children }: Props) => {
-  const [initalLoading, setInitialLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [lastLoaded, setLastLoaded] = useState(+new Date());
 
   const {
     loading: mainnetLoading,
     pools: mainnetPools,
-    feesLoading,
+    feesLoading: mainnetFeesLoading,
   } = usePoolsForNetwork(1, lastLoaded);
 
   const {
@@ -49,11 +49,15 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading;
   }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
 
+  const feesLoading = useMemo(() => {
+    return mainnetFeesLoading || polygonFeesLoading || optimismFeesLoading || arbitrumFeesLoading;
+  }, [mainnetFeesLoading, polygonFeesLoading, optimismFeesLoading, arbitrumFeesLoading]);
+
   useEffect(() => {
-    if (initalLoading) {
-      setInitialLoading(loading);
+    if (initialLoading && !loading) {
+      setInitialLoading(false);
     }
-  }, [initalLoading, loading]);
+  }, [initialLoading, loading]);
 
   const refreshingList = useMemo(() => {
     return loading || feesLoading;
@@ -79,7 +83,7 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
       value={{
         pools,
         empty,
-        loading: initalLoading,
+        loading: initialLoading,
         lastLoaded,
         refreshingList,
         refresh,

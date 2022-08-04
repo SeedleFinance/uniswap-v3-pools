@@ -1,14 +1,12 @@
 import React from 'react';
 import { Token } from '@uniswap/sdk-core';
 
-import { PoolState } from '../../hooks/usePoolsState';
-
 import Pools from './Pools';
 
 interface Props {
   chainId: number;
   filter: string;
-  pools: PoolState[];
+  pools: any[]; // FIXME!
   onPoolClick: (baseToken: Token, quoteToken: Token, fee: number, positions: any[]) => void;
 }
 

@@ -13,6 +13,18 @@ import Logo from './ui/Logo';
 import Popover from './ui/Popover';
 import Account from './Account';
 
+interface ThemeWrapperProps {
+  theme: 'light' | 'dark';
+  children: ReactNode;
+}
+function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
+  return (
+    <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
+      <div className="max-w-full bg-canvas-light h-full">{children}</div>
+    </div>
+  );
+}
+
 function Container() {
   const { addresses } = useAddress();
 
