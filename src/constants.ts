@@ -149,5 +149,5 @@ export const EXTERNAL_LINKS = {
   TWITTER: 'https://twitter.com/seedleFinance',
   GITHUB: 'https://github.com/SeedleFinance/uniswap-v3-pools',
   GITCOIN: 'https://gitcoin.co/grants/4385/seedle-finance',
-  ROADMAP: 'https://seedle.frill.co',
+  FEEDBACK: 'https://seedle.frill.co',
 };

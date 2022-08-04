@@ -14,6 +14,11 @@ import Pool from './Pool';
 import Positions from './Positions';
 import ChartLayout from './Chart';
 import { tickToPrice } from '@uniswap/v3-sdk';
+import DropdownMenu from '../../ui/DropdownMenu';
+import IconDownload from '../../icons/Download';
+import Button from '../../ui/Button';
+import IconOptions from '../../icons/Options';
+import Plus from '../../icons/Plus';
 
 const PoolDetailsPage = () => {
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
@@ -72,6 +77,8 @@ const PoolDetailsPage = () => {
     navigate(-1);
   }
 
+  function handleClickDownloadCSV() {}
+
   return (
     <div className="flex flex-col w-full">
       <button
@@ -121,8 +128,30 @@ const PoolDetailsPage = () => {
             refresh={refresh}
             className="text-0.75"
           />
-          <div className="ml-2 hidden md:flex">
-            <DownloadCSV />
+          <div className="flex items-center">
+            <Button
+              href={`/add/existing/${quoteToken.symbol}/${baseToken.symbol}`}
+              size="md"
+              className="ml-2"
+            >
+              <div className="flex items-center -ml-1">
+                <Plus />
+                <span className="ml-1">Add Liquidity</span>
+              </div>
+            </Button>
+            <DropdownMenu
+              options={[
+                {
+                  label: 'Download CSV',
+                  cb: handleClickDownloadCSV,
+                  icon: <IconDownload />,
+                },
+              ]}
+            >
+              <Button variant="ghost">
+                <IconOptions />
+              </Button>
+            </DropdownMenu>
           </div>
         </div>
       </div>
