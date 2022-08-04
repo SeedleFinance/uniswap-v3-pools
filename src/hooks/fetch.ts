@@ -157,8 +157,11 @@ export function useFetchPools(
       }
 
       let pools = await res.json();
-      // FIXME! Pools should not be null
-      pools = pools.filter((pool: any) => pool);
+      // Pools should not be null (null pools are usually a result of data indexing error)
+      // however there can be pools without any liquidity - we'd filter them out
+      pools = pools.filter(
+        (pool: any) => pool && pool.liquidity.length && pool.sqrtPriceX96.length,
+      );
 
       setPoolStates(pools);
       setLoading(false);
