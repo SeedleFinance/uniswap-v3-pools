@@ -168,6 +168,7 @@ export function usePerpUncollectedFees(chainId: number, positions: PerpPositionS
 }
 
 export function useQueryPools(chainId: number, addresses: string[]) {
+  console.log(addresses);
   const [queryPools, { loading, error, data }] = useLazyQuery(QUERY_POOLS, {
     variables: { addresses },
     fetchPolicy: 'network-only',
@@ -293,6 +294,7 @@ export function usePerpV2(chainId: number): {
       positionsByPool[position.poolAddress] = entry;
     });
 
+    console.log(positionsByPool);
     return positionsByPool;
   }, [pools, positionStates, uncollectedFeesByPosition]);
 
