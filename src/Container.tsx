@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { useAddress } from './AddressProvider';
-import { useAppSettings } from './AppSettingsProvider';
 import GlobalCurrencySelector from './GlobalCurrencySelector';
 import ThemeSelector from './ThemeSelector';
 import PageBody from './PageBody';
@@ -12,18 +11,6 @@ import { EXTERNAL_LINKS, ROUTES } from './constants';
 import Logo from './ui/Logo';
 import Popover from './ui/Popover';
 import Account from './Account';
-
-interface ThemeWrapperProps {
-  theme: 'light' | 'dark';
-  children: ReactNode;
-}
-function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
-  return (
-    <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
-      <div className="max-w-full bg-canvas-light h-full">{children}</div>
-    </div>
-  );
-}
 
 function Container() {
   const { addresses } = useAddress();
