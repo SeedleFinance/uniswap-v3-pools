@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import { useAccount, useNetwork, useProvider } from 'wagmi';
 import { useSearchParams } from 'react-router-dom';
 import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
@@ -55,27 +55,14 @@ interface Props {
 }
 
 function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Props) {
-  const { chainId, account, library } = useWeb3React('injected');
-  const chainWeb3React = useChainWeb3React(chainId as number);
+  const { chain } = useNetwork();
+  const { address: account } = useAccount();
+  const library = useProvider();
+
   const [searchParams] = useSearchParams();
   const positionId = searchParams.get('position');
 
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!chainId) {
-      return;
-    }
-
-    if (!chainWeb3React.active) {
-      const networkConnector = getNetworkConnector();
-      networkConnector.changeChainId(chainId);
-
-      chainWeb3React.activate(networkConnector, (err) => {
-        console.error(err);
-      });
-    }
-  }, [chainId, chainWeb3React]);
 
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
     [baseToken, quoteToken],
@@ -125,19 +112,19 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [getBalances]);
 
   useEffect(() => {
-    if (!chainId || !getAllowances) {
+    if (!chain || !getAllowances) {
       return;
     }
 
     const _run = async () => {
-      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number];
+      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id];
       const [val0, val1] = await getAllowances(spender);
       setBaseTokenAllowance(val0);
       setQuoteTokenAllowance(val1);
     };
 
     _run();
-  }, [getAllowances, chainId]);
+  }, [getAllowances, chain]);
 
   const rangeReverse = useMemo(() => {
     if (!quoteToken || !baseToken) {
@@ -213,32 +200,32 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse, swapAndAdd]);
 
   const baseTokenNeedApproval = useMemo(() => {
-    if (!chainId || !baseToken) {
+    if (!chain || !baseToken) {
       return false;
     }
 
     return tokenAmountNeedApproval(
-      chainId as number,
+      chain.id,
       baseToken,
       baseTokenAllowance,
       baseAmount,
       depositWrapped,
     );
-  }, [chainId, baseToken, baseAmount, baseTokenAllowance, depositWrapped]);
+  }, [chain, baseToken, baseAmount, baseTokenAllowance, depositWrapped]);
 
   const quoteTokenNeedApproval = useMemo(() => {
-    if (!chainId || !quoteToken) {
+    if (!chain || !quoteToken) {
       return false;
     }
 
     return tokenAmountNeedApproval(
-      chainId as number,
+      chain.id,
       quoteToken,
       quoteTokenAllowance,
       quoteAmount,
       depositWrapped,
     );
-  }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance, depositWrapped]);
+  }, [chain, quoteToken, quoteAmount, quoteTokenAllowance, depositWrapped]);
 
   const totalPositionValue = useMemo(() => {
     if (!pool) {
@@ -358,8 +345,8 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       }
 
       const router = new AlphaRouter({
-        chainId: chainId as number,
-        provider: chainWeb3React.library,
+        chainId: chain.id,
+        provider: library,
       });
 
       let token0Balance, token1Balance, matchingPosition;
@@ -445,7 +432,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       }
 
       const tx = {
-        to: SWAP_ROUTER_ADDRESSES[chainId as number],
+        to: SWAP_ROUTER_ADDRESSES[chain.id],
         value,
         data: route.methodParameters.calldata,
         gasPrice: BigNumber.from(route.gasPriceWei),
@@ -513,7 +500,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       const useNative =
         isNativeToken(pool.token0) || isNativeToken(pool.token1)
           ? !depositWrapped
-            ? getNativeToken(chainId as number)
+            ? getNativeToken(chain.id)
             : undefined
           : undefined;
 
@@ -532,7 +519,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           });
 
       const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id],
         data: calldata,
         value,
       };
@@ -753,11 +740,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           ) : baseTokenNeedApproval ? (
             <Button
               onClick={() =>
-                onApprove(
-                  baseToken,
-                  baseAmount,
-                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-                )
+                onApprove(baseToken, baseAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id])
               }
               disabled={transactionPending}
               tabIndex={8}
@@ -769,11 +752,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           ) : quoteTokenNeedApproval ? (
             <Button
               onClick={() =>
-                onApprove(
-                  quoteToken,
-                  quoteAmount,
-                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-                )
+                onApprove(quoteToken, quoteAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id])
               }
               disabled={transactionPending}
               tabIndex={8}
@@ -819,7 +798,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           )}
 
           {transactionPending && (
-            <TransactionModal chainId={chainId} transactionHash={transactionHash} />
+            <TransactionModal chainId={chain.id} transactionHash={transactionHash} />
           )}
         </div>
       </div>
@@ -828,7 +807,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         <div className="h-64">
           {showFeeTierData && (
             <FeeTierData
-              chainId={chainId}
+              chainId={chain.id}
               baseToken={baseToken}
               quoteToken={quoteToken}
               currentValue={fee}
@@ -839,7 +818,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         {showRangeData && (
           <div>
             <RangeData
-              chainId={chainId}
+              chainId={chain.id}
               tickLower={tickLower}
               tickUpper={tickUpper}
               baseToken={baseToken}
