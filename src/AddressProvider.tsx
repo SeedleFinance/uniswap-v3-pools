@@ -17,7 +17,7 @@ interface Props {
 
 export const AddressProvider = ({ children }: Props) => {
   const { library, active, activate } = useWeb3React('mainnet');
-  const { address: account, isConnected, activeConnector } = useAccount();
+  const { address: account, isConnected, connector } = useAccount();
   const { connect } = useConnect();
 
   const [addresses, setAddresses] = useState<string[]>([]);
@@ -34,10 +34,10 @@ export const AddressProvider = ({ children }: Props) => {
   }, [activate, active]);
 
   useEffect(() => {
-    if (!isConnected && activeConnector) {
-      connect({ activeConnector });
+    if (!isConnected && connector) {
+      connect({ connector });
     }
-  }, [isConnected, connect, activeConnector]);
+  }, [isConnected, connect, connector]);
 
   useEffect(() => {
     const fetchAddresses = async () => {
