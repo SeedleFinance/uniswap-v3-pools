@@ -69,17 +69,17 @@ function App() {
   return (
     <Web3CombinedProvider>
       <SubgraphProvider>
-        <AddressProvider>
-          <AppSettingsProvider>
-            <ThemeWrapper>
-              <WagmiConfig client={wagmiClient}>
+        <WagmiConfig client={wagmiClient}>
+          <AddressProvider>
+            <AppSettingsProvider>
+              <ThemeWrapper>
                 <RainbowKitWithTheme>
                   <Container />
                 </RainbowKitWithTheme>
-              </WagmiConfig>
-            </ThemeWrapper>
-          </AppSettingsProvider>
-        </AddressProvider>
+              </ThemeWrapper>
+            </AppSettingsProvider>
+          </AddressProvider>
+        </WagmiConfig>
       </SubgraphProvider>
     </Web3CombinedProvider>
   );
