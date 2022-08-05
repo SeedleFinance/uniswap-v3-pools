@@ -8,7 +8,8 @@ import PoolDetailsPage from './pages/PoolDetails';
 import AddLiquidityPage from './pages/AddLiquidity/index';
 
 import { ROUTES } from './constants';
-import { useAddress } from './AddressProvider';
+import { useAccount } from 'wagmi';
+import Landing from './pages/Landing';
 
 function PoolsLayout() {
   return (
@@ -20,23 +21,29 @@ function PoolsLayout() {
 
 // TODO: Add a Not found page
 function PageBody() {
-  const { addresses } = useAddress();
-  return (
-    <Router>
-      <Routes>
-        <Route
-          path={`${ROUTES.ADD}/:quoteTokenSymbol/:baseTokenSymbol/:fee`}
-          element={<AddLiquidityPage tab="new" />}
-        />
-        <Route path={ROUTES.ADD_NEW} element={<AddLiquidityPage tab="new" />} />
-        <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
+  const { isConnected } = useAccount();
 
-        <Route element={<PoolsLayout />}>
-          <Route path={ROUTES.HOME} element={!addresses.length ? <LandingPage /> : <PoolsPage />} />
-          <Route path={`${ROUTES.POOL_DETAILS}/:id`} element={<PoolDetailsPage />} />
-        </Route>
-      </Routes>
-    </Router>
+  return (
+    <>
+      <Router>
+        <Routes>
+          <Route
+            path={`${ROUTES.ADD}/:quoteTokenSymbol/:baseTokenSymbol/:fee`}
+            element={<AddLiquidityPage tab="new" />}
+          />
+          <Route path={ROUTES.ADD_NEW} element={<AddLiquidityPage tab="new" />} />
+          <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
+
+          <Route element={<PoolsLayout />}>
+            <Route path={ROUTES.HOME} element={isConnected ? <PoolsPage /> : <LandingPage />} />
+            <Route
+              path={`${ROUTES.POOL_DETAILS}/:id`}
+              element={isConnected ? <PoolDetailsPage /> : <LandingPage />}
+            />
+          </Route>
+        </Routes>
+      </Router>
+    </>
   );
 }
 

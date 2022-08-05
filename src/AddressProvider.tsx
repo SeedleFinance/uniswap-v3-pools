@@ -1,7 +1,8 @@
-import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import React, { ReactNode, useContext, useState, useEffect, useMemo } from 'react';
 import { useWeb3React } from '@web3-react/core';
 
 import { getNetworkConnector, injectedConnector } from './utils/connectors';
+import { useAccount } from 'wagmi';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
@@ -14,9 +15,10 @@ interface Props {
 }
 
 export const AddressProvider = ({ children }: Props) => {
-  const { library, active, activate } = useWeb3React('mainnet');
+  const { library, activate } = useWeb3React('mainnet');
+  const { isConnected: active, address: account } = useAccount();
 
-  const { account, active: injectedActive, activate: activateInjected } = useWeb3React('injected');
+  const { active: injectedActive, activate: activateInjected } = useWeb3React('injected');
 
   const [addresses, setAddresses] = useState<string[]>([]);
 

@@ -17,6 +17,9 @@
   @apply bg-transparent p-0;
 }
 
+.button--outline {
+  @apply border border-element-10;
+}
 /* Button sizes */
 
 .button-xs {
@@ -25,16 +28,16 @@
 
 /* note sm - replaces the current compact button */
 .button--sm {
-  @apply px-2 py-1 text-0.875;
+  @apply px-2 py-1 text-0.875 h-6;
 }
 
 /* Button Sizes */
 .button--md {
-  @apply text-0.875 px-4 py-2;
+  @apply text-0.8125 md:text-0.875 px-4 py-2 h-9;
 }
 
 .button--lg {
-  @apply px-4;
+  @apply text-0.875 md:text-1 px-4 h-10;
 }
 
 /* other */
