@@ -6,9 +6,12 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
 export const { chains, provider } = configureChains(
-  [chain.mainnet, chain.optimism, chain.arbitrum],
+  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
   //@ts-ignore
-  [alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }), publicProvider()],
+  [
+    alchemyProvider({ apiKey: 'saJ_d7L6OvoZ3t6jL7ewhv7ONWWi_J29', priority: 0 }),
+    publicProvider({ priority: 1 }),
+  ],
 );
 
 const connectors = connectorsForWallets([
