@@ -745,7 +745,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               onClick={onSwapAndAddLiquidity}
               disabled={transactionPending}
               tabIndex={8}
-              size="sm"
+              size="lg"
               className="mr-2"
             >
               Swap & Add
@@ -761,6 +761,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               }
               disabled={transactionPending}
               tabIndex={8}
+              size="lg"
               className="mr-2"
             >
               Approve {baseToken.symbol}
@@ -776,7 +777,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               }
               disabled={transactionPending}
               tabIndex={8}
-              size="sm"
+              size="lg"
               className="mr-2"
             >
               Approve {quoteToken.symbol}
@@ -786,7 +787,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               onClick={onAddLiquidity}
               disabled={transactionPending}
               tabIndex={8}
-              size="sm"
+              size="lg"
               className="mr-2"
             >
               Add Liquidity
