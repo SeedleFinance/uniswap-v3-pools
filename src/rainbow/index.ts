@@ -1,4 +1,3 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { chain, configureChains, createClient } from 'wagmi';
 import { connectorsForWallets, wallet } from '@rainbow-me/rainbowkit';
 

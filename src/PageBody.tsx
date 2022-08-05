@@ -9,7 +9,6 @@ import AddLiquidityPage from './pages/AddLiquidity/index';
 
 import { ROUTES } from './constants';
 import { useAddress } from './AddressProvider';
-import Landing from './pages/Landing';
 
 function PoolsLayout() {
   return (

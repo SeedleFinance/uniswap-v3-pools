@@ -1,13 +1,13 @@
-import React, { ReactNode, useContext, useState, useEffect, useMemo } from 'react';
+import React, { ReactNode, useContext, useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
 
-import { getNetworkConnector, injectedConnector } from './utils/connectors';
+import { getNetworkConnector } from './utils/connectors';
 import { useAccount, useConnect } from 'wagmi';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
   injectedAddress: null as string | null | undefined,
-  addressReady: false;
+  addressReady: false,
 });
 export const useAddress = () => useContext(AddressContext);
 
@@ -77,7 +77,9 @@ export const AddressProvider = ({ children }: Props) => {
   }, [library, account]);
 
   return (
-    <AddressContext.Provider value={{ addresses, injectedAddress: account, addressReady: addresses.length > 0 }}>
+    <AddressContext.Provider
+      value={{ addresses, injectedAddress: account, addressReady: addresses.length > 0 }}
+    >
       {children}
     </AddressContext.Provider>
   );
