@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useState, useEffect, useMemo } from 'reac
 import { useWeb3React } from '@web3-react/core';
 
 import { getNetworkConnector, injectedConnector } from './utils/connectors';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
@@ -15,10 +15,9 @@ interface Props {
 }
 
 export const AddressProvider = ({ children }: Props) => {
-  const { library, activate } = useWeb3React('mainnet');
-  const { isConnected: active, address: account } = useAccount();
-
-  const { active: injectedActive, activate: activateInjected } = useWeb3React('injected');
+  const { library, active, activate } = useWeb3React('mainnet');
+  const { address: account, isConnected, activeConnector } = useAccount();
+  const { connect } = useConnect();
 
   const [addresses, setAddresses] = useState<string[]>([]);
 
@@ -34,13 +33,10 @@ export const AddressProvider = ({ children }: Props) => {
   }, [activate, active]);
 
   useEffect(() => {
-    if (!injectedActive) {
-      activateInjected(injectedConnector, (err) => {
-        // ignore error
-        //console.error(err);
-      });
+    if (!isConnected) {
+      connect({ activeConnector });
     }
-  }, [activateInjected, injectedActive]);
+  }, [isConnected, connect, activeConnector]);
 
   useEffect(() => {
     const fetchAddresses = async () => {
