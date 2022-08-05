@@ -8,7 +8,7 @@ import PoolDetailsPage from './pages/PoolDetails';
 import AddLiquidityPage from './pages/AddLiquidity/index';
 
 import { ROUTES } from './constants';
-import { useAccount } from 'wagmi';
+import { useAddress } from './AddressProvider';
 import Landing from './pages/Landing';
 
 function PoolsLayout() {
@@ -21,7 +21,7 @@ function PoolsLayout() {
 
 // TODO: Add a Not found page
 function PageBody() {
-  const { isConnected } = useAccount();
+  const { addressReady } = useAddress();
 
   return (
     <>
@@ -35,10 +35,10 @@ function PageBody() {
           <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
 
           <Route element={<PoolsLayout />}>
-            <Route path={ROUTES.HOME} element={isConnected ? <PoolsPage /> : <LandingPage />} />
+            <Route path={ROUTES.HOME} element={addressReady ? <PoolsPage /> : <LandingPage />} />
             <Route
               path={`${ROUTES.POOL_DETAILS}/:id`}
-              element={isConnected ? <PoolDetailsPage /> : <LandingPage />}
+              element={addressReady ? <PoolDetailsPage /> : <LandingPage />}
             />
           </Route>
         </Routes>

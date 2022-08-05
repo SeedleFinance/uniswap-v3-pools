@@ -7,6 +7,7 @@ import { useAccount, useConnect } from 'wagmi';
 const AddressContext = React.createContext({
   addresses: [] as string[],
   injectedAddress: null as string | null | undefined,
+  addressReady: false;
 });
 export const useAddress = () => useContext(AddressContext);
 
@@ -33,7 +34,7 @@ export const AddressProvider = ({ children }: Props) => {
   }, [activate, active]);
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnected && activeConnector) {
       connect({ activeConnector });
     }
   }, [isConnected, connect, activeConnector]);
@@ -76,7 +77,7 @@ export const AddressProvider = ({ children }: Props) => {
   }, [library, account]);
 
   return (
-    <AddressContext.Provider value={{ addresses, injectedAddress: account }}>
+    <AddressContext.Provider value={{ addresses, injectedAddress: account, addressReady: addresses.length > 0 }}>
       {children}
     </AddressContext.Provider>
   );

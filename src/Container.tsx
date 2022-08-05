@@ -13,7 +13,7 @@ import Popover from './ui/Popover';
 import Account from './Account';
 
 function Container() {
-  const { addresses } = useAddress();
+  const { addressReady } = useAddress();
 
   return (
     <CurrencyConversionsProvider>
@@ -24,7 +24,7 @@ function Container() {
           </a>
           <div className="flex justify-end gap-1 md:gap-2">
             <ThemeSelector />
-            {addresses.length > 0 && <GlobalCurrencySelector />}
+            {addressReady && <GlobalCurrencySelector />}
             <Account />
           </div>
         </div>
