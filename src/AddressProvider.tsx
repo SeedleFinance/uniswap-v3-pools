@@ -1,8 +1,6 @@
 import React, { ReactNode, useContext, useState, useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
 
-import { getNetworkConnector } from './utils/connectors';
-import { useAccount, useConnect } from 'wagmi';
+import { useAccount, useConnect, useProvider } from 'wagmi';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
@@ -16,22 +14,11 @@ interface Props {
 }
 
 export const AddressProvider = ({ children }: Props) => {
-  const { library, active, activate } = useWeb3React('mainnet');
+  const library = useProvider({ chainId: 1 });
   const { address: account, isConnected, connector } = useAccount();
   const { connect } = useConnect();
 
   const [addresses, setAddresses] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!active) {
-      const networkConnector = getNetworkConnector();
-      networkConnector.changeChainId(1);
-
-      activate(networkConnector, (err) => {
-        console.error(err);
-      });
-    }
-  }, [activate, active]);
 
   useEffect(() => {
     if (!isConnected && connector) {
