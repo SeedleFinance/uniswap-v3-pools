@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { getAddress } from '@ethersproject/address';
 import { Contract } from '@ethersproject/contracts';
 import { AddressZero } from '@ethersproject/constants';
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
-import { useWeb3React } from '@web3-react/core';
+import { JsonRpcSigner, BaseProvider } from '@ethersproject/providers';
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
@@ -19,6 +19,8 @@ import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../constants';
 
 import { NonfungiblePositionManager } from '../types/v3/NonfungiblePositionManager';
 
+import { useChainId } from './useChainId';
+
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
   try {
@@ -28,30 +30,27 @@ export function isAddress(value: any): string | false {
   }
 }
 
-// account is not optional
-export function getSigner(library: Web3Provider, account: string): JsonRpcSigner {
-  return library.getSigner(account).connectUnchecked();
-}
-
 // account is optional
 export function getProviderOrSigner(
-  library: Web3Provider,
+  library: BaseProvider,
+  signer: JsonRpcSigner,
   account?: string,
-): Web3Provider | JsonRpcSigner {
-  return account ? getSigner(library, account) : library;
+): BaseProvider | JsonRpcSigner {
+  return account && signer ? signer : library;
 }
 
 export function getContract(
   address: string,
   ABI: any,
-  library: Web3Provider,
+  library: BaseProvider,
+  signer: JsonRpcSigner,
   account?: string,
 ): Contract {
   if (!isAddress(address) || address === AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`);
   }
 
-  return new Contract(address, ABI, getProviderOrSigner(library, account) as any);
+  return new Contract(address, ABI, getProviderOrSigner(library, signer, account) as any);
 }
 
 // returns null on errors
@@ -59,10 +58,13 @@ export function useContract(
   address: string | undefined,
   ABI: any,
   withSignerIfPossible = true,
-  providerLibrary?: Web3Provider,
+  customProvider?: BaseProvider,
 ): Contract | null {
-  const { library: injectedLibrary, account } = useWeb3React('injected');
-  const library = providerLibrary || injectedLibrary;
+  const { address: account } = useAccount();
+  const defaultProvider = useProvider();
+  const { data: signer } = useSigner();
+
+  const library = customProvider || defaultProvider;
 
   return useMemo(() => {
     if (!address || !ABI || !library) return null;
@@ -71,13 +73,14 @@ export function useContract(
         address,
         ABI,
         library,
+        signer! as JsonRpcSigner,
         withSignerIfPossible && account ? account : undefined,
       );
     } catch (error) {
       console.error('Failed to get contract', error);
       return null;
     }
-  }, [address, ABI, library, withSignerIfPossible, account]);
+  }, [address, ABI, library, signer, withSignerIfPossible, account]);
 }
 
 // returns null on errors
@@ -85,10 +88,14 @@ export function useContractBulk(
   addresses: (string | undefined)[],
   ABI: any,
   withSignerIfPossible = true,
-  providerLibrary?: Web3Provider,
+  customProvider?: BaseProvider,
 ): (Contract | null)[] {
-  const { library: injectedLibrary, account } = useWeb3React('injected');
-  const library = providerLibrary || injectedLibrary;
+  const { address: account } = useAccount();
+  const defaultProvider = useProvider();
+  const { data: signer } = useSigner();
+
+  const library = customProvider || defaultProvider;
+
   return useMemo(() => {
     try {
       return addresses.map((address) => {
@@ -97,6 +104,7 @@ export function useContractBulk(
           address,
           ABI,
           library,
+          signer! as JsonRpcSigner,
           withSignerIfPossible && account ? account : undefined,
         );
       });
@@ -104,11 +112,11 @@ export function useContractBulk(
       console.error('Failed to get contract', error);
       return [];
     }
-  }, [addresses, ABI, library, withSignerIfPossible, account]);
+  }, [addresses, ABI, library, signer, withSignerIfPossible, account]);
 }
 
 export function useV3NFTPositionManagerContract(): NonfungiblePositionManager | null {
-  const { chainId } = useWeb3React();
+  const chainId = useChainId();
   const address = chainId ? NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number] : undefined;
   return useContract(address, NFTPositionManagerABI) as NonfungiblePositionManager | null;
 }
@@ -131,7 +139,7 @@ export function usePoolContract(
   token0: Token | null,
   token1: Token | null,
   fee: number,
-  providerLibrary?: Web3Provider,
+  providerLibrary?: BaseProvider,
   withSignerIfPossible?: boolean,
 ): Contract | null {
   const address =
@@ -150,14 +158,14 @@ export interface PoolParams {
 
 export function usePoolContracts(
   addresses: string[],
-  providerLibrary?: Web3Provider,
+  providerLibrary?: BaseProvider,
   withSignerIfPossible?: boolean,
 ): (Contract | null)[] {
   return useContractBulk(addresses, V3PoolABI, withSignerIfPossible, providerLibrary);
 }
 
 export function usePerpOrderBookContract(
-  providerLibrary?: Web3Provider,
+  providerLibrary?: BaseProvider,
   withSignerIfPossible?: boolean,
 ) {
   const { contracts } = PerpMainMetadataOptimism;

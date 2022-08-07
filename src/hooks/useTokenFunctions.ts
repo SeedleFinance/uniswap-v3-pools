@@ -3,7 +3,7 @@ import { parseBytes32String } from '@ethersproject/strings';
 import { TransactionResponse } from '@ethersproject/providers';
 import { formatUnits } from '@ethersproject/units';
 import { CurrencyAmount, Token } from '@uniswap/sdk-core';
-import { useWeb3React } from '@web3-react/core';
+import { useProvider } from 'wagmi';
 import { BigNumber } from '@ethersproject/bignumber';
 import { MaxUint256 } from '@ethersproject/constants';
 
@@ -48,7 +48,7 @@ export function useTokenFunctions(
     amount: number,
   ) => Promise<TransactionResponse | null>;
 } {
-  const { library } = useWeb3React('injected');
+  const library = useProvider();
 
   const addresses = useMemo(() => tokens.map((token) => token.address), [tokens]);
   const contracts = useTokenContracts(addresses);
