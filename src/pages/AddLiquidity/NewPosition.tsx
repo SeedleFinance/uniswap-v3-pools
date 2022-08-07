@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { useSearchParams } from 'react-router-dom';
 import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
 
+import { useChainId } from '../../hooks/useChainId';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import { usePool } from '../../hooks/usePool';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
@@ -53,8 +54,7 @@ interface Props {
 }
 
 function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Props) {
-  const { chain } = useNetwork();
-  const chainId = useMemo(() => (chain ? chain.id : 1), [chain]); // defaults to mainnet
+  const chainId = useChainId();
   const { address: account } = useAccount();
   const library = useProvider();
   const { data: signer } = useSigner();

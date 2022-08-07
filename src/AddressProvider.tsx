@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useState, useEffect } from 'react';
-
+import { isAddress } from '@ethersproject/address';
 import { useAccount, useConnect, useProvider } from 'wagmi';
 
 const AddressContext = React.createContext({
@@ -38,7 +38,7 @@ export const AddressProvider = ({ children }: Props) => {
 
       if (inputAddresses.length) {
         inputAddresses.forEach((addr) => {
-          if (addr.toLowerCase().startsWith('0x')) {
+          if (isAddress(addr)) {
             hexAddresses.push(addr);
           } else {
             // if an address doesn't look hex, treat as an ENS name

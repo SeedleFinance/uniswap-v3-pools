@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import { useAccount } from 'wagmi';
 import { Token, Currency } from '@uniswap/sdk-core';
 import { SwapToRatioRoute } from '@uniswap/smart-order-router';
 
+import { useChainId } from '../../hooks/useChainId';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import TokenLabel from '../../ui/TokenLabel';
 import TokenLogo from '../../ui/TokenLogo';
@@ -36,7 +37,8 @@ function SwapAndAddModal({
   onCancel,
   onComplete,
 }: Props) {
-  const { chainId, account } = useWeb3React('injected');
+  const chainId = useChainId();
+  const { address: account } = useAccount();
   const { getAllowances } = useTokenFunctions([token0, token1], account);
 
   const [tokenApproving, setTokenApproving] = useState<boolean>(false);
