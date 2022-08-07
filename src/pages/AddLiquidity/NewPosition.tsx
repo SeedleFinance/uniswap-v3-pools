@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAccount, useNetwork, useProvider } from 'wagmi';
+import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 import { useSearchParams } from 'react-router-dom';
 import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
@@ -8,8 +8,6 @@ import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart
 
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import { usePool } from '../../hooks/usePool';
-import { useChainWeb3React } from '../../hooks/useChainWeb3React';
-import { getNetworkConnector } from '../../utils/connectors';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import PoolButton from '../../ui/PoolButton';
 import TokenLabel from '../../ui/TokenLabel';
@@ -56,8 +54,10 @@ interface Props {
 
 function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Props) {
   const { chain } = useNetwork();
+  const chainId = useMemo(() => (chain ? chain.id : 1), [chain]); // defaults to mainnet
   const { address: account } = useAccount();
   const library = useProvider();
+  const { data: signer } = useSigner();
 
   const [searchParams] = useSearchParams();
   const positionId = searchParams.get('position');
@@ -112,19 +112,19 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [getBalances]);
 
   useEffect(() => {
-    if (!chain || !getAllowances) {
+    if (!getAllowances) {
       return;
     }
 
     const _run = async () => {
-      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id];
+      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId];
       const [val0, val1] = await getAllowances(spender);
       setBaseTokenAllowance(val0);
       setQuoteTokenAllowance(val1);
     };
 
     _run();
-  }, [getAllowances, chain]);
+  }, [getAllowances, chainId]);
 
   const rangeReverse = useMemo(() => {
     if (!quoteToken || !baseToken) {
@@ -200,32 +200,32 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse, swapAndAdd]);
 
   const baseTokenNeedApproval = useMemo(() => {
-    if (!chain || !baseToken) {
+    if (!baseToken) {
       return false;
     }
 
     return tokenAmountNeedApproval(
-      chain.id,
+      chainId,
       baseToken,
       baseTokenAllowance,
       baseAmount,
       depositWrapped,
     );
-  }, [chain, baseToken, baseAmount, baseTokenAllowance, depositWrapped]);
+  }, [chainId, baseToken, baseAmount, baseTokenAllowance, depositWrapped]);
 
   const quoteTokenNeedApproval = useMemo(() => {
-    if (!chain || !quoteToken) {
+    if (!quoteToken) {
       return false;
     }
 
     return tokenAmountNeedApproval(
-      chain.id,
+      chainId,
       quoteToken,
       quoteTokenAllowance,
       quoteAmount,
       depositWrapped,
     );
-  }, [chain, quoteToken, quoteAmount, quoteTokenAllowance, depositWrapped]);
+  }, [chainId, quoteToken, quoteAmount, quoteTokenAllowance, depositWrapped]);
 
   const totalPositionValue = useMemo(() => {
     if (!pool) {
@@ -345,7 +345,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       }
 
       const router = new AlphaRouter({
-        chainId: chain.id,
+        chainId,
         provider: library,
       });
 
@@ -432,14 +432,14 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       }
 
       const tx = {
-        to: SWAP_ROUTER_ADDRESSES[chain.id],
+        to: SWAP_ROUTER_ADDRESSES[chainId],
         value,
         data: route.methodParameters.calldata,
         gasPrice: BigNumber.from(route.gasPriceWei),
       };
 
-      const estimatedGas = await library.getSigner().estimateGas(tx);
-      const res = await library.getSigner().sendTransaction({
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
         ...tx,
         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
@@ -500,7 +500,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       const useNative =
         isNativeToken(pool.token0) || isNativeToken(pool.token1)
           ? !depositWrapped
-            ? getNativeToken(chain.id)
+            ? getNativeToken(chainId)
             : undefined
           : undefined;
 
@@ -519,13 +519,13 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           });
 
       const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id],
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
         data: calldata,
         value,
       };
 
-      const estimatedGas = await library.getSigner().estimateGas(tx);
-      const res = await library.getSigner().sendTransaction({
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
         ...tx,
         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
@@ -740,7 +740,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           ) : baseTokenNeedApproval ? (
             <Button
               onClick={() =>
-                onApprove(baseToken, baseAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id])
+                onApprove(baseToken, baseAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId])
               }
               disabled={transactionPending}
               tabIndex={8}
@@ -752,7 +752,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           ) : quoteTokenNeedApproval ? (
             <Button
               onClick={() =>
-                onApprove(quoteToken, quoteAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chain.id])
+                onApprove(quoteToken, quoteAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId])
               }
               disabled={transactionPending}
               tabIndex={8}
@@ -798,7 +798,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           )}
 
           {transactionPending && (
-            <TransactionModal chainId={chain.id} transactionHash={transactionHash} />
+            <TransactionModal chainId={chainId} transactionHash={transactionHash} />
           )}
         </div>
       </div>
@@ -807,7 +807,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         <div className="h-64">
           {showFeeTierData && (
             <FeeTierData
-              chainId={chain.id}
+              chainId={chainId}
               baseToken={baseToken}
               quoteToken={quoteToken}
               currentValue={fee}
@@ -818,7 +818,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         {showRangeData && (
           <div>
             <RangeData
-              chainId={chain.id}
+              chainId={chainId}
               tickLower={tickLower}
               tickUpper={tickUpper}
               baseToken={baseToken}

@@ -38,10 +38,11 @@ export const AddressProvider = ({ children }: Props) => {
 
       if (inputAddresses.length) {
         inputAddresses.forEach((addr) => {
-          if (addr.endsWith('.eth')) {
-            ensNames.push(addr);
-          } else {
+          if (addr.toLowerCase().startsWith('0x')) {
             hexAddresses.push(addr);
+          } else {
+            // if an address doesn't look hex, treat as an ENS name
+            ensNames.push(addr);
           }
         });
       }
@@ -50,7 +51,10 @@ export const AddressProvider = ({ children }: Props) => {
 
       const resolvedAddresses = await Promise.all(ensNames.map((name) => resolveName(name)));
 
-      let results = [...hexAddresses, ...resolvedAddresses];
+      const results: string[] = [
+        ...hexAddresses,
+        ...resolvedAddresses.filter((addr): addr is string => !!addr),
+      ];
       if (!noWallet && account) {
         results.push(account as string);
       }
