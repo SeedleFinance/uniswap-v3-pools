@@ -1,5 +1,4 @@
 import React, { ReactNode, useMemo } from 'react';
-import '@rainbow-me/rainbowkit/dist/index.css';
 
 import Web3CombinedProvider from './Web3CombinedProvider';
 import SubgraphProvider from './SubgraphProvider';

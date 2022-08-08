@@ -1,6 +1,10 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '../node_modules/@rainbow-me/rainbowkit/dist/index.css';
+
+@tailwind base ;
+
+@tailwind components ;
+
+@tailwind utilities ;
 
 @layer base {
   /* default light theme */
@@ -8,13 +12,10 @@
     /* Base colors */
     --color-white: #fff;
     --color-black: #000;
-
     --color-purple: #8882d5;
-
     --color-text-high: #161413;
     --color-text-medium: #878ea1;
     --color-text-low: #7f879c;
-
     --color-text-inverted: #fff;
     --color-text-white: #fff;
     --color-text-black: #000;
@@ -42,7 +43,6 @@
     --color-pink-dark: #d12b71;
     --color-blue-primary: #205eff;
     --color-blue-light: #205eff;
-
     --color-canvas-light: #fff;
 
     /* Elements */
@@ -60,14 +60,12 @@
     /* Base colors */
     --color-white: #fff;
     --color-black: #ccc;
-
     --color-purple: #c1bdfc;
 
     /* Text colors */
     --color-text-high: #fff;
     --color-text-medium: #ccc;
     --color-text-low: #ccc;
-
     --color-text-inverted: #161413;
     --color-text-white: #fff;
     --color-text-black: #000;
@@ -95,7 +93,6 @@
     --color-pink-dark: #d12b71;
     --color-blue-primary: #205eff;
     --color-blue-light: #205eff;
-
     --color-canvas-light: #151924;
 
     /* Elements */
