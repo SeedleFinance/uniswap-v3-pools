@@ -1,4 +1,4 @@
-import React from 'React';
+import React from 'react';
 import Davatar from '@davatar/react';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
