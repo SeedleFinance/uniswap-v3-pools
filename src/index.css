@@ -153,6 +153,6 @@ a:focus {
 }
 
 /* Force Rainbow wallet wrapper to be 100% height */
-#theme-wrapper > div > div {
+#theme-wrapper div[data-rk] {
   height: 100%;
 }
