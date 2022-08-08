@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { useSearchParams } from 'react-router-dom';
 import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
 
+import { useChainId } from '../../hooks/useChainId';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import { usePool } from '../../hooks/usePool';
-import { useChainWeb3React } from '../../hooks/useChainWeb3React';
-import { getNetworkConnector } from '../../utils/connectors';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import PoolButton from '../../ui/PoolButton';
 import TokenLabel from '../../ui/TokenLabel';
@@ -55,27 +54,15 @@ interface Props {
 }
 
 function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Props) {
-  const { chainId, account, library } = useWeb3React('injected');
-  const chainWeb3React = useChainWeb3React(chainId as number);
+  const chainId = useChainId();
+  const { address: account } = useAccount();
+  const library = useProvider();
+  const { data: signer } = useSigner();
+
   const [searchParams] = useSearchParams();
   const positionId = searchParams.get('position');
 
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (!chainId) {
-      return;
-    }
-
-    if (!chainWeb3React.active) {
-      const networkConnector = getNetworkConnector();
-      networkConnector.changeChainId(chainId);
-
-      chainWeb3React.activate(networkConnector, (err) => {
-        console.error(err);
-      });
-    }
-  }, [chainId, chainWeb3React]);
 
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
     [baseToken, quoteToken],
@@ -125,12 +112,12 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [getBalances]);
 
   useEffect(() => {
-    if (!chainId || !getAllowances) {
+    if (!getAllowances) {
       return;
     }
 
     const _run = async () => {
-      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number];
+      const spender = NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId];
       const [val0, val1] = await getAllowances(spender);
       setBaseTokenAllowance(val0);
       setQuoteTokenAllowance(val1);
@@ -213,12 +200,12 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [pool, tickLower, tickUpper, baseToken, quoteToken, rangeReverse, swapAndAdd]);
 
   const baseTokenNeedApproval = useMemo(() => {
-    if (!chainId || !baseToken) {
+    if (!baseToken) {
       return false;
     }
 
     return tokenAmountNeedApproval(
-      chainId as number,
+      chainId,
       baseToken,
       baseTokenAllowance,
       baseAmount,
@@ -227,12 +214,12 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   }, [chainId, baseToken, baseAmount, baseTokenAllowance, depositWrapped]);
 
   const quoteTokenNeedApproval = useMemo(() => {
-    if (!chainId || !quoteToken) {
+    if (!quoteToken) {
       return false;
     }
 
     return tokenAmountNeedApproval(
-      chainId as number,
+      chainId,
       quoteToken,
       quoteTokenAllowance,
       quoteAmount,
@@ -358,8 +345,8 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       }
 
       const router = new AlphaRouter({
-        chainId: chainId as number,
-        provider: chainWeb3React.library,
+        chainId,
+        provider: library,
       });
 
       let token0Balance, token1Balance, matchingPosition;
@@ -445,14 +432,14 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       }
 
       const tx = {
-        to: SWAP_ROUTER_ADDRESSES[chainId as number],
+        to: SWAP_ROUTER_ADDRESSES[chainId],
         value,
         data: route.methodParameters.calldata,
         gasPrice: BigNumber.from(route.gasPriceWei),
       };
 
-      const estimatedGas = await library.getSigner().estimateGas(tx);
-      const res = await library.getSigner().sendTransaction({
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
         ...tx,
         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
@@ -513,7 +500,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       const useNative =
         isNativeToken(pool.token0) || isNativeToken(pool.token1)
           ? !depositWrapped
-            ? getNativeToken(chainId as number)
+            ? getNativeToken(chainId)
             : undefined
           : undefined;
 
@@ -532,13 +519,13 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           });
 
       const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
         data: calldata,
         value,
       };
 
-      const estimatedGas = await library.getSigner().estimateGas(tx);
-      const res = await library.getSigner().sendTransaction({
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
         ...tx,
         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
@@ -753,11 +740,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           ) : baseTokenNeedApproval ? (
             <Button
               onClick={() =>
-                onApprove(
-                  baseToken,
-                  baseAmount,
-                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-                )
+                onApprove(baseToken, baseAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId])
               }
               disabled={transactionPending}
               tabIndex={8}
@@ -769,11 +752,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           ) : quoteTokenNeedApproval ? (
             <Button
               onClick={() =>
-                onApprove(
-                  quoteToken,
-                  quoteAmount,
-                  NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-                )
+                onApprove(quoteToken, quoteAmount, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId])
               }
               disabled={transactionPending}
               tabIndex={8}

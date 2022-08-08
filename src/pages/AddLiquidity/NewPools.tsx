@@ -1,8 +1,8 @@
 import React from 'react';
-import { useWeb3React } from '@web3-react/core';
 import { Token } from '@uniswap/sdk-core';
 import endOfYesterday from 'date-fns/endOfYesterday';
 
+import { useChainId } from '../../hooks/useChainId';
 import { useTopPools } from '../../hooks/useTopPools';
 import Pools from './Pools';
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 function NewPools({ onPoolClick, filter }: Props) {
-  const { chainId } = useWeb3React('injected');
+  const chainId = useChainId();
   const date = +endOfYesterday().setUTCHours(0, 0, 0, 0) / 1000;
   const pools = useTopPools(chainId || 1, date);
 

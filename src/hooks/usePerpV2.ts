@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useProvider } from 'wagmi';
 import { useLazyQuery } from '@apollo/client';
 import { uniq, flatten } from 'lodash';
 import gql from 'graphql-tag';
@@ -9,7 +10,6 @@ import { Position, Pool, tickToPrice } from '@uniswap/v3-sdk';
 
 import { useAddress } from '../AddressProvider';
 import { useAppSettings } from '../AppSettingsProvider';
-import { useChainWeb3React } from './useChainWeb3React';
 import { usePerpOrderBookContract } from './useContract';
 import { getClient, getPerpClient } from '../apollo/client';
 import { PoolState } from './usePoolsState';
@@ -135,7 +135,7 @@ export function useQueryPerpOpenOrders(
 }
 
 export function usePerpUncollectedFees(chainId: number, positions: PerpPositionState[]) {
-  const { library } = useChainWeb3React(chainId);
+  const library = useProvider({ chainId });
   const contract = usePerpOrderBookContract(library);
 
   const [fees, setFees] = useState<BigNumber[]>([]);
