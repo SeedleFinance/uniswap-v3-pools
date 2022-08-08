@@ -3968,23 +3968,10 @@
     "@uniswap/v3-core" "1.0.0"
     base64-sol "1.0.1"
 
-"@uniswap/v3-sdk@3.8.3":
-  version "3.8.3"
-  resolved "https://registry.yarnpkg.com/@uniswap/v3-sdk/-/v3-sdk-3.8.3.tgz#7e0c3fc4fff4e88c0d5348885e0493b57eaa865b"
-  integrity sha512-5zx8Fi41KyL7IhleZsRTRiX2lo+i0E4ks+IhVeyq0nrRPzO9f4drgHi29VwZaDw0+RWf+OCLm0CURURsJO2MZg==
-  dependencies:
-    "@ethersproject/abi" "^5.0.12"
-    "@ethersproject/solidity" "^5.0.9"
-    "@uniswap/sdk-core" "^3.0.1"
-    "@uniswap/v3-periphery" "^1.1.1"
-    "@uniswap/v3-staker" "1.0.0"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-
-"@uniswap/v3-sdk@^3.7.0":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@uniswap/v3-sdk/-/v3-sdk-3.8.1.tgz#111f50a5da32ae3827d9ef500a29dcb38c7e2e43"
-  integrity sha512-Fn+h9zNVzgX8DE0hTWqMyXNF1AhT1ovmzE2dpSsTZmJkxVbc70+DzENeuknTfA+nmemtB915mq4vHrJL3lZGjA==
+"@uniswap/v3-sdk@3.7.0", "@uniswap/v3-sdk@^3.7.0":
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/@uniswap/v3-sdk/-/v3-sdk-3.7.0.tgz#77827cdc5331d33ff8f5d8c9cfd78390bd41e1dd"
+  integrity sha512-P9CWaAHfKJ8VX9rFHRjToH9Xl5zDSjOfbVF2G5S1GJV66tuXvlh3+6+xmMfGgb5toeahcYgR0gHnnyIjTzUdeA==
   dependencies:
     "@ethersproject/abi" "^5.0.12"
     "@ethersproject/solidity" "^5.0.9"
