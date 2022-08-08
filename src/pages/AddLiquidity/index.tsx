@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Token } from '@uniswap/sdk-core';
 
@@ -8,10 +7,10 @@ import ExistingPools from './ExistingPools';
 import NewPosition from './NewPosition';
 import SearchInput from './SearchInput';
 
+import { useChainId } from '../../hooks/useChainId';
 import { usePoolsForNetwork } from '../../hooks/usePoolsForNetwork';
 
 import { getQuoteAndBaseToken } from '../../utils/tokens';
-import { injectedConnector } from '../../utils/connectors';
 import { loadTokens, findTokens, TokenListItem } from './utils';
 import { ROUTES } from '../../constants';
 
@@ -20,18 +19,10 @@ interface Props {
 }
 
 function AddLiquidity({ tab }: Props) {
-  const { chainId, active, activate } = useWeb3React('injected');
+  const chainId = useChainId();
 
   const navigate = useNavigate();
   const { baseTokenSymbol, quoteTokenSymbol, fee } = useParams<any>();
-
-  useEffect(() => {
-    if (!active) {
-      activate(injectedConnector, (err) => {
-        console.error(err);
-      });
-    }
-  }, [activate, active]);
 
   // keep timestamp static
   // This page ends up being re-rendered this prevents it

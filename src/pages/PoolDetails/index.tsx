@@ -8,7 +8,6 @@ import { usePools } from '../../CombinedPoolsProvider';
 import BackArrow from '../../icons/LeftArrow';
 import Card from '../../ui/Card';
 import PoolButton from '../../ui/PoolButton';
-import DownloadCSV from '../../ui/DownloadCSV';
 import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Pool from './Pool';
 import Positions from './Positions';

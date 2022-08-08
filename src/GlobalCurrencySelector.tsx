@@ -4,6 +4,7 @@ import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { useAppSettings } from './AppSettingsProvider';
 import Icon from './ui/Icon/Icon';
 import Menu from './ui/Menu/Menu';
+import Button from './ui/Button';
 
 function GlobalCurrencySelector() {
   const { globalCurrency, setGlobalCurrency } = useAppSettings();
@@ -15,14 +16,16 @@ function GlobalCurrencySelector() {
   };
 
   return (
-    <div className="py-2 px-4 mx-1 md:mx-2 rounded-md border border-element-10 text-high relative flex flex-shrink-0">
-      <button
+    <div className="mx-1 md:mx-2 relative">
+      <Button
+        variant="outline"
+        size="lg"
         className="focus:outline-none font-medium"
         onClick={() => setSelectorExpanded(!selectorExpanded)}
       >
         <span>{globalCurrency === 'eth' ? 'ETH' : 'USD'}</span>
         <Icon className="pl-1 text-xl" icon={faCaretDown} />
-      </button>
+      </Button>
 
       {selectorExpanded && (
         <Menu className="top-12 left-0 w-16 shadow-lg" onClose={() => setSelectorExpanded(false)}>

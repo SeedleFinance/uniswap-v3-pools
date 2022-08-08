@@ -20,23 +20,29 @@ function PoolsLayout() {
 
 // TODO: Add a Not found page
 function PageBody() {
-  const { addresses } = useAddress();
-  return (
-    <Router>
-      <Routes>
-        <Route
-          path={`${ROUTES.ADD}/:quoteTokenSymbol/:baseTokenSymbol/:fee`}
-          element={<AddLiquidityPage tab="new" />}
-        />
-        <Route path={ROUTES.ADD_NEW} element={<AddLiquidityPage tab="new" />} />
-        <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
+  const { addressReady } = useAddress();
 
-        <Route element={<PoolsLayout />}>
-          <Route path={ROUTES.HOME} element={!addresses.length ? <LandingPage /> : <PoolsPage />} />
-          <Route path={`${ROUTES.POOL_DETAILS}/:id`} element={<PoolDetailsPage />} />
-        </Route>
-      </Routes>
-    </Router>
+  return (
+    <>
+      <Router>
+        <Routes>
+          <Route
+            path={`${ROUTES.ADD}/:quoteTokenSymbol/:baseTokenSymbol/:fee`}
+            element={<AddLiquidityPage tab="new" />}
+          />
+          <Route path={ROUTES.ADD_NEW} element={<AddLiquidityPage tab="new" />} />
+          <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
+
+          <Route element={<PoolsLayout />}>
+            <Route path={ROUTES.HOME} element={addressReady ? <PoolsPage /> : <LandingPage />} />
+            <Route
+              path={`${ROUTES.POOL_DETAILS}/:id`}
+              element={addressReady ? <PoolDetailsPage /> : <LandingPage />}
+            />
+          </Route>
+        </Routes>
+      </Router>
+    </>
   );
 }
 

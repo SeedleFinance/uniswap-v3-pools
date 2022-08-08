@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { useFloating, autoUpdate } from '@floating-ui/react-dom';
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
-import { useWeb3React } from '@web3-react/core';
 import { useNavigate } from 'react-router-dom';
 import { BigNumber } from '@ethersproject/bignumber';
 import { isAddress } from '@ethersproject/address';
@@ -9,6 +9,7 @@ import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core';
 import { Pool, Position as UniPosition, NonfungiblePositionManager } from '@uniswap/v3-sdk';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
+import { useChainId } from '../../hooks/useChainId';
 import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
 
 import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
@@ -57,7 +58,11 @@ function Position({
   priceUpper,
   transactions,
 }: PositionProps) {
-  const { chainId, account, library } = useWeb3React('injected');
+  const chainId = useChainId();
+  const { address: account } = useAccount();
+  const library = useProvider();
+  const { data: signer } = useSigner();
+
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
 
   const navigate = useNavigate();
@@ -200,9 +205,13 @@ function Position({
 
     try {
       let recipient = address;
-      // check if the address is a hex address
       if (!isAddress(address)) {
-        recipient = await library.resolveName(address);
+        // if the address is not a hex address, treat it as an ENS name
+        recipient = (await library.resolveName(address)) || '';
+      }
+
+      if (recipient === '') {
+        return;
       }
 
       const { calldata, value } = NonfungiblePositionManager.safeTransferFromParameters({
@@ -216,8 +225,8 @@ function Position({
         value,
       };
 
-      const estimatedGas = await library.getSigner().estimateGas(tx);
-      const res = await library.getSigner().sendTransaction({
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
         ...tx,
         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });

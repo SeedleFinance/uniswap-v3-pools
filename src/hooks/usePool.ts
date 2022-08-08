@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useProvider } from 'wagmi';
 import { Pool } from '@uniswap/v3-sdk';
 import { Token } from '@uniswap/sdk-core';
 
-import { useChainWeb3React } from './useChainWeb3React';
 import { usePoolContract } from './useContract';
 
 export function usePool(
@@ -13,7 +13,7 @@ export function usePool(
   pool: Pool | null;
   poolAddress: string | null;
 } {
-  const { library } = useChainWeb3React(token0 ? token0.chainId : 1);
+  const library = useProvider({ chainId: token0 ? token0.chainId : 1 });
   const contract = usePoolContract(token0, token1, fee, library);
 
   const [pool, setPool] = useState<Pool | null>(null);

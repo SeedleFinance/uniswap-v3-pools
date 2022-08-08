@@ -54,7 +54,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
   const positionsByPool = useMemo((): {
     [key: string]: PositionStateV2[];
   } => {
-    if (!allPositions.length) {
+    if (queryLoading || !allPositions.length) {
       return {};
     }
     const positionsByPool: { [key: string]: PositionStateV2[] } = {};
@@ -76,7 +76,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
     });
 
     return positionsByPool;
-  }, [allPositions]);
+  }, [queryLoading, allPositions]);
 
   const poolAddresses = useMemo(() => Object.keys(positionsByPool), [positionsByPool]);
   const { loading: poolsLoading, poolStates: pools } = useFetchPools(chainId, poolAddresses);

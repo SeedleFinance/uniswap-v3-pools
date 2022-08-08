@@ -1,8 +1,11 @@
-import { useWeb3React } from '@web3-react/core';
+import { useMemo } from 'react';
+import { useNetwork } from 'wagmi';
+
+import { ChainID } from '../enums';
 
 export function useChainId() {
-  const { chainId } = useWeb3React();
+  const { chain } = useNetwork();
+  const chainId = useMemo(() => (chain ? chain.id : ChainID.Mainnet), [chain]); // defaults to mainnet
 
-  const defaultChainId = 1;
-  return chainId || defaultChainId;
+  return chainId;
 }

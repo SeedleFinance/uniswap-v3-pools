@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useWeb3React } from '@web3-react/core';
+import { useAccount } from 'wagmi';
 import { Token, Currency } from '@uniswap/sdk-core';
 import { SwapToRatioRoute } from '@uniswap/smart-order-router';
 
+import { useChainId } from '../../hooks/useChainId';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import TokenLabel from '../../ui/TokenLabel';
 import TokenLogo from '../../ui/TokenLogo';
@@ -36,7 +37,8 @@ function SwapAndAddModal({
   onCancel,
   onComplete,
 }: Props) {
-  const { chainId, account } = useWeb3React('injected');
+  const chainId = useChainId();
+  const { address: account } = useAccount();
   const { getAllowances } = useTokenFunctions([token0, token1], account);
 
   const [tokenApproving, setTokenApproving] = useState<boolean>(false);
@@ -248,7 +250,7 @@ function SwapAndAddModal({
                   handleApprove(token0, getApprovalAmount(token0PreswapAmount, token0Amount))
                 }
                 tabIndex={8}
-                size="sm"
+                size="lg"
                 className="mr-2"
               >
                 Approve {token0.symbol}
@@ -259,13 +261,13 @@ function SwapAndAddModal({
                   handleApprove(token1, getApprovalAmount(token1PreswapAmount, token1Amount))
                 }
                 tabIndex={8}
-                size="sm"
+                size="lg"
                 className="mr-2"
               >
                 Approve {token1.symbol}
               </Button>
             ) : (
-              <Button onClick={onComplete} tabIndex={8} className="mr-2">
+              <Button onClick={onComplete} tabIndex={8} size="lg" className="mr-2">
                 Complete Transaction
               </Button>
             )}

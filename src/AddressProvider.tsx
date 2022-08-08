@@ -1,11 +1,11 @@
 import React, { ReactNode, useContext, useState, useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
-
-import { getNetworkConnector, injectedConnector } from './utils/connectors';
+import { isAddress } from '@ethersproject/address';
+import { useAccount, useConnect, useProvider } from 'wagmi';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
   injectedAddress: null as string | null | undefined,
+  addressReady: false,
 });
 export const useAddress = () => useContext(AddressContext);
 
@@ -14,31 +14,17 @@ interface Props {
 }
 
 export const AddressProvider = ({ children }: Props) => {
-  const { library, active, activate } = useWeb3React('mainnet');
-
-  const { account, active: injectedActive, activate: activateInjected } = useWeb3React('injected');
+  const library = useProvider({ chainId: 1 });
+  const { address: account, isConnected, connector } = useAccount();
+  const { connect } = useConnect();
 
   const [addresses, setAddresses] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!active) {
-      const networkConnector = getNetworkConnector();
-      networkConnector.changeChainId(1);
-
-      activate(networkConnector, (err) => {
-        console.error(err);
-      });
+    if (!isConnected && connector) {
+      connect({ connector });
     }
-  }, [activate, active]);
-
-  useEffect(() => {
-    if (!injectedActive) {
-      activateInjected(injectedConnector, (err) => {
-        // ignore error
-        //console.error(err);
-      });
-    }
-  }, [activateInjected, injectedActive]);
+  }, [isConnected, connect, connector]);
 
   useEffect(() => {
     const fetchAddresses = async () => {
@@ -52,10 +38,11 @@ export const AddressProvider = ({ children }: Props) => {
 
       if (inputAddresses.length) {
         inputAddresses.forEach((addr) => {
-          if (addr.endsWith('.eth')) {
-            ensNames.push(addr);
-          } else {
+          if (isAddress(addr)) {
             hexAddresses.push(addr);
+          } else {
+            // if an address doesn't look hex, treat as an ENS name
+            ensNames.push(addr);
           }
         });
       }
@@ -64,7 +51,10 @@ export const AddressProvider = ({ children }: Props) => {
 
       const resolvedAddresses = await Promise.all(ensNames.map((name) => resolveName(name)));
 
-      let results = [...hexAddresses, ...resolvedAddresses];
+      const results: string[] = [
+        ...hexAddresses,
+        ...resolvedAddresses.filter((addr): addr is string => !!addr),
+      ];
       if (!noWallet && account) {
         results.push(account as string);
       }
@@ -78,7 +68,9 @@ export const AddressProvider = ({ children }: Props) => {
   }, [library, account]);
 
   return (
-    <AddressContext.Provider value={{ addresses, injectedAddress: account }}>
+    <AddressContext.Provider
+      value={{ addresses, injectedAddress: account, addressReady: addresses.length > 0 }}
+    >
       {children}
     </AddressContext.Provider>
   );
