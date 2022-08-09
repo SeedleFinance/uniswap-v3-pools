@@ -57,8 +57,7 @@
     "web-vitals": "^1.0.1"
   },
   "resolutions": {
-    "@uniswap/smart-order-router/@uniswap/router-sdk": "1.0.5",
-    "@uniswap/smart-order-router/@uniswap/v3-sdk": "3.7.0"
+    "@uniswap/smart-order-router/@uniswap/router-sdk": "1.0.5"
   },
   "scripts": {
     "compile-contract-types": "yarn compile-v3-contract-types",
