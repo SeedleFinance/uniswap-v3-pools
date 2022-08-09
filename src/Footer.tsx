@@ -6,7 +6,7 @@ import Twitter from './icons/Twitter';
 
 function Footer() {
   return (
-    <footer className="my-2 flex justify-between items-center w-full text-0.9375 text-high">
+    <footer className="my-2 flex justify-between items-start w-full text-0.875 text-high">
       <div>
         <div className="flex font-medium">
           <div>
@@ -20,7 +20,7 @@ function Footer() {
             </a>
           </div>
         </div>
-        <span className="text-0.75 text-low">Copyright 2022</span>
+        <span className="text-0.6875 text-low">Copyright 2022</span>
       </div>
       <div className="flex">
         <a href={EXTERNAL_LINKS.TWITTER} target="_blank" rel="noreferrer">

@@ -387,7 +387,6 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         addLiquidityOptions,
       };
 
-      console.log(opts);
       const routerResult = await router.routeToRatio(
         token0Balance,
         token1Balance,

@@ -20,7 +20,7 @@
 
 /* Extra large */
 .input--xl {
-  @apply text-1.125 text-high px-4 py-3 border-2 border-element-0 transition-colors duration-150 focus:bg-surface-20 focus:shadow-md focus:placeholder-current;
+  @apply text-1 md:text-1.125 text-high px-3 py-2 md:px-4 md:py-3 border-2 border-element-0 transition-colors duration-150 focus:bg-surface-20 focus:shadow-md focus:placeholder-current;
 }
 
 /* Outlined */

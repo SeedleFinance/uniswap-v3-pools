@@ -23,7 +23,7 @@ function Landing() {
 
   return (
     <div className="flex flex-col items-center py-4 mx-auto lg:container p-4 h-full">
-      <div className="flex flex-col items-center justify-center px-4 py-4 mx-auto flex-1 w-full md:mt-8">
+      <div className="flex flex-col items-center justify-center md:px-4 py-4 mx-auto flex-1 w-full md:mt-8">
         <h1 className="text-center text-high text-2 sm:text-3 lg:text-4.75 font-bold leading-tight tracking-tighter">
           Powerful Insights for <br />
           Uniswap positions
@@ -33,7 +33,7 @@ function Landing() {
           className="my-4 flex items-center justify-center w-full md:w-1/2"
         >
           <Input
-            className="text-center"
+            className="text-center w-full"
             size="xl"
             value={addresses.join(' ')}
             onChange={handleInput}

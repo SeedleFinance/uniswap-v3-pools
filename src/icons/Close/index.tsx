@@ -1,12 +1,13 @@
 import React from 'react';
 
-const IconClose = () => {
+const IconClose = ({ color }: { color?: string }) => {
   return (
     <svg
       role="presentation"
       focusable="false"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
+      color={color}
     >
       <path
         fillRule="evenodd"
