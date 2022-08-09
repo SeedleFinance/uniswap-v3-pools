@@ -14,7 +14,7 @@ export function usePool(
   poolAddress: string | null;
 } {
   const library = useProvider({ chainId: token0 ? token0.chainId : 1 });
-  const contract = usePoolContract(token0, token1, fee, library);
+  const contract = usePoolContract(token0, token1, fee, library, false);
 
   const [pool, setPool] = useState<Pool | null>(null);
   const [poolAddress, setPoolAddress] = useState<string | null>(null);
