@@ -17,14 +17,14 @@ import {
 import { BytesLike } from "@ethersproject/bytes";
 import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
-import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
+import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface IQuoterV2Interface extends ethers.utils.Interface {
   functions: {
     "quoteExactInput(bytes,uint256)": FunctionFragment;
-    "quoteExactInputSingle(tuple)": FunctionFragment;
+    "quoteExactInputSingle((address,address,uint256,uint24,uint160))": FunctionFragment;
     "quoteExactOutput(bytes,uint256)": FunctionFragment;
-    "quoteExactOutputSingle(tuple)": FunctionFragment;
+    "quoteExactOutputSingle((address,address,uint256,uint24,uint160))": FunctionFragment;
   };
 
   encodeFunctionData(

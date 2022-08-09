@@ -3968,20 +3968,7 @@
     "@uniswap/v3-core" "1.0.0"
     base64-sol "1.0.1"
 
-"@uniswap/v3-sdk@3.7.0", "@uniswap/v3-sdk@^3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@uniswap/v3-sdk/-/v3-sdk-3.7.0.tgz#77827cdc5331d33ff8f5d8c9cfd78390bd41e1dd"
-  integrity sha512-P9CWaAHfKJ8VX9rFHRjToH9Xl5zDSjOfbVF2G5S1GJV66tuXvlh3+6+xmMfGgb5toeahcYgR0gHnnyIjTzUdeA==
-  dependencies:
-    "@ethersproject/abi" "^5.0.12"
-    "@ethersproject/solidity" "^5.0.9"
-    "@uniswap/sdk-core" "^3.0.1"
-    "@uniswap/v3-periphery" "^1.1.1"
-    "@uniswap/v3-staker" "1.0.0"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-
-"@uniswap/v3-sdk@^3.7.1":
+"@uniswap/v3-sdk@^3.7.0", "@uniswap/v3-sdk@^3.7.1":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@uniswap/v3-sdk/-/v3-sdk-3.9.0.tgz#de93fa19f89c29d460996aa4d0b4bb6531641105"
   integrity sha512-LuoF3UcY1DxSAQKJ3E4/1Eq4HaNp+x+7q9mvbpiu+/PBj+O1DjLforAMrKxu+RsA0aarmZtz7yBnAPy+akgfgQ==
