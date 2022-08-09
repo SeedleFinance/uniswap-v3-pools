@@ -37,7 +37,7 @@ const Popover = ({ title, description, className, href }: Props) => {
           >
             <button
               onClick={handleClickClose}
-              className="absolute right-2 top-2 w-6 h-6 flex justify-center items-center hover:bg-slate-50 rounded-sm flex-shrink-0 p-1 text-medium"
+              className="absolute right-2 top-2 w-6 h-6 flex justify-center items-center hover:bg-surface-5 rounded-sm flex-shrink-0 p-1 text-medium"
             >
               <IconClose />
             </button>
