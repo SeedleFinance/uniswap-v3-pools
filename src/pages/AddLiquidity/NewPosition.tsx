@@ -387,9 +387,12 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
         addLiquidityOptions,
       };
 
+      // there's a version mismatch between v3-sdk used in app (^3.7.1) and smart-order-router (3.7.0).
+      // keep this line ignored until we resolve the version mismatch.
       const routerResult = await router.routeToRatio(
         token0Balance,
         token1Balance,
+        // @ts-ignore
         newPosition,
         config,
         opts,
