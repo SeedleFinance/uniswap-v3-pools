@@ -33,15 +33,17 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
     );
   }
 
-  const sortedByLiquidity = [...liquidityData].sort((a: any, b: any) => a.price - b.price);
-  const min = sortedByLiquidity[0].price;
-  const max = sortedByLiquidity[sortedByLiquidity.length - 1].price;
+  const sortedByLiquidity = [...liquidityData].sort((a: any, b: any) => a.liquidity - b.liquidity);
+  const min = sortedByLiquidity[0].liquidity;
+  const max = sortedByLiquidity[sortedByLiquidity.length - 1].liquidity;
 
   const buffer = 0.2; // 20% buffer on each axis
 
-  const minPriceWithBuffer = min - (max - min) * buffer;
+  console.log('min', min);
+  console.log('max', max);
+
   const maxPriceWithBuffer = max + (max - min) * buffer;
-  const yDomain = [minPriceWithBuffer, maxPriceWithBuffer];
+  const yDomain = [min, maxPriceWithBuffer];
 
   function CustomTooltip({ active, payload = '', label = '' }: any) {
     if (payload && active) {
@@ -54,6 +56,8 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
 
     return null;
   }
+
+  console.log('liquidityData', liquidityData);
 
   return (
     <ResponsiveContainer width={'100%'} height="100%">
