@@ -11,38 +11,21 @@ import { WagmiConfig } from 'wagmi';
 import classNames from 'classnames';
 import { chains, wagmiClient } from './rainbow';
 
-interface ThemeWrapperProps {
-  children: ReactNode;
-}
-
-function ThemeWrapper({ children }: ThemeWrapperProps) {
+function ThemeWrapper({ children }: { children: ReactNode }) {
   const { theme } = useAppSettings();
 
-  const computedTheme = useMemo(() => {
-    if (
-      theme === 'dark' ||
-      (theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
-      return 'dark';
-    } else {
-      return 'light';
-    }
-  }, [theme]);
   return (
-    <div id="theme-wrapper" className={classNames(computedTheme, 'h-full')}>
+    <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
       <div className="max-w-full bg-canvas-light h-full">{children}</div>
     </div>
   );
 }
 
-const RainbowKitWithTheme = ({ children }: { children: ReactNode }) => {
+function RainbowKitWithTheme({ children }: { children: ReactNode }) {
   const { theme } = useAppSettings();
 
   const computedTheme = useMemo(() => {
-    if (
-      theme === 'dark' ||
-      (theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-    ) {
+    if (theme === 'dark') {
       return darkTheme({
         accentColor: '#4cce57',
         borderRadius: 'small',
@@ -62,7 +45,7 @@ const RainbowKitWithTheme = ({ children }: { children: ReactNode }) => {
       {children}
     </RainbowKitProvider>
   );
-};
+}
 
 function App() {
   return (
