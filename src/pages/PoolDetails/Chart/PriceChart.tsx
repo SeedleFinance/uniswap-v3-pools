@@ -66,12 +66,11 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
             <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
           </linearGradient>
         </defs>
-        <CartesianGrid
+        {/* <CartesianGrid
           strokeDasharray="4 4"
           vertical={false}
           stroke={theme === 'light' ? '#e7e7ed' : '#40444a'}
-        />
-
+        /> */}
         <XAxis
           dataKey="date"
           tick={{ fontSize: 12, fill: '#7f879c' }}
