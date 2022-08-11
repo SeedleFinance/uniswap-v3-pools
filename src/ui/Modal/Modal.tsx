@@ -24,7 +24,7 @@ const Modal = ({ title, children, className, onClose }: Props) => {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-0 h-screen flex flex-col items-center justify-center p-4"
+      className="fixed inset-0 h-screen flex flex-col items-center justify-center p-4 z-50"
       onKeyUp={handleKeyup}
     >
       <div className="fixed h-screen w-full bg-slate-800 bg-opacity-75"></div>
