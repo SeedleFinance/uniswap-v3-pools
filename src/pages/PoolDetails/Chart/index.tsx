@@ -95,11 +95,11 @@ function ChartLayout({
         </div>
       </div>
       <div className="w-full md:w-3/4 h-96 md:ml-6 mt-4 md:mt-0 rounded-lg p-8 relative shadow-sm bg-surface-0">
-        <div className="flex border border-element-10 bg-surface-0 text-0.75 px-4 py-2 w-fit left-10 absolute z-5 text-medium">
+        <div className="flex border border-element-10 bg-surface-0 text-0.75 px-4 py-1 w-fit left-10 absolute text-medium z-10">
           <button
             onClick={() => handleClickChangeGraph('price')}
             className={`ml-2 px-2 uppercase font-medium ${
-              showChartType === 'price' ? 'text-high' : 'text-low'
+              showChartType === 'price' ? 'text-purple-700 dark:text-purple-400' : 'text-low'
             }`}
           >
             Price
@@ -107,7 +107,7 @@ function ChartLayout({
           <button
             onClick={() => handleClickChangeGraph('liquidity')}
             className={`ml-2 px-2 uppercase font-medium ${
-              showChartType === 'liquidity' ? 'bg-purple-light' : 'text-low'
+              showChartType === 'liquidity' ? 'text-purple-700 dark:text-purple-400' : 'text-low'
             }`}
           >
             Liquidity
