@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useCallback } from 'react';
+import React, { ReactNode, useContext, useCallback, useMemo } from 'react';
 import { Token } from '@uniswap/sdk-core';
 import createPersistedState from 'use-persisted-state';
 
@@ -31,6 +31,17 @@ export const AppSettingsProvider = ({ children }: Props) => {
     [globalCurrency],
   );
 
+  const computedTheme = useMemo(() => {
+    if (
+      theme === 'dark' ||
+      (theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      return 'dark';
+    } else {
+      return 'light';
+    }
+  }, [theme]);
+
   return (
     <AppSettingsContext.Provider
       value={{
@@ -39,7 +50,7 @@ export const AppSettingsProvider = ({ children }: Props) => {
         globalCurrency,
         getGlobalCurrencyToken,
         setGlobalCurrency,
-        theme,
+        theme: computedTheme,
         setTheme,
       }}
     >
