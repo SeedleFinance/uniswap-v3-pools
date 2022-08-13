@@ -150,4 +150,5 @@ export const EXTERNAL_LINKS = {
   GITHUB: 'https://github.com/SeedleFinance/uniswap-v3-pools',
   GITCOIN: 'https://gitcoin.co/grants/4385/seedle-finance',
   FEEDBACK: 'https://seedle.frill.co',
+  DISCORD: 'https://discord.gg/c4NHs77G3B',
 };
