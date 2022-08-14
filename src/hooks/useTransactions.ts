@@ -6,13 +6,34 @@ import { CurrencyAmount, Token } from '@uniswap/sdk-core';
 import { useAddress } from '../AddressProvider';
 import { getClient } from '../apollo/client';
 import { WETH9, MATIC } from '../constants';
+import { TxTypes } from '../enums';
 
 const QUERY_MINTS_BURNS = gql`
-  query mints_burns($origins: [String]!, $poolAddress: String!) {
-    mints(where: { origin_in: $origins, pool: $poolAddress }) {
+  query mints_burns($origins: [String]!, $poolAddresses: [String]!) {
+    mints(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: desc
+      where: { origin_in: $origins, pool_in: $poolAddresses }
+    ) {
       tickLower
       tickUpper
       timestamp
+      pool {
+        id
+      }
+      token0 {
+        id
+        name
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        name
+        symbol
+        decimals
+      }
       amount0
       amount1
       transaction {
@@ -22,10 +43,30 @@ const QUERY_MINTS_BURNS = gql`
       }
     }
 
-    burns(where: { origin_in: $origins, pool: $poolAddress }) {
+    burns(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: desc
+      where: { origin_in: $origins, pool_in: $poolAddresses }
+    ) {
       tickLower
       tickUpper
       timestamp
+      pool {
+        id
+      }
+      token0 {
+        id
+        name
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        name
+        symbol
+        decimals
+      }
       amount0
       amount1
       transaction {
@@ -39,10 +80,30 @@ const QUERY_MINTS_BURNS = gql`
 
 const QUERY_COLLECTS = gql`
   query collectsByTransactions($ids: [String]!) {
-    collects(where: { transaction_in: $ids }) {
+    collects(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: desc
+      where: { transaction_in: $ids }
+    ) {
       tickLower
       tickUpper
       timestamp
+      pool {
+        id
+      }
+      token0 {
+        id
+        name
+        symbol
+        decimals
+      }
+      token1 {
+        id
+        name
+        symbol
+        decimals
+      }
       amount0
       amount1
       transaction {
@@ -58,6 +119,9 @@ interface PoolTransactionResponse {
   tickLower: string;
   tickUpper: string;
   timestamp: string;
+  pool: { id: string };
+  token0: { id: string; name: string; symbol: string; decimals: string };
+  token1: { id: string; name: string; symbol: string; decimals: string };
   amount0: string;
   amount1: string;
   transaction: { id: string; gasUsed: string; gasPrice: string };
@@ -65,7 +129,9 @@ interface PoolTransactionResponse {
 
 export interface FormattedPoolTransaction {
   id: string;
-  type: string;
+  transactionHash: string;
+  poolAddress: string;
+  transactionType: TxTypes;
   tickLower: number;
   tickUpper: number;
   timestamp: number;
@@ -79,23 +145,18 @@ export interface FormattedPoolTransaction {
   };
 }
 
-export function useTransactions(
-  poolAddress: string | null,
-  token0: Token | null,
-  token1: Token | null,
-) {
-  const chainId = token0 ? token0.chainId : 1;
+export function useTransactions(chainId: number, poolAddresses: string[]) {
   const { addresses } = useAddress();
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
-    variables: { origins: addresses, poolAddress },
+    variables: { origins: addresses, poolAddresses },
     fetchPolicy: 'network-only',
     client: getClient(chainId),
   });
 
   const collectData = useCollects(chainId, data ? data.burns : []);
 
-  if (loading || error || !data || !token0 || !token1) {
+  if (loading || error || !data) {
     return [];
   }
 
@@ -104,42 +165,47 @@ export function useTransactions(
     const price = BigNumber.from(transaction.gasPrice);
     const cost = used.mul(price);
     const costCurrency = CurrencyAmount.fromRawAmount(
-      token0.chainId === 137 ? MATIC[token0.chainId] : WETH9[token0.chainId],
+      chainId === 137 ? MATIC[chainId] : WETH9[chainId],
       cost.toString(),
     );
 
     return { used, price, cost, costCurrency };
   };
 
-  const formatTx = (type: string) => {
+  const formatTx = (type: TxTypes) => {
     return ({
       tickLower,
       tickUpper,
       timestamp,
+      pool,
+      token0,
+      token1,
       amount0,
       amount1,
       transaction,
     }: PoolTransactionResponse): FormattedPoolTransaction => ({
       id: transaction.id,
-      type,
+      transactionHash: transaction.id,
+      transactionType: type,
       tickLower: parseInt(tickLower, 10),
       tickUpper: parseInt(tickUpper, 10),
       timestamp: parseInt(timestamp, 10),
+      poolAddress: pool.id,
       gas: calcGasCost(transaction),
       amount0: CurrencyAmount.fromRawAmount(
-        token0,
-        Math.ceil(parseFloat(amount0) * Math.pow(10, token0.decimals)),
+        new Token(chainId, token0.id, parseInt(token0.decimals, 10), token0.symbol, token0.name),
+        Math.ceil(parseFloat(amount0) * Math.pow(10, parseInt(token0.decimals, 10))),
       ),
       amount1: CurrencyAmount.fromRawAmount(
-        token1,
-        Math.ceil(parseFloat(amount1) * Math.pow(10, token1.decimals)),
+        new Token(chainId, token1.id, parseInt(token1.decimals, 10), token1.symbol, token1.name),
+        Math.ceil(parseFloat(amount1) * Math.pow(10, parseInt(token1.decimals, 10))),
       ),
     });
   };
 
-  const mints = data.mints.map(formatTx('mint'));
-  const burns = data.burns.map(formatTx('burn'));
-  const collects = collectData.map(formatTx('collect'));
+  const mints = data.mints.map(formatTx(TxTypes.Add));
+  const burns = data.burns.map(formatTx(TxTypes.Remove));
+  const collects = collectData.map(formatTx(TxTypes.Collect));
 
   const reconcileBurnsAndCollects = (
     accm: FormattedPoolTransaction[],
@@ -157,17 +223,21 @@ export function useTransactions(
     // Remove the transaction from the list
     if (prevTx.amount0.equalTo(0) && prevTx.amount1.equalTo(0)) {
       accm.splice(prevTxIdx, 1);
-    } else if (tx.type === 'burn' && tx.amount0.equalTo(0) && tx.amount1.equalTo(0)) {
+    } else if (
+      tx.transactionType === TxTypes.Remove &&
+      tx.amount0.equalTo(0) &&
+      tx.amount1.equalTo(0)
+    ) {
       // an empty burn, this will be followed by a collect. Don't include this tx.
       return [...accm];
-    } else if (tx.type === 'collect') {
+    } else if (tx.transactionType === TxTypes.Collect) {
       // burn with liquidity + fees
       // reset the gas cost (already included in the burn)
       tx.gas = {
         ...tx.gas,
         cost: BigNumber.from(0),
         costCurrency: CurrencyAmount.fromRawAmount(
-          token0.chainId === 137 ? MATIC[token0.chainId] : WETH9[token0.chainId],
+          chainId === 137 ? MATIC[chainId] : WETH9[chainId],
           0,
         ),
       };

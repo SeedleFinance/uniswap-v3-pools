@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 import { usePoolsForNetwork } from './hooks/usePoolsForNetwork';
-//import { usePerpV2 } from './hooks/usePerpV2';
+import { usePerpV2 } from './hooks/usePerpV2';
 
 const PoolsContext = React.createContext({
   pools: [] as any[],
@@ -45,9 +45,11 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     feesLoading: arbitrumFeesLoading,
   } = usePoolsForNetwork(42161, lastLoaded);
 
+  const { loading: perpLoading, pools: perpPools } = usePerpV2(10);
+
   const loading = useMemo(() => {
-    return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading;
-  }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
+    return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading || perpLoading;
+  }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading, perpLoading]);
 
   const feesLoading = useMemo(() => {
     return mainnetFeesLoading || polygonFeesLoading || optimismFeesLoading || arbitrumFeesLoading;
@@ -64,8 +66,8 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
   }, [loading, feesLoading]);
 
   const pools = useMemo(() => {
-    return [...mainnetPools, ...polygonPools, ...optimismPools, ...arbitrumPools];
-  }, [mainnetPools, polygonPools, optimismPools, arbitrumPools]);
+    return [...mainnetPools, ...polygonPools, ...optimismPools, ...arbitrumPools, ...perpPools];
+  }, [mainnetPools, polygonPools, optimismPools, arbitrumPools, perpPools]);
 
   const empty = useMemo(() => {
     if (loading) {

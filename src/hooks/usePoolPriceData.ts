@@ -46,7 +46,7 @@ export function usePoolPriceData(
   });
 
   const poolData = useMemo(() => {
-    if (loading || error || !data) {
+    if (loading || error || !data || !data.pool) {
       return [];
     }
 
