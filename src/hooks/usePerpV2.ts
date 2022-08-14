@@ -8,7 +8,7 @@ import { Position, Pool, tickToPrice } from '@uniswap/v3-sdk';
 
 import { useAddress } from '../AddressProvider';
 import { useAppSettings } from '../AppSettingsProvider';
-import { getClient, getPerpClient } from '../apollo/client';
+import { getPerpClient } from '../apollo/client';
 import { useFetchPools } from './fetch';
 import { PoolState } from './usePoolsState';
 
@@ -51,7 +51,7 @@ export interface PerpPositionState {
   baseTokenAddress: string;
 }
 
-export function useQueryPerpOpenOrders(
+function useQueryPerpOpenOrders(
   chainId: number,
   accounts: string[],
   includeEmpty: boolean,
@@ -109,7 +109,7 @@ export function useQueryPerpOpenOrders(
   return { loading, positionStates };
 }
 
-export function usePerpUncollectedFees(
+function usePerpUncollectedFees(
   chainId: number,
   positions: PerpPositionState[],
 ): { loading: boolean; uncollectedFees: { hex: string }[] } {
@@ -153,6 +153,41 @@ export function usePerpUncollectedFees(
   return { loading, uncollectedFees };
 }
 
+function usePerpPools(
+  chainId: number,
+  poolAddresses: string[],
+): {
+  loading: boolean;
+  pools: Pool[];
+} {
+  const { loading, poolStates } = useFetchPools(chainId, poolAddresses);
+  const pools = useMemo(() => {
+    if (!poolStates.length) {
+      return [];
+    }
+
+    return poolStates.map((pool) => {
+      const token0 = new Token(
+        chainId,
+        pool.token0.address,
+        parseInt(pool.token0.decimals, 10),
+        pool.token0.symbol,
+        pool.token0.name,
+      );
+      const token1 = new Token(
+        chainId,
+        pool.token1.address,
+        parseInt(pool.token1.decimals, 10),
+        pool.token1.symbol,
+        pool.token1.name,
+      );
+      return new Pool(token0, token1, pool.fee, pool.sqrtPriceX96, pool.liquidity, pool.tick);
+    });
+  }, [poolStates, chainId]);
+
+  return { loading, pools };
+}
+
 export function usePerpV2(chainId: number): {
   loading: boolean;
   pools: PoolState[];
@@ -176,42 +211,18 @@ export function usePerpV2(chainId: number): {
     return uniq(positionStates.map(({ poolAddress }) => poolAddress));
   }, [loadingPositions, positionStates]);
 
-  const { loading: loadingPools, poolStates: pools } = useFetchPools(chainId, poolAddresses);
-
-  const poolEntities = useMemo(() => {
-    if (!pools.length) {
-      return [];
-    }
-
-    return pools.map((pool) => {
-      const token0 = new Token(
-        chainId,
-        pool.token0.address,
-        parseInt(pool.token0.decimals, 10),
-        pool.token0.symbol,
-        pool.token0.name,
-      );
-      const token1 = new Token(
-        chainId,
-        pool.token1.address,
-        parseInt(pool.token1.decimals, 10),
-        pool.token1.symbol,
-        pool.token1.name,
-      );
-      return new Pool(token0, token1, pool.fee, pool.sqrtPriceX96, pool.liquidity, pool.tick);
-    });
-  }, [pools, chainId]);
+  const { loading: loadingPools, pools } = usePerpPools(chainId, poolAddresses);
 
   const positionsByPool = useMemo(() => {
     const positionsByPool: { [key: string]: any[] } = {};
 
-    if (!positionStates.length || !poolEntities.length || !uncollectedFeesByPosition.length) {
+    if (!positionStates.length || !pools.length || !uncollectedFeesByPosition.length) {
       return positionsByPool;
     }
 
     positionStates.forEach((position, idx) => {
       // enhance position
-      const pool = poolEntities[poolAddresses.indexOf(position.poolAddress)];
+      const pool = pools[poolAddresses.indexOf(position.poolAddress)];
 
       const entity = new Position({
         pool,
@@ -254,15 +265,15 @@ export function usePerpV2(chainId: number): {
     });
 
     return positionsByPool;
-  }, [poolAddresses, poolEntities, positionStates, uncollectedFeesByPosition]);
+  }, [poolAddresses, pools, positionStates, uncollectedFeesByPosition]);
 
   const poolStates = useMemo(() => {
     if (!Object.keys(positionsByPool).length || !pools.length) {
       return [];
     }
 
-    return pools.map(({ address }, idx) => {
-      const pool = poolEntities[idx];
+    return poolAddresses.map((address, idx) => {
+      const pool = pools[idx];
       const positions = positionsByPool[address.toLowerCase()];
 
       let rawPoolLiquidity = BigNumber.from(0);
@@ -288,7 +299,7 @@ export function usePerpV2(chainId: number): {
         poolUncollectedFees,
       };
     });
-  }, [pools, poolEntities, positionsByPool]);
+  }, [poolAddresses, pools, positionsByPool]);
 
   return { loading: loadingPositions || loadingFees || loadingPools, pools: poolStates };
 }
