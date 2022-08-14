@@ -10,6 +10,7 @@ import { useAddress } from '../AddressProvider';
 import { useAppSettings } from '../AppSettingsProvider';
 import { getPerpClient } from '../apollo/client';
 import { useFetchPools } from './fetch';
+import { useTransactions } from './useTransactions';
 import { PoolState } from './usePoolsState';
 
 const QUERY_OPEN_ORDERS = gql`
@@ -213,10 +214,17 @@ export function usePerpV2(chainId: number): {
 
   const { loading: loadingPools, pools } = usePerpPools(chainId, poolAddresses);
 
+  const transactions = useTransactions(chainId, poolAddresses);
+
   const positionsByPool = useMemo(() => {
     const positionsByPool: { [key: string]: any[] } = {};
 
-    if (!positionStates.length || !pools.length || !uncollectedFeesByPosition.length) {
+    if (
+      !positionStates.length ||
+      !pools.length ||
+      !uncollectedFeesByPosition.length ||
+      !transactions.length
+    ) {
       return positionsByPool;
     }
 
@@ -235,6 +243,13 @@ export function usePerpV2(chainId: number): {
       const priceUpper = tickToPrice(pool.token1, pool.token0, position.tickUpper);
 
       const positionLiquidity = pool.priceOf(pool.token0).quote(entity.amount0).add(entity.amount1);
+
+      const posTxs = transactions.filter(
+        (tx: { poolAddress: string; tickLower: number; tickUpper: number }) =>
+          tx.poolAddress === position.poolAddress &&
+          tx.tickLower === position.tickLower &&
+          tx.tickUpper === position.tickUpper,
+      );
 
       const uncollectedFees = [
         CurrencyAmount.fromRawAmount(pool.token0, 0),
@@ -256,7 +271,7 @@ export function usePerpV2(chainId: number): {
         positionLiquidity,
         uncollectedFees,
         positionUncollectedFees,
-        transactions: [],
+        transactions: posTxs,
       };
 
       const entry = positionsByPool[position.poolAddress] || [];
@@ -265,7 +280,7 @@ export function usePerpV2(chainId: number): {
     });
 
     return positionsByPool;
-  }, [poolAddresses, pools, positionStates, uncollectedFeesByPosition]);
+  }, [poolAddresses, pools, positionStates, uncollectedFeesByPosition, transactions]);
 
   const poolStates = useMemo(() => {
     if (!Object.keys(positionsByPool).length || !pools.length) {
@@ -279,6 +294,10 @@ export function usePerpV2(chainId: number): {
       let rawPoolLiquidity = BigNumber.from(0);
       let poolLiquidity = CurrencyAmount.fromRawAmount(pool.token1, 0);
       let poolUncollectedFees = CurrencyAmount.fromRawAmount(pool.token1, 0);
+      let currencyPoolUncollectedFees = [
+        CurrencyAmount.fromRawAmount(pool.token0, 0),
+        CurrencyAmount.fromRawAmount(pool.token1, 0),
+      ];
 
       positions.forEach(({ entity, positionLiquidity, positionUncollectedFees }) => {
         rawPoolLiquidity = rawPoolLiquidity.add(BigNumber.from(entity.liquidity.toString()));
@@ -297,6 +316,7 @@ export function usePerpV2(chainId: number): {
         rawPoolLiquidity,
         poolLiquidity,
         poolUncollectedFees,
+        currencyPoolUncollectedFees,
       };
     });
   }, [poolAddresses, pools, positionsByPool]);
