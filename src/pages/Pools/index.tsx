@@ -156,12 +156,14 @@ function Pools() {
           </div>
         ) : (
           <>
-            <table className="table-auto w-full text-high text-0.875">
+            <table className="table-auto w-full text-high text-0.875 overflow-x-auto">
               <thead className="border-b border-element-10">
-                <tr className="text-left align-middle">
+                <tr className="align-middle">
                   <th className="px-6 py-4 whitespace-nowrap font-medium">Pool</th>
-                  <th className="px-6 py-4 whitespace-nowrap font-medium">Current Price</th>
-                  <th className="px-6 py-4 whitespace-nowrap font-medium">
+                  <th className="text-right px-6 py-4 whitespace-nowrap font-medium">
+                    Current Price
+                  </th>
+                  <th className="text-right px-6 py-4 whitespace-nowrap font-medium">
                     <Tooltip label={LABELS.LIQUIDITY} placement="top-end">
                       <span className="flex items-center justify-end">
                         Liquidity
@@ -169,10 +171,12 @@ function Pools() {
                       </span>
                     </Tooltip>
                   </th>
-                  <th className="px-6 py-4 whitespace-nowrap font-medium">Uncollected Fees</th>
-                  <th className="px-6 py-4 whitespace-nowrap font-medium">
+                  <th className="text-right px-6 py-4 whitespace-nowrap font-medium">
+                    Uncollected Fees
+                  </th>
+                  <th className="text-right px-6 py-4 whitespace-nowrap font-medium">
                     <Tooltip label={LABELS.FEE_APY} placement="top">
-                      <span className="flex items-center cursor-default whitespace-nowrap">
+                      <span className="flex items-center justify-end cursor-default whitespace-nowrap">
                         Fee APY
                         <IconHelper className="ml-1" />
                       </span>
@@ -193,6 +197,7 @@ function Pools() {
                     positions,
                     poolLiquidity,
                     poolUncollectedFees,
+                    currencyPoolUncollectedFees,
                   }: PoolState) => (
                     <Row
                       key={key}
@@ -202,6 +207,7 @@ function Pools() {
                       baseToken={baseToken}
                       poolLiquidity={poolLiquidity}
                       poolUncollectedFees={poolUncollectedFees}
+                      currencyPoolUncollectedFees={currencyPoolUncollectedFees}
                       currentPrice={currentPrice}
                       positions={positions}
                     />

@@ -12,6 +12,7 @@ export interface PoolState {
   poolLiquidity: CurrencyAmount<Token>;
   rawPoolLiquidity: BigNumber;
   poolUncollectedFees: CurrencyAmount<Token>;
+  currencyPoolUncollectedFees: CurrencyAmount<Token>[];
   positions: CustomPosition[];
 }
 

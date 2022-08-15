@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAccount, useProvider, useSigner } from 'wagmi';
 import { useFloating, autoUpdate } from '@floating-ui/react-dom';
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
