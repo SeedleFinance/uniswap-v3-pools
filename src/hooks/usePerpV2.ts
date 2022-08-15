@@ -232,6 +232,9 @@ export function usePerpV2(chainId: number): {
       // enhance position
       const pool = pools[poolAddresses.indexOf(position.poolAddress)];
 
+      const [baseToken, quoteToken] =
+        pool.token0.symbol === 'vUSD' ? [pool.token0, pool.token1] : [pool.token1, pool.token0];
+
       const entity = new Position({
         pool,
         liquidity: position.liquidity.toString(),
@@ -239,10 +242,12 @@ export function usePerpV2(chainId: number): {
         tickUpper: position.tickUpper,
       });
 
-      const priceLower = tickToPrice(pool.token1, pool.token0, position.tickLower);
-      const priceUpper = tickToPrice(pool.token1, pool.token0, position.tickUpper);
+      const priceLower = tickToPrice(quoteToken, baseToken, position.tickLower);
+      const priceUpper = tickToPrice(quoteToken, baseToken, position.tickUpper);
 
-      const positionLiquidity = pool.priceOf(pool.token0).quote(entity.amount0).add(entity.amount1);
+      const positionLiquidity = pool.token0.equals(baseToken)
+        ? pool.priceOf(pool.token1).quote(entity.amount1).add(entity.amount0)
+        : pool.priceOf(pool.token0).quote(entity.amount0).add(entity.amount1);
 
       const posTxs = transactions.filter(
         (tx: { poolAddress: string; tickLower: number; tickUpper: number }) =>
@@ -257,7 +262,7 @@ export function usePerpV2(chainId: number): {
       ];
 
       const positionUncollectedFees = CurrencyAmount.fromRawAmount(
-        pool.token1,
+        baseToken,
         uncollectedFeesByPosition.length && uncollectedFeesByPosition[idx]
           ? BigNumber.from(uncollectedFeesByPosition[idx].hex).toString()
           : 0,
@@ -291,9 +296,12 @@ export function usePerpV2(chainId: number): {
       const pool = pools[idx];
       const positions = positionsByPool[address.toLowerCase()];
 
+      const [baseToken, quoteToken] =
+        pool.token0.symbol === 'vUSD' ? [pool.token0, pool.token1] : [pool.token1, pool.token0];
+
       let rawPoolLiquidity = BigNumber.from(0);
-      let poolLiquidity = CurrencyAmount.fromRawAmount(pool.token1, 0);
-      let poolUncollectedFees = CurrencyAmount.fromRawAmount(pool.token1, 0);
+      let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
+      let poolUncollectedFees = CurrencyAmount.fromRawAmount(baseToken, 0);
       let currencyPoolUncollectedFees = [
         CurrencyAmount.fromRawAmount(pool.token0, 0),
         CurrencyAmount.fromRawAmount(pool.token1, 0),
@@ -305,11 +313,15 @@ export function usePerpV2(chainId: number): {
         poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
       });
 
+      const currentPrice = parseFloat(
+        tickToPrice(quoteToken, baseToken, pool.tickCurrent).toSignificant(8),
+      );
+
       return {
         key: address,
         address,
-        quoteToken: pool.token0,
-        baseToken: pool.token1,
+        quoteToken,
+        baseToken,
         tick: pool.tickCurrent,
         entity: pool,
         positions,
