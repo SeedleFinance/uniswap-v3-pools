@@ -1,5 +1,20 @@
+import { BigNumber } from '@ethersproject/bignumber';
 import { Token, Price, CurrencyAmount } from '@uniswap/sdk-core';
-import { Position } from '@uniswap/v3-sdk';
+import { Pool, Position } from '@uniswap/v3-sdk';
+
+export interface PoolState {
+  key: string;
+  address: string;
+  currentPrice: number;
+  quoteToken: Token;
+  baseToken: Token;
+  entity: Pool;
+  poolLiquidity: CurrencyAmount<Token>;
+  rawPoolLiquidity: BigNumber;
+  poolUncollectedFees: CurrencyAmount<Token>;
+  currencyPoolUncollectedFees: CurrencyAmount<Token>[];
+  positions: CustomPosition[];
+}
 
 export interface CustomPosition {
   id: number;

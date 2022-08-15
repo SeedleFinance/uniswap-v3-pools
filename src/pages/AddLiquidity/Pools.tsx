@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Token } from '@uniswap/sdk-core';
 
-import { PoolState } from '../../hooks/usePoolsState';
+import { PoolState } from '../../types/seedle';
 import PoolButton from '../../ui/PoolButton';
 import LoadingSpinner from '../../ui/Spinner';
 
