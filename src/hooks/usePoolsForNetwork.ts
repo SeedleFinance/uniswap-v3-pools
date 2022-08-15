@@ -250,6 +250,10 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
           CurrencyAmount.fromRawAmount(entity.token1, rawPoolUncollectedFees[1].toString()),
         ];
 
+        const currentPrice = parseFloat(
+          tickToPrice(quoteToken, baseToken, entity.tickCurrent).toSignificant(8),
+        );
+
         return {
           ...pool,
           key: pool.address,
@@ -261,6 +265,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
           poolLiquidity,
           poolUncollectedFees,
           currencyPoolUncollectedFees,
+          currentPrice,
           positions,
         };
       })

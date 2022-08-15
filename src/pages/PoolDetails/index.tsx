@@ -12,7 +12,6 @@ import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Pool from './Pool';
 import Positions from './Positions';
 import ChartLayout from './Chart';
-import { tickToPrice } from '@uniswap/v3-sdk';
 import DropdownMenu from '../../ui/DropdownMenu';
 import IconDownload from '../../icons/Download';
 import Button from '../../ui/Button';
@@ -33,16 +32,6 @@ const PoolDetailsPage = () => {
 
     return pools.find((pool) => pool.address === id);
   }, [loadingPools, pools, id]);
-
-  const currentPrice = useMemo(() => {
-    if (!pool) {
-      return '0';
-    }
-    const { tick, baseToken, quoteToken } = pool;
-    const price = parseFloat(tickToPrice(quoteToken, baseToken, tick).toSignificant(8));
-
-    return price;
-  }, [pool]);
 
   if (!pool?.positions) {
     return (
@@ -66,6 +55,7 @@ const PoolDetailsPage = () => {
     quoteToken,
     baseToken,
     positions,
+    currentPrice,
     rawPoolLiquidity,
     poolLiquidity,
     currencyPoolUncollectedFees,

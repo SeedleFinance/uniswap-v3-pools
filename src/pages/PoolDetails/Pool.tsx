@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Pool as UniPool } from '@uniswap/v3-sdk';

@@ -11,7 +11,7 @@ import { useAppSettings } from '../AppSettingsProvider';
 import { getPerpClient } from '../apollo/client';
 import { useFetchPools } from './fetch';
 import { useTransactions } from './useTransactions';
-import { PoolState } from './usePoolsState';
+import { PoolState } from '../types/seedle';
 
 const QUERY_OPEN_ORDERS = gql`
   query openOrdersByAccounts($accounts: [String]!, $liquidity: BigInt) {
@@ -329,6 +329,7 @@ export function usePerpV2(chainId: number): {
         poolLiquidity,
         poolUncollectedFees,
         currencyPoolUncollectedFees,
+        currentPrice,
       };
     });
   }, [poolAddresses, pools, positionsByPool]);
