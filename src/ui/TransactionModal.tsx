@@ -24,7 +24,7 @@ function TransactionModal({ chainId, transactionHash }: Props) {
           </a>
         </div>
       ) : (
-        <div>Complete the transaction in your wallet.</div>
+        <div className="text-medium">Complete the transaction in your wallet.</div>
       )}
     </Modal>
   );

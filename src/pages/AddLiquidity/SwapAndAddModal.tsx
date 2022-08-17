@@ -167,7 +167,7 @@ function SwapAndAddModal({
   return (
     <Modal title={'Swap & Add'}>
       {!swapInput || !swapOutput ? (
-        <div>Finding the best route for the swap...</div>
+        <div className="text-medium">Finding the best route for the swap...</div>
       ) : (
         <div>
           <div>
@@ -211,18 +211,18 @@ function SwapAndAddModal({
             </div>
           </div>
           <div>
-            <div>Liquidity to be added after the swap:</div>
+            <div className="text-medium">Liquidity to be added after the swap:</div>
             <div>
-              <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
-                <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+              <div className="w-full flex flex-wrap items-start p-2 my-1 relative text-medium">
+                <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-surface-10 border-element-10 rounded">
                   <TokenLogo name={token0.name} address={token0.address} />
                   <TokenLabel name={token0.name} symbol={token0.symbol} wrapped={wrapped} />
                 </div>
                 <div className="w-2/3 p-2 my-1">{formatInput(token0Amount)}</div>
               </div>
 
-              <div className="w-full flex flex-wrap items-start p-2 my-1 relative">
-                <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+              <div className="w-full flex flex-wrap items-start p-2 my-1 relative text-medium">
+                <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-surface-10 border-element-10 border rounded">
                   <TokenLogo name={token1.name} address={token1.address} />
                   <TokenLabel name={token1.name} symbol={token1.symbol} wrapped={wrapped} />
                 </div>
@@ -232,7 +232,7 @@ function SwapAndAddModal({
           </div>
 
           <div>
-            <div className="text-sm my-2">
+            <div className="text-sm my-2 text-high">
               Swap & Add interacts with{' '}
               <a
                 className="text-underline text-blue-500"
