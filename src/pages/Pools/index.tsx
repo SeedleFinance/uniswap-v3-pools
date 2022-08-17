@@ -182,6 +182,11 @@ function Pools() {
                       </span>
                     </Tooltip>
                   </th>
+                  <th className="text-right px-2 py-4 whitespace-nowrap font-medium">
+                    <span className="flex items-center justify-end cursor-default whitespace-nowrap">
+                      Status
+                    </span>
+                  </th>
                   <th></th>
                 </tr>
               </thead>

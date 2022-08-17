@@ -49,12 +49,13 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
             name={baseToken.name}
             address={baseToken.address}
             size={size}
+            className="-ml-2"
           />
         </div>
         <div className="flex flex-col mx-1">
           <div>
             <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} size={size} />
-            <span className="px-1">/</span>
+            <span className="mx-1">/</span>
             <TokenLabel name={baseToken.name} symbol={baseToken.symbol} size={size} />
           </div>
         </div>
