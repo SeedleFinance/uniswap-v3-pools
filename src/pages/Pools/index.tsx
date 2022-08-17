@@ -141,7 +141,7 @@ function Pools() {
           </div>
         </div>
       </div>
-      <div className="w-full flex-col mt-4 flex justify-center">
+      <div className="w-full flex-col mt-4 flex justify-center overflow-x-auto">
         {empty ? (
           <div className="py-12 rounded-lg">
             <div className="text-center text-1 md:text-1 text-low mt-4">
@@ -159,7 +159,7 @@ function Pools() {
             <table className="table-auto w-full text-high text-0.875 overflow-x-auto">
               <thead className="border-b border-element-10">
                 <tr className="align-middle">
-                  <th className="px-6 py-4 whitespace-nowrap font-medium">Pool</th>
+                  <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">Pool</th>
                   <th className="text-right px-6 py-4 whitespace-nowrap font-medium">
                     Current Price
                   </th>
