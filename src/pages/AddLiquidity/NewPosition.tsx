@@ -616,6 +616,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               quoteToken={quoteToken}
               onClick={() => {}}
               tabIndex={0}
+              size="md"
             />
           </div>
         </div>

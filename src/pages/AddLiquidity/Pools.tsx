@@ -53,6 +53,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
               quoteToken={quoteToken}
               fee={entity.fee / 10000}
               onClick={() => onPoolClick(baseToken, quoteToken, entity.fee, positions)}
+              size="md"
             />
           </div>
         ))}

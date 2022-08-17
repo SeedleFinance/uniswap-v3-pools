@@ -12,7 +12,7 @@ interface Props {
   onClick: () => void;
   tabIndex?: number;
   showNetwork?: boolean;
-  size?: 'xs' | 'sm' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 function getChainNameAndColor(chainId: number) {

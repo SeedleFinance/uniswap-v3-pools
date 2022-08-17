@@ -8,7 +8,7 @@ interface Props {
   address: string | undefined;
   className?: string | undefined;
   chain?: string | undefined;
-  size?: 'xs' | 'sm' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }
 
 function TokenLogo({ chain, name, address, className, size = 'sm' }: Props) {
@@ -26,7 +26,7 @@ function TokenLogo({ chain, name, address, className, size = 'sm' }: Props) {
   return (
     <img
       ref={imgEl}
-      className={classNames(styles['logo'], styles[`logo--${size}`], className)}
+      className={classNames(className, styles['logo'], styles[`logo--${size}`])}
       alt={`${name} logo`}
       src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${
         chain || 'ethereum'

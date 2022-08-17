@@ -54,7 +54,7 @@ function Row({
           quoteToken={quoteToken}
           fee={entity.fee / 10000}
           showNetwork={true}
-          size="xs"
+          size="md"
           onClick={() => {}}
         />
       </td>
