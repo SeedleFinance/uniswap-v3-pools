@@ -48,7 +48,7 @@ function Row({
 
   return (
     <tr onClick={onClick} className="hover:bg-surface-5 cursor-pointer">
-      <td className="px-2 py-4 md:px-6 md:py-8 md:whitespace-nowrap">
+      <td className="pl-4 pr-8 py-4 md:pl-6 md:pr-12 md:py-8">
         <PoolButton
           baseToken={baseToken}
           quoteToken={quoteToken}

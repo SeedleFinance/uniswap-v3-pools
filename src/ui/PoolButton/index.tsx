@@ -5,6 +5,8 @@ import TokenLogo from '../TokenLogo';
 import TokenLabel from '../TokenLabel';
 import Button from '../Button';
 
+export type TokenSize = 'lg' | 'md' | 'sm' | 'xs';
+
 interface Props {
   baseToken: Token;
   quoteToken: Token;
@@ -12,7 +14,7 @@ interface Props {
   onClick: () => void;
   tabIndex?: number;
   showNetwork?: boolean;
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size: TokenSize;
 }
 
 function getChainNameAndColor(chainId: number) {
@@ -26,7 +28,15 @@ function getChainNameAndColor(chainId: number) {
   return chains[chainId] || chains[1];
 }
 
-function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork, size }: Props) {
+function PoolButton({
+  baseToken,
+  quoteToken,
+  fee,
+  onClick,
+  tabIndex,
+  showNetwork,
+  size = 'lg',
+}: Props) {
   const [chainName, chainColor, chainLogoName] = getChainNameAndColor(baseToken.chainId);
   return (
     <Button
@@ -36,7 +46,7 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
       variant="ghost"
       size="xs"
     >
-      <div className="flex items-center">
+      <div className="flex items-center flex-shrink-0">
         <div className="flex flex-shrink-0 mr-1 items-center">
           <TokenLogo
             chain={chainLogoName}
@@ -52,15 +62,13 @@ function PoolButton({ baseToken, quoteToken, fee, onClick, tabIndex, showNetwork
             className="-ml-2"
           />
         </div>
-        <div className="flex flex-col mx-1">
-          <div>
-            <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} size={size} />
-            <span className="mx-1">/</span>
-            <TokenLabel name={baseToken.name} symbol={baseToken.symbol} size={size} />
-          </div>
+        <div>
+          <TokenLabel name={quoteToken.name} symbol={quoteToken.symbol} size={size} />
+          <span className="mx-1">/</span>
+          <TokenLabel name={baseToken.name} symbol={baseToken.symbol} size={size} />
         </div>
       </div>
-      <div className="hidden md:flex">
+      <div className="flex items-center">
         {fee && (
           <span className="rounded-md bg-gray-400 text-inverted text-0.8125 ml-1 px-1 font-medium">
             {fee}%

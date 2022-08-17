@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
+import { TokenSize } from '../PoolButton';
 import styles from './styles.module.css';
 
 export interface TokenProps {
   name?: string | undefined;
   symbol?: string | undefined;
   wrapped?: boolean;
-  size?: 'xs' | 'sm' | 'lg';
+  size?: TokenSize;
   className?: string;
 }
 
