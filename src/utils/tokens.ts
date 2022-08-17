@@ -1,6 +1,6 @@
 import { Token, Ether } from '@uniswap/sdk-core';
 
-import { WETH9, DAI, USDC, USDT, PAX, FEI, WMATIC } from '../constants';
+import { WETH9, DAI, USDC, USDT, PAX, FEI, WMATIC, WBTC } from '../constants';
 import MaticNativeCurrency from './matic';
 
 export function getQuoteAndBaseToken(
@@ -22,6 +22,7 @@ export function getQuoteAndBaseToken(
     FEI,
     PAX,
     WETH9[chainId],
+    WBTC[chainId],
   ];
 
   for (let i = 0; i < baseCurrencies.length; i++) {

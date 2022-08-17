@@ -223,3 +223,36 @@ export function useFetchUncollectedFees(
 
   return { loading, uncollectedFees };
 }
+
+export function useFetchPriceFeed(): { loading: boolean; priceFeed: { [pool: string]: number } } {
+  const [loading, setLoading] = useState(true);
+  const [priceFeedResult, setPriceFeedResult] = useState({});
+
+  useEffect(() => {
+    const _call = async () => {
+      setLoading(true);
+
+      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/price_feed';
+      const res = await fetch(url, {
+        method: 'GET',
+      });
+      if (!res.ok) {
+        const errors = await res.json();
+        console.error(errors);
+        setPriceFeedResult({});
+        setLoading(false);
+
+        return;
+      }
+
+      const results = await res.json();
+
+      setPriceFeedResult(results);
+      setLoading(false);
+    };
+
+    _call();
+  }, []);
+
+  return { loading, priceFeed: priceFeedResult };
+}

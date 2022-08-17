@@ -43,7 +43,6 @@ export const DAI: { [key: number]: Token } = {
 
 export const USDC: { [key: number]: Token } = {
   1: new Token(1, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C'),
-
   10: new Token(10, '0x7F5c764cBc14f9669B88837ca1490cCa17c31607', 6, 'USDC', 'USD//C'),
   42161: new Token(
     42161,
@@ -83,6 +82,7 @@ export const PAX = new Token(
 export const vUSD = new Token(10, '0xC84Da6c8ec7A57cD10B939E79eaF9d2D17834E04', 18, 'vUSD', 'vUSD');
 
 export const MATIC: { [chainId: number]: Token } = {
+  1: new Token(1, '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0', 18, 'MATIC', 'Matic Token'),
   137: new Token(137, '0x0000000000000000000000000000000000001010', 18, 'MATIC', 'Matic Token'),
 };
 
@@ -122,6 +122,10 @@ export const WMATIC: { [chainId: number]: Token } = {
     'WMATIC',
     'Wrapped Matic Token',
   ),
+};
+
+export const WBTC: { [chainId: number]: Token } = {
+  1: new Token(1, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC'),
 };
 
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
