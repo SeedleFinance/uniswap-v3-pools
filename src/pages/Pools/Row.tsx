@@ -79,7 +79,7 @@ function Row({
           <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY.toFixed(2)}%</div>
         </div>
       </td>
-      <td>
+      <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex flex-col-reverse items-end md:flex-row md:justify-end">
           <PositionStatuses
             tickCurrent={entity.tickCurrent}
