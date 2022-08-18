@@ -66,7 +66,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
 
       const { pool } = position;
       if (!pool) {
-        console.log('no pool defined', position);
+        console.log('no pool defined', { chainId, position });
         return;
       }
 
@@ -76,7 +76,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterC
     });
 
     return positionsByPool;
-  }, [queryLoading, allPositions]);
+  }, [queryLoading, allPositions, chainId]);
 
   const poolAddresses = useMemo(() => Object.keys(positionsByPool), [positionsByPool]);
   const { loading: poolsLoading, poolStates: pools } = useFetchPools(chainId, poolAddresses);

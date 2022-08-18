@@ -126,6 +126,11 @@ export const WMATIC: { [chainId: number]: Token } = {
 
 export const WBTC: { [chainId: number]: Token } = {
   1: new Token(1, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC'),
+  137: new Token(137, '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6', 8, 'WBTC', '(POS) Wrapped BTC'),
+};
+
+export const CRV: { [chainId: number]: Token } = {
+  1: new Token(1, '0xD533a949740bb3306d119CC777fa900bA034cd52', 18, 'CRV', 'Curve DAO Token'),
 };
 
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);

@@ -2,7 +2,7 @@ import React, { ReactNode, useContext, useCallback } from 'react';
 import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { tickToPrice } from '@uniswap/v3-sdk';
 
-import { WETH9, DAI, USDC, USDT, vUSD, MATIC, WBTC } from './constants';
+import { WETH9, DAI, USDC, USDT, vUSD, MATIC, WBTC, CRV } from './constants';
 import { formatCurrency } from './utils/numbers';
 import { useAppSettings } from './AppSettingsProvider';
 
@@ -61,6 +61,11 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
           quoteToken: MATIC[1],
           baseToken: USDC[1],
         },
+        CRV: {
+          address: '0x9445bd19767f73dcae6f2de90e6cd31192f62589',
+          quoteToken: CRV[1],
+          baseToken: USDC[1],
+        },
       };
 
       // pick a pool
@@ -88,7 +93,8 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
       if (val.currency.equals(USDC[val.currency.chainId]) || val.currency.equals(vUSD)) {
         price = 1;
       } else {
-        price = getUSDPrice(val.currency.symbol as string);
+        const curSymbol = val.currency.symbol === 'WMATIC' ? 'MATIC' : val.currency.symbol;
+        price = getUSDPrice(curSymbol as string);
       }
 
       if (globalCurrencyToken.symbol === 'WETH') {
