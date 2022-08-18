@@ -147,6 +147,8 @@ export const ROUTES = {
   ADD_EXISTING: '/add/existing',
   ABOUT: '/about',
   POOL_DETAILS: '/pool',
+  POOLS: '/pools',
+  TOKENS: '/tokens',
 };
 
 export const EXTERNAL_LINKS = {
