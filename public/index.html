@@ -51,11 +51,5 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <script type="module" src="../src/index.tsx"></script>
-    <script>
-      // Only load on production environment.
-      if (window.location.host !== 'seedle.finance')
-          window.goatcounter = {no_onload: true}
-    </script>
-    <script data-goatcounter="https://seedle.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </body>
 </html>
