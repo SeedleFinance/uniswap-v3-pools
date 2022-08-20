@@ -12,7 +12,7 @@ function TransactionModal({ chainId, transactionHash }: Props) {
   return (
     <Modal title={transactionHash ? 'Waiting for confirmation' : 'Complete Transaction'}>
       {transactionHash ? (
-        <div>
+        <div className="text-medium">
           Waiting for transaction to be confirmed. Check status on{' '}
           <a
             className="text-blue-500"
