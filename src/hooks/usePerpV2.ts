@@ -159,7 +159,7 @@ function usePerpPools(
   poolAddresses: string[],
 ): {
   loading: boolean;
-  pools: Pool[];
+  pools: { [address: string]: Pool };
 } {
   const { loading, poolStates } = useFetchPools(chainId, poolAddresses);
   const pools = useMemo(() => {
@@ -167,7 +167,8 @@ function usePerpPools(
       return [];
     }
 
-    return poolStates.map((pool) => {
+    const p = {};
+    poolStates.forEach((pool) => {
       const token0 = new Token(
         chainId,
         pool.token0.address,
@@ -182,8 +183,16 @@ function usePerpPools(
         pool.token1.symbol,
         pool.token1.name,
       );
-      return new Pool(token0, token1, pool.fee, pool.sqrtPriceX96, pool.liquidity, pool.tick);
+      p[pool.address.toLowerCase()] = new Pool(
+        token0,
+        token1,
+        pool.fee,
+        pool.sqrtPriceX96,
+        pool.liquidity,
+        pool.tick,
+      );
     });
+    return p;
   }, [poolStates, chainId]);
 
   return { loading, pools };
@@ -221,7 +230,7 @@ export function usePerpV2(chainId: number): {
 
     if (
       !positionStates.length ||
-      !pools.length ||
+      !Object.keys(pools).length ||
       !uncollectedFeesByPosition.length ||
       !transactions.length
     ) {
@@ -230,7 +239,7 @@ export function usePerpV2(chainId: number): {
 
     positionStates.forEach((position, idx) => {
       // enhance position
-      const pool = pools[poolAddresses.indexOf(position.poolAddress)];
+      const pool = pools[position.poolAddress];
 
       const [baseToken, quoteToken] =
         pool.token0.symbol === 'vUSD' ? [pool.token0, pool.token1] : [pool.token1, pool.token0];
@@ -288,12 +297,12 @@ export function usePerpV2(chainId: number): {
   }, [poolAddresses, pools, positionStates, uncollectedFeesByPosition, transactions]);
 
   const poolStates = useMemo(() => {
-    if (!Object.keys(positionsByPool).length || !pools.length) {
+    if (!Object.keys(positionsByPool).length || !Object.keys(pools).length) {
       return [];
     }
 
-    return poolAddresses.map((address, idx) => {
-      const pool = pools[idx];
+    return poolAddresses.map((address) => {
+      const pool = pools[address];
       const positions = positionsByPool[address.toLowerCase()];
 
       const [baseToken, quoteToken] =
