@@ -224,7 +224,10 @@ export function useFetchUncollectedFees(
   return { loading, uncollectedFees };
 }
 
-export function useFetchPriceFeed(): { loading: boolean; priceFeed: { [pool: string]: number } } {
+export function useFetchPriceFeed(
+  chainId: number,
+  tokens: string[],
+): { loading: boolean; priceFeed: { [pool: string]: number } } {
   const [loading, setLoading] = useState(true);
   const [priceFeedResult, setPriceFeedResult] = useState({});
 
@@ -232,9 +235,10 @@ export function useFetchPriceFeed(): { loading: boolean; priceFeed: { [pool: str
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/price_feed';
+      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/prices';
       const res = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
+        body: JSON.stringify({ chainId, tokens }),
       });
       if (!res.ok) {
         const errors = await res.json();
@@ -251,8 +255,13 @@ export function useFetchPriceFeed(): { loading: boolean; priceFeed: { [pool: str
       setLoading(false);
     };
 
+    if (!tokens || !tokens.length) {
+      setPriceFeedResult([]);
+      setLoading(false);
+    }
+
     _call();
-  }, []);
+  }, [chainId, tokens]);
 
   return { loading, priceFeed: priceFeedResult };
 }
