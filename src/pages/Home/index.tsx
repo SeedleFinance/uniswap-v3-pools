@@ -208,9 +208,9 @@ function Pools() {
                 },
               ]}
             >
-              <Button variant="ghost">
+              <div className="w-8 h-8 flex items-center justify-center">
                 <IconOptions />
-              </Button>
+              </div>
             </DropdownMenu>
           </div>
         </div>
