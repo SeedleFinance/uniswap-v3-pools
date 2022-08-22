@@ -142,7 +142,7 @@ export function useFetchPools(
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/pools';
+      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/v2/pools';
       const res = await fetch(url, {
         method: 'POST',
         body: JSON.stringify({ chainId, addresses }),
