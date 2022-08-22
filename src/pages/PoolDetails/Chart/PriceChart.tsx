@@ -89,8 +89,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
         <Area
           type="monotone"
           dataKey="price"
-          //@ts-ignore
-          stroke={false}
+          stroke="false"
           strokeWidth={2}
           fillOpacity={1}
           fill="url(#colorUv)"
