@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Network as AlchemyNetwork } from 'alchemy-sdk';
+import { Network as AlchemyNetwork, Network } from 'alchemy-sdk';
 import { useAddress } from '../AddressProvider';
 import { getAlchemy } from '../alchemy';
 import { useNetwork } from 'wagmi';
@@ -13,10 +13,10 @@ interface AlchemyToken {
 }
 
 const mapNetworkToAlchemyNetwork: { [key: string]: AlchemyNetwork } = {
-  Ethereum: AlchemyNetwork.ETH_MAINNET,
-  Optimism: AlchemyNetwork.OPT_MAINNET,
-  Arbitrum: AlchemyNetwork.ARB_MAINNET,
-  Polygon: AlchemyNetwork.MATIC_MAINNET,
+  Ethereum: Network.ETH_MAINNET,
+  Optimism: Network.OPT_MAINNET,
+  Arbitrum: Network.ARB_MAINNET,
+  Polygon: Network.MATIC_MAINNET,
 };
 
 async function fetchTokens(addresses: string[], network: string) {
@@ -105,7 +105,7 @@ export function useTokens() {
     return () => {
       mounted = false;
     };
-  }, [addresses, chain]);
+  }, [addresses, chain?.name]);
 
   return state;
 }
