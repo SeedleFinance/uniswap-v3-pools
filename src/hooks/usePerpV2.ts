@@ -164,10 +164,10 @@ function usePerpPools(
   const { loading, poolStates } = useFetchPools(chainId, poolAddresses);
   const pools = useMemo(() => {
     if (!poolStates.length) {
-      return [];
+      return {};
     }
 
-    const p = {};
+    const p: { [address: string]: Pool } = {};
     poolStates.forEach((pool) => {
       const token0 = new Token(
         chainId,
@@ -294,7 +294,7 @@ export function usePerpV2(chainId: number): {
     });
 
     return positionsByPool;
-  }, [poolAddresses, pools, positionStates, uncollectedFeesByPosition, transactions]);
+  }, [pools, positionStates, uncollectedFeesByPosition, transactions]);
 
   const poolStates = useMemo(() => {
     if (!Object.keys(positionsByPool).length || !Object.keys(pools).length) {
