@@ -152,7 +152,8 @@ function Pools() {
           </div>
           {tokenData && !tokenData.length && (
             <div className="text-center text-1 md:text-1 text-low mt-4 flex justify-center items-center h-20">
-              This address has no tokens.
+              This address has no tokens. <br />
+              Try changing networks.
             </div>
           )}
           <div className="w-full mt-8 flex gap-20 overflow-x-auto pb-12">

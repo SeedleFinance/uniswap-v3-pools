@@ -19,6 +19,14 @@ const mapNetworkToAlchemyNetwork: { [key: string]: AlchemyNetwork } = {
   Polygon: Network.MATIC_MAINNET,
 };
 
+const mapNetworkToLabel: { [key: string]: string } = {
+  Ethereum: 'Mainnet',
+  Mainnet: 'Mainnet',
+  Optimism: 'Optimism',
+  Arbitrum: 'Arbitrum',
+  Polygon: 'Polygon',
+};
+
 async function fetchTokens(addresses: string[], network: string) {
   if (!addresses.length) return [];
 
@@ -57,7 +65,7 @@ async function fetchTokens(addresses: string[], network: string) {
           name: tokenName,
           balance: balance,
           logo: metadata.logo!,
-          network,
+          network: mapNetworkToLabel[network],
           price,
         });
       }
