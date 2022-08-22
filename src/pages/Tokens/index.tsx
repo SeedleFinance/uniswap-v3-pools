@@ -32,8 +32,6 @@ const TokensPage = () => {
     return <div>You do not have any tokens.</div>;
   }
 
-  console.log('data: ', data);
-
   return (
     <div>
       <button
@@ -50,13 +48,6 @@ const TokensPage = () => {
             <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">Token</th>
             <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Balance</th>
             <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Current Price</th>
-
-            <th className="text-right px-2 md:px-6 py-4 whitespace-nowrap font-medium">
-              <span className="flex items-center justify-end cursor-default whitespace-nowrap">
-                Utilization
-              </span>
-            </th>
-            <th></th>
           </tr>
         </thead>
         <tbody className="text-0.875">
@@ -65,12 +56,16 @@ const TokensPage = () => {
               <td className="md:px-6 py-4 whitespace-nowrap flex items-center font-medium text-left">
                 <img className="w-8 h-8 mr-2" alt={`${token.name} logo`} src={token.logo} />
                 {token.name}
+                <div className="text-0.75 px-1 py-0.5 bg-slate-200 rounded-md ml-2 font-medium text-black">
+                  {token.network}
+                </div>
               </td>
               <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
                 {token.balance}
               </td>
-              <td className="text-right px-6 py-4 whitespace-nowrap font-medium">$0.00</td>
-              <td className="text-right px-2 md:px-6 py-4 whitespace-nowrap font-medium">-</td>
+              <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
+                ${token.price.toFixed(5)}
+              </td>
             </tr>
           ))}
         </tbody>
