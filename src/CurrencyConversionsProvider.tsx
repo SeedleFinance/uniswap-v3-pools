@@ -26,7 +26,7 @@ interface Props {
   children: ReactNode;
 }
 
-const baseTokens = {
+const baseTokens: { [token: string]: Token } = {
   USDC: USDC[ChainID.Mainnet],
   DAI: DAI[ChainID.Mainnet],
   USDT: USDT[ChainID.Mainnet],
@@ -72,7 +72,7 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
       if (val.currency.equals(WETH9[val.currency.chainId])) {
         price = 1;
       } else {
-        let currency = baseTokens[val.currency.symbol];
+        let currency = baseTokens[val.currency.symbol as string];
         if (val.currency.symbol === 'WMATIC') {
           currency = MATIC[ChainID.Mainnet];
         } else if (val.currency.symbol === 'vUSD') {
