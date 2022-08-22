@@ -31,6 +31,7 @@ function Pools() {
   const navigate = useNavigate();
   const location = useLocation();
   const handleDownloadCSV = useCSV();
+
   const { data: tokenData, loading: loadingTokens, error: errorTokens } = useTokens();
 
   const { addresses } = useAddress();
@@ -154,7 +155,7 @@ function Pools() {
               This address has no tokens.
             </div>
           )}
-          <div className="w-full mt-8 flex gap-20 overflow-x-auto">
+          <div className="w-full mt-8 flex gap-20 overflow-x-auto pb-12">
             {tokenData.map((token) => (
               <div className="h-full rounded-md flex-shrink-0 flex-col flex" key={token.name}>
                 <div className="flex items-start text-low">
@@ -162,10 +163,14 @@ function Pools() {
                   <div className="flex flex-col text-high">
                     <div className="text-1.25 font-bold leading-tight flex items-center">
                       {token.name}{' '}
-                      {/* <span className="text-1 text-low font-normal ml-1">(symbol)</span> */}
                     </div>
-                    <div className="text-0.875">$0.00</div>
-                    <div className="text-0.875 bg-green-100 dark:bg-green-600 -ml-2 mt-1 rounded-md px-2">
+                    <div className="flex items-center mt-1">
+                      <div className="text-0.875">${token.price.toFixed(5)}</div>
+                      <div className="text-0.75 px-1 py-0.5 bg-slate-200 rounded-md ml-1 font-medium text-black">
+                        {token.network}
+                      </div>
+                    </div>
+                    <div className="text-0.875 bg-green-100 dark:bg-green-600 -ml-2 mt-2 rounded-md px-2">
                       Balance: {token.balance.toFixed(2)}
                     </div>
                   </div>
@@ -177,7 +182,7 @@ function Pools() {
       )}
       <div className="w-full mt-4 md:mt-12">
         <div className="w-full flex justify-between py-4 border-b border-element-10 mb-8">
-          <h2 className="leading-tight font-bold text-1.25 text-high text-high">Positions</h2>
+          <h2 className="leading-tight font-bold text-1.25 text-high">Pools</h2>
           {sortedPools.length > 0 && (
             <Link to={`${ROUTES.POOLS}/${location.search}`} className="text-low text-0.875">
               View all
