@@ -24,7 +24,7 @@ import { useTokens } from '../../hooks/useTokens';
 import { useAddress } from '../../AddressProvider';
 import { shortenAddress } from '../../utils/shortenAddress';
 
-function Pools() {
+function Home() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
@@ -181,6 +181,7 @@ function Pools() {
           </div>
         </div>
       )}
+
       <div className="w-full mt-4 md:mt-12">
         <div className="w-full flex justify-between py-4 border-b border-element-10 mb-8">
           <h2 className="leading-tight font-bold text-1.25 text-high">Pools</h2>
@@ -308,4 +309,4 @@ function Pools() {
   );
 }
 
-export default Pools;
+export default Home;
