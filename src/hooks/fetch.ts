@@ -59,6 +59,13 @@ interface UncollectedFeesResult {
   amount1: number;
 }
 
+export interface TokenBalance {
+  address: string;
+  balance: string;
+  metadata: { symbol: string; name: string; logo: string; decimals: number };
+  priceTick: number | null;
+}
+
 export function useFetchPositions(
   chainId: number,
   addresses: string[],
@@ -264,4 +271,46 @@ export function useFetchPriceFeed(
   }, [chainId, tokens]);
 
   return { loading, priceFeed: priceFeedResult };
+}
+
+export function useFetchTokenBalances(
+  chainId: number,
+  address: string,
+): { loading: boolean; tokenBalances: TokenBalance[] } {
+  const [loading, setLoading] = useState(true);
+  const [tokenBalances, setTokenBalances] = useState([]);
+
+  useEffect(() => {
+    const _call = async () => {
+      setLoading(true);
+
+      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/token_balances';
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ chainId, address }),
+      });
+      if (!res.ok) {
+        const errors = await res.json();
+        console.error(errors);
+        setTokenBalances([]);
+        setLoading(false);
+
+        return;
+      }
+
+      const results = await res.json();
+
+      setTokenBalances(results);
+      setLoading(false);
+    };
+
+    if (!address || address === '') {
+      setTokenBalances([]);
+      setLoading(false);
+    }
+
+    _call();
+  }, [chainId, address]);
+
+  return { loading, tokenBalances };
 }

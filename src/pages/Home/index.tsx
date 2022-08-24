@@ -17,10 +17,10 @@ import Plus from '../../icons/Plus';
 import Tooltip from '../../ui/Tooltip';
 import IconHelper from '../../icons/Helper';
 import Row from './Row';
+import TokenList from './TokenList';
 import DropdownMenu from '../../ui/DropdownMenu';
 import IconOptions from '../../icons/Options';
 import IconDownload from '../../icons/Download';
-import { useTokens } from '../../hooks/useTokens';
 import { useAddress } from '../../AddressProvider';
 import { shortenAddress } from '../../utils/shortenAddress';
 
@@ -31,8 +31,6 @@ function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const handleDownloadCSV = useCSV();
-
-  const { data: tokenData, loading: loadingTokens, error: errorTokens } = useTokens();
 
   const { addresses } = useAddress();
 
@@ -126,61 +124,7 @@ function Home() {
         </div>
       </div>
 
-      {loadingTokens && (
-        <div className="w-full">
-          <div className="w-32 h-6 py-2 flex-shrink-0 bg-surface-10 mt-12 rounded-md"></div>
-          <div className="w-full h-24 mt-4 flex overflow-hidden">
-            <div className="w-52 bg-surface-10 h-full rounded-md flex-shrink-0"></div>
-            <div className="w-52 bg-surface-10 h-full rounded-md flex-shrink-0 ml-6"></div>
-            <div className="w-52 bg-surface-10 h-full rounded-md flex-shrink-0 ml-6"></div>
-            <div className="w-52 bg-surface-10 h-full rounded-md flex-shrink-0 ml-6"></div>
-            <div className="w-52 bg-surface-10 h-full rounded-md flex-shrink-0 ml-6"></div>
-            <div className="w-52 bg-surface-10 h-full rounded-md flex-shrink-0 ml-6"></div>
-          </div>
-        </div>
-      )}
-
-      {tokenData && (
-        <div className="w-full mt-12">
-          <div className="flex justify-between w-full border-b border-element-10 py-4">
-            <h2 className="leading-tight font-bold text-1.25 text-high">Tokens</h2>
-            {tokenData.length > 0 && (
-              <Link to={`${ROUTES.TOKENS}/${location.search}`} className="text-low text-0.875">
-                View all
-              </Link>
-            )}
-          </div>
-          {tokenData && !tokenData.length && (
-            <div className="text-center text-1 md:text-1 text-low mt-4 flex justify-center items-center h-20">
-              This address has no tokens. <br />
-              Try changing networks.
-            </div>
-          )}
-          <div className="w-full mt-8 flex gap-20 overflow-x-auto pb-12">
-            {tokenData.map((token) => (
-              <div className="h-full rounded-md flex-shrink-0 flex-col flex" key={token.name}>
-                <div className="flex items-start text-low">
-                  <img className="w-8 h-8 mr-2" alt={`${token.name} logo`} src={token.logo} />
-                  <div className="flex flex-col text-high">
-                    <div className="text-1.25 font-bold leading-tight flex items-center">
-                      {token.name}{' '}
-                    </div>
-                    <div className="flex items-center mt-1">
-                      <div className="text-0.875">${token.price.toFixed(5)}</div>
-                      <div className="text-0.75 px-1 py-0.5 bg-slate-200 rounded-md ml-1 font-medium text-black">
-                        {token.network}
-                      </div>
-                    </div>
-                    <div className="text-0.875 bg-green-100 dark:bg-green-600 -ml-2 mt-2 rounded-md px-2">
-                      Balance: {token.balance.toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <TokenList />
 
       <div className="w-full mt-4 md:mt-12">
         <div className="w-full flex justify-between py-4 border-b border-element-10 mb-8">

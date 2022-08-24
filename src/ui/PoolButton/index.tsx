@@ -4,6 +4,7 @@ import { Token } from '@uniswap/sdk-core';
 import TokenLogo from '../TokenLogo';
 import TokenLabel from '../TokenLabel';
 import Button from '../Button';
+import { getChainNameAndColor } from '../../utils/chains';
 
 export type TokenSize = 'lg' | 'md' | 'sm' | 'xs';
 
@@ -15,17 +16,6 @@ interface Props {
   tabIndex?: number;
   showNetwork?: boolean;
   size: TokenSize;
-}
-
-function getChainNameAndColor(chainId: number) {
-  const chains: { [id: number]: string[] } = {
-    1: ['Mainnet', 'bg-gray-200 text-black', 'ethereum'],
-    10: ['Optimism', 'bg-red-200 text-red-700', 'optimism'],
-    42161: ['Arbitrum', 'bg-blue-200 text-blue-700', 'arbitrum'],
-    137: ['Polygon', 'bg-indigo-300 text-indigo-600', 'polygon'],
-  };
-
-  return chains[chainId] || chains[1];
 }
 
 function PoolButton({

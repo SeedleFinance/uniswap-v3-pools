@@ -1,119 +1,57 @@
-import { useState, useEffect } from 'react';
-import { Network as AlchemyNetwork, Network } from 'alchemy-sdk';
+import { useMemo } from 'react';
+import { tickToPrice } from '@uniswap/v3-sdk';
+import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
+import { BigNumber } from '@ethersproject/bignumber';
+import { formatUnits } from '@ethersproject/units';
+
+import { WETH9 } from '../constants';
 import { useAddress } from '../AddressProvider';
-import { getAlchemy } from '../alchemy';
-import { useNetwork } from 'wagmi';
+import { useFetchTokenBalances, TokenBalance } from './fetch';
+import { formatInput } from '../utils/numbers';
 
-interface AlchemyToken {
-  name: string;
-  balance: number;
-  price: number;
-  network: string;
-  logo: string;
-}
-
-const mapNetworkToAlchemyNetwork: { [key: string]: AlchemyNetwork } = {
-  Ethereum: Network.ETH_MAINNET,
-  Optimism: Network.OPT_MAINNET,
-  Arbitrum: Network.ARB_MAINNET,
-  Polygon: Network.MATIC_MAINNET,
-};
-
-const mapNetworkToLabel: { [key: string]: string } = {
-  Ethereum: 'Mainnet',
-  Mainnet: 'Mainnet',
-  Optimism: 'Optimism',
-  Arbitrum: 'Arbitrum',
-  Polygon: 'Polygon',
-};
-
-async function fetchTokens(addresses: string[], network: string) {
-  if (!addresses.length) return [];
-
-  // instantiate alchemy with network
-  const alchemy = getAlchemy(mapNetworkToAlchemyNetwork[network]);
-
-  const data = await alchemy.core.getTokenBalances(addresses[0]); // - for now
-  console.log('Response Object for getTokenBalances\n', data);
-
-  const tokens: AlchemyToken[] = [];
-  const tokenBalances = Array.from(data.tokenBalances.values());
-
-  await Promise.all(
-    tokenBalances.map(async (token: any) => {
-      /*
-       ** Fetching the metadata for the token with Alchemy's getTokenMetadata API
-       */
-      const metadata = await alchemy.core.getTokenMetadata(token.contractAddress);
-
-      // Forming the name of the token that comprises of the Name and the Symbol of the token
-      const tokenName = metadata.name + '(' + metadata.symbol + ')';
-
-      /* Calculating the tokenBalance in decimal. The "decimals" field in the token metadata tells us
-      how many digits at the end of the tokenBalance in Line 17 are to the right of the decimal.
-      so we divide the Full tokenBalance with 10 to the power of the decimal value of the token
-      */
-      const balance = (token.tokenBalance as any) / Math.pow(10, metadata.decimals!);
-
-      // placeholder for the price of the token
-      const price = 0.0;
-
-      // Only show tokens with a balance > 0
-      if (balance > 0) {
-        console.log('Token balance for', tokenName, 'is', balance);
-        tokens.push({
-          name: tokenName,
-          balance: balance,
-          logo: metadata.logo!,
-          network: mapNetworkToLabel[network],
-          price,
-        });
-      }
-    }),
-  );
-
-  return tokens;
-}
-
-interface TokenState {
-  loading: boolean;
-  data?: AlchemyToken[];
-  error?: Error;
-}
-
-export function useTokens() {
+export function useTokens(chainId: number) {
   const { addresses } = useAddress();
-  const [state, setState] = useState<TokenState>({
-    loading: true,
-  });
-  const { chain } = useNetwork();
+  const { loading, tokenBalances } = useFetchTokenBalances(chainId, addresses[0]);
 
-  useEffect(() => {
-    let mounted = true;
+  const tokens = useMemo(() => {
+    if (!tokenBalances || !tokenBalances.length) {
+      return [];
+    }
 
-    const activeNetwork = chain?.name || 'Mainnet';
+    return tokenBalances
+      .map(({ address, balance, metadata, priceTick }: TokenBalance) => {
+        const token = new Token(
+          chainId,
+          address,
+          metadata.decimals,
+          metadata.symbol,
+          metadata.name,
+        );
+        const balanceFormatted = formatInput(parseFloat(formatUnits(balance, token.decimals)));
 
-    (async () => {
-      try {
-        const tokens = await fetchTokens(addresses, activeNetwork);
+        const ONE_UNIT = `1${'0'.repeat(token.decimals)}`;
+        const tokenCurrency = CurrencyAmount.fromRawAmount(token, ONE_UNIT);
+        const price = token.equals(WETH9[chainId])
+          ? tokenCurrency
+          : priceTick === null
+          ? CurrencyAmount.fromRawAmount(WETH9[chainId], 0)
+          : tickToPrice(token, WETH9[chainId], priceTick).quote(tokenCurrency);
+        const value = price.multiply(new Fraction(BigNumber.from(balance).toString(), ONE_UNIT));
 
-        if (mounted) {
-          setState({
-            data: tokens,
-            loading: false,
-          });
-        }
-      } catch (err) {
-        if (mounted) {
-          setState({ error: err as Error, loading: false });
-        }
-      }
-    })();
+        return {
+          chainId,
+          entity: token,
+          balance: balanceFormatted,
+          price: price,
+          value: value,
+          name: metadata.name,
+          symbol: metadata.symbol,
+          decimals: metadata.decimals,
+          logo: metadata.logo,
+        };
+      })
+      .sort((a, b) => (a.value.lessThan(b.value) ? 1 : -1));
+  }, [chainId, tokenBalances]);
 
-    return () => {
-      mounted = false;
-    };
-  }, [addresses, chain?.name]);
-
-  return state;
+  return { loading, tokens };
 }
