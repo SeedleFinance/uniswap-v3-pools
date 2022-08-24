@@ -40,47 +40,49 @@ const TokensPage = () => {
         <span className="ml-2">Home</span>
       </button>
       <h1 className="text-2.5 font-bold tracking-tighter leading-tight mt-4 text-high">Tokens</h1>
-      <table className="text-high w-full mt-4">
-        <thead className="border-b border-element-10">
-          <tr className="align-middle">
-            <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">Token</th>
-            <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Balance</th>
-            <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Current Price</th>
-            <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Value</th>
-          </tr>
-        </thead>
-        <tbody className="text-0.875">
-          {tokens.map((token) => (
-            <tr key={token.name} className="w-full hover:bg-surface-10 cursor-pointer">
-              <td className="md:px-6 py-4 whitespace-nowrap flex items-center font-medium text-left">
-                <TokenLogo
-                  className="w-8 h-8 mr-2"
-                  name={token.name}
-                  address={token.address}
-                  src={token.logo}
-                />
-                {token.name}
-                <div
-                  className={`text-0.75 px-1 py-0.5 rounded-md ml-1 font-medium text-black ${
-                    getChainNameAndColor(token.chainId)[1]
-                  }`}
-                >
-                  {getChainNameAndColor(token.chainId)[0]}
-                </div>
-              </td>
-              <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
-                {token.balance}
-              </td>
-              <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
-                {convertToGlobalFormatted(token.price)}
-              </td>
-              <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
-                {convertToGlobalFormatted(token.value)}
-              </td>
+      <div className="pb-8 overflow-x-auto">
+        <table className="text-high w-full mt-4">
+          <thead className="border-b border-element-10">
+            <tr className="align-middle">
+              <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">Token</th>
+              <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Balance</th>
+              <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Current Price</th>
+              <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Value</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="text-0.875">
+            {tokens.map((token) => (
+              <tr key={token.name} className="w-full hover:bg-surface-10 cursor-pointer">
+                <td className="md:px-6 py-4 whitespace-nowrap flex items-center font-medium text-left">
+                  <TokenLogo
+                    className="w-8 h-8 mr-2"
+                    name={token.name}
+                    address={token.address}
+                    src={token.logo}
+                  />
+                  {token.name}
+                  <div
+                    className={`text-0.75 px-1 py-0.5 rounded-md ml-1 font-medium text-black ${
+                      getChainNameAndColor(token.chainId)[1]
+                    }`}
+                  >
+                    {getChainNameAndColor(token.chainId)[0]}
+                  </div>
+                </td>
+                <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
+                  {token.balance}
+                </td>
+                <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
+                  {convertToGlobalFormatted(token.price)}
+                </td>
+                <td className="text-right px-6 py-4 whitespace-nowrap font-medium">
+                  {convertToGlobalFormatted(token.value)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
