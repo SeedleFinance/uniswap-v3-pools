@@ -165,9 +165,14 @@ export async function loadTokens(chainId: number) {
   const json = await res.json();
   const { tokens } = json;
 
+  // filter tokens by chainId
+  // some token lists return tokens from multiple networks,
+  // we want to return only the tokens for the network.
+  const filtered = tokens.filter((token) => token.chainId === chainId);
+
   // add WMATIC
   if (chainId === 137) {
-    tokens.push({
+    filtered.push({
       address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
       chainId: 137,
       name: 'Wrapped Matic Token',
@@ -175,7 +180,7 @@ export async function loadTokens(chainId: number) {
       decimals: 18,
     });
   }
-  return tokens;
+  return filtered;
 }
 
 export function findTokens(chainId: number, tokens: TokenListItem[], symbols: string[]) {

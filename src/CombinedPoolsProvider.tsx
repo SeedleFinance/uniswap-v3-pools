@@ -2,6 +2,7 @@ import React, { ReactNode, useContext, useEffect, useMemo, useState } from 'reac
 
 import { usePoolsForNetwork } from './hooks/usePoolsForNetwork';
 import { usePerpV2 } from './hooks/usePerpV2';
+import { ChainID } from './enums';
 
 const PoolsContext = React.createContext({
   pools: [] as any[],
@@ -25,25 +26,25 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
     loading: mainnetLoading,
     pools: mainnetPools,
     feesLoading: mainnetFeesLoading,
-  } = usePoolsForNetwork(1, lastLoaded);
+  } = usePoolsForNetwork(ChainID.Mainnet, lastLoaded);
 
   const {
     loading: polygonLoading,
     pools: polygonPools,
     feesLoading: polygonFeesLoading,
-  } = usePoolsForNetwork(137, lastLoaded);
+  } = usePoolsForNetwork(ChainID.Matic, lastLoaded);
 
   const {
     loading: optimismLoading,
     pools: optimismPools,
     feesLoading: optimismFeesLoading,
-  } = usePoolsForNetwork(10, lastLoaded);
+  } = usePoolsForNetwork(ChainID.Optimism, lastLoaded);
 
   const {
     loading: arbitrumLoading,
     pools: arbitrumPools,
     feesLoading: arbitrumFeesLoading,
-  } = usePoolsForNetwork(42161, lastLoaded);
+  } = usePoolsForNetwork(ChainID.Arbitrum, lastLoaded);
 
   const { loading: perpLoading, pools: perpPools } = usePerpV2(10);
 

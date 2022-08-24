@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 
 import { CombinedPoolsProvider } from './CombinedPoolsProvider';
+import { CombinedTokensProvider } from './CombinedTokensProvider';
 import LandingPage from './pages/Landing';
 import PoolDetailsPage from './pages/PoolDetails';
 import AddLiquidityPage from './pages/AddLiquidity/index';
@@ -12,10 +13,12 @@ import PoolsPage from './pages/Pools';
 import { ROUTES } from './constants';
 import { useAddress } from './AddressProvider';
 
-function PoolsLayout() {
+function PoolsAndTokensLayout() {
   return (
     <CombinedPoolsProvider>
-      <Outlet />
+      <CombinedTokensProvider>
+        <Outlet />
+      </CombinedTokensProvider>
     </CombinedPoolsProvider>
   );
 }
@@ -35,15 +38,15 @@ function PageBody() {
           <Route path={ROUTES.ADD_NEW} element={<AddLiquidityPage tab="new" />} />
           <Route path={ROUTES.ADD_EXISTING} element={<AddLiquidityPage tab="existing" />} />
 
-          <Route element={<PoolsLayout />}>
+          <Route element={<PoolsAndTokensLayout />}>
             <Route path={ROUTES.HOME} element={addressReady ? <HomePage /> : <LandingPage />} />
             <Route
               path={`${ROUTES.POOL_DETAILS}/:id`}
               element={addressReady ? <PoolDetailsPage /> : <LandingPage />}
             />
             <Route path={ROUTES.POOLS} element={addressReady ? <PoolsPage /> : <LandingPage />} />
+            <Route path={ROUTES.TOKENS} element={<TokensPage />} />
           </Route>
-          <Route path={ROUTES.TOKENS} element={<TokensPage />} />
         </Routes>
       </Router>
     </>

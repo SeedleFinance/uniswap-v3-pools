@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useTokens } from '../../hooks/useTokens';
+import { useTokens } from '../../CombinedTokensProvider';
 import BackArrow from '../../icons/LeftArrow';
 import LoadingSpinner from '../../ui/Spinner';
 import { getChainNameAndColor } from '../../utils/chains';
@@ -10,7 +10,7 @@ import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 const TokensPage = () => {
   const navigate = useNavigate();
   const { convertToGlobalFormatted } = useCurrencyConversions();
-  const { loading, tokens } = useTokens(1);
+  const { loading, tokens } = useTokens();
 
   function handleClickBack() {
     navigate(-1);

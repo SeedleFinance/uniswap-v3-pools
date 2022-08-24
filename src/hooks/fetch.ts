@@ -307,6 +307,7 @@ export function useFetchTokenBalances(
     if (!address || address === '') {
       setTokenBalances([]);
       setLoading(false);
+      return;
     }
 
     _call();

@@ -9,7 +9,7 @@ import { useAddress } from '../AddressProvider';
 import { useFetchTokenBalances, TokenBalance } from './fetch';
 import { formatInput } from '../utils/numbers';
 
-export function useTokens(chainId: number) {
+export function useTokensForNetwork(chainId: number) {
   const { addresses } = useAddress();
   const { loading, tokenBalances } = useFetchTokenBalances(chainId, addresses[0]);
 

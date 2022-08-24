@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 
 import { ROUTES } from '../../constants';
-import { useTokens } from '../../hooks/useTokens';
+import { useTokens } from '../../CombinedTokensProvider';
 import { getChainNameAndColor } from '../../utils/chains';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 
 function TokenList() {
   const location = useLocation();
   const { convertToGlobalFormatted } = useCurrencyConversions();
-  const { loading: loadingTokens, tokens } = useTokens(1);
+  const { loading: loadingTokens, tokens } = useTokens();
 
   const topTokens = useMemo(() => {
     if (!tokens || !tokens.length) {
