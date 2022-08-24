@@ -151,7 +151,7 @@ export async function loadTokens(chainId: number) {
   }
 
   const tokenURLs: { [key: number]: string } = {
-    1: 'https://tokens.coingecko.com/uniswap/all.json',
+    1: 'https://gateway.ipfs.io/ipns/tokens.uniswap.org',
     10: 'https://static.optimism.io/optimism.tokenlist.json',
     42161: 'https://bridge.arbitrum.io/token-list-42161.json',
     137: 'https://api-polygon-tokens.polygon.technology/tokenlists/allTokens.tokenlist.json',
@@ -168,7 +168,7 @@ export async function loadTokens(chainId: number) {
   // filter tokens by chainId
   // some token lists return tokens from multiple networks,
   // we want to return only the tokens for the network.
-  const filtered = tokens.filter((token) => token.chainId === chainId);
+  const filtered = tokens.filter((token: { chainId: number }) => token.chainId === chainId);
 
   // add WMATIC
   if (chainId === 137) {

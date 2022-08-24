@@ -6,6 +6,8 @@ import { useTokens } from '../../CombinedTokensProvider';
 import { getChainNameAndColor } from '../../utils/chains';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 
+import TokenLogo from '../../ui/TokenLogo';
+
 function TokenList() {
   const location = useLocation();
   const { convertToGlobalFormatted } = useCurrencyConversions();
@@ -54,7 +56,12 @@ function TokenList() {
         {topTokens.map((token) => (
           <div className="h-full rounded-md flex-shrink-0 flex-col flex" key={token.name}>
             <div className="flex items-start text-low">
-              <img className="w-8 h-8 mr-2" alt={`${token.name} logo`} src={token.logo} />
+              <TokenLogo
+                className="w-8 h-8 mr-2"
+                name={token.name}
+                address={token.address}
+                src={token.logo}
+              />
               <div className="flex flex-col text-high">
                 <div className="text-1.25 font-bold leading-tight flex items-center">
                   {token.name}{' '}

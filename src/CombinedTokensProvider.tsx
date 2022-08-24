@@ -17,17 +17,22 @@ interface Props {
 export const CombinedTokensProvider = ({ children }: Props) => {
   const { loading: mainnetLoading, tokens: mainnetTokens } = useTokensForNetwork(ChainID.Mainnet);
   const { loading: polygonLoading, tokens: polygonTokens } = useTokensForNetwork(ChainID.Matic);
+  const { loading: optimismLoading, tokens: optimismTokens } = useTokensForNetwork(
+    ChainID.Optimism,
+  );
   const { loading: arbitrumLoading, tokens: arbitrumTokens } = useTokensForNetwork(
     ChainID.Arbitrum,
   );
 
   const loading = useMemo(() => {
-    return mainnetLoading || polygonLoading || arbitrumLoading;
-  }, [mainnetLoading, polygonLoading, arbitrumLoading]);
+    return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading;
+  }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
 
   const tokens = useMemo(() => {
-    return [...mainnetTokens, ...polygonTokens, ...arbitrumTokens];
-  }, [mainnetTokens, polygonTokens, arbitrumTokens]);
+    return [...mainnetTokens, ...polygonTokens, ...optimismTokens, ...arbitrumTokens].sort((a, b) =>
+      a.value.lessThan(b.value) ? 1 : -1,
+    );
+  }, [mainnetTokens, polygonTokens, optimismTokens, arbitrumTokens]);
 
   const empty = useMemo(() => {
     if (loading) {
