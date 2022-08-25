@@ -4,15 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { useTokens } from '../../CombinedTokensProvider';
 import { getChainNameAndColor } from '../../utils/chains';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import { ChainID } from '../../enums';
 
 import BackArrow from '../../icons/LeftArrow';
 import LoadingSpinner from '../../ui/Spinner';
 import TokenLogo from '../../ui/TokenLogo';
+import Card from '../../ui/Card';
 
 const TokensPage = () => {
   const navigate = useNavigate();
-  const { convertToGlobalFormatted } = useCurrencyConversions();
-  const { loading, tokens } = useTokens();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { loading, tokens, totalTokenValue } = useTokens();
 
   function handleClickBack() {
     navigate(-1);
@@ -39,7 +41,21 @@ const TokensPage = () => {
         <BackArrow />
         <span className="ml-2">Home</span>
       </button>
-      <h1 className="text-2.5 font-bold tracking-tighter leading-tight mt-4 text-high">Tokens</h1>
+
+      <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
+        <div className="hidden md:flex w-4/5 flex-col text-high">
+          <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Tokens</h1>
+        </div>
+        <div className="flex w-1/5 overflow-x-auto md:overflow-x-visible py-2">
+          <Card className="ml-1 md:ml-2">
+            <div className="text-1.25 md:text-1.75 my-1 font-semibold">
+              {formatCurrencyWithSymbol(totalTokenValue, ChainID.Mainnet)}
+            </div>
+            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
+          </Card>
+        </div>
+      </div>
+
       <table className="text-high w-full mt-4">
         <thead className="border-b border-element-10">
           <tr className="align-middle">
