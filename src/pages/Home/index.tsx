@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import toast, { Toaster } from 'react-hot-toast';
 
 import { PoolState } from '../../types/seedle';
 import { ROUTES } from '../../constants';
@@ -23,6 +25,7 @@ import IconOptions from '../../icons/Options';
 import IconDownload from '../../icons/Download';
 import { useAddress } from '../../AddressProvider';
 import { shortenAddress } from '../../utils/shortenAddress';
+import CopyIcon from '../../icons/Copy';
 
 function Home() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
@@ -33,6 +36,8 @@ function Home() {
   const handleDownloadCSV = useCSV();
 
   const { addresses } = useAddress();
+
+  const notifyCopy = () => toast('Copied to clipboard.');
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -92,14 +97,24 @@ function Home() {
     );
   }
 
+  console.log('rendered');
+
   return (
     <div className="w-full h-full">
       <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
         <div className="hidden md:flex w-1/2 flex-col text-high">
           <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Home</h1>
-          <div className="text-medium">
-            A 10,000ft summary of{' '}
-            <span className="text-high font-medium">{shortenAddress(addresses[0])}.</span>
+          <div className="text-medium flex items-center mt-1">
+            A 10,000ft summary of &nbsp;
+            <>
+              <span className="text-high font-medium mr-1">{shortenAddress(addresses[0])}</span>
+              <CopyToClipboard text={addresses[0]}>
+                <button onClick={notifyCopy}>
+                  <CopyIcon />
+                </button>
+              </CopyToClipboard>
+              <Toaster />
+            </>
           </div>
         </div>
         <div className="flex w-full lg:w-2/3 xl:w-1/2 overflow-x-auto md:overflow-x-visible py-2">
