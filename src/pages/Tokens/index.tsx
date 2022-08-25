@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 import { ChainID } from '../../enums';
 
@@ -14,6 +14,7 @@ import { ROUTES } from '../../constants';
 import Card from '../../ui/Card';
 
 const TokensPage = () => {
+  const location = useLocation();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { loading, tokens, totalTokenValue } = useTokens();
 
@@ -32,7 +33,10 @@ const TokensPage = () => {
   return (
     <div>
       <div className="flex justify-between">
-        <Link to={ROUTES.HOME} className="text-0.875 font-medium text-medium flex items-center">
+        <Link
+          to={`${ROUTES.HOME}${location.search}`}
+          className="text-0.875 font-medium text-medium flex items-center"
+        >
           <BackArrow />
           <span className="ml-2">Home</span>
         </Link>

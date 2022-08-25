@@ -72,10 +72,6 @@ function Pools() {
     navigate(`${ROUTES.POOL_DETAILS}/${address}${location.search}`);
   }
 
-  function handleClickBack() {
-    navigate(-1);
-  }
-
   if (loading) {
     return (
       <div>
@@ -94,13 +90,13 @@ function Pools() {
 
   return (
     <div className="w-full h-full">
-      <button
+      <Link
+        to={`${ROUTES.HOME}${location.search}`}
         className="text-0.875 font-medium text-medium flex items-center"
-        onClick={handleClickBack}
       >
         <BackArrow />
         <span className="ml-2">Home</span>
-      </button>
+      </Link>
       <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
         <div className="hidden md:flex w-1/2 flex-col text-high">
           <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Pools</h1>
@@ -158,7 +154,7 @@ function Pools() {
         {empty ? (
           <div className="py-12 rounded-lg">
             <div className="text-center text-1 md:text-1 text-low mt-4">
-              This address has no position history.
+              This address has no positions.
             </div>
             <Link
               to={ROUTES.ADD_NEW}
