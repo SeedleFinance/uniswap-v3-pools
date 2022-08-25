@@ -69,11 +69,11 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
       }
 
       let price = 0;
-      if (val.currency.equals(WETH9[val.currency.chainId])) {
+      if (val.currency.isNative || val.currency.equals(WETH9[val.currency.chainId])) {
         price = 1;
       } else {
         let currency = baseTokens[val.currency.symbol as string];
-        if (val.currency.symbol === 'WMATIC') {
+        if (val.currency.symbol === 'WMATIC' || val.currency.symbol === 'MATIC') {
           currency = MATIC[ChainID.Mainnet];
         } else if (val.currency.symbol === 'vUSD') {
           // treat Perp vUSD as USDC for pricing

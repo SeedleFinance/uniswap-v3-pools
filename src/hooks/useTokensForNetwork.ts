@@ -1,13 +1,31 @@
 import { useMemo } from 'react';
 import { tickToPrice } from '@uniswap/v3-sdk';
-import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
+import { Token, Ether, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { formatUnits } from '@ethersproject/units';
 
-import { WETH9 } from '../constants';
+import { WETH9, MATIC } from '../constants';
+import { ChainID } from '../enums';
 import { useAddress } from '../AddressProvider';
 import { useFetchTokenBalances, TokenBalance } from './fetch';
 import { formatInput } from '../utils/numbers';
+
+function getTokenOrNative(chainId: number, address: string, metadata: any) {
+  if (address === 'native') {
+    if (chainId === ChainID.Matic) {
+      return MATIC[chainId];
+    }
+    return new Ether(chainId);
+  }
+  return new Token(chainId, address, metadata.decimals, metadata.symbol, metadata.name);
+}
+
+function isNativeToken(chainId: number, token: Token | Ether) {
+  return (
+    token.isNative ||
+    (chainId === ChainID.Matic ? token.equals(MATIC[chainId]) : token.equals(WETH9[chainId]))
+  );
+}
 
 export function useTokensForNetwork(chainId: number) {
   const { addresses } = useAddress();
@@ -19,12 +37,13 @@ export function useTokensForNetwork(chainId: number) {
     }
 
     return tokenBalances.map(({ address, balance, metadata, priceTick }: TokenBalance) => {
-      const token = new Token(chainId, address, metadata.decimals, metadata.symbol, metadata.name);
+      const token = getTokenOrNative(chainId, address, metadata);
       const balanceFormatted = formatInput(parseFloat(formatUnits(balance, token.decimals)));
 
       const ONE_UNIT = `1${'0'.repeat(token.decimals)}`;
       const tokenCurrency = CurrencyAmount.fromRawAmount(token, ONE_UNIT);
-      const price = token.equals(WETH9[chainId])
+
+      const price = isNativeToken(chainId, token)
         ? tokenCurrency
         : priceTick === null
         ? CurrencyAmount.fromRawAmount(WETH9[chainId], 0)
