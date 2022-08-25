@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { useTokens } from '../../CombinedTokensProvider';
 import { getChainNameAndColor } from '../../utils/chains';
@@ -8,15 +8,11 @@ import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import BackArrow from '../../icons/LeftArrow';
 import LoadingSpinner from '../../ui/Spinner';
 import TokenLogo from '../../ui/TokenLogo';
+import { ROUTES } from '../../constants';
 
 const TokensPage = () => {
-  const navigate = useNavigate();
   const { convertToGlobalFormatted } = useCurrencyConversions();
   const { loading, tokens } = useTokens();
-
-  function handleClickBack() {
-    navigate(-1);
-  }
 
   if (loading) {
     return (
@@ -32,13 +28,10 @@ const TokensPage = () => {
 
   return (
     <div>
-      <button
-        className="text-0.875 font-medium text-medium flex items-center"
-        onClick={handleClickBack}
-      >
+      <Link to={ROUTES.HOME} className="text-0.875 font-medium text-medium flex items-center">
         <BackArrow />
         <span className="ml-2">Home</span>
-      </button>
+      </Link>
       <h1 className="text-2.5 font-bold tracking-tighter leading-tight mt-4 text-high">Tokens</h1>
       <div className="pb-8 overflow-x-auto">
         <table className="text-high w-full mt-4">
