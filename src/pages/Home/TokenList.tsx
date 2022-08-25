@@ -52,7 +52,7 @@ function TokenList() {
           This address has no tokens.
         </div>
       )}
-      <div className="w-full mt-8 flex gap-20 overflow-x-auto pb-12">
+      <div className="w-full mt-8 flex gap-8 md:gap-20 overflow-x-auto pb-12">
         {topTokens.map((token) => (
           <div className="h-full rounded-md flex-shrink-0 flex-col flex" key={token.name}>
             <div className="flex items-start text-low">
