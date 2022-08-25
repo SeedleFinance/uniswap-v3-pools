@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { ChainID } from '../../enums';
+
 import { useTokens } from '../../CombinedTokensProvider';
 import { getChainNameAndColor } from '../../utils/chains';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
@@ -12,9 +14,8 @@ import { ROUTES } from '../../constants';
 import Card from '../../ui/Card';
 
 const TokensPage = () => {
-  const { convertToGlobalFormatted } = useCurrencyConversions();
-  const { loading, tokens } = useTokens();
-  const { formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { loading, tokens, totalTokenValue } = useTokens();
 
   if (loading) {
     return (
@@ -38,7 +39,7 @@ const TokensPage = () => {
         <div className="">
           <Card>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
-              {formatCurrencyWithSymbol(0.0, 1)}
+              {formatCurrencyWithSymbol(totalTokenValue, ChainID.Mainnet)}
             </div>
             <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>

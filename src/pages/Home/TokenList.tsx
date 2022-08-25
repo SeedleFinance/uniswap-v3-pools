@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 
 import { ROUTES } from '../../constants';
+import { ChainID } from '../../enums';
+
 import { useTokens } from '../../CombinedTokensProvider';
 import { getChainNameAndColor } from '../../utils/chains';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
@@ -10,8 +12,8 @@ import TokenLogo from '../../ui/TokenLogo';
 
 function TokenList() {
   const location = useLocation();
-  const { convertToGlobalFormatted } = useCurrencyConversions();
-  const { loading: loadingTokens, tokens } = useTokens();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { loading, tokens, totalTokenValue } = useTokens();
 
   const topTokens = useMemo(() => {
     if (!tokens || !tokens.length) {
@@ -21,7 +23,7 @@ function TokenList() {
     return tokens.slice(0, 10);
   }, [tokens]);
 
-  if (loadingTokens) {
+  if (loading) {
     return (
       <div className="w-full">
         <div className="w-32 h-6 py-2 flex-shrink-0 bg-surface-10 mt-12 rounded-md"></div>
@@ -42,7 +44,9 @@ function TokenList() {
       <div className="flex justify-between w-full border-b border-element-10 py-4">
         <div className="flex items-baseline">
           <h2 className=" font-bold text-1.25 text-high">Tokens</h2>
-          <span className="text-0.875 ml-2 flex text-medium">($0.00)</span>
+          <span className="text-0.875 ml-2 flex text-medium">
+            ({formatCurrencyWithSymbol(totalTokenValue, ChainID.Mainnet)})
+          </span>
         </div>
         {tokens.length > 0 && (
           <Link to={`${ROUTES.TOKENS}/${location.search}`} className="text-low text-0.875">
