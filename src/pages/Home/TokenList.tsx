@@ -40,7 +40,10 @@ function TokenList() {
   return (
     <div className="w-full mt-12">
       <div className="flex justify-between w-full border-b border-element-10 py-4">
-        <h2 className="leading-tight font-bold text-1.25 text-high">Tokens</h2>
+        <div className="flex items-baseline">
+          <h2 className=" font-bold text-1.25 text-high">Tokens</h2>
+          <span className="text-0.875 ml-2 flex text-medium">($0.00)</span>
+        </div>
         {tokens.length > 0 && (
           <Link to={`${ROUTES.TOKENS}/${location.search}`} className="text-low text-0.875">
             View all
