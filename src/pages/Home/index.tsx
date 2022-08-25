@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
 import toast, { Toaster } from 'react-hot-toast';
 
 import { PoolState } from '../../types/seedle';
@@ -97,7 +96,12 @@ function Home() {
     );
   }
 
-  console.log('rendered');
+  function handleClickCopy(text: string) {
+    navigator.clipboard.writeText(text);
+
+    // fire toast
+    notifyCopy();
+  }
 
   return (
     <div className="w-full h-full">
@@ -108,11 +112,9 @@ function Home() {
             A 10,000ft summary of &nbsp;
             <>
               <span className="text-high font-medium mr-1">{shortenAddress(addresses[0])}</span>
-              <CopyToClipboard text={addresses[0]}>
-                <button onClick={notifyCopy}>
-                  <CopyIcon />
-                </button>
-              </CopyToClipboard>
+              <button onClick={() => handleClickCopy(addresses[0])}>
+                <CopyIcon />
+              </button>
               <Toaster />
             </>
           </div>
