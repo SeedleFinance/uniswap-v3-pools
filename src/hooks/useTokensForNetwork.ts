@@ -15,7 +15,7 @@ function getTokenOrNative(chainId: number, address: string, metadata: any) {
     if (chainId === ChainID.Matic) {
       return MATIC[chainId];
     }
-    return new Ether(chainId);
+    return Ether.onChain(chainId);
   }
   return new Token(chainId, address, metadata.decimals, metadata.symbol, metadata.name);
 }
@@ -47,7 +47,9 @@ export function useTokensForNetwork(chainId: number) {
         ? tokenCurrency
         : priceTick === null
         ? CurrencyAmount.fromRawAmount(WETH9[chainId], 0)
-        : tickToPrice(token, WETH9[chainId], priceTick).quote(tokenCurrency);
+        : tickToPrice(token as Token, WETH9[chainId], priceTick).quote(
+            tokenCurrency as CurrencyAmount<Token>,
+          );
       const value = price.multiply(new Fraction(BigNumber.from(balance).toString(), ONE_UNIT));
 
       return {

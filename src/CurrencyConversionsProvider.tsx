@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useCallback } from 'react';
-import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Token, Currency, CurrencyAmount } from '@uniswap/sdk-core';
 import { tickToPrice } from '@uniswap/v3-sdk';
 
 import { WETH9, DAI, USDC, USDT, MATIC, WBTC, CRV, FEI } from './constants';
@@ -10,7 +10,7 @@ import { useAppSettings } from './AppSettingsProvider';
 import { useFetchPriceFeed } from './hooks/fetch';
 
 const CurrencyConversionsContext = React.createContext({
-  convertToGlobal: (val: CurrencyAmount<Token>): number => {
+  convertToGlobal: (val: CurrencyAmount<Currency>): number => {
     return 0;
   },
   convertToGlobalFormatted: (val: CurrencyAmount<Token>): string => {
@@ -61,7 +61,7 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
   );
 
   const convertToGlobal = useCallback(
-    (val: CurrencyAmount<Token>): number => {
+    (val: CurrencyAmount<Currency>): number => {
       const valFloat = parseFloat(val.toSignificant(15));
       const globalCurrencyToken = getGlobalCurrencyToken(val.currency.chainId);
       if (val.currency.equals(globalCurrencyToken)) {
