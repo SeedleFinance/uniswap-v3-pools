@@ -44,10 +44,18 @@ const TokensPage = () => {
         <table className="text-high w-full mt-4">
           <thead className="border-b border-element-10">
             <tr className="align-middle">
-              <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">Token</th>
-              <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Balance</th>
-              <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Current Price</th>
-              <th className="text-right px-6 py-4 whitespace-nowrap font-medium">Value</th>
+              <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left text-0.875">
+                Token
+              </th>
+              <th className="text-right px-6 py-4 whitespace-nowrap font-medium text-0.875">
+                Balance
+              </th>
+              <th className="text-right px-6 py-4 whitespace-nowrap font-medium text-0.875">
+                Current Price
+              </th>
+              <th className="text-right px-6 py-4 whitespace-nowrap font-medium text-0.875">
+                Value
+              </th>
             </tr>
           </thead>
           <tbody className="text-0.875">
@@ -55,10 +63,11 @@ const TokensPage = () => {
               <tr key={token.name} className="w-full hover:bg-surface-10 cursor-pointer">
                 <td className="md:px-6 py-4 whitespace-nowrap flex items-center font-medium text-left">
                   <TokenLogo
-                    className="w-8 h-8 mr-2"
                     name={token.name}
                     address={token.address}
                     src={token.logo}
+                    size="sm"
+                    className="mr-2"
                   />
                   {token.name}
                   <div

@@ -20,7 +20,7 @@ function TokenLogo({ chain, name, address, src, className, size = 'sm' }: Props)
     }
   };
 
-  if (src && src !== null) {
+  if (src) {
     return (
       <img
         ref={imgEl}

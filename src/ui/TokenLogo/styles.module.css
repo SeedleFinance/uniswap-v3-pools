@@ -7,11 +7,11 @@
 }
 
 .logo--sm {
-  @apply w-5 h-5;
+  @apply w-6 h-6;
 }
 
 .logo--md {
-  @apply w-6 h-6;
+  @apply w-8 h-8;
 }
 
 .logo--lg {

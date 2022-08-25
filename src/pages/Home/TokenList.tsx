@@ -57,10 +57,11 @@ function TokenList() {
           <div className="h-full rounded-md flex-shrink-0 flex-col flex" key={token.name}>
             <div className="flex items-start text-low">
               <TokenLogo
-                className="w-8 h-8 mr-2"
                 name={token.name}
                 address={token.address}
                 src={token.logo}
+                size="md"
+                className="mr-2"
               />
               <div className="flex flex-col text-high">
                 <div className="text-1.25 font-bold leading-tight flex items-center">
