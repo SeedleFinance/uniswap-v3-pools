@@ -9,10 +9,12 @@ import BackArrow from '../../icons/LeftArrow';
 import LoadingSpinner from '../../ui/Spinner';
 import TokenLogo from '../../ui/TokenLogo';
 import { ROUTES } from '../../constants';
+import Card from '../../ui/Card';
 
 const TokensPage = () => {
   const { convertToGlobalFormatted } = useCurrencyConversions();
   const { loading, tokens } = useTokens();
+  const { formatCurrencyWithSymbol } = useCurrencyConversions();
 
   if (loading) {
     return (
@@ -28,10 +30,20 @@ const TokensPage = () => {
 
   return (
     <div>
-      <Link to={ROUTES.HOME} className="text-0.875 font-medium text-medium flex items-center">
-        <BackArrow />
-        <span className="ml-2">Home</span>
-      </Link>
+      <div className="flex justify-between">
+        <Link to={ROUTES.HOME} className="text-0.875 font-medium text-medium flex items-center">
+          <BackArrow />
+          <span className="ml-2">Home</span>
+        </Link>
+        <div className="">
+          <Card>
+            <div className="text-1.25 md:text-1.75 my-1 font-semibold">
+              {formatCurrencyWithSymbol(0.0, 1)}
+            </div>
+            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
+          </Card>
+        </div>
+      </div>
       <h1 className="text-2.5 font-bold tracking-tighter leading-tight mt-4 text-high">Tokens</h1>
       <div className="pb-8 overflow-x-auto">
         <table className="text-high w-full mt-4">
