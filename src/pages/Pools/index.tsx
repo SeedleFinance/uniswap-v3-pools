@@ -5,6 +5,7 @@ import { PoolState } from '../../types/seedle';
 import { ROUTES } from '../../constants';
 import { LABELS } from '../../content/tooltip';
 
+import { useAppSettings } from '../../AppSettingsProvider';
 import { usePools } from '../../CombinedPoolsProvider';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import { useCSV } from '../../hooks/useCSV';
@@ -23,6 +24,7 @@ import Row from '../Home/Row';
 import BackArrow from '../../icons/LeftArrow';
 
 function Pools() {
+  const { filterClosed } = useAppSettings();
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
 
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
@@ -36,12 +38,14 @@ function Pools() {
       return [];
     }
 
-    return pools.sort((a, b) => {
-      const aLiq = convertToGlobal(a.poolLiquidity);
-      const bLiq = convertToGlobal(b.poolLiquidity);
-      return bLiq - aLiq;
-    });
-  }, [loading, pools, convertToGlobal]);
+    return pools
+      .filter((pool) => (filterClosed ? !pool.rawPoolLiquidity.isZero() : true))
+      .sort((a, b) => {
+        const aLiq = convertToGlobal(a.poolLiquidity);
+        const bLiq = convertToGlobal(b.poolLiquidity);
+        return bLiq - aLiq;
+      });
+  }, [loading, pools, convertToGlobal, filterClosed]);
 
   // calculate total
   const [totalLiquidity, totalUncollectedFees] = useMemo(() => {

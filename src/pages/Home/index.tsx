@@ -10,20 +10,15 @@ import { ChainID } from '../../enums';
 import { usePools } from '../../CombinedPoolsProvider';
 import { useTokens } from '../../CombinedTokensProvider';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
-import { useCSV } from '../../hooks/useCSV';
 
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
-import FilterClosedToggle from './FilterClosedToggle';
 import LastUpdatedStamp from '../../ui/LastUpdatedStamp';
 import Plus from '../../icons/Plus';
 import Tooltip from '../../ui/Tooltip';
 import IconHelper from '../../icons/Helper';
 import Row from './Row';
 import TokenList from './TokenList';
-import DropdownMenu from '../../ui/DropdownMenu';
-import IconOptions from '../../icons/Options';
-import IconDownload from '../../icons/Download';
 import { useAddress } from '../../AddressProvider';
 import { shortenAddress } from '../../utils/shortenAddress';
 import CopyIcon from '../../icons/Copy';
@@ -34,7 +29,6 @@ function Home() {
   const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
   const navigate = useNavigate();
   const location = useLocation();
-  const handleDownloadCSV = useCSV();
   const { totalTokenValue } = useTokens();
 
   const { addresses } = useAddress();
@@ -47,11 +41,13 @@ function Home() {
       return [];
     }
 
-    return pools.sort((a, b) => {
-      const aLiq = convertToGlobal(a.poolLiquidity);
-      const bLiq = convertToGlobal(b.poolLiquidity);
-      return bLiq - aLiq;
-    });
+    return pools
+      .filter((pool) => !pool.rawPoolLiquidity.isZero())
+      .sort((a, b) => {
+        const aLiq = convertToGlobal(a.poolLiquidity);
+        const bLiq = convertToGlobal(b.poolLiquidity);
+        return bLiq - aLiq;
+      });
   }, [loading, pools, convertToGlobal]);
 
   // calculate total
@@ -151,40 +147,24 @@ function Home() {
 
       <div className="w-full mt-4 md:mt-12">
         <div className="w-full flex justify-between py-4 border-b border-element-10 mb-8">
-          <div className="flex items-baseline">
+          <div className="w-2/3 flex items-baseline">
             <h2 className=" font-bold text-1.25 text-high">Pools</h2>
             <span className="text-0.875 ml-2 text-medium flex">
               ({formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, ChainID.Mainnet)})
             </span>
           </div>
-          {sortedPools.length > 0 && (
-            <Link to={`${ROUTES.POOLS}/${location.search}`} className="text-low text-0.875">
-              View all
-            </Link>
-          )}
-        </div>
-        <div className="flex justify-between items-center">
-          <FilterClosedToggle />
-          <div className="flex">
-            <Button href="/add/new" size="md" className="ml-2">
+          <div className="w-1/3 flex items-center justify-end">
+            <Button href="/add/new" size="md" className="ml-2 mr-4">
               <div className="flex items-center -ml-1">
                 <Plus />
                 <span className="ml-1">New Position</span>
               </div>
             </Button>
-            <DropdownMenu
-              options={[
-                {
-                  label: 'Download CSV',
-                  cb: handleDownloadCSV,
-                  icon: <IconDownload />,
-                },
-              ]}
-            >
-              <div className="w-8 h-8 flex items-center justify-center">
-                <IconOptions />
-              </div>
-            </DropdownMenu>
+            {sortedPools.length > 0 && (
+              <Link to={`${ROUTES.POOLS}/${location.search}`} className="text-low text-0.875">
+                View all
+              </Link>
+            )}
           </div>
         </div>
       </div>

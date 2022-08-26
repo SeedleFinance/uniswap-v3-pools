@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 
+import { ROUTES } from '../../constants';
 import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 import { usePools } from '../../CombinedPoolsProvider';
 
@@ -22,7 +22,7 @@ const PoolDetailsPage = () => {
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted } = useCurrencyConversions();
   const { id } = useParams();
-  const navigate = useNavigate();
+  const location = useLocation();
 
   // Select a single pool
   const pool = useMemo(() => {
@@ -62,21 +62,17 @@ const PoolDetailsPage = () => {
     poolUncollectedFees,
   } = pool;
 
-  function handleClickBack() {
-    navigate(-1);
-  }
-
   function handleClickDownloadCSV() {}
 
   return (
     <div className="flex flex-col w-full">
-      <button
+      <Link
+        to={`${ROUTES.HOME}${location.search}`}
         className="text-0.875 font-medium text-medium flex items-center"
-        onClick={handleClickBack}
       >
         <BackArrow />
-        <span className="ml-2">All positions</span>
-      </button>
+        <span className="ml-2">Home</span>
+      </Link>
       <div className="flex flex-col-reverse md:flex-row justify-between items-start md:items-center mt-4">
         <div className="flex mt-8 md:mt-0">
           <PoolButton
