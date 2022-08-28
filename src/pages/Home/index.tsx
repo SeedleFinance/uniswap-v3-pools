@@ -147,7 +147,7 @@ function Home() {
 
       <div className="w-full mt-4 md:mt-12">
         <div className="w-full flex justify-between py-4 border-b border-element-10 mb-8">
-          <div className="w-2/3 flex items-baseline">
+          <div className="w-2/3 flex items-center">
             <h2 className=" font-bold text-1.25 text-high">Pools</h2>
             <span className="text-0.875 ml-2 text-medium flex">
               ({formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, ChainID.Mainnet)})

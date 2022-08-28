@@ -33,10 +33,10 @@ export const CombinedTokensProvider = ({ children }: Props) => {
   }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
 
   const tokens = useMemo(() => {
-    return [...mainnetTokens, ...polygonTokens, ...optimismTokens, ...arbitrumTokens].sort((a, b) =>
-      a.value.lessThan(b.value) ? 1 : -1,
-    );
-  }, [mainnetTokens, polygonTokens, optimismTokens, arbitrumTokens]);
+    return [...mainnetTokens, ...polygonTokens, ...optimismTokens, ...arbitrumTokens]
+      .map((token) => ({ ...token, globalValue: convertToGlobal(token.value) }))
+      .sort((a, b) => (a.globalValue < b.globalValue ? 1 : -1));
+  }, [mainnetTokens, polygonTokens, optimismTokens, arbitrumTokens, convertToGlobal]);
 
   const empty = useMemo(() => {
     if (loading) {
@@ -49,8 +49,8 @@ export const CombinedTokensProvider = ({ children }: Props) => {
     if (loading) {
       return 0;
     }
-    return tokens.reduce((accm, token) => accm + convertToGlobal(token.value), 0);
-  }, [loading, tokens, convertToGlobal]);
+    return tokens.reduce((accm, token) => accm + token.globalValue, 0);
+  }, [loading, tokens]);
 
   return (
     <TokensContext.Provider
