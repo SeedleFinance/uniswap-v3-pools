@@ -40,7 +40,7 @@ function reconcileTransactions(chainId: number, txs: any[]) {
   });
 }
 
-export function usePoolsForNetwork(chainId: number, timestamp: number, noFilterClosed = false) {
+export function usePoolsForNetwork(chainId: number, timestamp: number) {
   const { addresses } = useAddress();
 
   const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
