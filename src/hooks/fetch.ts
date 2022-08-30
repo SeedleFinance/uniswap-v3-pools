@@ -263,7 +263,7 @@ export function useFetchPriceFeed(
     };
 
     if (!tokens || !tokens.length) {
-      setPriceFeedResult([]);
+      setPriceFeedResult({});
       setLoading(false);
     }
 

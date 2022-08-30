@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -26,12 +26,17 @@ import CopyIcon from '../../icons/Copy';
 function Home() {
   const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
 
-  const { loading, empty, pools, lastLoaded, refresh, refreshingList } = usePools();
+  const { loading, empty, pools, lastLoaded, refresh: refreshPools, refreshingList } = usePools();
   const navigate = useNavigate();
   const location = useLocation();
-  const { totalTokenValue } = useTokens();
+  const { totalTokenValue, refreshTokenPrices } = useTokens();
 
   const { addresses } = useAddress();
+
+  const refreshPoolsAndTokens = useCallback(() => {
+    refreshPools();
+    refreshTokenPrices();
+  }, [refreshPools, refreshTokenPrices]);
 
   const notifyCopy = () => toast('Copied to clipboard.');
 
@@ -254,7 +259,7 @@ function Home() {
         <LastUpdatedStamp
           loading={loading || refreshingList}
           lastLoaded={lastLoaded}
-          refresh={refresh}
+          refresh={refreshPoolsAndTokens}
         />
       </div>
     </div>

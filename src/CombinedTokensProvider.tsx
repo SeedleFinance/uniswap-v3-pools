@@ -1,14 +1,17 @@
-import React, { ReactNode, useContext, useMemo } from 'react';
+import React, { ReactNode, useContext, useCallback, useMemo, useState } from 'react';
 
+import { ChainID } from './enums';
 import { useTokensForNetwork } from './hooks/useTokensForNetwork';
 import { useCurrencyConversions } from './CurrencyConversionsProvider';
-import { ChainID } from './enums';
+import { useFetchPriceFeed } from './hooks/fetch';
+import { priceFromTick } from './utils/tokens';
 
 const TokensContext = React.createContext({
   tokens: [] as any[],
   loading: true,
   empty: false,
   totalTokenValue: 0,
+  refreshTokenPrices: () => {},
 });
 export const useTokens = () => useContext(TokensContext);
 
@@ -32,11 +35,21 @@ export const CombinedTokensProvider = ({ children }: Props) => {
     return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading;
   }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading]);
 
+  const [refreshingTokenAddresses, setRefreshingTokenAddresses] = useState<string[]>([]);
+  const { priceFeed } = useFetchPriceFeed(ChainID.Mainnet, refreshingTokenAddresses);
+
   const tokens = useMemo(() => {
     return [...mainnetTokens, ...polygonTokens, ...optimismTokens, ...arbitrumTokens]
-      .map((token) => ({ ...token, globalValue: convertToGlobal(token.value) }))
+      .map((token) => {
+        const priceTick = priceFeed[token.address];
+        return {
+          ...token,
+          globalValue: convertToGlobal(token.value),
+          price: priceTick ? priceFromTick(token.entity, priceTick) : token.price,
+        };
+      })
       .sort((a, b) => (a.globalValue < b.globalValue ? 1 : -1));
-  }, [mainnetTokens, polygonTokens, optimismTokens, arbitrumTokens, convertToGlobal]);
+  }, [mainnetTokens, polygonTokens, optimismTokens, arbitrumTokens, convertToGlobal, priceFeed]);
 
   const empty = useMemo(() => {
     if (loading) {
@@ -52,6 +65,14 @@ export const CombinedTokensProvider = ({ children }: Props) => {
     return tokens.reduce((accm, token) => accm + token.globalValue, 0);
   }, [loading, tokens]);
 
+  const refreshTokenPrices = useCallback(() => {
+    setRefreshingTokenAddresses(
+      tokens
+        .filter((token) => token.address !== 'native' && token.chainId === ChainID.Mainnet)
+        .map((token) => token.address),
+    );
+  }, [tokens]);
+
   return (
     <TokensContext.Provider
       value={{
@@ -59,6 +80,7 @@ export const CombinedTokensProvider = ({ children }: Props) => {
         empty,
         loading,
         totalTokenValue,
+        refreshTokenPrices,
       }}
     >
       {children}

@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
-import { tickToPrice } from '@uniswap/v3-sdk';
-import { Token, Ether, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
+import { Token, Ether, Fraction } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { formatUnits } from '@ethersproject/units';
 
-import { WETH9, MATIC } from '../constants';
+import { MATIC } from '../constants';
 import { ChainID } from '../enums';
 import { useAddress } from '../AddressProvider';
 import { useFetchTokenBalances, TokenBalance } from './fetch';
 import { formatInput } from '../utils/numbers';
+import { oneTokenUnit, priceFromTick } from '../utils/tokens';
 
 function getTokenOrNative(chainId: number, address: string, metadata: any) {
   if (address === 'native') {
@@ -18,13 +18,6 @@ function getTokenOrNative(chainId: number, address: string, metadata: any) {
     return Ether.onChain(chainId);
   }
   return new Token(chainId, address, metadata.decimals, metadata.symbol, metadata.name);
-}
-
-function isNativeToken(chainId: number, token: Token | Ether) {
-  return (
-    token.isNative ||
-    (chainId === ChainID.Matic ? token.equals(MATIC[chainId]) : token.equals(WETH9[chainId]))
-  );
 }
 
 export function useTokensForNetwork(chainId: number) {
@@ -40,17 +33,10 @@ export function useTokensForNetwork(chainId: number) {
       const token = getTokenOrNative(chainId, address, metadata);
       const balanceFormatted = formatInput(parseFloat(formatUnits(balance, token.decimals)));
 
-      const ONE_UNIT = `1${'0'.repeat(token.decimals)}`;
-      const tokenCurrency = CurrencyAmount.fromRawAmount(token, ONE_UNIT);
-
-      const price = isNativeToken(chainId, token)
-        ? tokenCurrency
-        : priceTick === null
-        ? CurrencyAmount.fromRawAmount(WETH9[chainId], 0)
-        : tickToPrice(token as Token, WETH9[chainId], priceTick).quote(
-            tokenCurrency as CurrencyAmount<Token>,
-          );
-      const value = price.multiply(new Fraction(BigNumber.from(balance).toString(), ONE_UNIT));
+      const price = priceFromTick(token, priceTick);
+      const value = price.multiply(
+        new Fraction(BigNumber.from(balance).toString(), oneTokenUnit(token)),
+      );
 
       return {
         chainId,
