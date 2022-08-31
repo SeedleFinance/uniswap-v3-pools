@@ -22,10 +22,10 @@ export function getQuoteAndBaseToken(
     DAI[chainId as number],
     FEI,
     PAX,
-    CRV[chainId],
-    WBTC[chainId],
     WETH9[chainId],
     WMATIC[chainId],
+    WBTC[chainId],
+    CRV[chainId],
   ];
 
   for (let i = 0; i < baseCurrencies.length; i++) {
