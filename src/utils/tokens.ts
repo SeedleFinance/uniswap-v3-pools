@@ -24,8 +24,8 @@ export function getQuoteAndBaseToken(
     PAX,
     CRV[chainId],
     WBTC[chainId],
-    WMATIC[chainId],
     WETH9[chainId],
+    WMATIC[chainId],
   ];
 
   for (let i = 0; i < baseCurrencies.length; i++) {
