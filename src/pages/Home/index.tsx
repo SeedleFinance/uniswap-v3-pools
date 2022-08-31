@@ -24,7 +24,7 @@ import { shortenAddress } from '../../utils/shortenAddress';
 import CopyIcon from '../../icons/Copy';
 
 function Home() {
-  const { convertToGlobal, formatCurrencyWithSymbol } = useCurrencyConversions();
+  const { convertToGlobal, formatCurrencyWithSymbol, refreshPriceFeed } = useCurrencyConversions();
 
   const { loading, empty, pools, lastLoaded, refresh: refreshPools, refreshingList } = usePools();
   const navigate = useNavigate();
@@ -35,8 +35,9 @@ function Home() {
 
   const refreshPoolsAndTokens = useCallback(() => {
     refreshPools();
+    refreshPriceFeed();
     refreshTokenPrices();
-  }, [refreshPools, refreshTokenPrices]);
+  }, [refreshPools, refreshTokenPrices, refreshPriceFeed]);
 
   const notifyCopy = () => toast('Copied to clipboard.');
 

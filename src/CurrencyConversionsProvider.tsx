@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useCallback } from 'react';
+import React, { ReactNode, useContext, useCallback, useState } from 'react';
 import { Token, Currency, CurrencyAmount } from '@uniswap/sdk-core';
 import { tickToPrice } from '@uniswap/v3-sdk';
 
@@ -19,6 +19,7 @@ const CurrencyConversionsContext = React.createContext({
   formatCurrencyWithSymbol: (val: number, chainId: number): string => {
     return '$0';
   },
+  refreshPriceFeed: () => {},
 });
 export const useCurrencyConversions = () => useContext(CurrencyConversionsContext);
 
@@ -38,11 +39,15 @@ const baseTokens: { [token: string]: Token } = {
 const baseTokenAddresses = Object.values(baseTokens).map((t) => t.address);
 
 export const CurrencyConversionsProvider = ({ children }: Props) => {
+  const { getGlobalCurrencyToken } = useAppSettings();
+
+  const [priceFeedLastLoaded, setPriceFeedLastLoaded] = useState(+new Date());
+
   const { loading: loadingPriceFeed, priceFeed } = useFetchPriceFeed(
     ChainID.Mainnet,
     baseTokenAddresses,
+    priceFeedLastLoaded,
   );
-  const { getGlobalCurrencyToken } = useAppSettings();
 
   const getETHPrice = useCallback(
     (token: Token) => {
@@ -112,12 +117,17 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
     [formatCurrencyWithSymbol, convertToGlobal],
   );
 
+  const refreshPriceFeed = () => {
+    setPriceFeedLastLoaded(+new Date());
+  };
+
   return (
     <CurrencyConversionsContext.Provider
       value={{
         convertToGlobal,
         formatCurrencyWithSymbol,
         convertToGlobalFormatted,
+        refreshPriceFeed,
       }}
     >
       {children}

@@ -234,6 +234,7 @@ export function useFetchUncollectedFees(
 export function useFetchPriceFeed(
   chainId: number,
   tokens: string[],
+  timestamp?: number,
 ): { loading: boolean; priceFeed: { [pool: string]: number } } {
   const [loading, setLoading] = useState(true);
   const [priceFeedResult, setPriceFeedResult] = useState({});
@@ -268,7 +269,7 @@ export function useFetchPriceFeed(
     }
 
     _call();
-  }, [chainId, tokens]);
+  }, [chainId, tokens, timestamp]);
 
   return { loading, priceFeed: priceFeedResult };
 }
