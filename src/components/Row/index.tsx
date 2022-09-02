@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { Token, CurrencyAmount } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
 import JSBI from "jsbi";
+import { usePoolFeeAPY } from '../../hooks/calculations';
 import { useCurrencyConversions } from "../../providers/CurrencyConversionProvider";
-import { useFeeAPY } from "../../hooks/calculations";
 
 import PoolButton from "../PoolButton";
 import TokenLabel from "../TokenLabel";
@@ -24,7 +24,7 @@ interface Props {
   currentPrice: number;
 }
 
-function Row({
+function PoolRow({
   onClick,
   entity,
   quoteToken,
@@ -44,12 +44,7 @@ function Row({
     }, []);
   }, [positions]);
 
-  const feeAPY = useFeeAPY(
-    entity,
-    baseToken,
-    currencyPoolUncollectedFees,
-    poolTransactions
-  );
+  const feeAPY = usePoolFeeAPY(entity, baseToken, positions);
 
   return (
     <tr onClick={onClick} className="hover:bg-surface-5 cursor-pointer">
@@ -102,4 +97,4 @@ function Row({
     </tr>
   );
 }
-export default Row;
+export default PoolRow;

@@ -139,6 +139,95 @@ function calcPeriodYield(
   return periodYield.divide(secondsSince);
 }
 
+function calculateFeeAPY(
+  pool: Pool,
+  baseToken: Token,
+  uncollectedFees: CurrencyAmount<Token>[],
+  transactions: any[],
+): number {
+  const zeroAmount = CurrencyAmount.fromRawAmount(baseToken, 0);
+
+  if (!transactions.length) {
+    return 0;
+  }
+
+  const sortedTxs = transactions.sort((a: any, b: any) => a.timestamp - b.timestamp);
+
+  const periodYieldsPerSecond = [];
+  let periodLiquidityAdded = zeroAmount;
+  let periodLiquidityRemoved = zeroAmount;
+  let periodStart = new Date();
+
+  sortedTxs.forEach(
+    ({
+      transactionType,
+      amount0,
+      amount1,
+      timestamp,
+    }: {
+      transactionType: TxTypes;
+      amount0: CurrencyAmount<Token>;
+      amount1: CurrencyAmount<Token>;
+      timestamp: number;
+    }) => {
+      let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
+      if (transactionType === TxTypes.Add) {
+        if (periodLiquidityAdded.lessThan(zeroAmount) || periodLiquidityAdded.equalTo(zeroAmount)) {
+          periodStart = new Date(timestamp * 1000);
+        }
+        periodLiquidityAdded = periodLiquidityAdded.add(liquidity);
+      } else if (transactionType === TxTypes.Remove) {
+        periodLiquidityRemoved = periodLiquidityRemoved.add(liquidity);
+      } else if (transactionType === TxTypes.Collect) {
+        const periodEnd = new Date(timestamp * 1000);
+        const periodYield = calcPeriodYield(
+          liquidity,
+          periodLiquidityAdded,
+          periodStart,
+          periodEnd,
+        );
+        periodYieldsPerSecond.push(periodYield);
+
+        // reset period
+        periodLiquidityAdded = periodLiquidityAdded.subtract(periodLiquidityRemoved);
+        periodLiquidityRemoved = zeroAmount;
+        periodStart = periodEnd;
+      }
+    },
+  );
+
+  // calculate uncollected fee yield
+  const totalUncollectedFees =
+    uncollectedFees.length > 1
+      ? calcLiquidity(pool, baseToken, uncollectedFees[0], uncollectedFees[1])
+      : uncollectedFees[0];
+  if (!totalUncollectedFees.equalTo(zeroAmount)) {
+    const uncollectedYield = calcPeriodYield(
+      totalUncollectedFees,
+      periodLiquidityAdded,
+      periodStart,
+      new Date(),
+    );
+    periodYieldsPerSecond.push(uncollectedYield);
+  }
+
+  let totalYield = CurrencyAmount.fromRawAmount(baseToken, 0);
+  periodYieldsPerSecond.forEach((y) => (totalYield = totalYield.add(y)));
+
+  if (!periodYieldsPerSecond.length) {
+    return 0;
+  }
+
+  const yearInSeconds = 365 * 24 * 60 * 60;
+  return parseFloat(
+    totalYield
+      .divide(periodYieldsPerSecond.length)
+      .multiply(yearInSeconds)
+      .multiply(100)
+      .toFixed(2),
+  );
+}
+
 export function useFeeAPY(
   pool: Pool,
   baseToken: Token,
@@ -146,93 +235,22 @@ export function useFeeAPY(
   transactions: any[]
 ) {
   return useMemo(() => {
-    const zeroAmount = CurrencyAmount.fromRawAmount(baseToken, 0);
-
-    if (!transactions.length) {
-      return zeroAmount;
-    }
-
-    const sortedTxs = transactions.sort(
-      (a: any, b: any) => a.timestamp - b.timestamp
-    );
-
-    const periodYieldsPerSecond = [];
-    let periodLiquidityAdded = zeroAmount;
-    let periodLiquidityRemoved = zeroAmount;
-    let periodStart = new Date();
-
-    sortedTxs.forEach(
-      ({
-        transactionType,
-        amount0,
-        amount1,
-        timestamp,
-      }: {
-        transactionType: TxTypes;
-        amount0: CurrencyAmount<Token>;
-        amount1: CurrencyAmount<Token>;
-        timestamp: number;
-      }) => {
-        let liquidity = calcLiquidity(pool, baseToken, amount0, amount1);
-        if (transactionType === TxTypes.Add) {
-          if (
-            periodLiquidityAdded.lessThan(zeroAmount) ||
-            periodLiquidityAdded.equalTo(zeroAmount)
-          ) {
-            periodStart = new Date(timestamp * 1000);
-          }
-          periodLiquidityAdded = periodLiquidityAdded.add(liquidity);
-        } else if (transactionType === TxTypes.Remove) {
-          periodLiquidityRemoved = periodLiquidityRemoved.add(liquidity);
-        } else if (transactionType === TxTypes.Collect) {
-          const periodEnd = new Date(timestamp * 1000);
-          const periodYield = calcPeriodYield(
-            liquidity,
-            periodLiquidityAdded,
-            periodStart,
-            periodEnd
-          );
-          periodYieldsPerSecond.push(periodYield);
-
-          // reset period
-          periodLiquidityAdded = periodLiquidityAdded.subtract(
-            periodLiquidityRemoved
-          );
-          periodLiquidityRemoved = zeroAmount;
-          periodStart = periodEnd;
-        }
-      }
-    );
-
-    // calculate uncollected fee yield
-    const totalUncollectedFees =
-      uncollectedFees.length > 1
-        ? calcLiquidity(pool, baseToken, uncollectedFees[0], uncollectedFees[1])
-        : uncollectedFees[0];
-    if (!totalUncollectedFees.equalTo(zeroAmount)) {
-      const uncollectedYield = calcPeriodYield(
-        totalUncollectedFees,
-        periodLiquidityAdded,
-        periodStart,
-        new Date()
-      );
-      periodYieldsPerSecond.push(uncollectedYield);
-    }
-
-    let totalYield = CurrencyAmount.fromRawAmount(baseToken, 0);
-    periodYieldsPerSecond.forEach((y) => (totalYield = totalYield.add(y)));
-
-    if (!periodYieldsPerSecond.length) {
-      return zeroAmount;
-    }
-
-    const yearInSeconds = 365 * 24 * 60 * 60;
-    return parseFloat(
-      totalYield
-        .divide(periodYieldsPerSecond.length)
-        .multiply(yearInSeconds)
-        .multiply(100)
-        .toFixed(2)
-    );
+    return calculateFeeAPY(pool, baseToken, uncollectedFees, transactions);
   }, [transactions, pool, baseToken, uncollectedFees]);
+}
+
+export function usePoolFeeAPY(pool: Pool, baseToken: Token, positions: any[]) {
+  return useMemo(() => {
+    if (!positions || !positions.length) {
+      return 0;
+    }
+
+    const totalAPY = positions.reduce((accm, position) => {
+      return (
+        accm + calculateFeeAPY(pool, baseToken, position.uncollectedFees, position.transactions)
+      );
+    }, 0);
+
+    return totalAPY / positions.length;
+  }, [positions, pool, baseToken]);
 }

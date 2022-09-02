@@ -216,7 +216,7 @@ function AllPoolsLayout() {
                     poolUncollectedFees,
                     currencyPoolUncollectedFees,
                   }: PoolState) => (
-                    <Row
+                    <Pool
                       key={key}
                       onClick={() => handleRowClick(address)}
                       entity={entity}

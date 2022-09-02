@@ -7,9 +7,9 @@ import {
   useTransactionTotals,
   useReturnValue,
   useAPR,
-  useFeeAPY,
-} from "../../hooks/calculations";
-import { useCurrencyConversions } from "../../providers/CurrencyConversionProvider";
+  usePoolFeeAPY,
+} from '../../hooks/calculations';
+import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
 
 import LoadingSpinner from "../../components/Spinner";
 import Tooltip from "../../components/Tooltip";
@@ -87,12 +87,7 @@ function Pool({
 
   const apr = useAPR(poolTransactions, returnPercent, rawPoolLiquidity);
 
-  const feeAPY = useFeeAPY(
-    entity,
-    baseToken,
-    currencyPoolUncollectedFees,
-    poolTransactions
-  );
+  const feeAPY = usePoolFeeAPY(entity, baseToken, positions);
 
   if (!baseToken || !quoteToken || !entity) {
     return (
