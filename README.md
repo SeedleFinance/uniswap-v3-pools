@@ -1,5 +1,6 @@
 # Seedle Finance - Uniswap V3 Pool Manager
 
+
 A UI to manage Uniswap v3 pools. Check the hosted version at https://seedle.finance
 
 This project was made with [Next Js](https://nextjs.org)
