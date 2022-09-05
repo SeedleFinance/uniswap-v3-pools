@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { uniqBy } from 'lodash';
-import { BigNumber } from '@ethersproject/bignumber';
+import { useState, useEffect } from "react";
+import { uniqBy } from "lodash";
+import { BigNumber } from "@ethersproject/bignumber";
 
-import { TxTypes } from '../enums';
+import { TxTypes } from "../types/enums";
 
 export interface TransactionV2 {
   id: string;
@@ -69,7 +69,7 @@ export interface TokenBalance {
 export function useFetchPositions(
   chainId: number,
   addresses: string[],
-  timestamp: number,
+  timestamp: number
 ): { loading: boolean; positionStates: PositionStateV2[] } {
   const [loading, setLoading] = useState(true);
   const [positionStates, setPositionStates] = useState<PositionStateV2[]>([]);
@@ -78,9 +78,10 @@ export function useFetchPositions(
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/positions';
+      const url =
+        "https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/positions";
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ chainId, addresses, timestamp }),
       });
       if (!res.ok) {
@@ -99,12 +100,16 @@ export function useFetchPositions(
           // calculate position liquidity
           let positionLiquidity = BigNumber.from(0);
           // remove duplicate transactions
-          const txs = uniqBy(result.transactions, 'id');
+          const txs = uniqBy(result.transactions, "id");
           txs.forEach(({ transactionType, liquidity }: any) => {
             if (transactionType === TxTypes.Add) {
-              positionLiquidity = positionLiquidity.add(BigNumber.from(liquidity));
+              positionLiquidity = positionLiquidity.add(
+                BigNumber.from(liquidity)
+              );
             } else if (transactionType === TxTypes.Remove) {
-              positionLiquidity = positionLiquidity.sub(BigNumber.from(liquidity));
+              positionLiquidity = positionLiquidity.sub(
+                BigNumber.from(liquidity)
+              );
             }
           });
 
@@ -140,7 +145,7 @@ export function useFetchPositions(
 
 export function useFetchPools(
   chainId: number,
-  addresses: string[],
+  addresses: string[]
 ): { loading: boolean; poolStates: PoolStateV2[] } {
   const [loading, setLoading] = useState(true);
   const [poolStates, setPoolStates] = useState([]);
@@ -149,9 +154,10 @@ export function useFetchPools(
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/v2/pools';
+      const url =
+        "https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/v2/pools";
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ chainId, addresses }),
       });
       if (!res.ok) {
@@ -167,7 +173,7 @@ export function useFetchPools(
       // Pools should not be null (null pools are usually a result of data indexing error)
       // however there can be pools without any liquidity - we'd filter them out
       pools = pools.filter(
-        (pool: any) => pool && pool.liquidity.length && pool.sqrtPriceX96.length,
+        (pool: any) => pool && pool.liquidity.length && pool.sqrtPriceX96.length
       );
 
       setPoolStates(pools);
@@ -189,7 +195,7 @@ export function useFetchPools(
 
 export function useFetchUncollectedFees(
   chainId: number,
-  pools: UncollectedFeesInput[],
+  pools: UncollectedFeesInput[]
 ): { loading: boolean; uncollectedFees: UncollectedFeesResult[][] } {
   const [loading, setLoading] = useState(true);
   const [uncollectedFees, setUncollectedFees] = useState([]);
@@ -198,9 +204,9 @@ export function useFetchUncollectedFees(
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/fees';
+      const url = "https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/fees";
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ chainId, pools }),
       });
       if (!res.ok) {
@@ -234,7 +240,7 @@ export function useFetchUncollectedFees(
 export function useFetchPriceFeed(
   chainId: number,
   tokens: string[],
-  timestamp?: number,
+  timestamp?: number
 ): { loading: boolean; priceFeed: { [pool: string]: number } } {
   const [loading, setLoading] = useState(true);
   const [priceFeedResult, setPriceFeedResult] = useState({});
@@ -243,9 +249,10 @@ export function useFetchPriceFeed(
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/prices';
+      const url =
+        "https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/prices";
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ chainId, tokens }),
       });
       if (!res.ok) {
@@ -276,7 +283,7 @@ export function useFetchPriceFeed(
 
 export function useFetchTokenBalances(
   chainId: number,
-  address: string,
+  address: string
 ): { loading: boolean; tokenBalances: TokenBalance[] } {
   const [loading, setLoading] = useState(true);
   const [tokenBalances, setTokenBalances] = useState([]);
@@ -285,9 +292,10 @@ export function useFetchTokenBalances(
     const _call = async () => {
       setLoading(true);
 
-      const url = 'https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/token_balances';
+      const url =
+        "https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/token_balances";
       const res = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ chainId, address }),
       });
       if (!res.ok) {
@@ -305,7 +313,7 @@ export function useFetchTokenBalances(
       setLoading(false);
     };
 
-    if (!address || address === '') {
+    if (!address || address === "") {
       setTokenBalances([]);
       setLoading(false);
       return;

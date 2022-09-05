@@ -1,12 +1,12 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
-import { BigNumber } from '@ethersproject/bignumber';
-import { CurrencyAmount, Token } from '@uniswap/sdk-core';
+import { useQuery } from "@apollo/client";
+import gql from "graphql-tag";
+import { BigNumber } from "@ethersproject/bignumber";
+import { CurrencyAmount, Token } from "@uniswap/sdk-core";
 
-import { useAddress } from '../AddressProvider';
-import { getClient } from '../apollo/client';
-import { WETH9, MATIC } from '../constants';
-import { TxTypes } from '../enums';
+import { useAddress } from "../providers/AddressProvider";
+import { getClient } from "../lib/apollo";
+import { WETH9, MATIC } from "../common/constants";
+import { TxTypes } from "../types/enums";
 
 const QUERY_MINTS_BURNS = gql`
   query mints_burns($origins: [String]!, $poolAddresses: [String]!) {
@@ -150,7 +150,7 @@ export function useTransactions(chainId: number, poolAddresses: string[]) {
 
   const { loading, error, data } = useQuery(QUERY_MINTS_BURNS, {
     variables: { origins: addresses, poolAddresses },
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     client: getClient(chainId),
   });
 
@@ -166,7 +166,7 @@ export function useTransactions(chainId: number, poolAddresses: string[]) {
     const cost = used.mul(price);
     const costCurrency = CurrencyAmount.fromRawAmount(
       chainId === 137 ? MATIC[chainId] : WETH9[chainId],
-      cost.toString(),
+      cost.toString()
     );
 
     return { used, price, cost, costCurrency };
@@ -193,12 +193,28 @@ export function useTransactions(chainId: number, poolAddresses: string[]) {
       poolAddress: pool.id,
       gas: calcGasCost(transaction),
       amount0: CurrencyAmount.fromRawAmount(
-        new Token(chainId, token0.id, parseInt(token0.decimals, 10), token0.symbol, token0.name),
-        Math.ceil(parseFloat(amount0) * Math.pow(10, parseInt(token0.decimals, 10))),
+        new Token(
+          chainId,
+          token0.id,
+          parseInt(token0.decimals, 10),
+          token0.symbol,
+          token0.name
+        ),
+        Math.ceil(
+          parseFloat(amount0) * Math.pow(10, parseInt(token0.decimals, 10))
+        )
       ),
       amount1: CurrencyAmount.fromRawAmount(
-        new Token(chainId, token1.id, parseInt(token1.decimals, 10), token1.symbol, token1.name),
-        Math.ceil(parseFloat(amount1) * Math.pow(10, parseInt(token1.decimals, 10))),
+        new Token(
+          chainId,
+          token1.id,
+          parseInt(token1.decimals, 10),
+          token1.symbol,
+          token1.name
+        ),
+        Math.ceil(
+          parseFloat(amount1) * Math.pow(10, parseInt(token1.decimals, 10))
+        )
       ),
     });
   };
@@ -209,7 +225,7 @@ export function useTransactions(chainId: number, poolAddresses: string[]) {
 
   const reconcileBurnsAndCollects = (
     accm: FormattedPoolTransaction[],
-    tx: FormattedPoolTransaction,
+    tx: FormattedPoolTransaction
   ) => {
     const prevTxIdx = accm.findIndex((ptx) => ptx.id === tx.id);
     // no previous tx found, returning early
@@ -238,7 +254,7 @@ export function useTransactions(chainId: number, poolAddresses: string[]) {
         cost: BigNumber.from(0),
         costCurrency: CurrencyAmount.fromRawAmount(
           chainId === 137 ? MATIC[chainId] : WETH9[chainId],
-          0,
+          0
         ),
       };
 
@@ -252,14 +268,17 @@ export function useTransactions(chainId: number, poolAddresses: string[]) {
 
   return [...mints, ...burns, ...collects]
     .reduce(reconcileBurnsAndCollects, [] as FormattedPoolTransaction[])
-    .sort((a: FormattedPoolTransaction, b: FormattedPoolTransaction) => a.timestamp - b.timestamp);
+    .sort(
+      (a: FormattedPoolTransaction, b: FormattedPoolTransaction) =>
+        a.timestamp - b.timestamp
+    );
 }
 
 export function useCollects(chainId: number, burns: any[]) {
   const ids = burns.map(({ transaction }) => transaction.id);
   const { loading, error, data } = useQuery(QUERY_COLLECTS, {
     variables: { ids },
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     client: getClient(chainId),
   });
 

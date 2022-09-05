@@ -1,6 +1,6 @@
-import { Currency, NativeCurrency, Token } from '@uniswap/sdk-core';
+import { Currency, NativeCurrency, Token } from "@uniswap/sdk-core";
 
-import { WMATIC } from '../constants';
+import { WMATIC } from "../common/constants";
 
 function isMatic(chainId: number) {
   return chainId === 137;
@@ -12,7 +12,7 @@ export default class MaticNativeCurrency extends NativeCurrency {
   }
 
   get wrapped(): Token {
-    if (!isMatic(this.chainId)) throw new Error('Not matic');
+    if (!isMatic(this.chainId)) throw new Error("Not matic");
     const nativeCurrency = WMATIC[this.chainId];
     if (nativeCurrency) {
       return nativeCurrency;
@@ -21,7 +21,7 @@ export default class MaticNativeCurrency extends NativeCurrency {
   }
 
   public constructor(chainId: number) {
-    if (!isMatic(chainId)) throw new Error('Not matic');
-    super(chainId, 18, 'MATIC', 'Polygon Matic');
+    if (!isMatic(chainId)) throw new Error("Not matic");
+    super(chainId, 18, "MATIC", "Polygon Matic");
   }
 }

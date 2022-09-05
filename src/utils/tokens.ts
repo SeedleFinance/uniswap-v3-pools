@@ -1,13 +1,23 @@
-import { Token, Ether, Currency, CurrencyAmount } from '@uniswap/sdk-core';
-import { tickToPrice } from '@uniswap/v3-sdk';
+import { Token, Ether, Currency, CurrencyAmount } from "@uniswap/sdk-core";
+import { tickToPrice } from "@uniswap/v3-sdk";
 
-import { WETH9, DAI, USDC, USDT, PAX, FEI, WMATIC, WBTC, CRV } from '../constants';
-import MaticNativeCurrency from './matic';
+import {
+  WETH9,
+  DAI,
+  USDC,
+  USDT,
+  PAX,
+  FEI,
+  WMATIC,
+  WBTC,
+  CRV,
+} from "../common/constants";
+import MaticNativeCurrency from "./matic";
 
 export function getQuoteAndBaseToken(
   chainId: number | undefined,
   token0: Token,
-  token1: Token,
+  token1: Token
 ): [Token, Token] {
   let quote = token0;
   let base = token1;
@@ -48,7 +58,9 @@ export function getQuoteAndBaseToken(
 }
 
 export function getNativeToken(chainId: number) {
-  return chainId === 137 ? new MaticNativeCurrency(chainId) : Ether.onChain(chainId);
+  return chainId === 137
+    ? new MaticNativeCurrency(chainId)
+    : Ether.onChain(chainId);
 }
 
 export function isNativeToken(token: Currency) {
@@ -61,17 +73,23 @@ export function isNativeToken(token: Currency) {
 }
 
 export function oneTokenUnit(token: Currency): string {
-  return `1${'0'.repeat(token.decimals)}`;
+  return `1${"0".repeat(token.decimals)}`;
 }
 
-export function priceFromTick(token: Currency, priceTick: number | null): CurrencyAmount<Currency> {
-  const tokenCurrency = CurrencyAmount.fromRawAmount(token, oneTokenUnit(token));
+export function priceFromTick(
+  token: Currency,
+  priceTick: number | null
+): CurrencyAmount<Currency> {
+  const tokenCurrency = CurrencyAmount.fromRawAmount(
+    token,
+    oneTokenUnit(token)
+  );
 
   return isNativeToken(token)
     ? tokenCurrency
     : priceTick === null
     ? CurrencyAmount.fromRawAmount(WETH9[token.chainId], 0)
     : tickToPrice(token as Token, WETH9[token.chainId], priceTick).quote(
-        tokenCurrency as CurrencyAmount<Token>,
+        tokenCurrency as CurrencyAmount<Token>
       );
 }
