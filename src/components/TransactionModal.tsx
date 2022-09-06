@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BLOCK_EXPLORER_URL } from '../constants';
+import { BLOCK_EXPLORER_URL } from '../common/constants';
 import Modal from './Modal/Modal';
 
 interface Props {

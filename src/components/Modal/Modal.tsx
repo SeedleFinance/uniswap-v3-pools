@@ -1,7 +1,7 @@
 import React, { useRef, ReactNode } from 'react';
 import ReactDOM from 'react-dom';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import Icon from '../Icon/Icon';
+// import { faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+// import Icon from '../Icon/Icon';
 import Button from '../Button';
 
 interface Props {
@@ -37,7 +37,8 @@ const Modal = ({ title, children, className, onClose }: Props) => {
           <h2 className="text-1.75 font-bold text-high">{title}</h2>
           {onClose && (
             <Button variant="ghost" onClick={() => onClose(false)}>
-              <Icon icon={faTimesCircle} />
+              {/* <Icon icon={faTimesCircle} /> */}
+              todo
             </Button>
           )}
         </header>

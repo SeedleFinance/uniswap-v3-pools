@@ -1,6 +1,6 @@
 import { CurrencyAmount, Token } from '@uniswap/sdk-core';
 import { Position } from '@uniswap/v3-sdk';
-import { usePools } from '../CombinedPoolsProvider';
+import { usePools } from '../providers/CombinedPoolsProvider';
 
 export function useCSV() {
   const { pools } = usePools();

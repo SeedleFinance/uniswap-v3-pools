@@ -4,8 +4,8 @@ import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
 import { usePoolLiquidityData } from '../../../hooks/usePoolLiquidityData';
-import LoadingSpinner from '../../../ui/Spinner';
-import { useAppSettings } from '../../../AppSettingsProvider';
+import LoadingSpinner from '../../../components/Spinner';
+import { useAppSettings } from '../../../providers/AppSettingsProvider';
 
 interface Props {
   address: string;

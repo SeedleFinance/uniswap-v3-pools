@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import classNames from 'classnames';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Menu, Transition } from '@headlessui/react';
 import Button from '../Button';
 
@@ -42,12 +42,11 @@ function DropdownMenu({ children, options, className }: DropdownMenuProps) {
           {options.map((option) => (
             <Menu.Item key={option.label!.toString()}>
               {option.href ? (
-                <Link
-                  to={option.href}
-                  className="px-4 py-2 flex !justify-start items-center w-full text-sm text-high hover:bg-surface-10 !rounded-none"
-                >
-                  <span className="w-4 h-4 text-medium mr-2">{option.icon}</span>
-                  <span className="text-0.8125">{option.label}</span>
+                <Link href={option.href}>
+                  <a className="px-4 py-2 flex !justify-start items-center w-full text-sm text-high hover:bg-surface-10 !rounded-none">
+                    <span className="w-4 h-4 text-medium mr-2">{option.icon}</span>
+                    <span className="text-0.8125">{option.label}</span>
+                  </a>
                 </Link>
               ) : (
                 <Button

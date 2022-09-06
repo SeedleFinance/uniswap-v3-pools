@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useNetwork } from 'wagmi';
 
-import { ChainID } from '../enums';
+import { ChainID } from '../types/enums';
 
 export function useChainId() {
   const { chain } = useNetwork();

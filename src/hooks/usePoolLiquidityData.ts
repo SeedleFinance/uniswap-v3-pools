@@ -4,7 +4,7 @@ import { Token } from '@uniswap/sdk-core';
 import { Pool, tickToPrice } from '@uniswap/v3-sdk';
 import JSBI from 'jsbi';
 
-import { getClient } from '../apollo/client';
+import { getClient } from '../lib/apollo';
 
 const QUERY_POOL_LIQUIDITY_DATA = gql`
   query pool_liquidity_data($poolAddress: String!) {

@@ -1,14 +1,8 @@
-import React, {
-  ReactNode,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
-import { usePoolsForNetwork } from "../hooks/usePoolsForNetwork";
-import { usePerpV2 } from "../hooks/usePerpV2";
-import { ChainID } from "../types/enums";
+import { usePoolsForNetwork } from '../hooks/usePoolsForNetwork';
+import { usePerpV2 } from '../hooks/usePerpV2';
+import { ChainID } from '../types/enums';
 
 const PoolsContext = React.createContext({
   pools: [] as any[],
@@ -55,37 +49,14 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
   const { loading: perpLoading, pools: perpPools } = usePerpV2(10);
 
   const loading = useMemo(() => {
-    return (
-      mainnetLoading ||
-      polygonLoading ||
-      optimismLoading ||
-      arbitrumLoading ||
-      perpLoading
-    );
-  }, [
-    mainnetLoading,
-    polygonLoading,
-    optimismLoading,
-    arbitrumLoading,
-    perpLoading,
-  ]);
+    return mainnetLoading || polygonLoading || optimismLoading || arbitrumLoading || perpLoading;
+  }, [mainnetLoading, polygonLoading, optimismLoading, arbitrumLoading, perpLoading]);
 
   const feesLoading = useMemo(() => {
-    return (
-      mainnetFeesLoading ||
-      polygonFeesLoading ||
-      optimismFeesLoading ||
-      arbitrumFeesLoading
-    );
-  }, [
-    mainnetFeesLoading,
-    polygonFeesLoading,
-    optimismFeesLoading,
-    arbitrumFeesLoading,
-  ]);
+    return mainnetFeesLoading || polygonFeesLoading || optimismFeesLoading || arbitrumFeesLoading;
+  }, [mainnetFeesLoading, polygonFeesLoading, optimismFeesLoading, arbitrumFeesLoading]);
 
   useEffect(() => {
-    console.log("here__");
     if (initialLoading && !loading) {
       setInitialLoading(false);
     }
@@ -96,13 +67,7 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
   }, [loading, feesLoading]);
 
   const pools = useMemo(() => {
-    return [
-      ...mainnetPools,
-      ...polygonPools,
-      ...optimismPools,
-      ...arbitrumPools,
-      ...perpPools,
-    ];
+    return [...mainnetPools, ...polygonPools, ...optimismPools, ...arbitrumPools, ...perpPools];
   }, [mainnetPools, polygonPools, optimismPools, arbitrumPools, perpPools]);
 
   const empty = useMemo(() => {

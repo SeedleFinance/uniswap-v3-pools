@@ -5,7 +5,7 @@ import { Token } from '@uniswap/sdk-core';
 import { tickToPrice } from '@uniswap/v3-sdk';
 import format from 'date-fns/format';
 
-import { getClient } from '../apollo/client';
+import { getClient } from '../lib/apollo';
 
 const QUERY_POOL_DAY_DATA = gql`
   query pool_day_data($poolAddress: String!, $days: Int!, $hours: Int!) {

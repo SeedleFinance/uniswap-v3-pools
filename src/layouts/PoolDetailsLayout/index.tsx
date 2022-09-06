@@ -1,36 +1,30 @@
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react';
 
-import { ROUTES } from "../../common/constants";
-import { useCurrencyConversions } from "../../CurrencyConversionsProvider";
-import { usePools } from "../../CombinedPoolsProvider";
+import { ROUTES } from '../../common/constants';
+import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
+import { usePools } from '../../providers/CombinedPoolsProvider';
 
-import BackArrow from "../../components/icons/LeftArrow";
-import Card from "../../components/Card";
-import PoolButton from "../../components/PoolButton";
-import LastUpdatedStamp from "../../components/LastUpdatedStamp";
-import Pool from "./Pool";
-import Positions from "./Positions";
-import ChartLayout from "./Chart";
-import DropdownMenu from "../../components/DropdownMenu";
-import IconDownload from "../../components/icons/Download";
-import Button from "../../components/Button";
-import IconOptions from "../../components/icons/Options";
-import Plus from "../../components/icons/Plus";
-import { useRouter } from "next/router";
-import Link from "next/link";
+import BackArrow from '../../components/icons/LeftArrow';
+import Card from '../../components/Card';
+import PoolButton from '../../components/PoolButton';
+import LastUpdatedStamp from '../../components/LastUpdatedStamp';
+import Pool from './Pool';
+import Positions from './Positions';
+import ChartLayout from './Chart';
+import DropdownMenu from '../../components/DropdownMenu';
+import IconDownload from '../../components/icons/Download';
+import Button from '../../components/Button';
+import IconOptions from '../../components/icons/Options';
+import Plus from '../../components/icons/Plus';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const PoolDetailsPage = () => {
-  const {
-    loading: loadingPools,
-    pools,
-    lastLoaded,
-    refresh,
-    refreshingList,
-  } = usePools();
+  const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted } = useCurrencyConversions();
-  const { id } = useParams();
-
   const { query } = useRouter();
+
+  const id = query.id;
 
   // Select a single pool
   const pool = useMemo(() => {
@@ -74,14 +68,11 @@ const PoolDetailsPage = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <Link
-        href={`${ROUTES.HOME}${query.search}`}
-        className="text-0.875 font-medium text-medium flex items-center"
-      >
-        <>
+      <Link href={`${ROUTES.HOME}${location.search}`}>
+        <a className="text-0.875 font-medium text-medium flex items-center">
           <BackArrow />
           <span className="ml-2">Home</span>
-        </>
+        </a>
       </Link>
       <div className="flex flex-col-reverse md:flex-row justify-between items-start md:items-center mt-4">
         <div className="flex mt-8 md:mt-0">
@@ -95,12 +86,9 @@ const PoolDetailsPage = () => {
           />
           <div className="hidden lg:flex flex-col ml-6 mt-8 md:-mt-3">
             <span className="text-medium text-0.6875">
-              Current Price (
-              {baseToken.symbol === "WETH" ? "ETH" : baseToken.symbol})
+              Current Price ({baseToken.symbol === 'WETH' ? 'ETH' : baseToken.symbol})
             </span>
-            <span className="text-1.25 lg:text-2 font-semibold text-high">
-              {currentPrice}
-            </span>
+            <span className="text-1.25 lg:text-2 font-semibold text-high">{currentPrice}</span>
           </div>
         </div>
         <div className="flex lg:ml-6 w-full lg:w-1/3">
@@ -108,17 +96,13 @@ const PoolDetailsPage = () => {
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {convertToGlobalFormatted(poolUncollectedFees)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">
-              Uncollected Fees
-            </div>
+            <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {convertToGlobalFormatted(poolUncollectedFees.add(poolLiquidity))}
             </div>
-            <div className="text-0.875 md:text-1 text-brand-dark-primary">
-              Total Value
-            </div>
+            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>
@@ -144,7 +128,7 @@ const PoolDetailsPage = () => {
             <DropdownMenu
               options={[
                 {
-                  label: "Download CSV",
+                  label: 'Download CSV',
                   cb: handleClickDownloadCSV,
                   icon: <IconDownload />,
                 },

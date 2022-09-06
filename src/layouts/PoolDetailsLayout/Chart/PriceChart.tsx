@@ -1,9 +1,9 @@
 import { Token } from '@uniswap/sdk-core';
 import React from 'react';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useAppSettings } from '../../../AppSettingsProvider';
+import { useAppSettings } from '../../../providers/AppSettingsProvider';
 import { usePoolPriceData } from '../../../hooks/usePoolPriceData';
-import LoadingSpinner from '../../../ui/Spinner';
+import LoadingSpinner from '../../../components/Spinner';
 
 interface PriceChartProps {
   address: string;

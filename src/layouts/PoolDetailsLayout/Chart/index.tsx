@@ -3,12 +3,12 @@ import classNames from 'classnames';
 
 import { Token } from '@uniswap/sdk-core';
 
-import LoadingSpinner from '../../../ui/Spinner';
+import LoadingSpinner from '../../../components/Spinner';
 
 import { usePoolPriceData } from '../../../hooks/usePoolPriceData';
 import LiquidityChart from './LiquidityChart';
 import PriceChart from './PriceChart';
-import ChartPeriodSelector from '../../../ui/ChartPeriodSelector';
+import ChartPeriodSelector from '../../../components/ChartPeriodSelector';
 
 interface ChartLayoutProps {
   address: string;
