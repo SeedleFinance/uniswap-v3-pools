@@ -6,7 +6,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
-import { getClient } from '../apollo/client';
+import { getClient } from '../lib/apollo';
 
 const QUERY_POSITIONS = gql`
   query positionsByOwner($accounts: [String]!, $liquidity: BigInt) {

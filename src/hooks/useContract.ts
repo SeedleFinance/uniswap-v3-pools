@@ -12,6 +12,7 @@ import { abi as V3PoolABI } from '@uniswap/v3-core/artifacts/contracts/UniswapV3
 import ERC20_ABI from '../abis/erc20.json';
 import ERC20_BYTES32_ABI from '../abis/erc20_bytes32.json';
 
+//@ts-ignore
 import PerpMainMetadataOptimism from '@perp/curie-contract/metadata/optimism.json';
 import { abi as PerpOrderBookABI } from '@perp/curie-contract/artifacts/contracts/OrderBook.sol/OrderBook.json';
 

@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 
-import { getClient } from '../apollo/client';
+import { getClient } from '../lib/apollo';
 
 const QUERY_FEE_TIER_DATA = gql`
   query fee_tier_data($addr0: ID, $addr1: ID, $addr2: ID, $addr3: ID) {

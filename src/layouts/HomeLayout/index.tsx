@@ -1,40 +1,33 @@
-import React, { useCallback, useMemo } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import toast, { Toaster } from "react-hot-toast";
+import React, { useCallback, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import toast, { Toaster } from 'react-hot-toast';
 
-import Button from "../../components/Button";
-import Card from "../../components/Card";
-import CopyIcon from "../../components/icons/Copy";
-import Plus from "../../components/icons/Plus";
-import TokenList from "../TokenListLayout";
+import Button from '../../components/Button';
+import Card from '../../components/Card';
+import CopyIcon from '../../components/icons/Copy';
+import Plus from '../../components/icons/Plus';
+import TokenList from '../TokenListLayout';
 
-import { useAddress } from "../../providers/AddressProvider";
-import { usePools } from "../../providers/CombinedPoolsProvider";
-import { useTokens } from "../../providers/CombinedTokensProvider";
-import { useCurrencyConversions } from "../../providers/CurrencyConversionProvider";
+import { useAddress } from '../../providers/AddressProvider';
+import { usePools } from '../../providers/CombinedPoolsProvider';
+import { useTokens } from '../../providers/CombinedTokensProvider';
+import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 
-import { shortenAddress } from "../../utils/shortenAddress";
-import { LABELS, ROUTES } from "../../common/constants";
-import { ChainID } from "../../types/enums";
-import Tooltip from "../../components/Tooltip";
-import Helper from "../../components/icons/Helper";
-import Row from "../../components/Row";
-import LastUpdatedStamp from "../../components/LastUpdatedStamp";
+import { shortenAddress } from '../../utils/shortenAddress';
+import { LABELS, ROUTES } from '../../common/constants';
+import { ChainID } from '../../types/enums';
+import Tooltip from '../../components/Tooltip';
+import Helper from '../../components/icons/Helper';
+import Row from '../../components/Row';
+import LastUpdatedStamp from '../../components/LastUpdatedStamp';
+import { PoolState } from '../../types/seedle';
 
 const HomeLayout = () => {
   const { addressReady } = useAddress();
-  const { convertToGlobal, formatCurrencyWithSymbol, refreshPriceFeed } =
-    useCurrencyConversions();
+  const { convertToGlobal, formatCurrencyWithSymbol, refreshPriceFeed } = useCurrencyConversions();
 
-  const {
-    loading,
-    empty,
-    pools,
-    lastLoaded,
-    refresh: refreshPools,
-    refreshingList,
-  } = usePools();
+  const { loading, empty, pools, lastLoaded, refresh: refreshPools, refreshingList } = usePools();
   const router = useRouter();
 
   const { totalTokenValue, refreshTokenPrices } = useTokens();
@@ -47,7 +40,7 @@ const HomeLayout = () => {
     refreshTokenPrices();
   }, [refreshPools, refreshTokenPrices, refreshPriceFeed]);
 
-  const notifyCopy = () => toast("Copied to clipboard.");
+  const notifyCopy = () => toast('Copied to clipboard.');
 
   // sort pools by liquidity
   const sortedPools = useMemo(() => {
@@ -85,7 +78,7 @@ const HomeLayout = () => {
 
         return [totalLiquidity, totalUncollectedFees];
       },
-      [0, 0]
+      [0, 0],
     );
   }, [loading, pools, convertToGlobal]);
 
@@ -93,7 +86,7 @@ const HomeLayout = () => {
     router.push(`${ROUTES.POOL_DETAILS}/${address}${location.search}`);
   }
 
-  console.log("addressReady", addressReady);
+  console.log('addressReady', addressReady);
   console.log({ pools });
 
   if (loading || !addressReady) {
@@ -123,15 +116,11 @@ const HomeLayout = () => {
     <div className="w-full h-full">
       <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
         <div className="hidden md:flex w-1/2 flex-col text-high">
-          <h1 className="text-2.5 font-bold tracking-tighter leading-tight">
-            Home
-          </h1>
+          <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Home</h1>
           <div className="text-medium flex items-center mt-1">
             A 10,000ft summary of &nbsp;
             <>
-              <span className="text-high font-medium mr-1">
-                {shortenAddress(addresses[0])}
-              </span>
+              <span className="text-high font-medium mr-1">{shortenAddress(addresses[0])}</span>
               <button onClick={() => handleClickCopy(addresses[0])}>
                 <CopyIcon />
               </button>
@@ -142,33 +131,24 @@ const HomeLayout = () => {
         <div className="flex w-full lg:w-2/3 xl:w-1/2 overflow-x-auto md:overflow-x-visible py-2">
           <Card>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
-              {formatCurrencyWithSymbol(
-                totalLiquidity + totalTokenValue,
-                ChainID.Mainnet
-              )}
+              {formatCurrencyWithSymbol(totalLiquidity + totalTokenValue, ChainID.Mainnet)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">
-              Total Liquidity
-            </div>
+            <div className="text-0.875 md:text-1 text-medium">Total Liquidity</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalUncollectedFees, ChainID.Mainnet)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">
-              Uncollected Fees
-            </div>
+            <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
           <Card className="ml-1 md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {formatCurrencyWithSymbol(
                 totalLiquidity + totalTokenValue + totalUncollectedFees,
-                ChainID.Mainnet
+                ChainID.Mainnet,
               )}
             </div>
-            <div className="text-0.875 md:text-1 text-brand-dark-primary">
-              Total Value
-            </div>
+            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>
@@ -180,12 +160,7 @@ const HomeLayout = () => {
           <div className="w-2/3 flex items-center">
             <h2 className=" font-bold text-1.25 text-high">Pools</h2>
             <span className="text-0.875 ml-2 text-medium flex">
-              (
-              {formatCurrencyWithSymbol(
-                totalLiquidity + totalUncollectedFees,
-                ChainID.Mainnet
-              )}
-              )
+              ({formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, ChainID.Mainnet)})
             </span>
           </div>
           <div className="w-1/3 flex items-center justify-end">
@@ -196,10 +171,7 @@ const HomeLayout = () => {
               </div>
             </Button>
             {sortedPools.length > 0 && (
-              <Link
-                href={`${ROUTES.POOLS}/${location.search}`}
-                className="text-low text-0.875"
-              >
+              <Link href={`${ROUTES.POOLS}/${location.search}`} className="text-low text-0.875">
                 <a>View all</a>
               </Link>
             )}
@@ -224,9 +196,7 @@ const HomeLayout = () => {
             <table className="table-auto w-full text-high text-0.875 overflow-x-auto">
               <thead className="border-b border-element-10">
                 <tr className="align-middle">
-                  <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">
-                    Pool
-                  </th>
+                  <th className="md:px-6 py-4 whitespace-nowrap font-medium text-left">Pool</th>
                   <th className="text-right px-6 py-4 whitespace-nowrap font-medium">
                     Current Price
                   </th>
@@ -283,7 +253,7 @@ const HomeLayout = () => {
                       currentPrice={currentPrice}
                       positions={positions}
                     />
-                  )
+                  ),
                 )}
               </tbody>
             </table>

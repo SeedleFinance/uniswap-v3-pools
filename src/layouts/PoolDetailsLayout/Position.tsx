@@ -371,7 +371,7 @@ function Position({
         </td>
         <td className="py-4 hidden md:table-cell">
           <div id={`menu-${portalId}`}>
-            <Button variant="ghost" ref={triggerRef} onClick={() => setShowActions(!showActions)}>
+            <Button variant="ghost" onClick={() => setShowActions(!showActions)}>
               {/* <Icon size="lg" icon={faEllipsis} /> */}
             </Button>
           </div>

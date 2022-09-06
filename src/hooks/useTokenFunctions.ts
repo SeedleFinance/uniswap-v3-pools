@@ -8,7 +8,7 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { MaxUint256 } from '@ethersproject/constants';
 
 import { useTokenContracts, useBytes32TokenContracts } from './useContract';
-import { WETH9, WMATIC } from '../constants';
+import { WETH9, WMATIC } from '../common/constants';
 
 const callContract = async (
   contracts: any[],

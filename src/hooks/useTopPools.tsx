@@ -5,7 +5,7 @@ import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
 import { getQuoteAndBaseToken } from '../utils/tokens';
-import { getClient } from '../apollo/client';
+import { getClient } from '../lib/apollo';
 
 const QUERY_TOP_POOLS = gql`
   query top_pools($date: Int!) {
