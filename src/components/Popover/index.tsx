@@ -2,7 +2,7 @@ import React from 'react';
 import createPersistedState from 'use-persisted-state';
 import classNames from 'classnames';
 import ReactDOM from 'react-dom';
-import IconClose from '../../icons/Close';
+import IconClose from '../../components/icons/Close';
 
 import styles from './styles.module.css';
 
@@ -13,7 +13,7 @@ interface Props {
   className?: string;
 }
 
-const usePopoverState = createPersistedState('popover');
+const usePopoverState: any = createPersistedState('popover');
 
 const Popover = ({ title, description, className, href }: Props) => {
   const themeWrapperEl = document.getElementById('theme-wrapper');

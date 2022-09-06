@@ -2,7 +2,7 @@ import React from 'react';
 import { Token, CurrencyAmount } from '@uniswap/sdk-core';
 import { Position } from '@uniswap/v3-sdk';
 
-import { usePools } from '../CombinedPoolsProvider';
+import { usePools } from '../providers/CombinedPoolsProvider';
 import Button from './Button';
 
 function DownloadCSV() {
