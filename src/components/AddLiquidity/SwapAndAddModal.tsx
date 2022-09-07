@@ -3,16 +3,16 @@ import { useAccount } from 'wagmi';
 import { Token, Currency } from '@uniswap/sdk-core';
 import { SwapToRatioRoute } from '@uniswap/smart-order-router';
 
-import { useChainId } from '../../../../hooks/useChainId';
-import { useTokenFunctions } from '../../../../hooks/useTokenFunctions';
-import TokenLabel from '../../../../components/TokenLabel';
-import TokenLogo from '../../../../components/TokenLogo';
-import Modal from '../../../../components/Modal/Modal';
-import Button from '../../../../components/Button';
-import { formatInput } from '../../../../utils/numbers';
+import { useChainId } from '../../hooks/useChainId';
+import { useTokenFunctions } from '../../hooks/useTokenFunctions';
+import TokenLabel from '../TokenLabel';
+import TokenLogo from '../TokenLogo';
+import Modal from '../Modal/Modal';
+import Button from '../Button';
+import { formatInput } from '../../utils/numbers';
 import { tokenAmountNeedApproval, getApprovalAmount } from './utils';
 
-import { WETH9, SWAP_ROUTER_ADDRESSES } from '../../../../common/constants';
+import { WETH9, SWAP_ROUTER_ADDRESSES } from '../../common/constants';
 
 interface Props {
   token0: Token;

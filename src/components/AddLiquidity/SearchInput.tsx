@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { debounce } from 'lodash';
-import Input from '../../../../components/Input';
+import Input from '../Input';
 
 interface Props {
   onChange: (value: string) => void;

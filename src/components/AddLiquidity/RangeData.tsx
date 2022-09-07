@@ -18,11 +18,11 @@ import { tickToPrice } from '@uniswap/v3-sdk';
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
-import { usePoolPriceData } from '../../../../hooks/usePoolPriceData';
-import { usePoolLiquidityData } from '../../../../hooks/usePoolLiquidityData';
-import Menu from '../../../../components/Menu/Menu';
+import { usePoolPriceData } from '../../hooks/usePoolPriceData';
+import { usePoolLiquidityData } from '../../hooks/usePoolLiquidityData';
+import Menu from '../Menu/Menu';
 // import Icon from '../../../components/Icon/Icon';
-import ChartPeriodSelector from '../../../../components/ChartPeriodSelector';
+import ChartPeriodSelector from '../ChartPeriodSelector';
 
 interface Props {
   chainId: number | undefined;

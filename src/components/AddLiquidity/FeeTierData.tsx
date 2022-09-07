@@ -6,8 +6,8 @@ import format from 'date-fns/format';
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
-import { useFeeTierData } from '../../../../hooks/useFeeTierData';
-import Menu from '../../../../components/Menu/Menu';
+import { useFeeTierData } from '../../hooks/useFeeTierData';
+import Menu from '../Menu/Menu';
 // import Icon from '../../../components/Icon/Icon';
 
 interface Props {

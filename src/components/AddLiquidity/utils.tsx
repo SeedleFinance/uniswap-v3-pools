@@ -3,8 +3,8 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { Pool, Position } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount, MaxUint256 } from '@uniswap/sdk-core';
 
-import { WETH9 } from '../../../../common/constants';
-import { isNativeToken, getNativeToken } from '../../../../utils/tokens';
+import { WETH9 } from '../../common/constants';
+import { isNativeToken, getNativeToken } from '../../utils/tokens';
 
 export function positionFromAmounts(
   {

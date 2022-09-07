@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { tickToPrice, priceToClosestTick, nearestUsableTick } from '@uniswap/v3-sdk';
 import { Price, CurrencyAmount, Token } from '@uniswap/sdk-core';
 
-import TokenLabel from '../../../../components/TokenLabel';
-import { formatInput } from '../../../../utils/numbers';
+import TokenLabel from '../TokenLabel';
+import { formatInput } from '../../utils/numbers';
 
 interface RangeInputProps {
   label: string;
