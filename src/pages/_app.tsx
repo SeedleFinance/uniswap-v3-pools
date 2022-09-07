@@ -1,40 +1,36 @@
-import React, { ReactNode, useMemo } from "react";
-import { WagmiConfig } from "wagmi";
-import type { AppProps } from "next/app";
-import classNames from "classnames";
+import React, { ReactNode, useMemo } from 'react';
+import { WagmiConfig } from 'wagmi';
+import type { AppProps } from 'next/app';
+import classNames from 'classnames';
 
-import "../styles/globals.css";
+import '../styles/globals.css';
 
-import SubgraphProvider from "../providers/SubgraphProvider";
-import { AddressProvider, useAddress } from "../providers/AddressProvider";
-import RainbowKitWithThemeProvider from "../providers/RainbowKitWithThemeProvider";
-import { CurrencyConversionsProvider } from "../providers/CurrencyConversionProvider";
-import { CombinedPoolsProvider } from "../providers/CombinedPoolsProvider";
-import { CombinedTokensProvider } from "../providers/CombinedTokensProvider";
-import {
+import SubgraphProvider from '../providers/SubgraphProvider';
+import { AddressProvider, useAddress } from '../providers/AddressProvider';
+import RainbowKitWithThemeProvider from '../providers/RainbowKitWithThemeProvider';
+import { CurrencyConversionsProvider } from '../providers/CurrencyConversionProvider';
+import { CombinedPoolsProvider } from '../providers/CombinedPoolsProvider';
+import { CombinedTokensProvider } from '../providers/CombinedTokensProvider';
+import AppSettingsProviderWithWrapper, {
   AppSettingsProvider,
   useAppSettings,
-} from "../providers/AppSettingsProvider";
+} from '../providers/AppSettingsProvider';
 
-import PageContainer from "../components/PageContainer";
-import Landing from "../layouts/LandingLayout";
-import { wagmiClient } from "../lib/rainbow";
+import PageContainer from '../components/PageContainer';
+import Landing from '../layouts/LandingLayout';
+import { wagmiClient } from '../lib/rainbow';
 
 function ThemeWrapper({ children }: { children: ReactNode }) {
   const { theme } = useAppSettings();
 
   return (
-    <div id="theme-wrapper" className={classNames(theme, "h-full")}>
+    <div id="theme-wrapper" className={classNames(theme, 'h-full')}>
       <div className="max-w-full bg-canvas-light h-full">{children}</div>
     </div>
   );
 }
 
-function PoolsAndTokensCombinedProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function PoolsAndTokensCombinedProviders({ children }: { children: React.ReactNode }) {
   return (
     <CombinedPoolsProvider>
       <CombinedTokensProvider>{children}</CombinedTokensProvider>
@@ -50,9 +46,7 @@ function CheckForActiveAddress({ children }: { children: React.ReactNode }) {
   return (
     <PageContainer>
       {addressReady ? (
-        <PoolsAndTokensCombinedProviders>
-          {children}
-        </PoolsAndTokensCombinedProviders>
+        <PoolsAndTokensCombinedProviders>{children}</PoolsAndTokensCombinedProviders>
       ) : (
         <Landing />
       )}
@@ -66,7 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <SubgraphProvider>
         <WagmiConfig client={wagmiClient}>
           <AddressProvider>
-            <AppSettingsProvider>
+            <AppSettingsProviderWithWrapper>
               <ThemeWrapper>
                 <RainbowKitWithThemeProvider>
                   <CurrencyConversionsProvider>
@@ -76,7 +70,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   </CurrencyConversionsProvider>
                 </RainbowKitWithThemeProvider>
               </ThemeWrapper>
-            </AppSettingsProvider>
+            </AppSettingsProviderWithWrapper>
           </AddressProvider>
         </WagmiConfig>
       </SubgraphProvider>
