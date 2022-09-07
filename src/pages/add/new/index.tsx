@@ -3,16 +3,16 @@ import { Token } from '@uniswap/sdk-core';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import NewPools from './NewPools';
-import ExistingPools from './ExistingPools';
-import NewPosition from './NewPosition';
-import SearchInput from './SearchInput';
+import NewPools from './AddLiquidity/NewPools';
+import ExistingPools from './AddLiquidity/ExistingPools';
+import NewPosition from './AddLiquidity/NewPosition';
+import SearchInput from './AddLiquidity/SearchInput';
 
 import { useChainId } from '../../../hooks/useChainId';
 import { usePoolsForNetwork } from '../../../hooks/usePoolsForNetwork';
 
 import { getQuoteAndBaseToken } from '../../../utils/tokens';
-import { loadTokens, findTokens, TokenListItem } from './utils';
+import { loadTokens, findTokens, TokenListItem } from './AddLiquidity/utils';
 import { ROUTES } from '../../../common/constants';
 
 interface Props {

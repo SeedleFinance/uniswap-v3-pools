@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { Token } from '@uniswap/sdk-core';
 
-import { PoolState } from '../../../types/seedle';
-import PoolButton from '../../../components/PoolButton';
-import LoadingSpinner from '../../../components/Spinner';
+import { PoolState } from '../../../../types/seedle';
+import PoolButton from '../../../../components/PoolButton';
+import LoadingSpinner from '../../../../components/Spinner';
 
 interface Props {
   pools: PoolState[];

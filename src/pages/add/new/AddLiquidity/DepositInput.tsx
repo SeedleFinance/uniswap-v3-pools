@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Token } from '@uniswap/sdk-core';
 
-import TokenLabel from '../../../components/TokenLabel';
-import TokenLogo from '../../../components/TokenLogo';
-import { formatInput } from '../../../utils/numbers';
-import { isNativeToken } from '../../../utils/tokens';
+import TokenLabel from '../../../../components/TokenLabel';
+import TokenLogo from '../../../../components/TokenLogo';
+import { formatInput } from '../../../../utils/numbers';
+import { isNativeToken } from '../../../../utils/tokens';
 
 interface DepositInputProps {
   token: Token;

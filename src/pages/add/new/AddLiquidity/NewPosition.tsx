@@ -6,15 +6,15 @@ import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
 
-import { useChainId } from '../../../hooks/useChainId';
-import { useTokenFunctions } from '../../../hooks/useTokenFunctions';
-import { usePool } from '../../../hooks/usePool';
-import { useCurrencyConversions } from '../../../providers/CurrencyConversionProvider';
-import PoolButton from '../../../components/PoolButton';
-import TokenLabel from '../../../components/TokenLabel';
-import Alert, { AlertLevel } from '../../../components/Alert/Alert';
-import Button from '../../../components/Button';
-import Toggle from '../../../components/Toggle';
+import { useChainId } from '../../../../hooks/useChainId';
+import { useTokenFunctions } from '../../../../hooks/useTokenFunctions';
+import { usePool } from '../../../../hooks/usePool';
+import { useCurrencyConversions } from '../../../../providers/CurrencyConversionProvider';
+import PoolButton from '../../../../components/PoolButton';
+import TokenLabel from '../../../../components/TokenLabel';
+import Alert, { AlertLevel } from '../../../../components/Alert/Alert';
+import Button from '../../../../components/Button';
+import Toggle from '../../../../components/Toggle';
 import ChartButton from './ChartButton';
 import FeeTierData from './FeeTierData';
 import RangeData from './RangeData';
@@ -25,16 +25,16 @@ import {
   DEFAULT_SLIPPAGE,
   SWAP_SLIPPAGE,
   ZERO_PERCENT,
-} from '../../../common/constants';
+} from '../../../../common/constants';
 
-import { formatInput } from '../../../utils/numbers';
-import { getNativeToken, isNativeToken } from '../../../utils/tokens';
+import { formatInput } from '../../../../utils/numbers';
+import { getNativeToken, isNativeToken } from '../../../../utils/tokens';
 
 import RangeInput from './RangeInput';
 import DepositInput from './DepositInput';
 import FeeButton from './FeeButton';
 import SwapAndAddModal from './SwapAndAddModal';
-import TransactionModal from '../../../components/TransactionModal';
+import TransactionModal from '../../../../components/TransactionModal';
 import {
   positionFromAmounts,
   calculateNewAmounts,
