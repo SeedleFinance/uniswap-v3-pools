@@ -122,17 +122,17 @@ function AddLiquidity({ tab }: Props) {
 
   const handleNewTabClick = () => {
     resetSelections();
-    router.push('/add/new');
+    router.push('/add/new', undefined, { shallow: true });
   };
 
   const handleExistingTabClick = () => {
     resetSelections();
-    router.push('/add/existing');
+    router.push('/add/existing', undefined, { shallow: true });
   };
 
   const handleCancelNewPosition = () => {
     resetSelections();
-    router.push('/add/new');
+    router.push('/add/new', undefined, { shallow: true });
   };
 
   return (
