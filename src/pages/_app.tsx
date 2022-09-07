@@ -11,10 +11,7 @@ import RainbowKitWithThemeProvider from '../providers/RainbowKitWithThemeProvide
 import { CurrencyConversionsProvider } from '../providers/CurrencyConversionProvider';
 import { CombinedPoolsProvider } from '../providers/CombinedPoolsProvider';
 import { CombinedTokensProvider } from '../providers/CombinedTokensProvider';
-import AppSettingsProviderWithWrapper, {
-  AppSettingsProvider,
-  useAppSettings,
-} from '../providers/AppSettingsProvider';
+import AppSettingsProviderWithWrapper, { useAppSettings } from '../providers/AppSettingsProvider';
 
 import PageContainer from '../components/PageContainer';
 import Landing from '../layouts/LandingLayout';
