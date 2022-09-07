@@ -7,14 +7,14 @@ import { JsonRpcSigner, BaseProvider } from '@ethersproject/providers';
 import { Token } from '@uniswap/sdk-core';
 import { Pool } from '@uniswap/v3-sdk';
 
-import { abi as NFTPositionManagerABI } from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json';
-import { abi as V3PoolABI } from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json';
+import NFTPositionManagerABI from '@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/NonfungiblePositionManager.json';
+import V3PoolABI from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/UniswapV3Pool.json';
 import ERC20_ABI from '../abis/erc20.json';
 import ERC20_BYTES32_ABI from '../abis/erc20_bytes32.json';
 
 //@ts-ignore
 import PerpMainMetadataOptimism from '@perp/curie-contract/metadata/optimism.json';
-import { abi as PerpOrderBookABI } from '@perp/curie-contract/artifacts/contracts/OrderBook.sol/OrderBook.json';
+import PerpOrderBookABI from '@perp/curie-contract/artifacts/contracts/OrderBook.sol/OrderBook.json';
 
 import { NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../common/constants';
 
