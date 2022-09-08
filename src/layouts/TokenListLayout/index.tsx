@@ -1,19 +1,18 @@
-import { useMemo } from "react";
+import { useMemo } from 'react';
 
-import { ChainID } from "../../types/enums";
+import { ChainID } from '../../types/enums';
 
-import { useTokens } from "../../providers/CombinedTokensProvider";
-import { getChainNameAndColor } from "../../utils/chains";
+import { useTokens } from '../../providers/CombinedTokensProvider';
+import { getChainNameAndColor } from '../../utils/chains';
 
-import TokenLogo from "../../components/TokenLogo";
-import { ROUTES } from "../../common/constants";
-import Link from "next/link";
-import { useCurrencyConversions } from "../../providers/CurrencyConversionProvider";
+import TokenLogo from '../../components/TokenLogo';
+import { ROUTES } from '../../common/constants';
+import Link from 'next/link';
+import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 
 function TokenListLayout() {
   //   const location = useLocation();
-  const { convertToGlobalFormatted, formatCurrencyWithSymbol } =
-    useCurrencyConversions();
+  const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { loading, tokens, totalTokenValue } = useTokens();
 
   const topTokens = useMemo(() => {
@@ -50,11 +49,8 @@ function TokenListLayout() {
           </span>
         </div>
         {tokens.length > 0 && (
-          <Link
-            href={`${ROUTES.TOKENS}/${location.search}`}
-            className="text-low text-0.875"
-          >
-            View all
+          <Link href={`${ROUTES.TOKENS}/${location.search}`}>
+            <a className="text-low text-0.875">View all</a>
           </Link>
         )}
       </div>
@@ -79,12 +75,10 @@ function TokenListLayout() {
               />
               <div className="flex flex-col text-high">
                 <div className="text-1.25 font-bold leading-tight flex items-center">
-                  {token.name}{" "}
+                  {token.name}{' '}
                 </div>
                 <div className="flex items-center mt-1">
-                  <div className="text-0.875">
-                    {convertToGlobalFormatted(token.price)}
-                  </div>
+                  <div className="text-0.875">{convertToGlobalFormatted(token.price)}</div>
                   <div
                     className={`text-0.75 px-1 py-0.5 rounded-md ml-1 font-medium text-black ${
                       getChainNameAndColor(token.chainId)[1]

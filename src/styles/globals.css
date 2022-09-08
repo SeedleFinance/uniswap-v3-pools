@@ -1,5 +1,5 @@
-@import url("https://rsms.me/inter/inter.css");
-@import "../../node_modules/@rainbow-me/rainbowkit/dist/index.css";
+@import url('https://rsms.me/inter/inter.css');
+@import '../../node_modules/@rainbow-me/rainbowkit/dist/index.css';
 
 @tailwind base;
 @tailwind components;
@@ -107,7 +107,7 @@
 
 html {
   display: flex;
-  font-family: "Inter", -apple-system, Helvetica Neue, sans-serif;
+  font-family: 'Inter', -apple-system, Helvetica Neue, sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
@@ -151,5 +151,9 @@ a:focus {
 /* Force Rainbow wallet and NEXT JS wrapper to be 100% height */
 #theme-wrapper div[data-rk],
 #__next {
+  height: 100%;
+}
+
+#__next > div {
   height: 100%;
 }

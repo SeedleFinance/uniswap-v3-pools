@@ -171,8 +171,8 @@ const HomeLayout = () => {
               </div>
             </Button>
             {sortedPools.length > 0 && (
-              <Link href={`${ROUTES.POOLS}/${location.search}`} className="text-low text-0.875">
-                <a>View all</a>
+              <Link href={`${ROUTES.POOLS}/${location.search}`}>
+                <a className="text-low text-0.875">View all</a>
               </Link>
             )}
           </div>
