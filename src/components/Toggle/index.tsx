@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface Props {
   label: string;
@@ -9,11 +9,11 @@ interface Props {
 function Toggle({ label, onChange, checked }: Props) {
   return (
     <label className="flex items-center cursor-pointer text-0.875">
-      {/* <style
+      <style
         dangerouslySetInnerHTML={{
           __html: `.toggle-checkbox:checked ~ .dot { transform: translateX(75%); background-color: #fff; }`,
         }}
-      ></style> */}
+      ></style>
 
       <div className="relative">
         <input
@@ -24,7 +24,7 @@ function Toggle({ label, onChange, checked }: Props) {
         />
         <div
           className={`w-7 h-5 rounded-full shadow-inner ${
-            checked ? "bg-blue-primary" : "bg-surface-40"
+            checked ? 'bg-blue-primary' : 'bg-surface-40'
           }`}
         ></div>
         <div className="dot absolute w-3 h-3 bg-white rounded-full shadow left-1 top-1 transition"></div>

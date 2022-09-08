@@ -18,7 +18,7 @@ import IconHelper from '../../components/icons/Helper';
 import DropdownMenu from '../../components/DropdownMenu';
 import IconOptions from '../../components/icons/Options';
 import IconDownload from '../../components/icons/Download';
-// import FilterClosedToggle from '../../components/FilterClosedToggle';
+import FilterClosedToggle from '../../components/FilterClosedToggle';
 import Row from '../../components/Row';
 import BackArrow from '../../components/icons/LeftArrow';
 import { useRouter } from 'next/router';
@@ -129,7 +129,7 @@ function AllPoolsLayout() {
 
       <div className="w-full mt-4 md:mt-12">
         <div className="flex justify-between items-center">
-          {/* <FilterClosedToggle /> */}
+          <FilterClosedToggle />
           <div className="flex">
             <Button href="/add/new" size="md" className="ml-2">
               <div className="flex items-center -ml-1">
