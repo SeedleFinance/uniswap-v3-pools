@@ -103,6 +103,8 @@ function AddLiquidity() {
   };
 
   const handlePoolClick = (baseToken: Token, quoteToken: Token, fee: number, positions: any[]) => {
+    console.log('setting baseToken', baseToken);
+
     setSelectedBaseToken(baseToken);
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(fee);
@@ -155,10 +157,6 @@ function AddLiquidity() {
 
   const selectedTab = query.tab === 'existing' ? 'existing' : 'new';
 
-  console.log('selectedBaseToken', selectedBaseToken);
-  console.log('selectedQuoteToken', selectedQuoteToken);
-  console.log('selectedFee', selectedFee);
-
   return (
     <div className="w-full flex flex-col">
       <div className="py-4 mb-4 flex items-center">
@@ -196,6 +194,11 @@ function AddLiquidity() {
         <div className="py-4">
           {selectedBaseToken !== null && selectedQuoteToken !== null && selectedFee != null ? (
             <>
+              {console.log('selectedPositions', selectedPositions)}
+              {console.log('selectedBaseToken', selectedBaseToken)}
+              {console.log('selectedQuoteToken', selectedQuoteToken)}
+              {console.log('selectedFee', selectedFee)}
+
               <NewPosition
                 baseToken={selectedBaseToken as Token}
                 quoteToken={selectedQuoteToken as Token}
