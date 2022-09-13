@@ -49,8 +49,8 @@ function TokenListLayout() {
           </span>
         </div>
         {tokens.length > 0 && (
-          <Link href={`${ROUTES.CURRENCIES}/${location.search}`}>
-            <a className="text-low text-0.875">View alls</a>
+          <Link href={`${ROUTES.TOKENS}/${location.search}`}>
+            <a className="text-low text-0.875">View all</a>
           </Link>
         )}
       </div>
