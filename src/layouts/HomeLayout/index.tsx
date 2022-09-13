@@ -86,8 +86,8 @@ const HomeLayout = () => {
     router.push(`${ROUTES.POOL_DETAILS}/${address}${location.search}`);
   }
 
-  console.log('addressReady', addressReady);
-  console.log({ pools });
+  //  console.log('addressReady', addressReady);
+  // console.log({ pools });
 
   if (loading || !addressReady) {
     return (
@@ -164,7 +164,7 @@ const HomeLayout = () => {
             </span>
           </div>
           <div className="w-1/3 flex items-center justify-end">
-            <Button href="/add/new" size="md" className="ml-2 mr-4">
+            <Button href="/add?tab=new" size="md" className="ml-2 mr-4">
               <div className="flex items-center -ml-1">
                 <Plus />
                 <span className="ml-1">New Position</span>

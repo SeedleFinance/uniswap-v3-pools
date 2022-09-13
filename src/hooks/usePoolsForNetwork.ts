@@ -1,12 +1,12 @@
-import { useMemo } from "react";
-import { Token, CurrencyAmount } from "@uniswap/sdk-core";
-import { Position, Pool, tickToPrice } from "@uniswap/v3-sdk";
-import { BigNumber } from "@ethersproject/bignumber";
+import { useMemo } from 'react';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Position, Pool, tickToPrice } from '@uniswap/v3-sdk';
+import { BigNumber } from '@ethersproject/bignumber';
 
-import { useAddress } from "../providers/AddressProvider";
-import { getQuoteAndBaseToken } from "../utils/tokens";
-import { calcGasCost } from "../utils/gas";
-import { TxTypes } from "../types/enums";
+import { useAddress } from '../providers/AddressProvider';
+import { getQuoteAndBaseToken } from '../utils/tokens';
+import { calcGasCost } from '../utils/gas';
+import { TxTypes } from '../types/enums';
 
 import {
   useFetchPositions,
@@ -14,7 +14,7 @@ import {
   useFetchUncollectedFees,
   PositionStateV2,
   TransactionV2,
-} from "./fetch";
+} from './fetch';
 
 function reconcileTransactions(chainId: number, txs: any[]) {
   let prevRemoveTx: TransactionV2 | null = null;
@@ -32,7 +32,7 @@ function reconcileTransactions(chainId: number, txs: any[]) {
         ...tx,
         amount0: tx.amount0.subtract(prevRemoveTx.amount0),
         amount1: tx.amount1.subtract(prevRemoveTx.amount1),
-        gas: calcGasCost(chainId, "0", "0"),
+        gas: calcGasCost(chainId, '0', '0'),
       };
     } else {
       return tx;
@@ -43,9 +43,11 @@ function reconcileTransactions(chainId: number, txs: any[]) {
 export function usePoolsForNetwork(chainId: number, timestamp: number) {
   const { addresses } = useAddress();
 
-  console.log({ addresses });
-  const { loading: queryLoading, positionStates: allPositions } =
-    useFetchPositions(chainId, addresses, timestamp);
+  const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
+    chainId,
+    addresses,
+    timestamp,
+  );
 
   const positionsByPool = useMemo((): {
     [key: string]: PositionStateV2[];
@@ -62,7 +64,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
 
       const { pool } = position;
       if (!pool) {
-        console.log("no pool defined", { chainId, position });
+        console.log('no pool defined', { chainId, position });
         return;
       }
 
@@ -74,14 +76,8 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
     return positionsByPool;
   }, [queryLoading, allPositions, chainId]);
 
-  const poolAddresses = useMemo(
-    () => Object.keys(positionsByPool),
-    [positionsByPool]
-  );
-  const { loading: poolsLoading, poolStates: pools } = useFetchPools(
-    chainId,
-    poolAddresses
-  );
+  const poolAddresses = useMemo(() => Object.keys(positionsByPool), [positionsByPool]);
+  const { loading: poolsLoading, poolStates: pools } = useFetchPools(chainId, poolAddresses);
 
   const uncollectedFeesParams = useMemo(() => {
     if (!pools.length || !Object.keys(positionsByPool).length) {
@@ -101,7 +97,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
 
   const { loading: feesLoading, uncollectedFees } = useFetchUncollectedFees(
     chainId,
-    uncollectedFeesParams
+    uncollectedFeesParams,
   );
 
   const uncollectedFeesByTokenId = useMemo(() => {
@@ -126,14 +122,14 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
         pool.token0.address,
         parseInt(pool.token0.decimals, 10),
         pool.token0.symbol,
-        pool.token0.name
+        pool.token0.name,
       );
       const token1 = new Token(
         chainId,
         pool.token1.address,
         parseInt(pool.token1.decimals, 10),
         pool.token1.symbol,
-        pool.token1.name
+        pool.token1.name,
       );
       const entity = new Pool(
         token0,
@@ -141,14 +137,10 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
         pool.fee,
         pool.sqrtPriceX96,
         pool.liquidity,
-        pool.tick
+        pool.tick,
       );
 
-      const [quoteToken, baseToken] = getQuoteAndBaseToken(
-        chainId,
-        entity.token0,
-        entity.token1
-      );
+      const [quoteToken, baseToken] = getQuoteAndBaseToken(chainId, entity.token0, entity.token1);
 
       let rawPoolLiquidity = BigNumber.from(0);
       let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
@@ -157,139 +149,105 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
 
       const positions = positionsByPool[pool.address.toLowerCase()]
         .sort((a, b) => (b.liquidity.gte(a.liquidity) ? 1 : -1))
-        .map(
-          ({ positionId, liquidity, tickLower, tickUpper, transactions }) => {
-            if (!liquidity || !tickLower || !tickUpper) {
-              return null;
-            }
+        .map(({ positionId, liquidity, tickLower, tickUpper, transactions }) => {
+          if (!liquidity || !tickLower || !tickUpper) {
+            return null;
+          }
 
-            const positionEntity = new Position({
-              pool: entity,
-              liquidity: liquidity.toString(),
-              tickLower,
-              tickUpper,
-            });
-            const priceLower = tickToPrice(quoteToken, baseToken, tickLower);
-            const priceUpper = tickToPrice(quoteToken, baseToken, tickUpper);
+          const positionEntity = new Position({
+            pool: entity,
+            liquidity: liquidity.toString(),
+            tickLower,
+            tickUpper,
+          });
+          const priceLower = tickToPrice(quoteToken, baseToken, tickLower);
+          const priceUpper = tickToPrice(quoteToken, baseToken, tickUpper);
 
-            rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
+          rawPoolLiquidity = rawPoolLiquidity.add(liquidity);
 
-            const positionLiquidity = entity.token0.equals(baseToken)
-              ? entity
-                  .priceOf(entity.token1)
-                  .quote(positionEntity.amount1)
-                  .add(positionEntity.amount0)
-              : entity
-                  .priceOf(entity.token0)
-                  .quote(positionEntity.amount0)
-                  .add(positionEntity.amount1);
+          const positionLiquidity = entity.token0.equals(baseToken)
+            ? entity
+                .priceOf(entity.token1)
+                .quote(positionEntity.amount1)
+                .add(positionEntity.amount0)
+            : entity
+                .priceOf(entity.token0)
+                .quote(positionEntity.amount0)
+                .add(positionEntity.amount1);
 
-            poolLiquidity = poolLiquidity.add(positionLiquidity);
+          poolLiquidity = poolLiquidity.add(positionLiquidity);
 
-            const rawUncollectedFees = uncollectedFeesByTokenId[positionId] || [
-              "0",
-              "0",
-            ];
-            const uncollectedFees = [
-              CurrencyAmount.fromRawAmount(
-                entity.token0,
-                rawUncollectedFees[0]
-              ),
-              CurrencyAmount.fromRawAmount(
-                entity.token1,
-                rawUncollectedFees[1]
-              ),
-            ];
+          const rawUncollectedFees = uncollectedFeesByTokenId[positionId] || ['0', '0'];
+          const uncollectedFees = [
+            CurrencyAmount.fromRawAmount(entity.token0, rawUncollectedFees[0]),
+            CurrencyAmount.fromRawAmount(entity.token1, rawUncollectedFees[1]),
+          ];
 
-            const positionUncollectedFees = entity.token0.equals(baseToken)
-              ? entity
-                  .priceOf(entity.token1)
-                  .quote(uncollectedFees[1])
-                  .add(uncollectedFees[0])
-              : entity
-                  .priceOf(entity.token0)
-                  .quote(uncollectedFees[0])
-                  .add(uncollectedFees[1]);
+          const positionUncollectedFees = entity.token0.equals(baseToken)
+            ? entity.priceOf(entity.token1).quote(uncollectedFees[1]).add(uncollectedFees[0])
+            : entity.priceOf(entity.token0).quote(uncollectedFees[0]).add(uncollectedFees[1]);
 
-            rawPoolUncollectedFees = [
-              rawPoolUncollectedFees[0].add(
-                BigNumber.from(rawUncollectedFees[0])
-              ),
-              rawPoolUncollectedFees[1].add(
-                BigNumber.from(rawUncollectedFees[1])
-              ),
-            ];
-            poolUncollectedFees = poolUncollectedFees.add(
-              positionUncollectedFees
-            );
+          rawPoolUncollectedFees = [
+            rawPoolUncollectedFees[0].add(BigNumber.from(rawUncollectedFees[0])),
+            rawPoolUncollectedFees[1].add(BigNumber.from(rawUncollectedFees[1])),
+          ];
+          poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
 
-            let formattedTransactions = transactions
-              .filter(
-                ({ transactionType }) => transactionType !== TxTypes.Transfer
-              )
-              .map(
-                ({
+          let formattedTransactions = transactions
+            .filter(({ transactionType }) => transactionType !== TxTypes.Transfer)
+            .map(
+              ({
+                id,
+                transactionHash,
+                transactionType,
+                amount0,
+                amount1,
+                gas,
+                gasUsed,
+                gasPrice,
+                effectiveGasPrice,
+                l1Fee,
+                timestamp,
+              }: TransactionV2) => {
+                return {
                   id,
                   transactionHash,
                   transactionType,
-                  amount0,
-                  amount1,
-                  gas,
-                  gasUsed,
-                  gasPrice,
-                  effectiveGasPrice,
-                  l1Fee,
-                  timestamp,
-                }: TransactionV2) => {
-                  return {
-                    id,
-                    transactionHash,
-                    transactionType,
-                    timestamp: BigNumber.from(timestamp || "0").toNumber(),
-                    amount0: CurrencyAmount.fromRawAmount(token0, amount0),
-                    amount1: CurrencyAmount.fromRawAmount(token1, amount1),
-                    gas: calcGasCost(
-                      chainId,
-                      gasUsed || gas || "0",
-                      effectiveGasPrice || gasPrice || "0",
-                      l1Fee
-                    ),
-                  };
-                }
-              )
-              .sort((a, b) => a.timestamp - b.timestamp);
-            formattedTransactions = reconcileTransactions(
-              chainId,
-              formattedTransactions
-            );
+                  timestamp: BigNumber.from(timestamp || '0').toNumber(),
+                  amount0: CurrencyAmount.fromRawAmount(token0, amount0),
+                  amount1: CurrencyAmount.fromRawAmount(token1, amount1),
+                  gas: calcGasCost(
+                    chainId,
+                    gasUsed || gas || '0',
+                    effectiveGasPrice || gasPrice || '0',
+                    l1Fee,
+                  ),
+                };
+              },
+            )
+            .sort((a, b) => a.timestamp - b.timestamp);
+          formattedTransactions = reconcileTransactions(chainId, formattedTransactions);
 
-            return {
-              id: positionId,
-              entity: positionEntity,
-              priceLower,
-              priceUpper,
-              positionLiquidity,
-              uncollectedFees,
-              positionUncollectedFees,
-              transactions: formattedTransactions,
-            };
-          }
-        )
+          return {
+            id: positionId,
+            entity: positionEntity,
+            priceLower,
+            priceUpper,
+            positionLiquidity,
+            uncollectedFees,
+            positionUncollectedFees,
+            transactions: formattedTransactions,
+          };
+        })
         .filter((position) => position !== null);
 
       const currencyPoolUncollectedFees = [
-        CurrencyAmount.fromRawAmount(
-          entity.token0,
-          rawPoolUncollectedFees[0].toString()
-        ),
-        CurrencyAmount.fromRawAmount(
-          entity.token1,
-          rawPoolUncollectedFees[1].toString()
-        ),
+        CurrencyAmount.fromRawAmount(entity.token0, rawPoolUncollectedFees[0].toString()),
+        CurrencyAmount.fromRawAmount(entity.token1, rawPoolUncollectedFees[1].toString()),
       ];
 
       const currentPrice = parseFloat(
-        tickToPrice(quoteToken, baseToken, entity.tickCurrent).toSignificant(8)
+        tickToPrice(quoteToken, baseToken, entity.tickCurrent).toSignificant(8),
       );
 
       return {

@@ -3,24 +3,21 @@ import { Token } from '@uniswap/sdk-core';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import NewPools from '../../../components/AddLiquidity/NewPools';
-import ExistingPools from '../../../components/AddLiquidity/ExistingPools';
-import NewPosition from '../../../components/AddLiquidity/NewPosition';
-import SearchInput from '../../../components/AddLiquidity/SearchInput';
+import NewPools from '../../components/AddLiquidity/NewPools';
+import ExistingPools from '../../components/AddLiquidity/ExistingPools';
+import NewPosition from '../../components/AddLiquidity/NewPosition';
+import SearchInput from '../../components/AddLiquidity/SearchInput';
 
-import { useChainId } from '../../../hooks/useChainId';
-import { usePoolsForNetwork } from '../../../hooks/usePoolsForNetwork';
+import { useChainId } from '../../hooks/useChainId';
+import { usePoolsForNetwork } from '../../hooks/usePoolsForNetwork';
 
-import { getQuoteAndBaseToken } from '../../../utils/tokens';
-import { loadTokens, findTokens, TokenListItem } from '../../../components/AddLiquidity/utils';
-import { ROUTES } from '../../../common/constants';
+import { getQuoteAndBaseToken } from '../../utils/tokens';
+import { loadTokens, findTokens, TokenListItem } from '../../components/AddLiquidity/utils';
+import { ROUTES } from '../../common/constants';
 
-interface Props {
-  tab: string;
-}
-
-function AddLiquidity({ tab }: Props) {
+function AddLiquidity() {
   const chainId = useChainId();
+  const { query } = useRouter();
 
   const router = useRouter();
   const { baseTokenSymbol, quoteTokenSymbol, fee } = useRouter().query;
@@ -31,7 +28,6 @@ function AddLiquidity({ tab }: Props) {
   const { pools } = usePoolsForNetwork(chainId || 1, timestamp);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
-  const [selectedTab, setSelectedTab] = useState('new');
   const [selectedBaseToken, setSelectedBaseToken] = useState<Token | null>(null);
   const [selectedQuoteToken, setSelectedQuoteToken] = useState<Token | null>(null);
   const [selectedFee, setSelectedFee] = useState<number | null>(null);
@@ -50,12 +46,6 @@ function AddLiquidity({ tab }: Props) {
 
     _run();
   }, [chainId]);
-
-  useEffect(() => {
-    if (tab !== '') {
-      setSelectedTab(tab);
-    }
-  }, [tab]);
 
   useEffect(() => {
     if (!chainId || !tokens || !tokens.length || !baseTokenSymbol || !quoteTokenSymbol || !fee) {
@@ -117,23 +107,54 @@ function AddLiquidity({ tab }: Props) {
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(fee);
     setSelectedPositions(positions);
-    router.push(`/add/${quoteToken.symbol}/${baseToken.symbol}/${fee}`);
+
+    router.push(
+      {
+        pathname: ROUTES.ADD,
+        query: { tab: 'new', quoteToken: quoteToken.symbol, baseToken: baseToken.symbol, fee },
+      },
+      undefined,
+      { shallow: true },
+    );
   };
 
   const handleNewTabClick = () => {
     resetSelections();
-    router.push('/add/new', undefined, { shallow: true });
+    router.push(
+      {
+        pathname: ROUTES.ADD,
+        query: { tab: 'new' },
+      },
+      undefined,
+      { shallow: true },
+    );
   };
 
   const handleExistingTabClick = () => {
     resetSelections();
-    router.push('/add/existing', undefined, { shallow: true });
+    router.push(
+      {
+        pathname: ROUTES.ADD,
+        query: { tab: 'existing' },
+      },
+      undefined,
+      { shallow: true },
+    );
   };
 
   const handleCancelNewPosition = () => {
     resetSelections();
-    router.push('/add/new', undefined, { shallow: true });
+    router.push(
+      {
+        pathname: ROUTES.ADD,
+        query: { tab: 'new' },
+      },
+      undefined,
+      { shallow: true },
+    );
   };
+
+  const selectedTab = query.tab === 'existing' ? 'existing' : 'new';
 
   return (
     <div className="w-full flex flex-col">

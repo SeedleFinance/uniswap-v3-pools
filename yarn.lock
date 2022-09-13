@@ -722,10 +722,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@perp/curie-contract@^1.1.3-staging":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@perp/curie-contract/-/curie-contract-1.4.0.tgz#674b26564badca61512b158c66f5eb2bbc4d88f5"
-  integrity sha512-uB/7fxBKALEB9GQZE2gwMp1PTPuMuDcOu1R82G2sfqW4ybgo60eHPXYDW4X5q0V2nDp8o0D9Q7RegsRY3gpnnw==
+"@perp/curie-contract@1.1.3-staging":
+  version "1.1.3-staging"
+  resolved "https://registry.yarnpkg.com/@perp/curie-contract/-/curie-contract-1.1.3-staging.tgz#daba078397dfa488c5064e39a814e8e981644feb"
+  integrity sha512-y0C0OQX6mqAl+s5dhjYokMf/73/02h8a1iSXKgdzQDSm3cGC6378aLrWrh2UXUdOTOW7Qf/Fm51pNAEXo6s58g==
 
 "@rainbow-me/rainbowkit@^0.5.0":
   version "0.5.0"
