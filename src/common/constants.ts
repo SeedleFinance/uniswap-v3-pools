@@ -150,8 +150,8 @@ export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
 export const ROUTES = {
   HOME: '/',
   ADD: '/add',
-  ADD_NEW: '/add/new',
-  ADD_EXISTING: '/add/existing',
+  ADD_NEW: '/add?tab=new',
+  ADD_EXISTING: '/add?tab=existing',
   ABOUT: '/about',
   POOL_DETAILS: '/pool',
   POOLS: '/pools',
