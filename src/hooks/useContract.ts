@@ -12,7 +12,6 @@ import V3PoolABI from '@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/Un
 import ERC20_ABI from '../abis/erc20.json';
 import ERC20_BYTES32_ABI from '../abis/erc20_bytes32.json';
 
-//@ts-ignore
 import PerpMainMetadataOptimism from '@perp/curie-contract/metadata/optimism.json';
 import PerpOrderBookABI from '@perp/curie-contract/artifacts/contracts/OrderBook.sol/OrderBook.json';
 
@@ -72,7 +71,7 @@ export function useContract(
     try {
       return getContract(
         address,
-        ABI,
+        ABI?.abi,
         library,
         signer! as JsonRpcSigner,
         withSignerIfPossible && account ? account : undefined,
