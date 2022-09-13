@@ -70,8 +70,11 @@ const TokensPage = () => {
             </tr>
           </thead>
           <tbody className="text-0.875">
-            {tokens.map((token) => (
-              <tr key={token.name} className="w-full hover:bg-surface-10 cursor-pointer">
+            {tokens.map((token, index) => (
+              <tr
+                key={`${token.name}-${index}`}
+                className="w-full hover:bg-surface-10 cursor-pointer"
+              >
                 <td className="md:px-6 py-4 whitespace-nowrap flex items-center font-medium text-left">
                   <TokenLogo
                     name={token.name}
