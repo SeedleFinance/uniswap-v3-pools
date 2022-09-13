@@ -1,4 +1,8 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Seedle Finance - Uniswap V3 Pool Manager
+
+A UI to manage Uniswap v3 pools. Check the hosted version at https://seedle.finance
+
+This project was made with [Next Js](https://nextjs.org)
 
 ## Getting Started
 
