@@ -111,7 +111,7 @@ function AddLiquidity() {
     router.push(
       {
         pathname: ROUTES.ADD,
-        query: { tab: 'new', quoteToken: quoteToken.symbol, baseToken: baseToken.symbol, fee },
+        query: { quoteToken: quoteToken.symbol, baseToken: baseToken.symbol, fee },
       },
       undefined,
       { shallow: true },
@@ -123,7 +123,6 @@ function AddLiquidity() {
     router.push(
       {
         pathname: ROUTES.ADD,
-        query: { tab: 'new' },
       },
       undefined,
       { shallow: true },
@@ -155,6 +154,10 @@ function AddLiquidity() {
   };
 
   const selectedTab = query.tab === 'existing' ? 'existing' : 'new';
+
+  console.log('selectedBaseToken', selectedBaseToken);
+  console.log('selectedQuoteToken', selectedQuoteToken);
+  console.log('selectedFee', selectedFee);
 
   return (
     <div className="w-full flex flex-col">
@@ -192,13 +195,15 @@ function AddLiquidity() {
 
         <div className="py-4">
           {selectedBaseToken !== null && selectedQuoteToken !== null && selectedFee != null ? (
-            <NewPosition
-              baseToken={selectedBaseToken as Token}
-              quoteToken={selectedQuoteToken as Token}
-              initFee={selectedFee}
-              positions={selectedPositions}
-              onCancel={handleCancelNewPosition}
-            />
+            <>
+              <NewPosition
+                baseToken={selectedBaseToken as Token}
+                quoteToken={selectedQuoteToken as Token}
+                initFee={selectedFee}
+                positions={selectedPositions}
+                onCancel={handleCancelNewPosition}
+              />
+            </>
           ) : selectedTab === 'new' ? (
             <NewPools onPoolClick={handlePoolClick} filter={searchInput} />
           ) : (

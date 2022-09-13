@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useAccount, useProvider, useSigner } from 'wagmi';
+import { useAccount, useProvider, useQuery, useSigner } from 'wagmi';
 // import { useSearchParams } from 'react-router-dom';
 import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
 import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
@@ -10,11 +10,11 @@ import { useChainId } from '../../hooks/useChainId';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import { usePool } from '../../hooks/usePool';
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
-import PoolButton from '../PoolButton';
-import TokenLabel from '../TokenLabel';
-import Alert, { AlertLevel } from '../Alert/Alert';
-import Button from '../Button';
-import Toggle from '../Toggle';
+import PoolButton from '../../components/PoolButton';
+import TokenLabel from '../../components/TokenLabel';
+import Alert, { AlertLevel } from '../../components/Alert/Alert';
+import Button from '../../components/Button';
+import Toggle from '../../components/Toggle';
 import ChartButton from './ChartButton';
 import FeeTierData from './FeeTierData';
 import RangeData from './RangeData';
@@ -34,7 +34,7 @@ import RangeInput from './RangeInput';
 import DepositInput from './DepositInput';
 import FeeButton from './FeeButton';
 import SwapAndAddModal from './SwapAndAddModal';
-import TransactionModal from '../TransactionModal';
+import TransactionModal from '../../components/TransactionModal';
 import {
   positionFromAmounts,
   calculateNewAmounts,
@@ -59,9 +59,11 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   const { address: account } = useAccount();
   const library = useProvider();
   const { data: signer } = useSigner();
-  const router = useRouter();
 
-  const positionId = router.query.id as string;
+  //const [searchParams] = useSearchParams();
+  //const positionId = searchParams.get('position');
+  const { query } = useRouter();
+  const positionId = query.positionId;
 
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
 
@@ -147,7 +149,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       tickLower = Math.round((tickCurrent - 10 * tickSpacing) / tickSpacing) * tickSpacing;
       tickUpper = Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) * tickSpacing;
     } else {
-      const position = findPositionById(positions, positionId);
+      const position = findPositionById(positions, positionId as string);
       if (position) {
         tickLower = position.entity.tickLower;
         tickUpper = position.entity.tickUpper;
