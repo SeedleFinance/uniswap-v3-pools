@@ -20,8 +20,8 @@ import TokenLabel from '../../components/TokenLabel';
 import Alert, { AlertLevel } from '../../components/Alert/Alert';
 import Menu from '../../components/Menu/Menu';
 import RangeVisual from './RangeVisual';
-// import Icon from "../../components/icons/Icon";
 import TransactionModal from '../../components/TransactionModal';
+import ElipsisVertical from '../../components/icons/EllipsisVertical';
 
 import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../common/constants';
 import Button from '../../components/Button';
@@ -372,7 +372,7 @@ function Position({
         <td className="py-4 hidden md:table-cell">
           <div id={`menu-${portalId}`}>
             <Button variant="ghost" onClick={() => setShowActions(!showActions)}>
-              {/* <Icon size="lg" icon={faEllipsis} /> */}
+              <ElipsisVertical />
             </Button>
           </div>
           <div ref={floating}>
