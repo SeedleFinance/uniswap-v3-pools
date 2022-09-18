@@ -188,7 +188,9 @@ function Position({
   };
 
   const handleAddLiquidity = () => {
-    router.push(`/add/${quoteToken.symbol}/${baseToken.symbol}/${pool.fee}?position=${id}`);
+    router.push(
+      `/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=${pool.fee}&position=${id}`,
+    );
   };
 
   const handleTransfer = () => {
