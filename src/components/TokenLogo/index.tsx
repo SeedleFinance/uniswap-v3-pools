@@ -15,11 +15,11 @@ interface Props {
 
 function TokenLogo({ chain, name, address, src, className, size = 'sm' }: Props) {
   const imgEl = useRef<HTMLImageElement>(null);
-  // const showFallbackImage = () => {
-  //   if (imgEl.current) {
-  //     imgEl.current.src = new URL('/icons/missing-icon.svg', import.meta.url).toString();
-  //   }
-  // };
+  const showFallbackImage = () => {
+    if (imgEl.current) {
+      imgEl.current.src = '/icons/missing-icon.svg';
+    }
+  };
 
   if (src) {
     return (
@@ -28,7 +28,7 @@ function TokenLogo({ chain, name, address, src, className, size = 'sm' }: Props)
         className={classNames(className, styles['logo'], styles[`logo--${size}`])}
         alt={`${name} logo`}
         src={src}
-        //onError={() => showFallbackImage()}
+        onError={() => showFallbackImage()}
       />
     );
   }
@@ -45,7 +45,7 @@ function TokenLogo({ chain, name, address, src, className, size = 'sm' }: Props)
       src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${
         chain || 'ethereum'
       }/assets/${address}/logo.png`}
-      // onError={() => showFallbackImage()}
+      onError={() => showFallbackImage()}
     />
   );
 }
