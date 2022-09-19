@@ -1,0 +1,22 @@
+{
+  "name": "Seedle Finance - Insights For Uniswap Positions",
+  "short_name": "Seedle",
+  "icons": [
+    {
+      "src": "/facicon32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/facicon64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    },
+    {
+      "src": "/facicon128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ],
+  "display": "standalone"
+}
