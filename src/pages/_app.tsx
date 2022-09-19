@@ -1,9 +1,14 @@
+import '../styles/globals.css';
 import React, { ReactNode, useMemo } from 'react';
 import { WagmiConfig } from 'wagmi';
 import type { AppProps } from 'next/app';
 import classNames from 'classnames';
 
-import '../styles/globals.css';
+import { wagmiClient } from '../lib/rainbow';
+
+import AppHead from '../components/AppHead';
+import PageContainer from '../components/PageContainer';
+import Landing from '../layouts/LandingLayout';
 
 import SubgraphProvider from '../providers/SubgraphProvider';
 import { AddressProvider, useAddress } from '../providers/AddressProvider';
@@ -12,10 +17,6 @@ import { CurrencyConversionsProvider } from '../providers/CurrencyConversionProv
 import { CombinedPoolsProvider } from '../providers/CombinedPoolsProvider';
 import { CombinedTokensProvider } from '../providers/CombinedTokensProvider';
 import AppSettingsProviderWithWrapper, { useAppSettings } from '../providers/AppSettingsProvider';
-
-import PageContainer from '../components/PageContainer';
-import Landing from '../layouts/LandingLayout';
-import { wagmiClient } from '../lib/rainbow';
 
 function ThemeWrapper({ children }: { children: ReactNode }) {
   const { theme } = useAppSettings();
@@ -62,6 +63,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <RainbowKitWithThemeProvider>
                   <CurrencyConversionsProvider>
                     <CheckForActiveAddress>
+                      <AppHead />
                       <Component {...pageProps} />
                     </CheckForActiveAddress>
                   </CurrencyConversionsProvider>

@@ -1,108 +1,105 @@
-@import url('https://rsms.me/inter/inter.css');
 @import '../../node_modules/@rainbow-me/rainbowkit/dist/index.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  /* default light theme */
-  .light {
-    /* Base colors */
-    --color-white: #fff;
-    --color-black: #000;
-    --color-purple: #8882d5;
-    --color-text-high: #161413;
-    --color-text-medium: #878ea1;
-    --color-text-low: #7f879c;
-    --color-text-inverted: #fff;
-    --color-text-white: #fff;
-    --color-text-black: #000;
+/* default light theme */
+.light {
+  /* Base colors */
+  --color-white: #fff;
+  --color-black: #000;
+  --color-purple: #8882d5;
+  --color-text-high: #161413;
+  --color-text-medium: #878ea1;
+  --color-text-low: #7f879c;
+  --color-text-inverted: #fff;
+  --color-text-white: #fff;
+  --color-text-black: #000;
 
-    /* background colors */
-    --color-surface-0: #fff;
-    --color-surface-05: #f5f6f6;
-    --color-surface-10: #eceef2;
-    --color-surface-20: #e5e7eb;
-    --color-surface-30: #d9dbe1;
-    --color-surface-40: #cccfd7;
-    --color-surface-50: #b2b7c3;
-    --color-surface-60: #7f879c;
-    --color-surface-70: #666c7d;
-    --color-surface-80: #3f434e;
-    --color-surface-90: #2b2d32;
+  /* background colors */
+  --color-surface-0: #fff;
+  --color-surface-05: #f5f6f6;
+  --color-surface-10: #eceef2;
+  --color-surface-20: #e5e7eb;
+  --color-surface-30: #d9dbe1;
+  --color-surface-40: #cccfd7;
+  --color-surface-50: #b2b7c3;
+  --color-surface-60: #7f879c;
+  --color-surface-70: #666c7d;
+  --color-surface-80: #3f434e;
+  --color-surface-90: #2b2d32;
 
-    /* Brand */
-    --color-brand-primary: #4cce57;
-    --color-brand-dark: #55bb5e;
-    --color-brand-light: #6dd977;
+  /* Brand */
+  --color-brand-primary: #4cce57;
+  --color-brand-dark: #55bb5e;
+  --color-brand-light: #6dd977;
 
-    /* Other colors */
-    --color-pink-light: #f7e8ef;
-    --color-pink-dark: #d12b71;
-    --color-blue-primary: #205eff;
-    --color-blue-light: #205eff;
-    --color-canvas-light: #fff;
+  /* Other colors */
+  --color-pink-light: #f7e8ef;
+  --color-pink-dark: #d12b71;
+  --color-blue-primary: #205eff;
+  --color-blue-light: #205eff;
+  --color-canvas-light: #fff;
 
-    /* Elements */
-    --color-element-0: #e7e7ed;
-    --color-element-10: #e5e5ee;
-    --color-element-20: #a3a3a9;
-    --color-element-30: #aaaab4;
-    --color-element-40: #7d7d7e;
-    --color-element-50: #646464;
-    --color-element-60: #323232;
-  }
+  /* Elements */
+  --color-element-0: #e7e7ed;
+  --color-element-10: #e5e5ee;
+  --color-element-20: #a3a3a9;
+  --color-element-30: #aaaab4;
+  --color-element-40: #7d7d7e;
+  --color-element-50: #646464;
+  --color-element-60: #323232;
+}
 
-  /* dark theme */
-  .dark {
-    /* Base colors */
-    --color-white: #fff;
-    --color-black: #ccc;
-    --color-purple: #c1bdfc;
+/* dark theme */
+.dark {
+  /* Base colors */
+  --color-white: #fff;
+  --color-black: #ccc;
+  --color-purple: #c1bdfc;
 
-    /* Text colors */
-    --color-text-high: #fff;
-    --color-text-medium: #ccc;
-    --color-text-low: #ccc;
-    --color-text-inverted: #161413;
-    --color-text-white: #fff;
-    --color-text-black: #000;
+  /* Text colors */
+  --color-text-high: #fff;
+  --color-text-medium: #ccc;
+  --color-text-low: #ccc;
+  --color-text-inverted: #161413;
+  --color-text-white: #fff;
+  --color-text-black: #000;
 
-    /* background colors */
-    --color-surface-0: #232329;
-    --color-surface-05: #2b2d32;
-    --color-surface-10: #3f434e;
-    --color-surface-20: #666c7d;
-    --color-surface-30: #7f879c;
-    --color-surface-40: #b2b7c3;
-    --color-surface-50: #cccfd7;
-    --color-surface-60: #d9dbe1;
-    --color-surface-70: #e5e7eb;
-    --color-surface-80: #eceef2;
-    --color-surface-90: #f5f6f6;
+  /* background colors */
+  --color-surface-0: #232329;
+  --color-surface-05: #2b2d32;
+  --color-surface-10: #3f434e;
+  --color-surface-20: #666c7d;
+  --color-surface-30: #7f879c;
+  --color-surface-40: #b2b7c3;
+  --color-surface-50: #cccfd7;
+  --color-surface-60: #d9dbe1;
+  --color-surface-70: #e5e7eb;
+  --color-surface-80: #eceef2;
+  --color-surface-90: #f5f6f6;
 
-    /* Brand */
-    --color-brand-primary: #4cce57;
-    --color-brand-dark: #55bb5e;
-    --color-brand-light: #6dd977;
+  /* Brand */
+  --color-brand-primary: #4cce57;
+  --color-brand-dark: #55bb5e;
+  --color-brand-light: #6dd977;
 
-    /* Other colors */
-    --color-pink-light: #f7e8ef;
-    --color-pink-dark: #d12b71;
-    --color-blue-primary: #205eff;
-    --color-blue-light: #205eff;
-    --color-canvas-light: #151924;
+  /* Other colors */
+  --color-pink-light: #f7e8ef;
+  --color-pink-dark: #d12b71;
+  --color-blue-primary: #205eff;
+  --color-blue-light: #205eff;
+  --color-canvas-light: #151924;
 
-    /* Elements */
-    --color-element-0: #515155;
-    --color-element-10: #40444a;
-    --color-element-20: #a3a3a9;
-    --color-element-30: #aaaab4;
-    --color-element-40: #7d7d7e;
-    --color-element-50: #646464;
-    --color-element-60: #323232;
-  }
+  /* Elements */
+  --color-element-0: #515155;
+  --color-element-10: #40444a;
+  --color-element-20: #a3a3a9;
+  --color-element-30: #aaaab4;
+  --color-element-40: #7d7d7e;
+  --color-element-50: #646464;
+  --color-element-60: #323232;
 }
 
 html {

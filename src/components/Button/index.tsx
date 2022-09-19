@@ -1,8 +1,8 @@
-import React, { ReactNode } from "react";
-import Link from "next/link";
-import classNames from "classnames";
+import React, { ReactNode } from 'react';
+import Link from 'next/link';
+import classNames from 'classnames';
 
-import styles from "./styles.module.css";
+import styles from './styles.module.css';
 
 interface ButtonProps {
   disabled?: boolean;
@@ -10,11 +10,11 @@ interface ButtonProps {
   tabIndex?: number;
   children: ReactNode;
   onClick?: (ev: any) => void;
-  type?: "submit" | "button" | "reset";
+  type?: 'submit' | 'button' | 'reset';
   onMouseOver?: () => void;
   onMouseOut?: () => void;
-  variant?: "primary" | "secondary" | "outline" | "ghost";
-  size?: "lg" | "md" | "sm" | "xs";
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'lg' | 'md' | 'sm' | 'xs';
   href?: string;
 }
 
@@ -31,7 +31,7 @@ const ButtonComponent = ({
   size,
   href,
 }: ButtonProps) => {
-  const isExternalLink = href && href.startsWith("http");
+  const isExternalLink = href && href.startsWith('http');
 
   // Use the Link component as a button for internal links
   if (href && !isExternalLink) {
@@ -39,10 +39,10 @@ const ButtonComponent = ({
       <Link href={href}>
         <a
           className={classNames(
-            styles["btn"],
+            styles['btn'],
             styles[`btn--${variant}`],
             styles[`btn--${size}`],
-            className
+            className,
           )}
         >
           {children}
@@ -51,15 +51,17 @@ const ButtonComponent = ({
     );
   }
 
+  console.log('type is', type);
+
   return (
     <button
       className={className}
       disabled={disabled}
-      type={type || "button"}
       tabIndex={tabIndex}
       onClick={onClick}
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
+      type={type}
     >
       {children}
     </button>
@@ -71,19 +73,19 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   onClick,
   tabIndex,
-  type = "submit",
+  type = 'submit',
   disabled = false,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   href,
 }: ButtonProps) => {
   return (
     <ButtonComponent
       className={classNames(
-        styles["btn"],
+        styles['btn'],
         styles[`btn--${variant}`],
         styles[`btn--${size}`],
-        className
+        className,
       )}
       onClick={onClick}
       type={type}
