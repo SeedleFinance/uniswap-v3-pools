@@ -1,9 +1,8 @@
+import '../styles/globals.css';
 import React, { ReactNode, useMemo } from 'react';
 import { WagmiConfig } from 'wagmi';
 import type { AppProps } from 'next/app';
 import classNames from 'classnames';
-
-import '../styles/globals.css';
 
 import SubgraphProvider from '../providers/SubgraphProvider';
 import { AddressProvider, useAddress } from '../providers/AddressProvider';
