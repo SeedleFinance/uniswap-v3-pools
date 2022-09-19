@@ -15,6 +15,7 @@ import AppSettingsProviderWithWrapper, { useAppSettings } from '../providers/App
 import PageContainer from '../components/PageContainer';
 import Landing from '../layouts/LandingLayout';
 import { wagmiClient } from '../lib/rainbow';
+import AppHead from '../components/AppHead';
 
 function ThemeWrapper({ children }: { children: ReactNode }) {
   const { theme } = useAppSettings();
@@ -61,6 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <RainbowKitWithThemeProvider>
                   <CurrencyConversionsProvider>
                     <CheckForActiveAddress>
+                      <AppHead />
                       <Component {...pageProps} />
                     </CheckForActiveAddress>
                   </CurrencyConversionsProvider>
