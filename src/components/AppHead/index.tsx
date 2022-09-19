@@ -4,6 +4,7 @@ import Head from 'next/head';
 const AppHead = () => {
   return (
     <Head>
+      <title>Seedle Finance - Manage Uniswap Positions</title>
       <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1.0" />
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon32.png" />
       <link rel="icon" type="image/png" sizes="64x64" href="/favicon64.png" />

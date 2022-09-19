@@ -42,6 +42,7 @@ function CheckForActiveAddress({ children }: { children: React.ReactNode }) {
 
   return (
     <PageContainer>
+      <AppHead />
       {addressReady ? (
         <PoolsAndTokensCombinedProviders>{children}</PoolsAndTokensCombinedProviders>
       ) : (
@@ -62,7 +63,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                 <RainbowKitWithThemeProvider>
                   <CurrencyConversionsProvider>
                     <CheckForActiveAddress>
-                      <AppHead />
                       <Component {...pageProps} />
                     </CheckForActiveAddress>
                   </CurrencyConversionsProvider>
