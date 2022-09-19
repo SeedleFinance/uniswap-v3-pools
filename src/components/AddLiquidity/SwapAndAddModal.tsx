@@ -170,11 +170,11 @@ function SwapAndAddModal({
         <div className="text-medium">Finding the best route for the swap...</div>
       ) : (
         <div>
-          <div>
+          <div className="text-medium">
             <div>Swap</div>
             <div className="flex item-center p-2">
-              <div className="grow flex flex-wrap items-start my-1 relative">
-                <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+              <div className="grow flex flex-wrap items-center my-1 relative">
+                <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border-element-10 rounded">
                   <TokenLogo
                     name={swapInput.currency.name}
                     address={getCurrencyAddress(swapInput.currency)}
@@ -192,8 +192,8 @@ function SwapAndAddModal({
 
               <div className="grow-0 p-4">→</div>
 
-              <div className="grow flex flex-wrap items-start my-1 relative">
-                <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border rounded">
+              <div className="grow flex flex-wrap items-center my-1 relative">
+                <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border-element-10 rounded">
                   <TokenLogo
                     name={swapOutput.currency.name}
                     address={getCurrencyAddress(swapOutput.currency)}
@@ -213,7 +213,7 @@ function SwapAndAddModal({
           <div>
             <div className="text-medium">Liquidity to be added after the swap:</div>
             <div>
-              <div className="w-full flex flex-wrap items-start p-2 my-1 relative text-medium">
+              <div className="w-full flex flex-wrap items-center p-2 my-1 relative text-medium">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-surface-10 border-element-10 rounded">
                   <TokenLogo name={token0.name} address={token0.address} />
                   <TokenLabel name={token0.name} symbol={token0.symbol} wrapped={wrapped} />
@@ -221,7 +221,7 @@ function SwapAndAddModal({
                 <div className="w-2/3 p-2 my-1">{formatInput(token0Amount)}</div>
               </div>
 
-              <div className="w-full flex flex-wrap items-start p-2 my-1 relative text-medium">
+              <div className="w-full flex flex-wrap items-center p-2 my-1 relative text-medium">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-surface-10 border-element-10 border rounded">
                   <TokenLogo name={token1.name} address={token1.address} />
                   <TokenLabel name={token1.name} symbol={token1.symbol} wrapped={wrapped} />
@@ -271,7 +271,7 @@ function SwapAndAddModal({
                 Complete Transaction
               </Button>
             )}
-            <Button onClick={onCancel} tabIndex={9} variant="ghost">
+            <Button onClick={onCancel} tabIndex={9} variant="ghost" className="p-0">
               Cancel
             </Button>
           </div>

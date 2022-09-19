@@ -116,13 +116,13 @@ const PoolDetailsPage = () => {
           />
           <div className="flex items-center">
             <Button
-              href={`/add/existing/${quoteToken.symbol}/${baseToken.symbol}`}
+              href={`/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=3000`}
               size="md"
               className="ml-2"
             >
               <div className="flex items-center -ml-1">
                 <Plus />
-                <span className="ml-1">Add Liquidity</span>
+                <span className="ml-1">New Position</span>
               </div>
             </Button>
             <DropdownMenu
