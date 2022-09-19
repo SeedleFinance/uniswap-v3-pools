@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useAccount, useProvider, useSigner } from 'wagmi';
 import classNames from 'classnames';
+import { useRouter } from 'next/router';
 import { useFloating, autoUpdate } from '@floating-ui/react-dom';
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
 import { BigNumber } from '@ethersproject/bignumber';
@@ -20,14 +21,13 @@ import TokenLabel from '../../components/TokenLabel';
 import Alert, { AlertLevel } from '../../components/Alert/Alert';
 import Menu from '../../components/Menu/Menu';
 import RangeVisual from './RangeVisual';
-// import Icon from "../../components/icons/Icon";
 import TransactionModal from '../../components/TransactionModal';
 
 import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../common/constants';
 import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import Warning from '../../components/icons/Warning';
-import { useRouter } from 'next/router';
+import ElipsisVertical from '../../components/EllipsisVertical';
 
 export interface PositionProps {
   id: BigNumber;
@@ -372,7 +372,7 @@ function Position({
         <td className="py-4 hidden md:table-cell">
           <div id={`menu-${portalId}`}>
             <Button variant="ghost" onClick={() => setShowActions(!showActions)}>
-              {/* <Icon size="lg" icon={faEllipsis} /> */}
+              <ElipsisVertical />
             </Button>
           </div>
           <div ref={floating}>
