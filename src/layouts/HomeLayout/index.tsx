@@ -241,7 +241,7 @@ const HomeLayout = () => {
                     poolUncollectedFees,
                     currencyPoolUncollectedFees,
                   }: PoolState) => (
-                    <Pool
+                    <Row
                       key={key}
                       onClick={() => handleRowClick(address)}
                       entity={entity}

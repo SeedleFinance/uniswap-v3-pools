@@ -9,7 +9,7 @@ import {
   useAPR,
   usePoolFeeAPY,
 } from '../../hooks/calculations';
-import { useCurrencyConversions } from '../../CurrencyConversionsProvider';
+import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 
 import LoadingSpinner from "../../components/Spinner";
 import Tooltip from "../../components/Tooltip";
