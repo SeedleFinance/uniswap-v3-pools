@@ -27,7 +27,7 @@ const HomeLayout = () => {
   const { addressReady } = useAddress();
   const { convertToGlobal, formatCurrencyWithSymbol, refreshPriceFeed } = useCurrencyConversions();
 
-  const { loading, empty, pools, lastLoaded, refresh: refreshPools, refreshingList } = usePools();
+  const { loading, pools, lastLoaded, refresh: refreshPools, refreshingList } = usePools();
   const router = useRouter();
 
   const { totalTokenValue, refreshTokenPrices } = useTokens();
@@ -170,25 +170,23 @@ const HomeLayout = () => {
                 <span className="ml-1">New Position</span>
               </div>
             </Button>
-            {sortedPools.length > 0 && (
-              <Link href={`${ROUTES.POOLS}/${location.search}`}>
-                <a className="text-low text-0.875">View all</a>
-              </Link>
-            )}
+            <Link href={`${ROUTES.POOLS}/${location.search}`}>
+              <a className="text-low text-0.875">View all</a>
+            </Link>
           </div>
         </div>
       </div>
       <div className="w-full flex-col mt-4 flex justify-center overflow-x-auto">
-        {empty ? (
+        {sortedPools.length === 0 ? (
           <div className="py-12 rounded-lg flex flex-col justify-center items-center">
             <div className="text-center text-1 md:text-1 text-low mt-4">
-              This address has no position history.
+              This address has no open positions.
             </div>
             <Link
               href={ROUTES.ADD_NEW}
               className="block text-center text-1 text-blue-primary font-medium py-2"
             >
-              <a>+ Add Liquidity</a>
+              <a>+ Create a Position</a>
             </Link>
           </div>
         ) : (
