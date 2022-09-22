@@ -64,7 +64,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number) {
 
       const { pool } = position;
       if (!pool) {
-        console.log('no pool defined', { chainId, position });
+        console.error('no pool defined', { chainId, position });
         return;
       }
 

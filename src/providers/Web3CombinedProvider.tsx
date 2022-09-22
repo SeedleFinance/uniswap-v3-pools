@@ -3,7 +3,6 @@ import { createWeb3ReactRoot } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
 function getLibrary(provider: any) {
-  console.log("calling this function");
   return new Web3Provider(provider);
 }
 

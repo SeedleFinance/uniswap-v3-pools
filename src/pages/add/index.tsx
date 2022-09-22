@@ -20,7 +20,7 @@ function AddLiquidity() {
   const { query } = useRouter();
 
   const router = useRouter();
-  const { baseTokenSymbol, quoteTokenSymbol, fee } = useRouter().query;
+  const { baseToken: baseTokenSymbol, quoteToken: quoteTokenSymbol, fee } = useRouter().query;
 
   // keep timestamp static
   // This page ends up being re-rendered this prevents it
@@ -103,8 +103,6 @@ function AddLiquidity() {
   };
 
   const handlePoolClick = (baseToken: Token, quoteToken: Token, fee: number, positions: any[]) => {
-    console.log('setting baseToken', baseToken);
-
     setSelectedBaseToken(baseToken);
     setSelectedQuoteToken(quoteToken);
     setSelectedFee(fee);
@@ -193,20 +191,13 @@ function AddLiquidity() {
 
         <div className="py-4">
           {selectedBaseToken !== null && selectedQuoteToken !== null && selectedFee != null ? (
-            <>
-              {console.log('selectedPositions', selectedPositions)}
-              {console.log('selectedBaseToken', selectedBaseToken)}
-              {console.log('selectedQuoteToken', selectedQuoteToken)}
-              {console.log('selectedFee', selectedFee)}
-
-              <NewPosition
-                baseToken={selectedBaseToken as Token}
-                quoteToken={selectedQuoteToken as Token}
-                initFee={selectedFee}
-                positions={selectedPositions}
-                onCancel={handleCancelNewPosition}
-              />
-            </>
+            <NewPosition
+              baseToken={selectedBaseToken as Token}
+              quoteToken={selectedQuoteToken as Token}
+              initFee={selectedFee}
+              positions={selectedPositions}
+              onCancel={handleCancelNewPosition}
+            />
           ) : selectedTab === 'new' ? (
             <NewPools onPoolClick={handlePoolClick} filter={searchInput} />
           ) : (

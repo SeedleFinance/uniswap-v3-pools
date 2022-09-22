@@ -39,9 +39,6 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
 
   const buffer = 0.2; // 20% buffer on each axis
 
-  console.log('min', min);
-  console.log('max', max);
-
   const maxPriceWithBuffer = max + (max - min) * buffer;
   const yDomain = [min, maxPriceWithBuffer];
 
@@ -56,8 +53,6 @@ function LiquidityChart({ address, quoteToken, baseToken, pool }: Props) {
 
     return null;
   }
-
-  console.log('liquidityData', liquidityData);
 
   return (
     <ResponsiveContainer width={'100%'} height="100%">

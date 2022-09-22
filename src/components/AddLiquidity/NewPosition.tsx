@@ -55,21 +55,13 @@ interface Props {
 }
 
 function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Props) {
-  console.log('baseToken', baseToken);
-  console.log('quoteToken', quoteToken);
-  console.log('initFee', initFee);
-
   const chainId = useChainId();
   const { address: account } = useAccount();
   const library = useProvider();
   const { data: signer } = useSigner();
 
-  //const [searchParams] = useSearchParams();
-  //const positionId = searchParams.get('position');
   const { query } = useRouter();
-  const positionId = query.positionId;
-
-  console.log('positionId', positionId);
+  const positionId = query.position;
 
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
 

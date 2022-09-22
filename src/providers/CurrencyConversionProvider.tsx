@@ -67,7 +67,7 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
 
       const tick = priceFeed[token.address];
       if (!tick) {
-        console.log("no matching price pool found for base token ", token);
+        console.error("no matching price pool found for base token ", token);
         return 0;
       }
       return parseFloat(
@@ -104,7 +104,7 @@ export const CurrencyConversionsProvider = ({ children }: Props) => {
         }
 
         if (!currency) {
-          console.log("base token not found", val.currency);
+          console.error("base token not found", val.currency);
           return 0;
         }
         price = getETHPrice(currency);
