@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
+import JSBI from 'jsbi';
 
 import Button from '../../components/Button';
 import Card from '../../components/Card';
@@ -19,7 +20,7 @@ import { LABELS, ROUTES } from '../../common/constants';
 import { ChainID } from '../../types/enums';
 import Tooltip from '../../components/Tooltip';
 import Helper from '../../components/icons/Helper';
-import Row from '../../components/Row';
+import PoolRow from '../../components/PoolRow';
 import LastUpdatedStamp from '../../components/LastUpdatedStamp';
 import { PoolState } from '../../types/seedle';
 
@@ -155,7 +156,7 @@ const HomeLayout = () => {
       <div className="w-full mt-4 md:mt-12">
         <div className="w-full flex justify-between py-4 border-b border-element-10 mb-8">
           <div className="w-2/3 flex items-center">
-            <h2 className=" font-bold text-1.25 text-high">Pools</h2>
+            <h2 className=" font-bold text-1.25 text-high">Open Positions</h2>
             <span className="text-0.875 ml-2 text-medium flex">
               ({formatCurrencyWithSymbol(totalLiquidity + totalUncollectedFees, ChainID.Mainnet)})
             </span>
@@ -236,7 +237,7 @@ const HomeLayout = () => {
                     poolUncollectedFees,
                     currencyPoolUncollectedFees,
                   }: PoolState) => (
-                    <Row
+                    <PoolRow
                       key={key}
                       onClick={() => handleRowClick(address)}
                       entity={entity}
@@ -246,7 +247,9 @@ const HomeLayout = () => {
                       poolUncollectedFees={poolUncollectedFees}
                       currencyPoolUncollectedFees={currencyPoolUncollectedFees}
                       currentPrice={currentPrice}
-                      positions={positions}
+                      positions={positions.filter(({ entity }) =>
+                        JSBI.notEqual(entity.liquidity, JSBI.BigInt(0)),
+                      )}
                     />
                   ),
                 )}

@@ -19,7 +19,7 @@ import DropdownMenu from '../../components/DropdownMenu';
 import IconOptions from '../../components/icons/Options';
 import IconDownload from '../../components/icons/Download';
 import FilterClosedToggle from '../../components/FilterClosedToggle';
-import Row from '../../components/Row';
+import PoolRow from '../../components/PoolRow';
 import BackArrow from '../../components/icons/LeftArrow';
 import { useRouter } from 'next/router';
 
@@ -216,7 +216,7 @@ function AllPoolsLayout() {
                     poolUncollectedFees,
                     currencyPoolUncollectedFees,
                   }: PoolState) => (
-                    <Row
+                    <PoolRow
                       key={key}
                       onClick={() => handleRowClick(address)}
                       entity={entity}
