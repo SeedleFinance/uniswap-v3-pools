@@ -156,7 +156,7 @@ function AddLiquidity() {
   const selectedTab = query.tab === 'existing' ? 'existing' : 'new';
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col h-full">
       <div className="py-4 mb-4 flex items-center">
         <Link href={ROUTES.HOME}>
           <a className="flex justify-center items-center text-high w-8 h-8 flex-shrink-0 mr-4 rounded-full hover:bg-surface-20">
@@ -169,7 +169,7 @@ function AddLiquidity() {
         <SearchInput onChange={setSearchInput} />
       </div>
 
-      <div className="w-full py-4 my-4">
+      <div className="w-full h-full py-4 my-4">
         <div className="flex border-b border-element-10">
           <button
             className={`p-2 mr-2 border-b-4 focus:outline-none text-medium ${
@@ -188,8 +188,7 @@ function AddLiquidity() {
             Existing
           </button>
         </div>
-
-        <div className="py-4">
+        <div className="py-4 h-full">
           {selectedBaseToken !== null && selectedQuoteToken !== null && selectedFee != null ? (
             <NewPosition
               baseToken={selectedBaseToken as Token}

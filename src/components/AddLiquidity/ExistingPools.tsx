@@ -11,6 +11,14 @@ interface Props {
 }
 
 function ExistingPools({ chainId, onPoolClick, filter, pools }: Props) {
+  if (!pools || !pools.length) {
+    return (
+      <div className="flex justify-center items-center text-low h-full">
+        No existing pools found.
+      </div>
+    );
+  }
+
   return <Pools pools={pools} filter={filter} onPoolClick={onPoolClick} />;
 }
 
