@@ -13,6 +13,7 @@ import { formatInput } from '../../utils/numbers';
 import { tokenAmountNeedApproval, getApprovalAmount } from './utils';
 
 import { WETH9, SWAP_ROUTER_ADDRESSES } from '../../common/constants';
+import LoadingSpinner from '../Spinner';
 
 interface Props {
   token0: Token;
@@ -164,14 +165,18 @@ function SwapAndAddModal({
     return (currency as Token).address;
   };
 
+  const isLoading = !swapInput || !swapOutput;
   return (
-    <Modal title={'Swap & Add'}>
-      {!swapInput || !swapOutput ? (
-        <div className="text-medium">Finding the best route for the swap...</div>
+    <Modal title={isLoading ? '' : 'Swap & Add'}>
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <LoadingSpinner />
+          <div className="text-medium ml-2">Finding the best route for the swap...</div>
+        </div>
       ) : (
         <div>
           <div className="text-medium">
-            <div>Swap</div>
+            <div className="text-high font-medium">Your Swap:</div>
             <div className="flex item-center p-2">
               <div className="grow flex flex-wrap items-center my-1 relative">
                 <div className="w-1/2 flex items-center p-1 my-1 justify-between bg-slate-200 dark:bg-slate-600 border-element-10 rounded">
@@ -210,8 +215,8 @@ function SwapAndAddModal({
               </div>
             </div>
           </div>
-          <div>
-            <div className="text-medium">Liquidity to be added after the swap:</div>
+          <div className="border-t border-element-10 py-6">
+            <div className="text-high font-medium">Liquidity to be added after the swap:</div>
             <div>
               <div className="w-full flex flex-wrap items-center p-2 my-1 relative text-medium">
                 <div className="w-1/3 flex items-center p-1 my-1 justify-between bg-surface-10 border-element-10 rounded">
@@ -232,8 +237,8 @@ function SwapAndAddModal({
           </div>
 
           <div>
-            <div className="text-sm my-2 text-high">
-              Swap & Add interacts with{' '}
+            <div className="py-2 text-0.8125 text-high border-element-10 border px-4">
+              Swap & Add interacts with the{' '}
               <a
                 className="text-underline text-blue-500"
                 href="https://etherscan.io/address/0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45#code"
@@ -242,38 +247,47 @@ function SwapAndAddModal({
               >
                 SmartRouter02 contract
               </a>{' '}
-              from Uniswap Labs. You may need to approve tokens.
+              from Uniswap Labs. <br />
+              You may need to approve tokens.
             </div>
-            {token0NeedApproval ? (
+            <div className="flex justify-end mt-4">
               <Button
-                onClick={() =>
-                  handleApprove(token0, getApprovalAmount(token0PreswapAmount, token0Amount))
-                }
-                tabIndex={8}
+                onClick={onCancel}
+                tabIndex={9}
+                variant="secondary"
                 size="lg"
                 className="mr-2"
               >
-                Approve {token0.symbol}
+                Cancel
               </Button>
-            ) : token1NeedApproval ? (
-              <Button
-                onClick={() =>
-                  handleApprove(token1, getApprovalAmount(token1PreswapAmount, token1Amount))
-                }
-                tabIndex={8}
-                size="lg"
-                className="mr-2"
-              >
-                Approve {token1.symbol}
-              </Button>
-            ) : (
-              <Button onClick={onComplete} tabIndex={8} size="lg" className="mr-2">
-                Complete Transaction
-              </Button>
-            )}
-            <Button onClick={onCancel} tabIndex={9} variant="ghost" className="p-0">
-              Cancel
-            </Button>
+              {token0NeedApproval ? (
+                <Button
+                  onClick={() =>
+                    handleApprove(token0, getApprovalAmount(token0PreswapAmount, token0Amount))
+                  }
+                  tabIndex={8}
+                  size="lg"
+                  className="mr-2"
+                >
+                  Approve {token0.symbol}
+                </Button>
+              ) : token1NeedApproval ? (
+                <Button
+                  onClick={() =>
+                    handleApprove(token1, getApprovalAmount(token1PreswapAmount, token1Amount))
+                  }
+                  tabIndex={8}
+                  size="lg"
+                  className="mr-2"
+                >
+                  Approve {token1.symbol}
+                </Button>
+              ) : (
+                <Button onClick={onComplete} tabIndex={8} size="lg" className="mr-2">
+                  Complete Transaction
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       )}
