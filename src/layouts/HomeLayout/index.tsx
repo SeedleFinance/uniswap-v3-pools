@@ -180,11 +180,8 @@ const HomeLayout = () => {
             <div className="text-center text-1 md:text-1 text-low mt-4">
               This address has no open positions.
             </div>
-            <Link
-              href={ROUTES.ADD_NEW}
-              className="block text-center text-1 text-blue-primary font-medium py-2"
-            >
-              <a>+ Create a Position</a>
+            <Link href={ROUTES.ADD_NEW} className="block text-center text-1 font-medium py-2">
+              <a className="text-blue-primary">+ Create a Position</a>
             </Link>
           </div>
         ) : (
