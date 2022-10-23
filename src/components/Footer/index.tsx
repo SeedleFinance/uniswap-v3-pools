@@ -1,9 +1,9 @@
-import React from "react";
-import { EXTERNAL_LINKS } from "../../common/constants";
+import React from 'react';
+import { EXTERNAL_LINKS } from '../../common/constants';
 
-import Discord from "../icons/Discord";
-import Github from "../icons/Github";
-import Twitter from "../icons/Twitter";
+import Discord from '../icons/Discord';
+import Github from '../icons/Github';
+import Twitter from '../icons/Twitter';
 
 function Footer() {
   return (
@@ -21,26 +21,18 @@ function Footer() {
             </a>
           </div>
         </div>
-        <span className="text-0.6875 text-low">Copyright 2022</span>
+        <div className="text-0.6875 text-medium">
+          Bootstrapped and open-sourced from Australia. <span>Copyright 2022.</span>
+        </div>
       </div>
       <div className="flex">
         <a href={EXTERNAL_LINKS.DISCORD} target="_blank" rel="noreferrer">
           <Discord />
         </a>
-        <a
-          href={EXTERNAL_LINKS.TWITTER}
-          className="ml-2"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={EXTERNAL_LINKS.TWITTER} className="ml-2" target="_blank" rel="noreferrer">
           <Twitter />
         </a>
-        <a
-          href={EXTERNAL_LINKS.GITHUB}
-          className="ml-2"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <a href={EXTERNAL_LINKS.GITHUB} className="ml-2" target="_blank" rel="noreferrer">
           <Github />
         </a>
       </div>
