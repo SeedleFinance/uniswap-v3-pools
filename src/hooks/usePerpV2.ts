@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLazyQuery } from "@apollo/client";
-import { uniq } from "lodash";
-import gql from "graphql-tag";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Token, CurrencyAmount } from "@uniswap/sdk-core";
-import { Position, Pool, tickToPrice } from "@uniswap/v3-sdk";
+import { useEffect, useMemo, useState } from 'react';
+import { useLazyQuery } from '@apollo/client';
+import { uniq } from 'lodash';
+import gql from 'graphql-tag';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Position, Pool, tickToPrice } from '@uniswap/v3-sdk';
 
-import { useAddress } from "../providers/AddressProvider";
-import { useAppSettings } from "../providers/AppSettingsProvider";
-import { getPerpClient } from "../lib/apollo";
-import { useFetchPools } from "./fetch";
-import { useTransactions } from "./useTransactions";
-import { PoolState } from "../types/seedle";
+import { useAddress } from '../providers/AddressProvider';
+import { useAppSettings } from '../providers/AppSettingsProvider';
+import { getPerpClient } from '../lib/apollo';
+import { useFetchPools } from './fetch';
+import { useTransactions } from './useTransactions';
+import { PoolState } from '../types/seedle';
 
 const QUERY_OPEN_ORDERS = gql`
   query openOrdersByAccounts($accounts: [String]!, $liquidity: BigInt) {
@@ -55,17 +55,14 @@ export interface PerpPositionState {
 function useQueryPerpOpenOrders(
   chainId: number,
   accounts: string[],
-  includeEmpty: boolean
+  includeEmpty: boolean,
 ): { loading: boolean; positionStates: PerpPositionState[] } {
-  const [queryOpenOrders, { loading, error, data }] = useLazyQuery(
-    QUERY_OPEN_ORDERS,
-    {
-      variables: { accounts, liquidity: includeEmpty ? -1 : 0 },
-      fetchPolicy: "network-only",
-      nextFetchPolicy: "cache-first",
-      client: getPerpClient(chainId),
-    }
-  );
+  const [queryOpenOrders, { loading, error, data }] = useLazyQuery(QUERY_OPEN_ORDERS, {
+    variables: { accounts, liquidity: includeEmpty ? -1 : 0 },
+    fetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-first',
+    client: getPerpClient(chainId),
+  });
 
   useEffect(() => {
     if (!accounts.length) {
@@ -106,7 +103,7 @@ function useQueryPerpOpenOrders(
         poolAddress: marketRef.pool,
         maker,
         baseTokenAddress: baseToken,
-      })
+      }),
     );
   }, [loading, error, data]);
 
@@ -115,7 +112,7 @@ function useQueryPerpOpenOrders(
 
 function usePerpUncollectedFees(
   chainId: number,
-  positions: PerpPositionState[]
+  positions: PerpPositionState[],
 ): { loading: boolean; uncollectedFees: { hex: string }[] } {
   const [loading, setLoading] = useState(true);
   const [uncollectedFees, setUncollectedFees] = useState([]);
@@ -124,10 +121,9 @@ function usePerpUncollectedFees(
     const _call = async () => {
       setLoading(true);
 
-      const url =
-        "https://ql2p37n7rb.execute-api.us-east-2.amazonaws.com/perp_fees";
+      const url = 'https://a988aiwz94.execute-api.us-east-2.amazonaws.com/perp_fees';
       const res = await fetch(url, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ chainId, positions }),
       });
       if (!res.ok) {
@@ -160,7 +156,7 @@ function usePerpUncollectedFees(
 
 function usePerpPools(
   chainId: number,
-  poolAddresses: string[]
+  poolAddresses: string[],
 ): {
   loading: boolean;
   pools: { [address: string]: Pool };
@@ -178,14 +174,14 @@ function usePerpPools(
         pool.token0.address,
         parseInt(pool.token0.decimals, 10),
         pool.token0.symbol,
-        pool.token0.name
+        pool.token0.name,
       );
       const token1 = new Token(
         chainId,
         pool.token1.address,
         parseInt(pool.token1.decimals, 10),
         pool.token1.symbol,
-        pool.token1.name
+        pool.token1.name,
       );
       p[pool.address.toLowerCase()] = new Pool(
         token0,
@@ -193,7 +189,7 @@ function usePerpPools(
         pool.fee,
         pool.sqrtPriceX96,
         pool.liquidity,
-        pool.tick
+        pool.tick,
       );
     });
     return p;
@@ -211,7 +207,7 @@ export function usePerpV2(chainId: number): {
   const { loading: loadingPositions, positionStates } = useQueryPerpOpenOrders(
     chainId,
     addresses,
-    !filterClosed
+    !filterClosed,
   );
 
   const { loading: loadingFees, uncollectedFees: uncollectedFeesByPosition } =
@@ -246,9 +242,7 @@ export function usePerpV2(chainId: number): {
       const pool = pools[position.poolAddress];
 
       const [baseToken, quoteToken] =
-        pool.token0.symbol === "vUSD"
-          ? [pool.token0, pool.token1]
-          : [pool.token1, pool.token0];
+        pool.token0.symbol === 'vUSD' ? [pool.token0, pool.token1] : [pool.token1, pool.token0];
 
       const entity = new Position({
         pool,
@@ -268,7 +262,7 @@ export function usePerpV2(chainId: number): {
         (tx: { poolAddress: string; tickLower: number; tickUpper: number }) =>
           tx.poolAddress === position.poolAddress &&
           tx.tickLower === position.tickLower &&
-          tx.tickUpper === position.tickUpper
+          tx.tickUpper === position.tickUpper,
       );
 
       const uncollectedFees = [
@@ -280,7 +274,7 @@ export function usePerpV2(chainId: number): {
         baseToken,
         uncollectedFeesByPosition.length && uncollectedFeesByPosition[idx]
           ? BigNumber.from(uncollectedFeesByPosition[idx].hex).toString()
-          : 0
+          : 0,
       );
 
       const enhanced = {
@@ -312,9 +306,7 @@ export function usePerpV2(chainId: number): {
       const positions = positionsByPool[address.toLowerCase()];
 
       const [baseToken, quoteToken] =
-        pool.token0.symbol === "vUSD"
-          ? [pool.token0, pool.token1]
-          : [pool.token1, pool.token0];
+        pool.token0.symbol === 'vUSD' ? [pool.token0, pool.token1] : [pool.token1, pool.token0];
 
       let rawPoolLiquidity = BigNumber.from(0);
       let poolLiquidity = CurrencyAmount.fromRawAmount(baseToken, 0);
@@ -324,20 +316,14 @@ export function usePerpV2(chainId: number): {
         CurrencyAmount.fromRawAmount(pool.token1, 0),
       ];
 
-      positions.forEach(
-        ({ entity, positionLiquidity, positionUncollectedFees }) => {
-          rawPoolLiquidity = rawPoolLiquidity.add(
-            BigNumber.from(entity.liquidity.toString())
-          );
-          poolLiquidity = poolLiquidity.add(positionLiquidity);
-          poolUncollectedFees = poolUncollectedFees.add(
-            positionUncollectedFees
-          );
-        }
-      );
+      positions.forEach(({ entity, positionLiquidity, positionUncollectedFees }) => {
+        rawPoolLiquidity = rawPoolLiquidity.add(BigNumber.from(entity.liquidity.toString()));
+        poolLiquidity = poolLiquidity.add(positionLiquidity);
+        poolUncollectedFees = poolUncollectedFees.add(positionUncollectedFees);
+      });
 
       const currentPrice = parseFloat(
-        tickToPrice(quoteToken, baseToken, pool.tickCurrent).toSignificant(8)
+        tickToPrice(quoteToken, baseToken, pool.tickCurrent).toSignificant(8),
       );
 
       return {
