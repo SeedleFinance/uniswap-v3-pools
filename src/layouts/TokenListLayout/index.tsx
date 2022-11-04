@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import Link from 'next/link';
 
 import { ChainID } from '../../types/enums';
 
@@ -7,13 +8,14 @@ import { getChainNameAndColor } from '../../utils/chains';
 
 import TokenLogo from '../../components/TokenLogo';
 import { ROUTES } from '../../common/constants';
-import Link from 'next/link';
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 
 function TokenListLayout() {
   //   const location = useLocation();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { loading, tokens, totalTokenValue } = useTokens();
+
+  console.log('tokens here are:', tokens);
 
   const topTokens = useMemo(() => {
     if (!tokens || !tokens.length) {
@@ -59,42 +61,47 @@ function TokenListLayout() {
           This address has no tokens.
         </div>
       )}
-      <div className="w-full mt-8 flex gap-8 md:gap-20 overflow-x-auto pb-12">
+      <div className="w-full mt-8 flex gap-4 md:gap-8 overflow-x-auto pb-12">
         {topTokens.map((token) => (
           <div
-            className="h-full rounded-md flex-shrink-0 flex-col flex"
+            className="h-full rounded-md flex-shrink-0 flex-col flex hover:bg-surface-5 p-4 cursor-pointer transition-colors"
             key={`${token.chainId}-${token.address}`}
           >
-            <div className="flex items-start text-low">
-              <TokenLogo
-                name={token.name}
-                address={token.address}
-                src={token.logo}
-                size="md"
-                className="mr-2"
-              />
-              <div className="flex flex-col text-high">
-                <div className="text-1.25 font-bold leading-tight flex items-center">
-                  {token.name}{' '}
-                </div>
-                <div className="flex items-center mt-1">
-                  <div className="text-0.875">{convertToGlobalFormatted(token.price)}</div>
-                  <div
-                    className={`text-0.75 px-1 py-0.5 rounded-md ml-1 font-medium text-black ${
-                      getChainNameAndColor(token.chainId)[1]
-                    }`}
-                  >
-                    {getChainNameAndColor(token.chainId)[0]}
+            <Link href={`${ROUTES.TOKENS}/${token.address}`}>
+              <a className="flex items-start text-low">
+                <>
+                  <TokenLogo
+                    name={token.name}
+                    address={token.address}
+                    src={token.logo}
+                    size="md"
+                    className="mr-2"
+                  />
+                  {console.log('token address:', token.address)}
+                  <div className="flex flex-col text-high">
+                    <div className="text-1.25 font-bold leading-tight flex items-center">
+                      {token.name}{' '}
+                    </div>
+                    <div className="flex items-center mt-1">
+                      <div className="text-0.875">{convertToGlobalFormatted(token.price)}</div>
+                      <div
+                        className={`text-0.75 px-1 py-0.5 rounded-md ml-1 font-medium text-black ${
+                          getChainNameAndColor(token.chainId)[1]
+                        }`}
+                      >
+                        {getChainNameAndColor(token.chainId)[0]}
+                      </div>
+                    </div>
+                    <div className="text-0.875 -ml-2 mt-2 rounded-md px-2">
+                      Balance: {token.balance}
+                    </div>
+                    <div className="text-0.875 bg-green-100 dark:bg-green-600 -ml-2 mt-2 rounded-md px-2">
+                      Value: {convertToGlobalFormatted(token.value)}
+                    </div>
                   </div>
-                </div>
-                <div className="text-0.875 -ml-2 mt-2 rounded-md px-2">
-                  Balance: {token.balance}
-                </div>
-                <div className="text-0.875 bg-green-100 dark:bg-green-600 -ml-2 mt-2 rounded-md px-2">
-                  Value: {convertToGlobalFormatted(token.value)}
-                </div>
-              </div>
-            </div>
+                </>
+              </a>
+            </Link>
           </div>
         ))}
       </div>
