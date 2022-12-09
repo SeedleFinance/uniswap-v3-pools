@@ -23,11 +23,12 @@ import Menu from '../../components/Menu/Menu';
 import RangeVisual from './RangeVisual';
 import TransactionModal from '../../components/TransactionModal';
 
-import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../common/constants';
+import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, ROUTES } from '../../common/constants';
 import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import Warning from '../../components/icons/Warning';
 import ElipsisVertical from '../../components/EllipsisVertical';
+import Link from 'next/link';
 
 export interface PositionProps {
   id: BigNumber;
@@ -147,6 +148,8 @@ function Position({
   );
 
   const apr = useAPR(transactions, returnPercent, BigNumber.from(entity.liquidity.toString()));
+
+  console.log({ pool, baseToken, uncollectedFees, transactions });
 
   const feeAPY = useFeeAPY(pool, baseToken, uncollectedFees, transactions);
 
@@ -285,6 +288,8 @@ function Position({
 
   const portalId = id.toString();
 
+  console.log(router.query);
+
   return (
     <>
       <tr className={classNames(positionTextColor, 'border-b border-element-10 text-0.8125')}>
@@ -381,6 +386,12 @@ function Position({
             <FloatingPortal id={`menu-${portalId}`}>
               {showActions && (
                 <Menu onClose={() => setShowActions(false)} className="w-32 shadow-lg text-0.875">
+                  <Link
+                    href={`${ROUTES.POSITION_DETAILS}/${router.query.id}?posId=${id}`}
+                    className="my-1"
+                  >
+                    View position
+                  </Link>
                   <button className="text-left my-1" onClick={handleTransactions}>
                     Transactions
                   </button>
@@ -393,16 +404,12 @@ function Position({
                       <button className="text-left my-1" onClick={handleAddLiquidity}>
                         Add Liquidity
                       </button>
-                      <div className="pt-1 mt-1">
-                        <div>
-                          <button className="text-left my-1" onClick={handleTransfer}>
-                            Transfer
-                          </button>
-                        </div>
-                        <button className="text-left text-red-500 my-1" onClick={handleRemove}>
-                          Remove
-                        </button>
-                      </div>
+                      <button className="text-left my-1" onClick={handleTransfer}>
+                        Transfer
+                      </button>
+                      <button className="text-left text-red-500 my-1" onClick={handleRemove}>
+                        Remove
+                      </button>
                     </>
                   )}
                 </Menu>

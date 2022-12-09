@@ -157,6 +157,7 @@ export const ROUTES = {
   POOLS: '/pools',
   TOKENS: '/tokens',
   CURRENCIES: '/currencies',
+  POSITION_DETAILS: '/position',
 };
 
 export const EXTERNAL_LINKS = {

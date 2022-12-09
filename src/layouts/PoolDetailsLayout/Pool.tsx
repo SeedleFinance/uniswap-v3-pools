@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { BigNumber } from "@ethersproject/bignumber";
-import { Token, CurrencyAmount } from "@uniswap/sdk-core";
-import { Pool as UniPool } from "@uniswap/v3-sdk";
+import { useMemo } from 'react';
+import { BigNumber } from '@ethersproject/bignumber';
+import { Token, CurrencyAmount } from '@uniswap/sdk-core';
+import { Pool as UniPool } from '@uniswap/v3-sdk';
 
 import {
   useTransactionTotals,
@@ -11,12 +11,12 @@ import {
 } from '../../hooks/calculations';
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 
-import LoadingSpinner from "../../components/Spinner";
-import Tooltip from "../../components/Tooltip";
-import IconHelper from "../../components/icons/Helper";
-import TokenLabel from "../../components/TokenLabel";
-import { CustomPosition } from "../../types/seedle";
-import { LABELS } from "../../common/constants";
+import LoadingSpinner from '../../components/Spinner';
+import Tooltip from '../../components/Tooltip';
+import IconHelper from '../../components/icons/Helper';
+import TokenLabel from '../../components/TokenLabel';
+import { CustomPosition } from '../../types/seedle';
+import { LABELS } from '../../common/constants';
 
 interface PoolProps {
   address: string;
@@ -56,8 +56,8 @@ function Pool({
 
   // total distribution – from all positions
   const distribution = useMemo(() => {
-    let amount0 = CurrencyAmount.fromRawAmount(entity.token0, "0");
-    let amount1 = CurrencyAmount.fromRawAmount(entity.token1, "0");
+    let amount0 = CurrencyAmount.fromRawAmount(entity.token0, '0');
+    let amount1 = CurrencyAmount.fromRawAmount(entity.token1, '0');
 
     positions.forEach((position) => {
       amount0 = amount0.add(position.entity.amount0);
@@ -67,12 +67,8 @@ function Pool({
     return [amount0, amount1];
   }, [entity, positions]);
 
-  const {
-    totalMintValue,
-    totalBurnValue,
-    totalCollectValue,
-    totalTransactionCost,
-  } = useTransactionTotals(poolTransactions, baseToken, entity);
+  const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
+    useTransactionTotals(poolTransactions, baseToken, entity);
 
   const { returnValue, returnPercent } = useReturnValue(
     baseToken,
@@ -80,7 +76,7 @@ function Pool({
     totalBurnValue,
     totalCollectValue,
     totalTransactionCost,
-    totalValue
+    totalValue,
   );
 
   const totalFees = totalCollectValue.add(poolUncollectedFees);
@@ -103,15 +99,9 @@ function Pool({
         <table className="table-auto w-full text-high text-0.875">
           <thead className="border-b border-element-10">
             <tr className="text-left align-middle">
-              <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">
-                Total Distribution
-              </th>
-              <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">
-                Total Liquidity
-              </th>
-              <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">
-                Total Fees
-              </th>
+              <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">Total Distribution</th>
+              <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">Total Liquidity</th>
+              <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">Total Fees</th>
               <th className="pb-3 px-6 py-5 font-medium">
                 <Tooltip label={LABELS.FEE_APY} placement="top">
                   <span className="flex items-center cursor-default whitespace-nowrap">
@@ -149,33 +139,24 @@ function Pool({
                 ))}
               </td>
 
+              <td className="px-4 py-6">{convertToGlobalFormatted(poolLiquidity)}</td>
               <td className="px-4 py-6">
-                {convertToGlobalFormatted(poolLiquidity)}
-              </td>
-              <td className="px-4 py-6">
-                {convertToGlobalFormatted(totalFees)} (uncl.{" "}
+                {convertToGlobalFormatted(totalFees)} (uncl.{' '}
                 {convertToGlobalFormatted(poolUncollectedFees)})
               </td>
               <td className="px-4 py-6">
-                <div className={feeAPY < 0 ? "text-red-500" : "text-green-500"}>
+                <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>
                   {feeAPY.toFixed(2)}%
                 </div>
               </td>
 
               <td className="px-4 py-6">
-                <div
-                  className={
-                    returnValue.lessThan(0) ? "text-red-500" : "text-green-500"
-                  }
-                >
-                  {convertToGlobalFormatted(returnValue)} (
-                  {returnPercent.toFixed(2)}%)
+                <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
+                  {convertToGlobalFormatted(returnValue)} ({returnPercent.toFixed(2)}%)
                 </div>
               </td>
               <td className="px-4 py-6">
-                <div className={apr < 0 ? "text-red-500" : "text-green-500"}>
-                  {apr.toFixed(2)}%
-                </div>
+                <div className={apr < 0 ? 'text-red-500' : 'text-green-500'}>{apr.toFixed(2)}%</div>
               </td>
             </tr>
           </tbody>
