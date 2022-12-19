@@ -50,30 +50,16 @@ const PositionDetailsLayout = () => {
     return pools.find((pool) => pool.address === id);
   }, [loadingPools, pools, id]);
 
-  const {
-    key,
-    address,
-    entity,
-    quoteToken,
-    baseToken,
-    positions,
-    currentPrice,
-    rawPoolLiquidity,
-    poolLiquidity,
-    currencyPoolUncollectedFees,
-    poolUncollectedFees,
-  } = pool;
+  const { entity, quoteToken, baseToken, positions } = pool;
 
   // using the posId, find the position in the pool
   const position: SeedlePosition = positions.find(
     (position: SeedlePosition) => position.id === Number(posId),
   );
 
-  console.log({ pool, baseToken, poolUncollectedFees, transactions: position.transactions });
-
-  // const feeAPY = useFeeAPY(pool, baseToken, poolUncollectedFees, position.transactions);
-
-  // console.log('feeAPY: ', feeAPY);
+  // Note - we push it into an array here as it expects an array
+  const uncollectedFees = [position.positionUncollectedFees];
+  const feeAPY = useFeeAPY(pool.entity, baseToken, uncollectedFees, position.transactions);
 
   if (!pool?.positions) {
     return (
@@ -109,9 +95,8 @@ const PositionDetailsLayout = () => {
             size="lg"
           />
           <div>
-            <span className="ml-20 py-2 px-4 bg-surface-10 text-0.8125">41%</span>
+            <span className="ml-20 py-2 px-4 bg-surface-10 text-0.8125 rounded-md">{feeAPY} %</span>
           </div>
-          {/* <span className="text-1.25 lg:text-2 font-semibold text-high">{feeAPY}</span> */}
         </div>
         <div className="flex lg:ml-6 w-full lg:w-1/3">
           <Card className="md:ml-2">
@@ -144,9 +129,9 @@ const PositionDetailsLayout = () => {
               <th className="px-4 py-2">Gas cost</th>
             </tr>
           </thead>
-          {/* {position.transactions.map((tx) => (
-              <Transaction key={tx.id} pool={pool} baseToken={baseToken} {...tx} />
-            ))} */}
+          {position.transactions.map((tx) => (
+            <Transaction key={tx.id} {...tx} pool={pool.entity} baseToken={baseToken} />
+          ))}
         </table>
       </div>
     </div>

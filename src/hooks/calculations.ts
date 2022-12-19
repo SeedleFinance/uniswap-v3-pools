@@ -1,18 +1,14 @@
-import { useMemo } from "react";
-import differenceInSeconds from "date-fns/differenceInSeconds";
-import { BigNumber } from "@ethersproject/bignumber";
-import { CurrencyAmount, Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import { useMemo } from 'react';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
+import { BigNumber } from '@ethersproject/bignumber';
+import { CurrencyAmount, Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import { useGasFee } from "./useGasFee";
-import { WETH9, MATIC } from "../common/constants";
-import { TxTypes } from "../types/enums";
+import { useGasFee } from './useGasFee';
+import { WETH9, MATIC } from '../common/constants';
+import { TxTypes } from '../types/enums';
 
-export function useTransactionTotals(
-  transactions: any[],
-  baseToken: Token,
-  pool: Pool
-) {
+export function useTransactionTotals(transactions: any[], baseToken: Token, pool: Pool) {
   const chainId = baseToken.chainId;
 
   return useMemo(() => {
@@ -21,11 +17,12 @@ export function useTransactionTotals(
     let totalCollectValue = CurrencyAmount.fromRawAmount(baseToken, 0);
     let totalTransactionCost = CurrencyAmount.fromRawAmount(
       chainId === 137 ? MATIC[chainId as number] : WETH9[chainId as number],
-      "0"
+      '0',
     );
 
     if (transactions.length && baseToken && pool && chainId) {
       transactions.forEach((tx) => {
+        console.log('pool token0\n\n', pool.token0);
         const txValue = pool.token0.equals(baseToken)
           ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
           : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
@@ -57,7 +54,7 @@ export function useReturnValue(
   totalBurnValue: CurrencyAmount<Token>,
   totalCollectValue: CurrencyAmount<Token>,
   totalTransactionCost: CurrencyAmount<Token>,
-  totalCurrentValue: CurrencyAmount<Token>
+  totalCurrentValue: CurrencyAmount<Token>,
 ) {
   const convertGasFee = useGasFee(baseToken);
 
@@ -71,9 +68,7 @@ export function useReturnValue(
 
     const returnPercent =
       (parseFloat(returnValue.toSignificant(2)) /
-        parseFloat(
-          totalMintValue.add(totalTransactionCostConverted).toSignificant(2)
-        )) *
+        parseFloat(totalMintValue.add(totalTransactionCostConverted).toSignificant(2))) *
       100;
 
     return { returnValue, returnPercent };
@@ -87,19 +82,13 @@ export function useReturnValue(
   ]);
 }
 
-export function useAPR(
-  transactions: any[],
-  returnPercent: number,
-  liquidity: BigNumber
-) {
+export function useAPR(transactions: any[], returnPercent: number, liquidity: BigNumber) {
   return useMemo(() => {
     if (!transactions.length) {
       return 0;
     }
 
-    const sortedTxs = transactions.sort(
-      (a: any, b: any) => a.timestamp - b.timestamp
-    );
+    const sortedTxs = transactions.sort((a: any, b: any) => a.timestamp - b.timestamp);
     const startDate = new Date(sortedTxs[0].timestamp * 1000);
     const endDate = liquidity.isZero()
       ? new Date(sortedTxs[sortedTxs.length - 1].timestamp * 1000)
@@ -114,8 +103,10 @@ function calcLiquidity(
   pool: Pool,
   baseToken: Token,
   amount0: CurrencyAmount<Token>,
-  amount1: CurrencyAmount<Token>
+  amount1: CurrencyAmount<Token>,
 ) {
+  console.log('pool token0\n\n', pool.token0);
+
   return pool.token0.equals(baseToken)
     ? pool.priceOf(pool.token1).quote(amount1).add(amount0)
     : pool.priceOf(pool.token0).quote(amount0).add(amount1);
@@ -125,7 +116,7 @@ function calcPeriodYield(
   fees: CurrencyAmount<Token>,
   liquidity: CurrencyAmount<Token>,
   periodStart: Date,
-  periodEnd: Date
+  periodEnd: Date,
 ) {
   const zeroAmount = CurrencyAmount.fromRawAmount(liquidity.currency, 0);
   if (liquidity.equalTo(zeroAmount)) {
@@ -232,7 +223,7 @@ export function useFeeAPY(
   pool: Pool,
   baseToken: Token,
   uncollectedFees: CurrencyAmount<Token>[],
-  transactions: any[]
+  transactions: any[],
 ) {
   return useMemo(() => {
     return calculateFeeAPY(pool, baseToken, uncollectedFees, transactions);

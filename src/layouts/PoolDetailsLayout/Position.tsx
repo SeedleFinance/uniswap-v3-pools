@@ -149,8 +149,6 @@ function Position({
 
   const apr = useAPR(transactions, returnPercent, BigNumber.from(entity.liquidity.toString()));
 
-  console.log({ pool, baseToken, uncollectedFees, transactions });
-
   const feeAPY = useFeeAPY(pool, baseToken, uncollectedFees, transactions);
 
   const statusLabel = useMemo(() => {
