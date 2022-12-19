@@ -45,7 +45,9 @@ const PositionDetailsLayout = () => {
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { query } = useRouter();
-  const { id, posId } = query;
+  const { id, poolid } = query;
+
+  console.log('query', query);
 
   // Select a single pool
   const pool = useMemo(() => {
@@ -84,9 +86,9 @@ const PositionDetailsLayout = () => {
     return colors[positionStatus];
   };
 
-  // using the posId, find the position in the pool
+  // using the poolId, find the position in the pool
   const position: SeedlePosition = positions.find(
-    (position: SeedlePosition) => position.id === Number(posId),
+    (position: SeedlePosition) => position.id === Number(poolid),
   );
 
   const formattedRange = useMemo(() => {
@@ -196,7 +198,7 @@ const PositionDetailsLayout = () => {
         <table className="table-auto w-full border-separate my-2 px-4 -ml-4">
           <thead className="bg-surface-5">
             <tr className="text-left text-0.875">
-              <th className="px-3 py-2">Timestamp</th>
+              <th className="px-3 py-2">Receipt</th>
               <th className="px-4 py-2">Type</th>
               <th className="px-4 py-2">Distribution</th>
               <th className="px-4 py-2">Liquidity</th>

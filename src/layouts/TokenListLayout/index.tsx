@@ -15,8 +15,6 @@ function TokenListLayout() {
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { loading, tokens, totalTokenValue } = useTokens();
 
-  console.log('tokens here are:', tokens);
-
   const topTokens = useMemo(() => {
     if (!tokens || !tokens.length) {
       return [];

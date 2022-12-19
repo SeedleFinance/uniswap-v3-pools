@@ -1,5 +1,5 @@
 import React from 'react';
-import PositionDetailsLayout from '../../../layouts/PositionDetailsLayout';
+import PositionDetailsLayout from '../../../../layouts/PositionDetailsLayout';
 
 const PositionDetailsPage = () => {
   return <PositionDetailsLayout />;
