@@ -2,15 +2,21 @@ import { CurrencyAmount, Price } from '@uniswap/sdk-core';
 import { Position } from '@uniswap/v3-sdk';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
+import { LABELS } from '../../common/constants';
 
 import Card from '../../components/Card';
 import BackArrow from '../../components/icons/LeftArrow';
 import PoolButton from '../../components/PoolButton';
+import Tooltip from '../../components/Tooltip';
+import IconHelper from '../../components/icons/Helper';
 import { useFeeAPY } from '../../hooks/calculations';
 import { usePools } from '../../providers/CombinedPoolsProvider';
 
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 import Transaction, { TransactionProps } from '../PoolDetailsLayout/Transaction';
+import RangeVisual from '../PoolDetailsLayout/RangeVisual';
+import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
+import Warning from '../../components/icons/Warning';
 
 interface SeedleTransaction {
   amount0: CurrencyAmount<any>;
@@ -52,14 +58,50 @@ const PositionDetailsLayout = () => {
 
   const { entity, quoteToken, baseToken, positions } = pool;
 
+  const positionStatus = useMemo((): PositionStatus => {
+    if (!pool) {
+      return PositionStatus.Inactive;
+    }
+
+    return getPositionStatus(pool.tickCurrent, entity);
+  }, [pool, entity]);
+
+  const statusLabel = useMemo(() => {
+    const labels = {
+      [PositionStatus.Inactive]: 'Closed',
+      [PositionStatus.InRange]: 'In Range',
+      [PositionStatus.OutRange]: 'Out of Range',
+    };
+    return labels[positionStatus];
+  }, [positionStatus]);
+
+  const getStatusColor = (status: PositionStatus) => {
+    const colors = {
+      [PositionStatus.Inactive]: 'text-medium',
+      [PositionStatus.InRange]: 'text-green-500',
+      [PositionStatus.OutRange]: 'text-yellow-500',
+    };
+    return colors[positionStatus];
+  };
+
   // using the posId, find the position in the pool
   const position: SeedlePosition = positions.find(
     (position: SeedlePosition) => position.id === Number(posId),
   );
 
+  const formattedRange = useMemo(() => {
+    const prices = position.priceLower.lessThan(position.priceUpper)
+      ? [position.priceLower, position.priceUpper]
+      : [position.priceUpper, position.priceLower];
+    const decimals = Math.min(baseToken.decimals, 8);
+    return prices.map((price) => price.toFixed(decimals)).join(' - ');
+  }, [baseToken]);
+
   // Note - we push it into an array here as it expects an array
   const uncollectedFees = [position.positionUncollectedFees];
   const feeAPY = useFeeAPY(pool.entity, baseToken, uncollectedFees, position.transactions);
+
+  console.log('position status', positionStatus);
 
   if (!pool?.positions) {
     return (
@@ -94,11 +136,43 @@ const PositionDetailsLayout = () => {
             onClick={() => {}}
             size="lg"
           />
-          <div>
-            <span className="ml-20 py-2 px-4 bg-surface-10 text-0.8125 rounded-md">{feeAPY} %</span>
+          <div className="ml-20">
+            <div
+              className={`text-0.8125 py-1 font-medium flex items-center pointer ${getStatusColor(
+                positionStatus,
+              )}`}
+            >
+              {statusLabel}
+              {positionStatus === 2 && (
+                <Tooltip label={LABELS.POSITION.OUT_OF_RANGE} placement="top">
+                  <div className="pointer">
+                    <Warning className="ml-2 bg-yellow-500" />
+                  </div>
+                </Tooltip>
+              )}
+            </div>
+            <RangeVisual
+              tickCurrent={pool.entity.tickCurrent}
+              tickLower={entity.tickLower}
+              tickUpper={entity.tickUpper}
+              tickSpacing={pool.entity.tickSpacing}
+              flip={pool.entity.token0.equals(baseToken)}
+            />
+            <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
           </div>
         </div>
-        <div className="flex lg:ml-6 w-full lg:w-1/3">
+        <div className="flex lg:ml-6 w-full lg:w-1/2">
+          <Card className="md:ml-2">
+            <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">{feeAPY}%</div>
+            <div className="text-0.875 md:text-1 text-medium text-brand-primary">
+              <Tooltip label={LABELS.FEE_APY} placement="bottom">
+                <span className="flex items-center cursor-default whitespace-nowrap">
+                  Fee APY
+                  <IconHelper className="ml-1" />
+                </span>
+              </Tooltip>
+            </div>
+          </Card>
           <Card className="md:ml-2">
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {position.positionLiquidity
@@ -117,7 +191,7 @@ const PositionDetailsLayout = () => {
       </div>
 
       <div>
-        <h1 className="font-bold mt-6">Transactions</h1>
+        <h1 className="font-bold py-4 mt-2">Transactions</h1>
 
         <table className="table-auto w-full border-separate my-2 px-4 -ml-4">
           <thead className="bg-surface-5">

@@ -274,6 +274,10 @@ function Position({
     }
   };
 
+  function handleClickPosition() {
+    router.push(`${ROUTES.POSITION_DETAILS}/${router.query.id}/${id}`);
+  }
+
   const resetAlert = () => {
     setAlert(null);
   };
@@ -286,11 +290,15 @@ function Position({
 
   const portalId = id.toString();
 
-  console.log(router.query);
-
   return (
     <>
-      <tr className={classNames(positionTextColor, 'border-b border-element-10 text-0.8125')}>
+      <tr
+        className={classNames(
+          positionTextColor,
+          'border-b border-element-10 text-0.8125 hover:bg-surface-10 cursor-pointer',
+        )}
+        onClick={handleClickPosition}
+      >
         <td className="flex flex-col justify-between px-4 py-4">
           <div
             className={`text-0.875  font-medium flex items-center pointer ${getStatusColor(
@@ -385,7 +393,7 @@ function Position({
               {showActions && (
                 <Menu onClose={() => setShowActions(false)} className="w-32 shadow-lg text-0.875">
                   <Link
-                    href={`${ROUTES.POSITION_DETAILS}/${router.query.id}?posId=${id}`}
+                    href={`${ROUTES.POSITION_DETAILS}/${router.query.id}/${id}`}
                     className="my-1"
                   >
                     View position
