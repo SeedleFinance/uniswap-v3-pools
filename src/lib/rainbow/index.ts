@@ -6,7 +6,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 
 export const { chains, provider } = configureChains(
   [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
-  //@ts-ignore
+
   [
     jsonRpcProvider({
       rpc: (chain) => {
