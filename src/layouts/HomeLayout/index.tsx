@@ -33,6 +33,8 @@ const HomeLayout = () => {
 
   const { totalTokenValue, refreshTokenPrices } = useTokens();
 
+  console.log('totalTokenValue', totalTokenValue);
+
   const { addresses } = useAddress();
 
   const refreshPoolsAndTokens = useCallback(() => {

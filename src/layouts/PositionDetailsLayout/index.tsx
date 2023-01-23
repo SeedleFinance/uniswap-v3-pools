@@ -18,6 +18,12 @@ import RangeVisual from '../PoolDetailsLayout/RangeVisual';
 import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
 import Warning from '../../components/icons/Warning';
 
+/***
+ * TODO:
+ * - Add row to top with distrubution, total liquidity, total fees, fee APY, net return sand net APY
+ * - Add price graph showing price range between lower and upper bounds (lakshan to provide API update for this -> hard code for now)
+ */
+
 interface SeedleTransaction {
   amount0: CurrencyAmount<any>;
   amount1: CurrencyAmount<any>;

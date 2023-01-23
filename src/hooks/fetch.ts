@@ -290,6 +290,7 @@ export function useFetchTokenBalances(
         method: 'POST',
         body: JSON.stringify({ chainId, address }),
       });
+
       if (!res.ok) {
         const errors = await res.json();
         console.error(errors);
@@ -301,6 +302,7 @@ export function useFetchTokenBalances(
 
       const results = await res.json();
 
+      console.log('the res is:', results);
       setTokenBalances(results);
       setLoading(false);
     };
