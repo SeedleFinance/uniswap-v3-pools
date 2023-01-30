@@ -1,11 +1,11 @@
-import React from "react";
-import { Token } from "@uniswap/sdk-core";
-import { Pool } from "@uniswap/v3-sdk";
+import React from 'react';
+import { Token } from '@uniswap/sdk-core';
+import { Pool } from '@uniswap/v3-sdk';
 
-import Position from "./Position";
-import IconHelper from "../../components/icons/Helper";
-import Tooltip from "../../components/Tooltip";
-import { LABELS } from "../../common/constants";
+import Position from './Position';
+import IconHelper from '../../components/icons/Helper';
+import Tooltip from '../../components/Tooltip';
+import { LABELS } from '../../common/constants';
 
 interface Props {
   positions: any[];
@@ -48,7 +48,6 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
                 </span>
               </Tooltip>
             </th>
-            <th className="pb-3 px-4 py-3"></th>
           </tr>
         </thead>
         <tbody className="text-0.875 align-middle">

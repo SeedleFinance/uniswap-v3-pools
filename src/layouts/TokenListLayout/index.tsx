@@ -77,7 +77,6 @@ function TokenListLayout() {
                     size="md"
                     className="mr-2"
                   />
-                  {console.log('token address:', token.address)}
                   <div className="flex flex-col text-high">
                     <div className="text-1.25 font-bold leading-tight flex items-center">
                       {token.name}{' '}

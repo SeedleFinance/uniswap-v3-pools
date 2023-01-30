@@ -15,20 +15,13 @@ import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../h
 import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
 
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
-import Transaction from './Transaction';
-import TransferModal from './TransferModal';
 import TokenLabel from '../../components/TokenLabel';
-import Alert, { AlertLevel } from '../../components/Alert/Alert';
-import Menu from '../../components/Menu/Menu';
+import { AlertLevel } from '../../components/Alert/Alert';
 import RangeVisual from './RangeVisual';
-import TransactionModal from '../../components/TransactionModal';
 
 import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, ROUTES } from '../../common/constants';
-import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import Warning from '../../components/icons/Warning';
-import ElipsisVertical from '../../components/EllipsisVertical';
-import Link from 'next/link';
 
 export interface PositionProps {
   id: BigNumber;
@@ -288,184 +281,83 @@ function Position({
 
   const positionTextColor = positionStatus === PositionStatus.Inactive ? 'text-low' : '';
 
-  const portalId = id.toString();
-
   return (
-    <>
-      <tr
-        className={classNames(
-          positionTextColor,
-          'border-b border-element-10 text-0.8125 hover:bg-surface-10 cursor-pointer',
-        )}
-        onClick={handleClickPosition}
-      >
-        <td className="flex flex-col justify-between px-4 py-4">
-          <div
-            className={`text-0.875  font-medium flex items-center pointer ${getStatusColor(
-              positionStatus,
-            )}`}
-          >
-            {statusLabel}
-            {positionStatus === 2 && (
-              <Tooltip label={LABELS.POSITION.OUT_OF_RANGE} placement="top">
-                <div className="pointer">
-                  <Warning className="ml-2 bg-yellow-500" />
-                </div>
-              </Tooltip>
-            )}
-          </div>
-
-          <RangeVisual
-            tickCurrent={pool.tickCurrent}
-            tickLower={entity.tickLower}
-            tickUpper={entity.tickUpper}
-            tickSpacing={pool.tickSpacing}
-            flip={pool.token0.equals(baseToken)}
-            className="mt-2"
-          />
-          <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
-        </td>
-        <td className="px-4 py-4">
-          <div>
-            <TokenLabel symbol={pool.token0.symbol} />: {entity.amount0.toSignificant(4)}({percent0}
-            %)
-          </div>
-          <div>
-            <TokenLabel symbol={pool.token1.symbol} />: {entity.amount1.toSignificant(4)}({percent1}
-            %)
-          </div>
-        </td>
-        <td className="px-4 py-4">
-          <div>
-            {positionLiquidity
-              ? convertToGlobalFormatted(positionLiquidity)
-              : formatCurrencyWithSymbol(0, 1)}
-          </div>
-        </td>
-        <td className="px-4 py-4">
-          <div className="flex flex-col items-start justify-center">
-            <button
-              style={{ borderBottom: '1px dotted border-element-20' }}
-              onClick={() => setExpandedUncollectedFees(!expandedUncollectedFees)}
-            >
-              {convertToGlobalFormatted(positionUncollectedFees)}
-            </button>
-            {expandedUncollectedFees ? (
-              <div className="flex flex-col">
-                <div>
-                  {uncollectedFees[0]?.toFixed(6)} <TokenLabel symbol={pool.token0.symbol} />
-                </div>
-                <div>
-                  {uncollectedFees[1]?.toFixed(6)} <TokenLabel symbol={pool.token1.symbol} />
-                </div>
+    <tr
+      className={classNames(
+        positionTextColor,
+        'border-b border-element-10 text-0.8125 hover:bg-surface-10 cursor-pointer',
+      )}
+      onClick={handleClickPosition}
+    >
+      <td className="flex flex-col justify-between px-4 py-4">
+        <div
+          className={`text-0.875  font-medium flex items-center pointer ${getStatusColor(
+            positionStatus,
+          )}`}
+        >
+          {statusLabel}
+          {positionStatus === 2 && (
+            <Tooltip label={LABELS.POSITION.OUT_OF_RANGE} placement="top">
+              <div className="pointer">
+                <Warning className="ml-2 bg-yellow-500" />
               </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
-        </td>
-        <td className="px-4 py-4">
-          <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY.toFixed(2)}%</div>
-        </td>
-
-        <td className="px-4 py-4">
-          <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
-            {convertToGlobalFormatted(returnValue)}
-          </div>
-        </td>
-        <td className="px-4 py-4">
-          <div
-            className={
-              apr < 0 ? 'text-red-500 hidden md:block ' : 'text-green-500 hidden md:block '
-            }
-          >
-            {apr.toFixed(2)}%
-          </div>
-        </td>
-        <td className="py-4 hidden md:table-cell">
-          <div id={`menu-${portalId}`}>
-            <Button variant="ghost" onClick={() => setShowActions(!showActions)}>
-              <ElipsisVertical />
-            </Button>
-          </div>
-          <div ref={floating}>
-            <FloatingPortal id={`menu-${portalId}`}>
-              {showActions && (
-                <Menu onClose={() => setShowActions(false)} className="w-32 shadow-lg text-0.875">
-                  <Link
-                    href={`${ROUTES.POSITION_DETAILS}/${router.query.id}/${id}`}
-                    className="my-1"
-                  >
-                    View position
-                  </Link>
-                  <button className="text-left my-1" onClick={handleTransactions}>
-                    Transactions
-                  </button>
-                  {isPerp ? (
-                    <button className="text-left my-1" onClick={handlePerp}>
-                      Manage
-                    </button>
-                  ) : (
-                    <>
-                      <button className="text-left my-1" onClick={handleAddLiquidity}>
-                        Add Liquidity
-                      </button>
-                      <button className="text-left my-1" onClick={handleTransfer}>
-                        Transfer
-                      </button>
-                      <button className="text-left text-red-500 my-1" onClick={handleRemove}>
-                        Remove
-                      </button>
-                    </>
-                  )}
-                </Menu>
-              )}
-            </FloatingPortal>
-          </div>
-        </td>
-      </tr>
-
-      {showTransactions && (
-        <tr>
-          <td colSpan={12}>
-            <table className="table-auto w-full border-separate w-full my-2 px-4 -ml-4 mt-6">
-              <thead className="bg-surface-5">
-                <tr className="text-left">
-                  <th className="px-3 py-2">Timestamp</th>
-                  <th className="px-4 py-2">Type</th>
-                  <th className="px-4 py-2">Distribution</th>
-                  <th className="px-4 py-2">Liquidity</th>
-                  <th className="px-4 py-2">Gas cost</th>
-                </tr>
-              </thead>
-              {transactions.map((tx: any) => (
-                <Transaction key={tx.id} pool={pool} baseToken={baseToken} {...tx} />
-              ))}
-            </table>
-          </td>
-        </tr>
-      )}
-
-      {showTransfer && (
-        <TransferModal
-          tokenId={id}
-          baseToken={baseToken}
-          quoteToken={quoteToken}
-          onCancel={onTransferCancel}
-          onComplete={onTransferComplete}
+            </Tooltip>
+          )}
+        </div>
+        <RangeVisual
+          tickCurrent={pool.tickCurrent}
+          tickLower={entity.tickLower}
+          tickUpper={entity.tickUpper}
+          tickSpacing={pool.tickSpacing}
+          flip={pool.token0.equals(baseToken)}
+          className="mt-2"
         />
-      )}
+        <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
+      </td>
+      <td className="px-4 py-4">
+        <div>
+          <TokenLabel symbol={pool.token0.symbol} />: {entity.amount0.toSignificant(4)}({percent0}
+          %)
+        </div>
+        <div>
+          <TokenLabel symbol={pool.token1.symbol} />: {entity.amount1.toSignificant(4)}({percent1}
+          %)
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <div>
+          {positionLiquidity
+            ? convertToGlobalFormatted(positionLiquidity)
+            : formatCurrencyWithSymbol(0, 1)}
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <div className="flex flex-col items-start justify-center">
+          <button
+            style={{ borderBottom: '1px dotted border-element-20' }}
+            onClick={() => setExpandedUncollectedFees(!expandedUncollectedFees)}
+          >
+            {convertToGlobalFormatted(positionUncollectedFees)}
+          </button>
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY.toFixed(2)}%</div>
+      </td>
 
-      {transactionPending && (
-        <TransactionModal chainId={chainId} transactionHash={transactionHash} />
-      )}
-
-      {alert && (
-        <Alert level={alert.level} onHide={resetAlert}>
-          {alert.message}
-        </Alert>
-      )}
-    </>
+      <td className="px-4 py-4">
+        <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
+          {convertToGlobalFormatted(returnValue)}
+        </div>
+      </td>
+      <td className="px-4 py-4">
+        <div
+          className={apr < 0 ? 'text-red-500 hidden md:block ' : 'text-green-500 hidden md:block '}
+        >
+          {apr.toFixed(2)}%
+        </div>
+      </td>
+    </tr>
   );
 }
 

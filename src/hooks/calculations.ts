@@ -22,7 +22,6 @@ export function useTransactionTotals(transactions: any[], baseToken: Token, pool
 
     if (transactions.length && baseToken && pool && chainId) {
       transactions.forEach((tx) => {
-        console.log('pool token0\n\n', pool.token0);
         const txValue = pool.token0.equals(baseToken)
           ? pool.priceOf(pool.token1).quote(tx.amount1).add(tx.amount0)
           : pool.priceOf(pool.token0).quote(tx.amount0).add(tx.amount1);
@@ -105,8 +104,6 @@ function calcLiquidity(
   amount0: CurrencyAmount<Token>,
   amount1: CurrencyAmount<Token>,
 ) {
-  console.log('pool token0\n\n', pool.token0);
-
   return pool.token0.equals(baseToken)
     ? pool.priceOf(pool.token1).quote(amount1).add(amount0)
     : pool.priceOf(pool.token0).quote(amount0).add(amount1);

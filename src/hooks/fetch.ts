@@ -302,7 +302,6 @@ export function useFetchTokenBalances(
 
       const results = await res.json();
 
-      console.log('the res is:', results);
       setTokenBalances(results);
       setLoading(false);
     };

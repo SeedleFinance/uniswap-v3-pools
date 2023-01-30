@@ -9,7 +9,7 @@ import BackArrow from '../../components/icons/LeftArrow';
 import PoolButton from '../../components/PoolButton';
 import Tooltip from '../../components/Tooltip';
 import IconHelper from '../../components/icons/Helper';
-import { useFeeAPY } from '../../hooks/calculations';
+import { useAPR, useFeeAPY, useReturnValue, useTransactionTotals } from '../../hooks/calculations';
 import { usePools } from '../../providers/CombinedPoolsProvider';
 
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
@@ -17,10 +17,12 @@ import Transaction, { TransactionProps } from '../PoolDetailsLayout/Transaction'
 import RangeVisual from '../PoolDetailsLayout/RangeVisual';
 import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
 import Warning from '../../components/icons/Warning';
+import TokenLabel from '../../components/TokenLabel';
+import { CustomPosition } from '../../types/seedle';
+import { BigNumber } from 'ethers';
 
 /***
  * TODO:
- * - Add row to top with distrubution, total liquidity, total fees, fee APY, net return sand net APY
  * - Add price graph showing price range between lower and upper bounds (lakshan to provide API update for this -> hard code for now)
  */
 
@@ -53,8 +55,6 @@ const PositionDetailsLayout = () => {
   const { query } = useRouter();
   const { id, poolid } = query;
 
-  console.log('query', query);
-
   // Select a single pool
   const pool = useMemo(() => {
     if (loadingPools) {
@@ -73,6 +73,8 @@ const PositionDetailsLayout = () => {
 
     return getPositionStatus(pool.tickCurrent, entity);
   }, [pool, entity]);
+
+  const poolLiquidity = pool.poolLiquidity;
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -109,7 +111,51 @@ const PositionDetailsLayout = () => {
   const uncollectedFees = [position.positionUncollectedFees];
   const feeAPY = useFeeAPY(pool.entity, baseToken, uncollectedFees, position.transactions);
 
-  console.log('position status', positionStatus);
+  const totalCurrentValue = useMemo(() => {
+    if (!position.positionLiquidity || position.positionLiquidity.equalTo(0)) {
+      return CurrencyAmount.fromRawAmount(baseToken, 0);
+    }
+
+    return position.positionLiquidity.add(position.positionUncollectedFees);
+  }, [baseToken, position.positionLiquidity, position.positionUncollectedFees]);
+
+  const poolTransactions = useMemo(() => {
+    return positions.reduce((txs: any[], { transactions }: any) => {
+      txs.push(...transactions);
+      return txs;
+    }, []);
+  }, [positions]);
+
+  // total distribution – from all positions
+  const distribution = useMemo(() => {
+    let amount0 = CurrencyAmount.fromRawAmount(entity.token0, '0');
+    let amount1 = CurrencyAmount.fromRawAmount(entity.token1, '0');
+
+    positions.forEach((position: CustomPosition) => {
+      amount0 = amount0.add(position.entity.amount0);
+      amount1 = amount1.add(position.entity.amount1);
+    });
+
+    return [amount0, amount1];
+  }, [entity, positions]);
+
+  const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
+    useTransactionTotals(position.transactions, baseToken, entity);
+
+  const { returnValue, returnPercent } = useReturnValue(
+    baseToken,
+    totalMintValue,
+    totalBurnValue,
+    totalCollectValue,
+    totalTransactionCost,
+    totalCurrentValue,
+  );
+
+  const apr = useAPR(
+    position.transactions,
+    returnPercent,
+    BigNumber.from(entity.liquidity.toString()),
+  );
 
   if (!pool?.positions) {
     return (
@@ -199,22 +245,102 @@ const PositionDetailsLayout = () => {
       </div>
 
       <div>
-        <h1 className="font-bold py-4 mt-2">Transactions</h1>
+        <h1 className="font-bold py-4 mt-2">Overview</h1>
+        <div className="overflow-x-auto bg-surface-0 shadow-sm mt-4 rounded-lg">
+          <table className="table-auto w-full text-high text-0.875">
+            <thead className="border-b border-element-10">
+              <tr className="text-left align-middle">
+                <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">Distribution</th>
+                <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">Liquidity</th>
+                <th className="pb-3 px-6 py-5 whitespace-nowrap font-medium">Uncl. fees</th>
+                <th className="pb-3 px-6 py-5 font-medium">
+                  <Tooltip label={LABELS.FEE_APY} placement="top">
+                    <span className="flex items-center cursor-default whitespace-nowrap">
+                      Fee APY
+                      <IconHelper className="ml-1" />
+                    </span>
+                  </Tooltip>
+                </th>
+                <th className="pb-3 px-4 py-5 font-medium">
+                  <Tooltip label={LABELS.NET_RETURN} placement="top-start">
+                    <span className="flex items-center cursor-default whitespace-nowrap">
+                      Net Return
+                      <IconHelper className="ml-1" />
+                    </span>
+                  </Tooltip>
+                </th>
+                <th className="pb-3 px-4 py-5 font-medium">
+                  <Tooltip label={LABELS.NET_APY} placement="top">
+                    <span className="flex items-center cursor-default whitespace-nowrap">
+                      Net APY
+                      <IconHelper className="ml-1" />
+                    </span>
+                  </Tooltip>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="text-0.875 align-wtop">
+              <tr>
+                <td className="px-4 py-6 flex flex-col font-medium">
+                  {distribution.map((token: any) => (
+                    <div className="flex px-2" key={token.currency.symbol}>
+                      <TokenLabel symbol={token.currency.symbol} size="sm" />
+                      {token.toSignificant(6)}
+                    </div>
+                  ))}
+                </td>
+                <td className="px-4 py-6">
+                  {position.positionLiquidity
+                    ? convertToGlobalFormatted(position.positionLiquidity)
+                    : formatCurrencyWithSymbol(0, 1)}
+                </td>
 
-        <table className="table-auto w-full border-separate my-2 px-4 -ml-4">
-          <thead className="bg-surface-5">
-            <tr className="text-left text-0.875">
-              <th className="px-3 py-2">Receipt</th>
-              <th className="px-4 py-2">Type</th>
-              <th className="px-4 py-2">Distribution</th>
-              <th className="px-4 py-2">Liquidity</th>
-              <th className="px-4 py-2">Gas cost</th>
-            </tr>
-          </thead>
-          {position.transactions.map((tx) => (
-            <Transaction key={tx.id} {...tx} pool={pool.entity} baseToken={baseToken} />
-          ))}
-        </table>
+                <td className="px-4 py-6">
+                  {convertToGlobalFormatted(position.positionUncollectedFees)}
+                </td>
+
+                <td className="px-4 py-6">
+                  <div className={feeAPY < 0 ? 'text-red-500' : 'text-green-500'}>{feeAPY}%</div>
+                </td>
+
+                <td className="px-4 py-6">
+                  <div className={returnValue.lessThan(0) ? 'text-red-500' : 'text-green-500'}>
+                    {convertToGlobalFormatted(returnValue)}
+                  </div>
+                </td>
+                <td className="px-4 py-6">
+                  <div
+                    className={
+                      apr < 0 ? 'text-red-500 hidden md:block ' : 'text-green-500 hidden md:block '
+                    }
+                  >
+                    {apr.toFixed(2)}%
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <h1 className="font-bold py-4 mt-2">Transactions</h1>
+        <div className="overflow-x-auto bg-surface-0 shadow-sm mt-4 rounded-lg mb-4">
+          <table className="table-auto w-full border-separate">
+            <thead className="bg-surface-5">
+              <tr className="text-left text-0.875">
+                <th className="px-3 py-2">Receipt</th>
+                <th className="px-4 py-2">Type</th>
+                <th className="px-4 py-2">Distribution</th>
+                <th className="px-4 py-2">Liquidity</th>
+                <th className="px-4 py-2">Gas cost</th>
+              </tr>
+            </thead>
+            {position.transactions.map((tx) => (
+              <Transaction key={tx.id} {...tx} pool={pool.entity} baseToken={baseToken} />
+            ))}
+          </table>
+        </div>
       </div>
     </div>
   );
