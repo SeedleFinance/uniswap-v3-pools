@@ -177,4 +177,5 @@ export const LABELS = {
   },
   LIQUIDITY: 'Total liquidity for a position, excluding fees',
   DATA_COLLECTED: 'placeholder copy',
+  NET_OVERVIEW: 'Net Return and Net APY for this position',
 };

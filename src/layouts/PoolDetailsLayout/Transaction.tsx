@@ -71,7 +71,7 @@ function Transaction({
 
   return (
     <tr className="text-0.875">
-      <td className="px-4 py-2">
+      <td className="px-6 py-2">
         <a
           href={`${BLOCK_EXPLORER_URL[baseToken.chainId]}/tx/${transactionHash}`}
           className="flex items-center text-blue-500"
@@ -80,8 +80,8 @@ function Transaction({
           <IconNewWindow className="ml-2" />
         </a>
       </td>
-      <td>{getTypeLabel(transactionType)}</td>
-      <td className="px-4 py-2">
+      <td className="px-6 py-2">{getTypeLabel(transactionType)}</td>
+      <td className="px-6 py-2">
         <div>
           <TokenSymbol symbol={pool.token0.symbol} />: {amount0.toFixed(4)}({percent0}%)
         </div>
@@ -89,12 +89,12 @@ function Transaction({
           <TokenSymbol symbol={pool.token1.symbol} />: {amount1.toFixed(4)}({percent1}%)
         </div>
       </td>
-      <td className="px-4 py-2">
+      <td className="px-6 py-2">
         {totalLiquidity !== 0
           ? convertToGlobalFormatted(totalLiquidity)
           : formatCurrencyWithSymbol(0, 1)}
       </td>
-      <td>{convertToGlobalFormatted(gas.costCurrency)}</td>
+      <td className="px-6 py-2">{convertToGlobalFormatted(gas.costCurrency)}</td>
     </tr>
   );
 }
