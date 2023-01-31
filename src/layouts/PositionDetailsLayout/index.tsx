@@ -2,7 +2,7 @@ import { CurrencyAmount, Price } from '@uniswap/sdk-core';
 import { Position } from '@uniswap/v3-sdk';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
-import { LABELS } from '../../common/constants';
+import { LABELS, ROUTES } from '../../common/constants';
 
 import Card from '../../components/Card';
 import BackArrow from '../../components/icons/LeftArrow';
@@ -20,10 +20,16 @@ import Warning from '../../components/icons/Warning';
 import TokenLabel from '../../components/TokenLabel';
 import { CustomPosition } from '../../types/seedle';
 import { BigNumber } from 'ethers';
+import Button from '../../components/Button';
+import Plus from '../../components/icons/Plus';
+import DropdownMenu from '../../components/DropdownMenu';
+import IconOptions from '../../components/icons/Options';
+import IconTransfer from '../../components/icons/Transfer';
+import IconTrash from '../../components/icons/Trash';
 
 /***
  * TODO:
- * - Add price graph showing price range between lower and upper bounds (lakshan to provide API update for this -> hard code for now)
+ * - Add price graph showing price range between lower and upper bounds.
  */
 
 interface SeedleTransaction {
@@ -45,6 +51,16 @@ interface SeedlePosition {
   priceUpper: Price<any, any>;
   transactions: TransactionProps[];
   uncollectableFees: CurrencyAmount<any>;
+}
+
+function handleTransferPosition(id: number) {
+  const url = `https://app.uniswap.org/#/pool/${id}`;
+  window.open(url);
+}
+
+function handleRemovePosition(id: number) {
+  const url = `https://app.uniswap.org/#/pool/${id}`;
+  window.open(url);
 }
 
 const PositionDetailsLayout = () => {
@@ -73,8 +89,6 @@ const PositionDetailsLayout = () => {
 
     return getPositionStatus(pool.tickCurrent, entity);
   }, [pool, entity]);
-
-  const poolLiquidity = pool.poolLiquidity;
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -256,7 +270,40 @@ const PositionDetailsLayout = () => {
       </div>
 
       <div>
-        <h1 className="font-semibold py-2 mt-4 text-1.125">Overview</h1>
+        <div className="flex justify-between items-center mt-8">
+          <h1 className="font-semibold py-2 mt-4 text-1.125">Overview</h1>
+          <div className="flex gap-1">
+            <Button
+              href={`/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=3000`}
+              disabled={false}
+              tabIndex={8}
+              className="mr-2"
+            >
+              <div className="flex items-center -ml-1">
+                <Plus />
+                <span className="ml-1">Add Liquidity</span>
+              </div>
+            </Button>
+            <DropdownMenu
+              options={[
+                {
+                  label: 'Transfer',
+                  cb: () => handleTransferPosition(position.id),
+                  icon: <IconTransfer />,
+                },
+                {
+                  label: 'Remove',
+                  cb: () => handleTransferPosition(position.id),
+                  icon: <IconTrash />,
+                },
+              ]}
+            >
+              <div className="w-8 h-8 flex items-center justify-center">
+                <IconOptions />
+              </div>
+            </DropdownMenu>
+          </div>
+        </div>
         <div className="overflow-x-auto bg-surface-0 shadow-sm mt-4 rounded-lg">
           <table className="table-auto w-full text-high text-0.875">
             <thead className="border-b border-element-10">

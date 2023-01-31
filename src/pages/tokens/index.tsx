@@ -30,7 +30,7 @@ const TokensPage = () => {
   }
 
   return (
-    <div>
+    <div className="h-full">
       <div className="flex justify-between">
         <Link
           href={`${ROUTES.HOME}${location.search}`}
