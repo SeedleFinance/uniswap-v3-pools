@@ -340,7 +340,7 @@ const PositionDetailsLayout = () => {
           </div>
         </div>
 
-        <div className="bg-surface-0 shadow-md h-80 my-6 p-4 rounded-lg">
+        <div className="bg-surface-0 shadow-md h-80 my-6 p-4 rounded-lg w-full">
           <ChartPeriodSelector current={period} onSelect={handleChangePeriod} />
           <PriceChart
             address={id as string}
