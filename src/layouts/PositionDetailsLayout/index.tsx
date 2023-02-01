@@ -29,6 +29,7 @@ import IconTrash from '../../components/icons/Trash';
 import ChartLayout from '../PoolDetailsLayout/Chart';
 import ChartPeriodSelector from '../../components/ChartPeriodSelector';
 import PriceChart from '../PoolDetailsLayout/Chart/PriceChart';
+import LiquidityChart from '../PoolDetailsLayout/Chart/LiquidityChart';
 
 /***
  * TODO:
@@ -44,6 +45,8 @@ interface SeedleTransaction {
   transactionHash: string;
   transactionType: string;
 }
+
+type GraphType = 'price' | 'liquidity';
 
 interface SeedlePosition {
   entity: Position;
@@ -69,6 +72,7 @@ function handleRemovePosition(id: number) {
 const PositionDetailsLayout = () => {
   const router = useRouter();
   const [period, setPeriod] = useState<number>(30);
+  const [chart, setChart] = useState<GraphType>('price');
 
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
@@ -206,6 +210,10 @@ const PositionDetailsLayout = () => {
     BigNumber.from(entity.liquidity.toString()),
   );
 
+  function handleClickChangeGraph(type: GraphType) {
+    setChart(type);
+  }
+
   if (!pool?.positions) {
     return (
       <div>
@@ -284,7 +292,7 @@ const PositionDetailsLayout = () => {
               <div>{convertToGlobalFormatted(returnValue)}</div>
               <span
                 className={
-                  feeAPY > 0
+                  apr > 0
                     ? 'text-green-500 text-0.875 text-medium font-normal'
                     : 'text-red-600 text-0.875 text-medium font-normal'
                 }
@@ -341,13 +349,44 @@ const PositionDetailsLayout = () => {
         </div>
 
         <div className="bg-surface-0 shadow-md h-80 my-6 p-4 rounded-lg w-full">
-          <ChartPeriodSelector current={period} onSelect={handleChangePeriod} />
-          <PriceChart
-            address={id as string}
-            baseToken={baseToken}
-            quoteToken={quoteToken}
-            period={period}
-          />
+          <div className="flex justify-between items-center">
+            <div className="flex border border-element-10 bg-surface-0 text-0.75 px-4 py-1 w-fit text-medium">
+              <button
+                onClick={() => handleClickChangeGraph('price')}
+                className={`ml-2 px-2 uppercase font-medium ${
+                  chart === 'price' ? 'text-purple-700 dark:text-purple-400' : 'text-low'
+                }`}
+              >
+                Price
+              </button>
+              <button
+                onClick={() => handleClickChangeGraph('liquidity')}
+                className={`ml-2 px-2 uppercase font-medium ${
+                  chart === 'liquidity' ? 'text-purple-700 dark:text-purple-400' : 'text-low'
+                }`}
+              >
+                Liquidity
+              </button>
+            </div>
+            <ChartPeriodSelector current={period} onSelect={handleChangePeriod} />
+          </div>
+
+          {chart === 'price' && (
+            <PriceChart
+              address={id as string}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              period={period}
+            />
+          )}
+          {chart === 'liquidity' && (
+            <LiquidityChart
+              address={id as string}
+              baseToken={baseToken}
+              quoteToken={quoteToken}
+              pool={pool.entity}
+            />
+          )}
         </div>
 
         <div className="overflow-x-auto bg-surface-0 shadow-sm mt-4 rounded-lg">

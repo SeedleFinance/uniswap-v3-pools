@@ -1,17 +1,6 @@
 import { Token } from '@uniswap/sdk-core';
 import React from 'react';
-import {
-  Area,
-  AreaChart,
-  Bar,
-  CartesianGrids,
-  ComposedChart,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useAppSettings } from '../../../providers/AppSettingsProvider';
 import { usePoolPriceData } from '../../../hooks/usePoolPriceData';
 import LoadingSpinner from '../../../components/Spinner';
@@ -59,11 +48,9 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
   const maxPriceWithBuffer = max + (max - min) * buffer;
   const yDomain = [minPriceWithBuffer, maxPriceWithBuffer];
 
-  console.log('priceData is:', priceData);
-
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <ComposedChart data={priceData} margin={{ top: 0, right: 0, bottom: 20, left: 20 }}>
+      <ComposedChart data={priceData} margin={{ top: 20, right: 0, bottom: 20, left: 20 }}>
         <defs>
           <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="#8882D5" stopOpacity={0.4} />
