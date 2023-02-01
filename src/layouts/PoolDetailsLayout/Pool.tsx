@@ -130,7 +130,7 @@ function Pool({
           </thead>
           <tbody className="text-0.875 align-wtop">
             <tr>
-              <td className="px-4 py-6 flex flex-col font-medium">
+              <td className="px-4 py-6 flex flex-col">
                 {distribution.map((token: any) => (
                   <div className="flex px-2" key={token.currency.symbol}>
                     <TokenLabel symbol={token.currency.symbol} size="sm" />

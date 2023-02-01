@@ -20,7 +20,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ address, quoteToken, baseToken,
   function CustomTooltip({ active, payload = '', label = '' }: any) {
     if (payload && active) {
       return (
-        <div className="custom-tooltip shadow-sm px-4 py-6 bg-surface-0 border border-element-10 flex flex-col justify-center items-center rounded-sm">
+        <div className="custom-tooltip shadow-sm py-6 bg-surface-0 border border-element-10 flex flex-col justify-center items-center rounded-sm">
           <span className="label text-high font-medium">{payload[0].value}</span>
           <span className="intro text-0.6875 text-low">{label}</span>
         </div>

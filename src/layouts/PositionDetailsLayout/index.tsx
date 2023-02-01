@@ -1,8 +1,8 @@
+import React, { useMemo, useState } from 'react';
 import { CurrencyAmount, Price } from '@uniswap/sdk-core';
 import { Position } from '@uniswap/v3-sdk';
 import { useRouter } from 'next/router';
-import React, { useMemo } from 'react';
-import { LABELS, ROUTES } from '../../common/constants';
+import { LABELS } from '../../common/constants';
 
 import Card from '../../components/Card';
 import BackArrow from '../../components/icons/LeftArrow';
@@ -26,6 +26,9 @@ import DropdownMenu from '../../components/DropdownMenu';
 import IconOptions from '../../components/icons/Options';
 import IconTransfer from '../../components/icons/Transfer';
 import IconTrash from '../../components/icons/Trash';
+import ChartLayout from '../PoolDetailsLayout/Chart';
+import ChartPeriodSelector from '../../components/ChartPeriodSelector';
+import PriceChart from '../PoolDetailsLayout/Chart/PriceChart';
 
 /***
  * TODO:
@@ -65,6 +68,7 @@ function handleRemovePosition(id: number) {
 
 const PositionDetailsLayout = () => {
   const router = useRouter();
+  const [period, setPeriod] = useState<number>(30);
 
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
@@ -113,6 +117,33 @@ const PositionDetailsLayout = () => {
     (position: SeedlePosition) => position.id === Number(poolid),
   );
 
+  // const { percent0, percent1 } = useMemo(() => {
+  //   if (
+  //     !baseToken ||
+  //     !pool ||
+  //     !entity ||
+  //     !position.positionLiquidity ||
+  //     position.positionLiquidity.equalTo(0)
+  //   ) {
+  //     return { percent0: '0', percent1: '0' };
+  //   }
+
+  //   console.log('pool here:', pool);
+
+  //   const [value0, value1] =
+  //     pool.token0 === baseToken.symbol
+  //       ? [entity.amount0, pool.priceOf(pool.token1).quote(entity.amount1)]
+  //       : [pool.priceOf(pool.token0).quote(entity.amount0), entity.amount1];
+  //   const calcPercent = (val: CurrencyAmount<Token>) =>
+  //     (
+  //       (parseFloat(val.toSignificant(15)) /
+  //         parseFloat(position.positionLiquidity.toSignificant(15))) *
+  //       100
+  //     ).toFixed(2);
+
+  //   return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
+  // }, [entity, pool, baseToken, position.positionLiquidity]);
+
   const formattedRange = useMemo(() => {
     const prices = position.priceLower.lessThan(position.priceUpper)
       ? [position.priceLower, position.priceUpper]
@@ -155,6 +186,10 @@ const PositionDetailsLayout = () => {
 
   const { totalMintValue, totalBurnValue, totalCollectValue, totalTransactionCost } =
     useTransactionTotals(position.transactions, baseToken, entity);
+
+  const handleChangePeriod = (days: number) => {
+    setPeriod(days);
+  };
 
   const { returnValue, returnPercent } = useReturnValue(
     baseToken,
@@ -304,6 +339,17 @@ const PositionDetailsLayout = () => {
             </DropdownMenu>
           </div>
         </div>
+
+        <div className="bg-surface-0 shadow-md h-80 my-6 p-4 rounded-lg">
+          <ChartPeriodSelector current={period} onSelect={handleChangePeriod} />
+          <PriceChart
+            address={id as string}
+            baseToken={baseToken}
+            quoteToken={quoteToken}
+            period={period}
+          />
+        </div>
+
         <div className="overflow-x-auto bg-surface-0 shadow-sm mt-4 rounded-lg">
           <table className="table-auto w-full text-high text-0.875">
             <thead className="border-b border-element-10">
@@ -339,7 +385,7 @@ const PositionDetailsLayout = () => {
             </thead>
             <tbody className="text-0.875 align-wtop">
               <tr>
-                <td className="px-4 py-6 flex flex-col font-medium">
+                <td className="px-4 py-6 flex flex-col font-regular">
                   {distribution.map((token: any) => (
                     <div className="flex px-2" key={token.currency.symbol}>
                       <TokenLabel symbol={token.currency.symbol} size="sm" />

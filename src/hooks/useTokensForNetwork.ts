@@ -23,7 +23,6 @@ function getTokenOrNative(chainId: number, address: string, metadata: any) {
 export function useTokensForNetwork(chainId: number) {
   const { addresses } = useAddress();
 
-  console.log('address here are:', addresses);
   const { loading, tokenBalances } = useFetchTokenBalances(chainId, addresses[0]);
 
   const tokens = useMemo(() => {

@@ -28,6 +28,7 @@ interface Props {
 }
 
 function ChartPeriodSelector({ current, onSelect }: Props) {
+  console.log('period is:', current);
   return (
     <div className="hidden md:flex w-full justify-end">
       <div className="flex justify-between text-medium text-0.75">
