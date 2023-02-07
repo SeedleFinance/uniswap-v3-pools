@@ -21,6 +21,7 @@ function Positions({ positions, pool, baseToken, quoteToken }: Props) {
         <thead className="border-b border-element-10">
           <tr className="text-left text-0.875 align-top">
             <th className="pb-5 px-4 py-5 whitespace-nowrap">Range</th>
+            <th className="pb-5 px-4 py-5 whitespace-nowrap">Status</th>
             <th className="pb-5 px-4 py-5 whitespace-nowrap">Distribution</th>
             <th className="pb-5 px-4 py-5 whitespace-nowrap">Liquidity</th>
             <th className="pb-5 px-4 py-5 whitespace-nowrap">Uncl. fees</th>

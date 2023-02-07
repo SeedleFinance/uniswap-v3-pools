@@ -290,6 +290,17 @@ function Position({
       onClick={handleClickPosition}
     >
       <td className="flex flex-col justify-between px-4 py-4">
+        <RangeVisual
+          tickCurrent={pool.tickCurrent}
+          tickLower={entity.tickLower}
+          tickUpper={entity.tickUpper}
+          tickSpacing={pool.tickSpacing}
+          flip={pool.token0.equals(baseToken)}
+          className="mt-2"
+        />
+        <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
+      </td>
+      <td className="px-4 py-4">
         <div
           className={`text-0.875  font-medium flex items-center pointer ${getStatusColor(
             positionStatus,
@@ -304,15 +315,6 @@ function Position({
             </Tooltip>
           )}
         </div>
-        <RangeVisual
-          tickCurrent={pool.tickCurrent}
-          tickLower={entity.tickLower}
-          tickUpper={entity.tickUpper}
-          tickSpacing={pool.tickSpacing}
-          flip={pool.token0.equals(baseToken)}
-          className="mt-2"
-        />
-        <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
       </td>
       <td className="px-4 py-4">
         <div>
