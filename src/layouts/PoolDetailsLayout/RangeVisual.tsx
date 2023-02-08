@@ -1,5 +1,5 @@
-import classNames from "classnames";
-import React from "react";
+import classNames from 'classnames';
+import React from 'react';
 
 interface RangeVisualProps {
   tickCurrent: number;
@@ -24,10 +24,8 @@ function RangeVisual({
   } else if (tickSpacing === 10) {
     spaceMultiplier = 2;
   }
-  let rangeStart =
-    Math.min(tickCurrent, tickLower) - tickSpacing * spaceMultiplier;
-  let rangeEnd =
-    Math.max(tickCurrent, tickUpper) + tickSpacing * spaceMultiplier;
+  let rangeStart = Math.min(tickCurrent, tickLower) - tickSpacing * spaceMultiplier;
+  let rangeEnd = Math.max(tickCurrent, tickUpper) + tickSpacing * spaceMultiplier;
 
   if (tickLower < tickCurrent && tickCurrent < tickUpper) {
     rangeStart = tickLower - tickSpacing * spaceMultiplier;
@@ -47,14 +45,14 @@ function RangeVisual({
 
   return (
     <div
-      className={classNames("flex bg-surface-30", className)}
-      style={{ position: "relative", width: `${barWidth}px`, height: "10px" }}
+      className={classNames('flex bg-surface-30', className)}
+      style={{ position: 'relative', width: `${barWidth}px`, height: '10px' }}
     >
       <div
         className="bg-blue-600"
         style={{
-          position: "absolute",
-          height: "10px",
+          position: 'absolute',
+          height: '10px',
           left: `${beforeRangeWidth}px`,
           width: `${rangeWidth.toFixed(2)}px`,
         }}
@@ -62,9 +60,9 @@ function RangeVisual({
       <div
         className="bg-red-400"
         style={{
-          width: "2px",
-          height: "10px",
-          position: "absolute",
+          width: '2px',
+          height: '10px',
+          position: 'absolute',
           left: `${currentTickDistance.toFixed(2)}px`,
         }}
       ></div>

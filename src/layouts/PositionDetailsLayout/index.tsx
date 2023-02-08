@@ -26,15 +26,9 @@ import DropdownMenu from '../../components/DropdownMenu';
 import IconOptions from '../../components/icons/Options';
 import IconTransfer from '../../components/icons/Transfer';
 import IconTrash from '../../components/icons/Trash';
-import ChartLayout from '../PoolDetailsLayout/Chart';
 import ChartPeriodSelector from '../../components/ChartPeriodSelector';
 import PriceChart from '../PoolDetailsLayout/Chart/PriceChart';
 import LiquidityChart from '../PoolDetailsLayout/Chart/LiquidityChart';
-
-/***
- * TODO:
- * - Add price graph showing price range between lower and upper bounds.
- */
 
 interface SeedleTransaction {
   amount0: CurrencyAmount<any>;
@@ -55,6 +49,8 @@ interface SeedlePosition {
   positionUncollectedFees: CurrencyAmount<any>;
   priceLower: Price<any, any>;
   priceUpper: Price<any, any>;
+  tickLower: number;
+  tickUpper: number;
   transactions: TransactionProps[];
   uncollectableFees: CurrencyAmount<any>;
 }
@@ -95,8 +91,10 @@ const PositionDetailsLayout = () => {
       return PositionStatus.Inactive;
     }
 
-    return getPositionStatus(pool.tickCurrent, entity);
-  }, [pool, entity]);
+    const position = positions.find((position: SeedlePosition) => position.id === Number(poolid));
+
+    return getPositionStatus(entity.tickCurrent, position.entity);
+  }, [pool, entity, poolid, positions]);
 
   const statusLabel = useMemo(() => {
     const labels = {
@@ -120,33 +118,6 @@ const PositionDetailsLayout = () => {
   const position: SeedlePosition = positions.find(
     (position: SeedlePosition) => position.id === Number(poolid),
   );
-
-  // const { percent0, percent1 } = useMemo(() => {
-  //   if (
-  //     !baseToken ||
-  //     !pool ||
-  //     !entity ||
-  //     !position.positionLiquidity ||
-  //     position.positionLiquidity.equalTo(0)
-  //   ) {
-  //     return { percent0: '0', percent1: '0' };
-  //   }
-
-  //   console.log('pool here:', pool);
-
-  //   const [value0, value1] =
-  //     pool.token0 === baseToken.symbol
-  //       ? [entity.amount0, pool.priceOf(pool.token1).quote(entity.amount1)]
-  //       : [pool.priceOf(pool.token0).quote(entity.amount0), entity.amount1];
-  //   const calcPercent = (val: CurrencyAmount<Token>) =>
-  //     (
-  //       (parseFloat(val.toSignificant(15)) /
-  //         parseFloat(position.positionLiquidity.toSignificant(15))) *
-  //       100
-  //     ).toFixed(2);
-
-  //   return { percent0: calcPercent(value0), percent1: calcPercent(value1) };
-  // }, [entity, pool, baseToken, position.positionLiquidity]);
 
   const formattedRange = useMemo(() => {
     const prices = position.priceLower.lessThan(position.priceUpper)
@@ -229,6 +200,11 @@ const PositionDetailsLayout = () => {
     );
   }
 
+  // TODO: probably not neededed / duplicate entity's
+  const positionEntity: SeedlePosition = positions.find(
+    (position: SeedlePosition) => position.id === Number(poolid),
+  ).entity;
+
   return (
     <div className="flex flex-col w-full h-full">
       <button onClick={() => router.back()}>
@@ -264,8 +240,8 @@ const PositionDetailsLayout = () => {
             </div>
             <RangeVisual
               tickCurrent={pool.entity.tickCurrent}
-              tickLower={entity.tickLower}
-              tickUpper={entity.tickUpper}
+              tickLower={positionEntity.tickLower}
+              tickUpper={positionEntity.tickUpper}
               tickSpacing={pool.entity.tickSpacing}
               flip={pool.entity.token0.equals(baseToken)}
             />
