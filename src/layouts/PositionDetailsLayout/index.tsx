@@ -388,7 +388,14 @@ const PositionDetailsLayout = () => {
             <table className="table-auto w-full text-high text-0.875">
               <thead className="border-b border-element-10">
                 <tr className="text-left align-middle">
-                  <th className="px-6 py-3 whitespace-nowrap font-semibold">Distribution</th>
+                  <th className="px-6 py-3 whitespace-nowrap font-semibold">
+                    <Tooltip label={LABELS.DISTRIBUTION} placement="top">
+                      <span className="flex items-center cursor-default whitespace-nowrap">
+                        Distribution
+                        <IconHelper className="ml-1" />
+                      </span>
+                    </Tooltip>
+                  </th>
                   <th className="px-6 py-3 whitespace-nowrap font-semibold">Liquidity</th>
                   <th className="px-6 py-3 whitespace-nowrap font-semibold">Uncl. fees</th>
                   <th className="px-6 py-3 font-semibold">
