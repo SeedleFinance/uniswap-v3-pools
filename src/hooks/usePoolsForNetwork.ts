@@ -46,7 +46,7 @@ export function usePoolsForNetwork(chainId: number, timestamp: number, onlyForIn
 
   const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
     chainId,
-    onlyForInjected ? [injectedAddress] : inputAddresses,
+    onlyForInjected && injectedAddress ? [injectedAddress] : inputAddresses,
     timestamp,
   );
 
