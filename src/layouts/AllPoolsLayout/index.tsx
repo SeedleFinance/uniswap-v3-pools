@@ -155,7 +155,7 @@ function AllPoolsLayout() {
       </div>
       <div className="w-full flex-col mt-4 flex justify-center overflow-x-auto">
         {empty ? (
-          <div className="py-12 rounded-lg">
+          <div className="py-12 rounded-lg flex items-center flex-col">
             <div className="text-center text-1 md:text-1 text-low mt-4">
               This address has no positions.
             </div>
