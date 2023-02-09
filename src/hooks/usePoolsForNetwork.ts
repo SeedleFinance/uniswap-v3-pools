@@ -40,12 +40,13 @@ function reconcileTransactions(chainId: number, txs: any[]) {
   });
 }
 
-export function usePoolsForNetwork(chainId: number, timestamp: number) {
-  const { addresses } = useAddress();
+// set `onlyForInjected`to return pools owned by connected wallet
+export function usePoolsForNetwork(chainId: number, timestamp: number, onlyForInjected = false) {
+  const { addresses: inputAddresses, injectedAddress } = useAddress();
 
   const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
     chainId,
-    addresses,
+    onlyForInjected ? [injectedAddress] : inputAddresses,
     timestamp,
   );
 

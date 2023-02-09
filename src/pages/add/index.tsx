@@ -25,7 +25,8 @@ function AddLiquidity() {
   // keep timestamp static
   // This page ends up being re-rendered this prevents it
   const timestamp = 1234;
-  const { pools } = usePoolsForNetwork(chainId || 1, timestamp);
+  const onlyForInjected = true;
+  const { pools } = usePoolsForNetwork(chainId || 1, timestamp, onlyForInjected);
 
   const [tokens, setTokens] = useState<TokenListItem[]>([]);
   const [selectedBaseToken, setSelectedBaseToken] = useState<Token | null>(null);
