@@ -219,7 +219,7 @@ const PositionDetailsLayout = () => {
     <>
       {showTransfer && (
         <TransferModal
-          tokenId={1 as any}
+          tokenId={position.id as any}
           baseToken={baseToken}
           quoteToken={quoteToken}
           onCancel={onTransferCancel}
