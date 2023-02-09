@@ -22,7 +22,7 @@ function Footer() {
           </div>
         </div>
         <div className="text-0.6875 text-medium">
-          Bootstrapped and open-sourced from Australia. <span>Copyright 2022.</span>
+          Bootstrapped and open-sourced from Australia. <span>Copyright 2023.</span>
         </div>
       </div>
       <div className="flex">
