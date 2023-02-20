@@ -44,9 +44,14 @@ function reconcileTransactions(chainId: number, txs: any[]) {
 export function usePoolsForNetwork(chainId: number, timestamp: number, onlyForInjected = false) {
   const { addresses: inputAddresses, injectedAddress } = useAddress();
 
+  const addresses = useMemo(
+    () => (onlyForInjected ? [injectedAddress].filter(Boolean) : inputAddresses),
+    [onlyForInjected, inputAddresses, injectedAddress],
+  );
+
   const { loading: queryLoading, positionStates: allPositions } = useFetchPositions(
     chainId,
-    onlyForInjected && injectedAddress ? [injectedAddress] : inputAddresses,
+    addresses,
     timestamp,
   );
 
