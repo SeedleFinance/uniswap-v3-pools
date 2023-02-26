@@ -1,7 +1,7 @@
-import HomeLayout from "../layouts/HomeLayout";
+import LandingLayout from '../layouts/LandingLayout';
 
-function Home() {
-  return <HomeLayout />;
+function Landing() {
+  return <LandingLayout />;
 }
 
-export default Home;
+export default Landing;

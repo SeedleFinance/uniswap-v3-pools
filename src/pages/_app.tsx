@@ -62,9 +62,14 @@ function MyApp({ Component, pageProps }: AppProps) {
               <ThemeWrapper>
                 <RainbowKitWithThemeProvider>
                   <CurrencyConversionsProvider>
-                    <CheckForActiveAddress>
-                      <Component {...pageProps} />
-                    </CheckForActiveAddress>
+                    {/* <CheckForActiveAddress> */}
+                    <PageContainer>
+                      <AppHead />
+                      <PoolsAndTokensCombinedProviders>
+                        <Component {...pageProps} />
+                      </PoolsAndTokensCombinedProviders>
+                    </PageContainer>
+                    {/* </CheckForActiveAddress> */}
                   </CurrencyConversionsProvider>
                 </RainbowKitWithThemeProvider>
               </ThemeWrapper>

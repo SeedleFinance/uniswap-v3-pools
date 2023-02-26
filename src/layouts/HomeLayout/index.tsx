@@ -87,6 +87,8 @@ const HomeLayout = () => {
     router.push(`${ROUTES.POOL_DETAILS}/${address}${location.search}`);
   }
 
+  console.log('loading', loading);
+  console.log('addressReady', addressReady);
   if (loading || !addressReady) {
     return (
       <div>
