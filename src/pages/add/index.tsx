@@ -154,16 +154,23 @@ function AddLiquidity() {
     );
   };
 
+  const handleClickBack = (e: any) => {
+    e.preventDefault();
+
+    router.back();
+  };
+
   const selectedTab = query.tab === 'existing' ? 'existing' : 'new';
 
   return (
     <div className="w-full flex flex-col h-full">
       <div className="py-4 mb-4 flex items-center">
-        <Link href={ROUTES.HOME}>
-          <a className="flex justify-center items-center text-high w-8 h-8 flex-shrink-0 mr-4 rounded-full hover:bg-surface-20">
-            ←
-          </a>
-        </Link>
+        <button
+          onClick={handleClickBack}
+          className="flex justify-center items-center text-high w-8 h-8 flex-shrink-0 mr-4 rounded-full hover:bg-surface-20"
+        >
+          ←
+        </button>
         <h1 className="text-2 text-high font-bold tracking-tighter leading-tight">Add Liquidity</h1>
       </div>
       <div className="md:w-1/2">
