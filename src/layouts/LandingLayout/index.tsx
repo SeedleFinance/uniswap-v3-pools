@@ -2,8 +2,11 @@ import { useState } from 'react';
 import type { NextPage } from 'next';
 
 import Input from '../../components/Input';
+import { useRouter } from 'next/router';
+import { ROUTES } from '../../common/constants';
 
 const LandingLayout: NextPage = () => {
+  const router = useRouter();
   const [addresses, setAddresses] = useState<string[]>([]);
 
   const handleInput = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -15,12 +18,10 @@ const LandingLayout: NextPage = () => {
   const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    const url = new URL(window.location.href);
+    let parts = addresses.slice(0, 10).map((address) => `addr=${address}`);
+    let path = `${ROUTES.HOME}?${parts.join('&').replace(/,/g, '')}`;
 
-    const parts = addresses.slice(0, 10).map((address) => `addr=${address}`);
-    url.search = `?${parts.join('&')}`;
-
-    window.location.href = url.href;
+    router.push(path);
   };
 
   return (

@@ -148,7 +148,8 @@ export const BLOCK_EXPLORER_URL: { [key: number]: string } = {
 };
 
 export const ROUTES = {
-  HOME: '/',
+  LANDING: '/',
+  HOME: '/home',
   ADD: '/add',
   ADD_NEW: '/add?tab=new',
   ADD_EXISTING: '/add?tab=existing',

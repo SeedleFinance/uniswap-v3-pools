@@ -1,6 +1,7 @@
-import React, { ReactNode, useContext, useState, useEffect } from "react";
-import { isAddress } from "@ethersproject/address";
-import { useAccount, useConnect, useProvider } from "wagmi";
+import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import { isAddress } from '@ethersproject/address';
+import { useAccount, useConnect, useProvider } from 'wagmi';
+import { useRouter } from 'next/router';
 
 const AddressContext = React.createContext({
   addresses: [] as string[],
@@ -17,6 +18,7 @@ export const AddressProvider = ({ children }: Props) => {
   const library = useProvider({ chainId: 1 });
   const { address: account, isConnected, connector } = useAccount();
   const { connect } = useConnect();
+  const router = useRouter();
 
   const [addresses, setAddresses] = useState<string[]>([]);
 
@@ -30,8 +32,8 @@ export const AddressProvider = ({ children }: Props) => {
     const fetchAddresses = async () => {
       const { location } = window;
       const searchParams = new URLSearchParams(location.search);
-      const inputAddresses = searchParams.getAll("addr");
-      const noWallet = searchParams.has("nw");
+      const inputAddresses = searchParams.getAll('addr');
+      const noWallet = searchParams.has('nw');
 
       const hexAddresses: string[] = [];
       const ensNames: string[] = [];
@@ -47,12 +49,9 @@ export const AddressProvider = ({ children }: Props) => {
         });
       }
 
-      const resolveName = async (name: string) =>
-        await library.resolveName(name);
+      const resolveName = async (name: string) => await library.resolveName(name);
 
-      const resolvedAddresses = await Promise.all(
-        ensNames.map((name) => resolveName(name))
-      );
+      const resolvedAddresses = await Promise.all(ensNames.map((name) => resolveName(name)));
 
       const results: string[] = [
         ...hexAddresses,
@@ -62,13 +61,14 @@ export const AddressProvider = ({ children }: Props) => {
         results.push(account as string);
       }
 
+      console.log('setting addreses here', results);
       setAddresses(results);
     };
 
     if (library) {
       fetchAddresses();
     }
-  }, [library, account]);
+  }, [library, account, router]);
 
   return (
     <AddressContext.Provider
