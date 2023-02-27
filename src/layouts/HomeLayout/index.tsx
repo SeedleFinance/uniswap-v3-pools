@@ -89,16 +89,14 @@ const HomeLayout = () => {
 
   if (loading || !addressReady) {
     return (
-      <div>
-        <div className="flex items-center justify-between">
+      <div className="w-full h-full flex items-start">
+        <div className="flex items-center justify-between w-full">
           <div className="flex flex-col">
             <div className="bg-surface-10 rounded w-64 h-12"></div>
             <div className="bg-surface-10 rounded-sm w-64 h-4 mt-4"></div>
           </div>
           <div className="bg-surface-10 rounded w-96 h-20 ml-4"></div>
         </div>
-        <div className="bg-surface-10 rounded w-full h-20 mt-8"></div>
-        <div className="bg-surface-10 rounded w-full h-20 mt-4"></div>
       </div>
     );
   }
