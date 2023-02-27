@@ -1,5 +1,5 @@
-import React from "react";
-import classNames from "classnames";
+import React from 'react';
+import classNames from 'classnames';
 
 interface CardProps {
   className?: string;
@@ -9,8 +9,8 @@ const Card: React.FC<CardProps> = ({ children, className }) => {
   return (
     <div
       className={classNames(
-        "shadow-md bg-surface-0 flex flex-col flex-1 p-4 rounded-lg text-high",
-        className
+        'shadow-md bg-surface-0 flex flex-col p-4 w-full md:w-auto rounded-lg text-high',
+        className,
       )}
     >
       {children}
