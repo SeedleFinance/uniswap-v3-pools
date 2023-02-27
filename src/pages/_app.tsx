@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import React, { ReactNode, useMemo } from 'react';
-import { WagmiConfig } from 'wagmi';
+import { useAccount, WagmiConfig } from 'wagmi';
 import type { AppProps } from 'next/app';
 import classNames from 'classnames';
 
@@ -13,9 +13,9 @@ import { CombinedTokensProvider } from '../providers/CombinedTokensProvider';
 import AppSettingsProviderWithWrapper, { useAppSettings } from '../providers/AppSettingsProvider';
 
 import PageContainer from '../components/PageContainer';
-import Landing from '../layouts/LandingLayout';
 import { wagmiClient } from '../lib/rainbow';
 import AppHead from '../components/AppHead';
+import { ROUTES } from '../common/constants';
 
 function ThemeWrapper({ children }: { children: ReactNode }) {
   const { theme } = useAppSettings();
@@ -35,23 +35,6 @@ function PoolsAndTokensCombinedProviders({ children }: { children: React.ReactNo
   );
 }
 
-// This component checks if there are any connected addresses
-// and if there are NOT we show the landing page.
-function CheckForActiveAddress({ children }: { children: React.ReactNode }) {
-  const { addressReady } = useAddress();
-
-  return (
-    <PageContainer>
-      <AppHead />
-      {addressReady ? (
-        <PoolsAndTokensCombinedProviders>{children}</PoolsAndTokensCombinedProviders>
-      ) : (
-        <Landing />
-      )}
-    </PageContainer>
-  );
-}
-
 function MyApp({ Component, pageProps }: AppProps) {
   const CombinedProviders = useMemo(() => {
     return (
@@ -62,14 +45,12 @@ function MyApp({ Component, pageProps }: AppProps) {
               <ThemeWrapper>
                 <RainbowKitWithThemeProvider>
                   <CurrencyConversionsProvider>
-                    {/* <CheckForActiveAddress> */}
                     <PageContainer>
                       <AppHead />
                       <PoolsAndTokensCombinedProviders>
                         <Component {...pageProps} />
                       </PoolsAndTokensCombinedProviders>
                     </PageContainer>
-                    {/* </CheckForActiveAddress> */}
                   </CurrencyConversionsProvider>
                 </RainbowKitWithThemeProvider>
               </ThemeWrapper>

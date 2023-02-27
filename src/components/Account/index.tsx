@@ -1,9 +1,23 @@
 import React from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
 
 import Button from '../Button';
+import { ROUTES } from '../../common/constants';
 
 const Account = () => {
+  const router = useRouter();
+  const account = useAccount({
+    onDisconnect() {
+      router.push(ROUTES.LANDING);
+    },
+    onConnect() {
+      if (router.pathname === ROUTES.LANDING) {
+        router.push(ROUTES.HOME);
+      }
+    },
+  });
   return (
     <ConnectButton.Custom>
       {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {

@@ -8,8 +8,10 @@ import Footer from '../Footer';
 import ThemeSelector from '../ThemeSelector';
 import GlobalCurrencySelector from '../GlobalCurrencySelector';
 import Account from '../Account';
+import { useRouter } from 'next/router';
 
 function PageContainer({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const { addressReady } = useAddress();
 
   return (
