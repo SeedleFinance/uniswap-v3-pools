@@ -61,7 +61,6 @@ export const AddressProvider = ({ children }: Props) => {
         results.push(account as string);
       }
 
-      console.log('setting addreses here', results);
       setAddresses(results);
     };
 

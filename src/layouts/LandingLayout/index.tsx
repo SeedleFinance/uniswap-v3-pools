@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { NextPage } from 'next';
 
 import Input from '../../components/Input';
 import { useRouter } from 'next/router';
 import { ROUTES } from '../../common/constants';
-import { useAddress } from '../../providers/AddressProvider';
 
 const LandingLayout: NextPage = () => {
   const router = useRouter();
