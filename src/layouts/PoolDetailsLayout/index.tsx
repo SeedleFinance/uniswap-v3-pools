@@ -91,18 +91,18 @@ const PoolDetailsPage = () => {
             <span className="text-1.25 lg:text-2 font-semibold text-high">{currentPrice}</span>
           </div>
         </div>
-        <div className="flex lg:ml-6 w-full lg:w-1/3">
-          <Card className="md:ml-2">
+        <div className="flex justify-end gap-2 w-full lg:w-1/3">
+          <Card>
+            <div className="text-0.875 text-medium whitespace-nowrap">Uncollected Fees</div>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {convertToGlobalFormatted(poolUncollectedFees)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
-          <Card className="ml-1 md:ml-2">
+          <Card>
+            <div className="text-0.875  text-brand-dark-primary">Total Value</div>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {convertToGlobalFormatted(poolUncollectedFees.add(poolLiquidity))}
             </div>
-            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>
