@@ -41,12 +41,12 @@ const TokensPage = () => {
             <span className="ml-2">Home</span>
           </a>
         </Link>
-        <div className="">
+        <div>
           <Card>
+            <div className="text-0.875 text-brand-dark-primary">Total Value</div>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {formatCurrencyWithSymbol(totalTokenValue, ChainID.Mainnet)}
             </div>
-            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>

@@ -89,16 +89,14 @@ const HomeLayout = () => {
 
   if (loading || !addressReady) {
     return (
-      <div>
-        <div className="flex items-center justify-between">
+      <div className="w-full h-full flex items-start">
+        <div className="flex items-center justify-between w-full">
           <div className="flex flex-col">
             <div className="bg-surface-10 rounded w-64 h-12"></div>
             <div className="bg-surface-10 rounded-sm w-64 h-4 mt-4"></div>
           </div>
           <div className="bg-surface-10 rounded w-96 h-20 ml-4"></div>
         </div>
-        <div className="bg-surface-10 rounded w-full h-20 mt-8"></div>
-        <div className="bg-surface-10 rounded w-full h-20 mt-4"></div>
       </div>
     );
   }
@@ -112,13 +110,13 @@ const HomeLayout = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="flex flex-col-reverse md:flex-row md:justify-between items-center">
-        <div className="hidden md:flex w-1/2 flex-col text-high">
+      <div className="flex flex-col-reverse md:flex-row md:justify-between items-center m-0">
+        <div className="hidden lg:flex flex-col text-high pr-2">
           <h1 className="text-2.5 font-bold tracking-tighter leading-tight">Home</h1>
-          <div className="text-medium flex items-center mt-1">
+          <div className="text-medium flex items-center py-1 whitespace-nowrap">
             A 10,000ft summary of &nbsp;
             <>
-              <span className="text-high font-medium mr-1">{shortenAddress(addresses[0])}</span>
+              <span className="text-high font-medium">{shortenAddress(addresses[0])}</span>
               <button onClick={() => handleClickCopy(addresses[0])}>
                 <CopyIcon />
               </button>
@@ -126,27 +124,27 @@ const HomeLayout = () => {
             </>
           </div>
         </div>
-        <div className="flex w-full lg:w-2/3 xl:w-1/2 overflow-x-auto md:overflow-x-visible py-2">
+        <div className="flex lg:justify-end gap-2 w-full overflow-x-auto md:overflow-visible py-4 px-1 md:py-2">
           <Card>
+            <div className="text-0.875 text-medium">Total Liquidity</div>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalLiquidity + totalTokenValue, ChainID.Mainnet)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Total Liquidity</div>
           </Card>
-          <Card className="ml-1 md:ml-2">
+          <Card>
+            <div className="text-0.875 text-medium whitespace-nowrap">Uncollected Fees</div>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold text-high">
               {formatCurrencyWithSymbol(totalUncollectedFees, ChainID.Mainnet)}
             </div>
-            <div className="text-0.875 md:text-1 text-medium">Uncollected Fees</div>
           </Card>
-          <Card className="ml-1 md:ml-2">
+          <Card>
+            <div className="text-0.875 text-brand-dark-primary">Total Value</div>
             <div className="text-1.25 md:text-1.75 my-1 font-semibold">
               {formatCurrencyWithSymbol(
                 totalLiquidity + totalTokenValue + totalUncollectedFees,
                 ChainID.Mainnet,
               )}
             </div>
-            <div className="text-0.875 md:text-1 text-brand-dark-primary">Total Value</div>
           </Card>
         </div>
       </div>
