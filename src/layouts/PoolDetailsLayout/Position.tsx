@@ -268,7 +268,7 @@ function Position({
   };
 
   function handleClickPosition() {
-    router.push(`${ROUTES.POSITION_DETAILS}/${router.query.id}/${id}`);
+    router.push(`${ROUTES.POSITION_DETAILS}/${id}`);
   }
 
   const resetAlert = () => {

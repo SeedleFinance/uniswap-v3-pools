@@ -72,14 +72,7 @@ const PositionDetailsLayout = () => {
   const { id, poolid } = query;
   const [showTransfer, setShowTransfer] = useState<boolean>(false);
 
-  // Select a single pool
-  const pool = useMemo(() => {
-    if (loadingPools) {
-      return null;
-    }
-
-    return pools.find((pool) => pool.address === id);
-  }, [loadingPools, pools, id]);
+  const pool = useMemo(() => pools[0], [pools]);
 
   const { entity, quoteToken, baseToken, positions } = pool;
 
@@ -368,7 +361,7 @@ const PositionDetailsLayout = () => {
 
             {chart === 'price' && (
               <PriceChart
-                address={id as string}
+                address={pool.address}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 period={period}
@@ -376,7 +369,7 @@ const PositionDetailsLayout = () => {
             )}
             {chart === 'liquidity' && (
               <LiquidityChart
-                address={id as string}
+                address={pool.address}
                 baseToken={baseToken}
                 quoteToken={quoteToken}
                 pool={pool.entity}
