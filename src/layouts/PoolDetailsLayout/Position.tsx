@@ -67,6 +67,8 @@ function Position({
   const [transactionPending, setTransactionPending] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
 
+  const { addr } = router.query;
+
   const [alert, setAlert] = useState<{
     message: string;
     level: AlertLevel;
@@ -268,7 +270,7 @@ function Position({
   };
 
   function handleClickPosition() {
-    router.push(`${ROUTES.POSITION_DETAILS}/${id}`);
+    router.push(`${ROUTES.POSITION_DETAILS}/${id}?addr=${addr}`);
   }
 
   const resetAlert = () => {
