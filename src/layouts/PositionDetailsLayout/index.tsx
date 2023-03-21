@@ -69,7 +69,7 @@ const PositionDetailsLayout = () => {
   const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { query } = useRouter();
-  const { id, poolid } = query;
+  const { poolid } = query;
   const [showTransfer, setShowTransfer] = useState<boolean>(false);
 
   const pool = useMemo(() => pools[0], [pools]);
