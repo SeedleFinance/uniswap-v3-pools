@@ -86,7 +86,7 @@ export const CombinedPoolsProvider = ({ children }: Props) => {
       value={{
         pools,
         empty,
-        loading: initialLoading,
+        loading: initialLoading || !pools.length,
         lastLoaded,
         refreshingList,
         refresh,

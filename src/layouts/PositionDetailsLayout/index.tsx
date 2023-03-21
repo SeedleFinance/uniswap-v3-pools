@@ -61,18 +61,22 @@ function handleRemovePosition(id: number) {
   window.open(url);
 }
 
-const PositionDetailsLayout = () => {
+interface PositionDetailsLayoutProps {
+  pools: any[];
+}
+
+const PositionDetailsLayout: React.FC<PositionDetailsLayoutProps> = ({ pools }) => {
   const router = useRouter();
   const [period, setPeriod] = useState<number>(30);
   const [chart, setChart] = useState<GraphType>('price');
 
-  const { loading: loadingPools, pools, lastLoaded, refresh, refreshingList } = usePools();
+  const { loading: loadingPools, lastLoaded, refresh, refreshingList } = usePools();
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
   const { query } = useRouter();
   const { poolid } = query;
   const [showTransfer, setShowTransfer] = useState<boolean>(false);
 
-  const pool = useMemo(() => pools[0], [pools]);
+  const pool = pools[0];
 
   const { entity, quoteToken, baseToken, positions } = pool;
 
@@ -262,7 +266,7 @@ const PositionDetailsLayout = () => {
               <div className="text-0.8125 py-2 flex flex-col">{formattedRange}</div>
             </div>
           </div>
-          <div className="flex lg:ml-6 w-full lg:w-1/2">
+          <div className="flex lg:ml-6 w-full lg:w-1/2 justify-end">
             <Card className="md:ml-2 justify-between">
               <div className="text-1.25 md:text-1.75 font-semibold text-high">
                 {position.positionLiquidity

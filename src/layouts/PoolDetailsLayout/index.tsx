@@ -37,7 +37,7 @@ const PoolDetailsPage = () => {
 
   if (!pool?.positions) {
     return (
-      <div>
+      <div className="w-full h-full">
         <div className="flex items-center">
           <div className="flex flex-col">
             <div className="bg-surface-10 rounded w-32 h-4"></div>
