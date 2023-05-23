@@ -13,7 +13,7 @@ import { useFetchPools } from './fetch';
 import { useTransactions } from './useTransactions';
 import { PoolState } from '../types/seedle';
 
-const QUERY_OPEN_ORDERS = gql`
+const QUERY_OPEN_ORDERS_AND_MARKETS = gql`
   query openOrdersByAccounts($accounts: [String]!, $liquidity: BigInt) {
     openOrders(
       where: { maker_in: $accounts, liquidity_gt: $liquidity }
@@ -28,11 +28,13 @@ const QUERY_OPEN_ORDERS = gql`
       liquidity
       collectedFee
       timestamp
-      marketRef {
-        pool
-      }
       maker
       baseToken
+    }
+
+    markets(first: 100) {
+      baseToken
+      pool
     }
   }
 `;
@@ -57,7 +59,7 @@ function useQueryPerpOpenOrders(
   accounts: string[],
   includeEmpty: boolean,
 ): { loading: boolean; positionStates: PerpPositionState[] } {
-  const [queryOpenOrders, { loading, error, data }] = useLazyQuery(QUERY_OPEN_ORDERS, {
+  const [queryOpenOrders, { loading, error, data }] = useLazyQuery(QUERY_OPEN_ORDERS_AND_MARKETS, {
     variables: { accounts, liquidity: includeEmpty ? -1 : 0 },
     fetchPolicy: 'network-only',
     nextFetchPolicy: 'cache-first',
@@ -82,6 +84,9 @@ function useQueryPerpOpenOrders(
       return [];
     }
 
+    const findPool = (baseToken: string) =>
+      (data.markets.find((market: any) => market.baseToken === baseToken) || {}).pool;
+
     return data.openOrders.map(
       ({
         id,
@@ -91,7 +96,6 @@ function useQueryPerpOpenOrders(
         baseToken,
         collectedFee,
         timestamp,
-        marketRef,
         maker,
       }: any) => ({
         id,
@@ -100,7 +104,7 @@ function useQueryPerpOpenOrders(
         liquidity: BigNumber.from(liquidity),
         collectedFee: parseFloat(collectedFee),
         timestamp: new Date(parseInt(timestamp, 10) * 1000),
-        poolAddress: marketRef.pool,
+        poolAddress: findPool(baseToken),
         maker,
         baseTokenAddress: baseToken,
       }),
