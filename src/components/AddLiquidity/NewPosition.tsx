@@ -45,6 +45,7 @@ import {
   findPositionById,
 } from './utils';
 import { useRouter } from 'next/router';
+import { parseEther } from '@ethersproject/units';
 
 interface Props {
   baseToken: Token;
@@ -62,6 +63,8 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
 
   const { query } = useRouter();
   const positionId = query.position;
+  const amountToken0 = query.amount0;
+  const amountToken1 = query.amount1;
 
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
 
@@ -102,6 +105,13 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
 
   const [focusedRangeInput, setFocusedRangeInput] = useState<HTMLInputElement | null>(null);
   const [alert, setAlert] = useState<{ message: string; level: AlertLevel } | null>(null);
+
+  useEffect(() => {
+    if (amountToken0 && amountToken1) {
+      setBaseAmount(parseFloat(String(amountToken0)));
+      setQuoteAmount(parseFloat(String(amountToken1)));
+    }
+  }, [amountToken0, amountToken1]);
 
   useEffect(() => {
     const _run = async () => {
@@ -506,17 +516,17 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
 
       const { calldata, value } = matchingPosition
         ? NonfungiblePositionManager.addCallParameters(newPosition, {
-            tokenId: matchingPosition.id,
-            deadline,
-            slippageTolerance,
-            useNative,
-          })
+          tokenId: matchingPosition.id,
+          deadline,
+          slippageTolerance,
+          useNative,
+        })
         : NonfungiblePositionManager.addCallParameters(newPosition, {
-            recipient: account as string,
-            deadline,
-            slippageTolerance,
-            useNative,
-          });
+          recipient: account as string,
+          deadline,
+          slippageTolerance,
+          useNative,
+        });
 
       const tx = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
@@ -615,7 +625,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             <PoolButton
               baseToken={baseToken}
               quoteToken={quoteToken}
-              onClick={() => {}}
+              onClick={() => { }}
               tabIndex={0}
               size="md"
             />
@@ -702,7 +712,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           <div className="lg:w-3/4 my-2">
             <DepositInput
               token={quoteToken}
-              value={quoteAmount}
+              value={amountToken0 ? Number(amountToken0) : quoteAmount}
               balance={quoteBalance}
               tabIndex={6}
               disabled={quoteTokenDisabled}
@@ -712,7 +722,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             />
             <DepositInput
               token={baseToken}
-              value={baseAmount}
+              value={amountToken1 ? Number(amountToken1) : baseAmount}
               balance={baseBalance}
               tabIndex={7}
               disabled={baseTokenDisabled}
