@@ -810,11 +810,11 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             Total position value:{' '}
             <span className="font-bold">{convertToGlobalFormatted(totalPositionValue)}</span>
           </div>
-          <div className="w-64 mb-2 text-sm">
+          {/*  <div className="w-64 mb-2 text-sm">
             Total liqudity value:{' '}
             <span className="font-bold">{String((parseInt(pool.liquidity.toString()) / 1e18).toFixed(2))}
             </span>
-          </div>
+          </div> */}
         </div>
 
         <div className="w-64 my-2 flex">

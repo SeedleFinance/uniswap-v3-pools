@@ -42,12 +42,12 @@ type Instructions = {
   amountOut0Min: number;
   amountIn1: number;
   amountOut1Min: number;
-  feeAmount0: number;
-  feeAmount1: number;
+  feeAmount0: string;
+  feeAmount1: string;
   fee: number;
   tickLower: number;
   tickUpper: number;
-  liquidity: number;
+  liquidity: string;
   amountAddMin0: number;
   amountAddMin1: number;
   deadline: number;
@@ -371,6 +371,15 @@ function Position({
   };
 
   async function handleManualOnChainCompound() {
+    console.log(
+      Number(parseEther(uncollectedFees[0].toExact())),
+      Number(parseEther(uncollectedFees[1].toFixed())),
+      pool?.fee,
+      entity.tickLower,
+      entity.tickUpper,
+    )
+
+
     try {
       const data: Instructions = {
         whatToDo: 2,
@@ -381,12 +390,12 @@ function Position({
         amountOut0Min: 0,
         amountIn1: 0,
         amountOut1Min: 0,
-        feeAmount0: Number(parseEther(uncollectedFees[0].toFixed(6))),
-        feeAmount1: Number(parseEther(uncollectedFees[1].toFixed(6))),
+        feeAmount0: String(parseEther(uncollectedFees[0].toExact())),
+        feeAmount1: String(parseEther(uncollectedFees[1].toExact())),
         fee: pool?.fee,
         tickLower: entity.tickLower,
         tickUpper: entity.tickUpper,
-        liquidity: 0,
+        liquidity: "0",
         amountAddMin0: 0,
         amountAddMin1: 0,
         deadline: Math.floor(Date.now() / 1000) + 60 * 20,
@@ -439,12 +448,12 @@ function Position({
         amountOut0Min: 0,
         amountIn1: 0,
         amountOut1Min: 0,
-        feeAmount0: 0,
-        feeAmount1: 0,
+        feeAmount0: "0",
+        feeAmount1: "0",
         fee: 0,
         tickLower: 0,
         tickUpper: 0,
-        liquidity: _liq,
+        liquidity: String(_liq),
         amountAddMin0: 0,
         amountAddMin1: 0,
         deadline: Math.floor(Date.now() / 1000) + 1000,
