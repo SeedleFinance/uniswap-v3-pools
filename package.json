@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 1234",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 1234",
     "lint": "next lint"
   },
   "dependencies": {
@@ -39,6 +39,7 @@
     "react-transition-group": "^4.4.5",
     "recharts": "2.1.12",
     "use-persisted-state": "^0.3.3",
+    "vercel": "^31.2.1",
     "wagmi": "0.11.5"
   },
   "devDependencies": {

@@ -6,7 +6,7 @@ import { useFloating, autoUpdate } from '@floating-ui/react-dom';
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
 import { BigNumber } from '@ethersproject/bignumber';
 import { isAddress } from '@ethersproject/address';
-import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core';
+import { CurrencyAmount, Percent, Price, Token } from '@uniswap/sdk-core';
 import { Pool, Position as UniPosition, NonfungiblePositionManager, TickMath } from '@uniswap/v3-sdk';
 
 import { useChainId } from '../../hooks/useChainId';
@@ -23,13 +23,40 @@ import Menu from '../../components/Menu/Menu';
 import RangeVisual from './RangeVisual';
 import TransactionModal from '../../components/TransactionModal';
 
-import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../common/constants';
+import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, V3UTILS } from '../../common/constants';
 import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import Warning from '../../components/icons/Warning';
 import ElipsisVertical from '../../components/EllipsisVertical';
-import { ethers } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import { findMatchingPosition, findPositionById } from '../../components/AddLiquidity/utils';
+import v3utils_abi from '../../abis/v3utils.json';
+import { parseEther, parseUnits } from '@ethersproject/units';
+
+type Instructions = {
+  whatToDo: number;
+  targetToken: string;
+  amountRemoveMin0: number;
+  amountRemoveMin1: number;
+  amountIn0: number;
+  amountOut0Min: number;
+  amountIn1: number;
+  amountOut1Min: number;
+  feeAmount0: number;
+  feeAmount1: number;
+  fee: number;
+  tickLower: number;
+  tickUpper: number;
+  liquidity: number;
+  amountAddMin0: number;
+  amountAddMin1: number;
+  deadline: number;
+  recipient: string;
+  recipientNFT: string;
+  unwrap: boolean;
+  returnData: string;
+  swapAndMintReturnData: string;
+};
 
 export interface PositionProps {
   id: BigNumber;
@@ -189,6 +216,42 @@ function Position({
     setShowTransactions(!showTransactions);
   };
 
+  const handleApprove = async () => {
+    setShowActions(false);
+    setTransactionPending(true);
+    setAlert({
+      message: 'Approving...',
+      level: AlertLevel.Success,
+    });
+
+    try {
+      let ABI = ["function approve(address to, uint256 tokenId)"];
+      let iface = new ethers.utils.Interface(ABI);
+
+      let calldata = iface.encodeFunctionData("approve", [V3UTILS[chainId as number], id]);
+
+      const tx = await signer!.sendTransaction({
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        data: calldata,
+      });
+
+      setTransactionHash(tx.hash);
+      await tx.wait();
+      setTransactionPending(false);
+      setAlert({
+        message: 'Approved!',
+        level: AlertLevel.Success,
+      });
+    } catch (e) {
+      setTransactionPending(false);
+      setAlert({
+        message: 'Approval Failed',
+        level: AlertLevel.Error,
+      });
+    }
+  };
+
+
   const handleAddLiquidity = () => {
     router.push(
       `/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=${pool.fee}&position=${id}`,
@@ -306,6 +369,120 @@ function Position({
       `/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=${pool.fee}&position=${id}&amount0=${amount0.toString()}&amount1=${amount1.toString()}`,
     );
   };
+
+  async function handleManualOnChainCompound() {
+    try {
+      const data: Instructions = {
+        whatToDo: 2,
+        targetToken: ethers.constants.AddressZero,
+        amountRemoveMin0: 0,
+        amountRemoveMin1: 0,
+        amountIn0: 0,
+        amountOut0Min: 0,
+        amountIn1: 0,
+        amountOut1Min: 0,
+        feeAmount0: Number(parseEther(uncollectedFees[0].toFixed(6))),
+        feeAmount1: Number(parseEther(uncollectedFees[1].toFixed(6))),
+        fee: pool?.fee,
+        tickLower: entity.tickLower,
+        tickUpper: entity.tickUpper,
+        liquidity: 0,
+        amountAddMin0: 0,
+        amountAddMin1: 0,
+        deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+        recipient: await signer?.getAddress() as string,
+        recipientNFT: await signer?.getAddress() as string,
+        unwrap: false,
+        returnData: ethers.constants.HashZero,
+        swapAndMintReturnData: ethers.constants.HashZero
+      }
+
+      const ctx = new Contract(
+        V3UTILS[chainId as number],
+        v3utils_abi,
+        signer!
+      );
+
+      const tx = await ctx.execute(id, data);
+
+      if (tx) {
+        setTransactionHash(tx.hash);
+        await tx.wait();
+        // Dopo aver raccolto le fee, inviale al proprietario.
+        setAlert({
+          message: `Successfully collected all fees for token ${id}.`,
+          level: AlertLevel.Success,
+        });
+      } else {
+        setAlert({
+          message: `Error collecting fees for token ${id}.`,
+          level: AlertLevel.Error,
+        });
+      }
+
+    } catch (e: any) {
+      handleTxError(e);
+    }
+    setTransactionPending(false);
+  }
+
+  async function handleClosePosition() {
+    let _liq = Number(parseInt(entity.liquidity.toString()) - parseInt(uncollectedFees[0].toSignificant(6)) - parseInt(uncollectedFees[1].toSignificant(6)))
+
+    try {
+      const data: Instructions = {
+        whatToDo: 1,
+        targetToken: ethers.constants.AddressZero,
+        amountRemoveMin0: 0,
+        amountRemoveMin1: 0,
+        amountIn0: 0,
+        amountOut0Min: 0,
+        amountIn1: 0,
+        amountOut1Min: 0,
+        feeAmount0: 0,
+        feeAmount1: 0,
+        fee: 0,
+        tickLower: 0,
+        tickUpper: 0,
+        liquidity: _liq,
+        amountAddMin0: 0,
+        amountAddMin1: 0,
+        deadline: Math.floor(Date.now() / 1000) + 1000,
+        recipient: await signer?.getAddress() as string,
+        recipientNFT: await signer?.getAddress() as string,
+        unwrap: false,
+        returnData: ethers.constants.HashZero,
+        swapAndMintReturnData: ethers.constants.HashZero
+      }
+
+      const ctx = new Contract(
+        V3UTILS[chainId as number],
+        v3utils_abi,
+        signer!
+      );
+
+      const tx = await ctx.execute(id, data);
+
+      if (tx) {
+        setTransactionHash(tx.hash);
+        await tx.wait();
+        // Dopo aver raccolto le fee, inviale al proprietario.
+        setAlert({
+          message: `Successfully collected all fees for token ${id}.`,
+          level: AlertLevel.Success,
+        });
+      } else {
+        setAlert({
+          message: `Error collecting fees for token ${id}.`,
+          level: AlertLevel.Error,
+        });
+      }
+
+    } catch (e: any) {
+      handleTxError(e);
+    }
+    setTransactionPending(false);
+  }
 
   const tx = {
     to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
@@ -508,14 +685,23 @@ function Position({
                     </button>
                   ) : (
                     <>
+                      <button className="text-left my-1" onClick={handleApprove}>
+                        Approve
+                      </button>
                       <button className="text-left my-1" onClick={handleAddLiquidity}>
                         Add Liquidity
+                      </button>
+                      <button className="text-left my-1" onClick={handleClosePosition}>
+                        Close Position
                       </button>
                       <button className="text-left my-1" onClick={handleCollectFees}>
                         Collect Fees
                       </button>
-                      <button className="text-left my-1" onClick={handleManualCompound}>
-                        Manual Compound
+                      {/* <button className="text-left my-1" onClick={handleManualCompound}>
+                        Compound
+                      </button> */}
+                      <button className="text-left my-1" onClick={handleManualOnChainCompound}>
+                        Compound
                       </button>
                       <div className="pt-1 mt-1">
                         <div>

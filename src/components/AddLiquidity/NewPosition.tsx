@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAccount, useProvider, useQuery, useSigner } from 'wagmi';
 // import { useSearchParams } from 'react-router-dom';
-import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
-import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
+import { TickMath, tickToPrice, NonfungiblePositionManager, Position, CollectOptions } from '@uniswap/v3-sdk';
+import { Token, CurrencyAmount, Fraction, Percent } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
 
@@ -554,6 +554,81 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
     setTransactionHash(null);
   };
 
+  const onRemoveLiquidity = async () => {
+    setTransactionPending(true);
+    const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
+
+    try {
+      const tokenId = matchingPosition?.id;
+      if (!tokenId) {
+        throw new Error('No position selected');
+      }
+
+      const liquidity = matchingPosition?.liquidity;
+      if (!liquidity) {
+        throw new Error('No liquidity found');
+      }
+
+      const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
+      const slippageTolerance =
+        baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
+
+      const useNative =
+        isNativeToken(pool.token0) || isNativeToken(pool.token1)
+          ? !depositWrapped
+            ? getNativeToken(chainId)
+            : undefined
+          : undefined;
+
+      const collectOptions: Omit<CollectOptions, 'tokenId'> = {
+        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+          pool.token0,
+          0
+        ),
+        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+          pool.token1,
+          0
+        ),
+        recipient: String(signer?.getAddress()),
+      }
+
+      const { calldata, value } = NonfungiblePositionManager.removeCallParameters((positionId as any),
+        {
+          tokenId: tokenId,
+          liquidityPercentage: new Percent(100),
+          deadline: deadline,
+          slippageTolerance: slippageTolerance,
+          burnToken: true,
+          collectOptions
+        },
+      );
+
+      const tx = {
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
+        data: calldata,
+        value,
+      };
+
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
+        ...tx,
+        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
+      });
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: 'Liquidity removed from the pool.',
+          level: AlertLevel.Success,
+        });
+      }
+    } catch (e: any) {
+      handleTxError(e);
+    }
+    setTransactionPending(false);
+    setTransactionHash(null);
+  };
+
   const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
     try {
@@ -735,6 +810,11 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             Total position value:{' '}
             <span className="font-bold">{convertToGlobalFormatted(totalPositionValue)}</span>
           </div>
+          <div className="w-64 mb-2 text-sm">
+            Total liqudity value:{' '}
+            <span className="font-bold">{String((parseInt(pool.liquidity.toString()) / 1e18).toFixed(2))}
+            </span>
+          </div>
         </div>
 
         <div className="w-64 my-2 flex">
@@ -773,6 +853,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               Approve {quoteToken.symbol}
             </Button>
           ) : (
+
             <Button
               onClick={onAddLiquidity}
               disabled={transactionPending}
@@ -782,8 +863,17 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             >
               Add Liquidity
             </Button>
-          )}
 
+          )}
+          <Button
+            onClick={onRemoveLiquidity}
+            disabled={transactionPending}
+            tabIndex={8}
+            size="lg"
+            className="mr-2"
+          >
+            Remove Liquidity
+          </Button>
           <Button variant="ghost" onClick={onCancel} tabIndex={9}>
             Cancel
           </Button>
@@ -839,7 +929,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 export default NewPosition;

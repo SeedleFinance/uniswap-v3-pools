@@ -42,9 +42,8 @@ function TokenLogo({ chain, name, address, src, className, size = 'sm' }: Props)
       ref={imgEl}
       className={classNames(className, styles['logo'], styles[`logo--${size}`])}
       alt={`${name} logo`}
-      src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${
-        chain || 'ethereum'
-      }/assets/${address}/logo.png`}
+      src={`https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${chain || 'ethereum'
+        }/assets/${address}/logo.png`}
       onError={() => showFallbackImage()}
     />
   );

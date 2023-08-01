@@ -20,6 +20,10 @@ export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES = constructSameAddressMap(
   '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 );
 
+export const V3UTILS = constructSameAddressMap(
+  '0x865A00aC030B8E01657F3BC4a90bfD43a58FD8ba',
+);
+
 export const SWAP_ROUTER_ADDRESSES = constructSameAddressMap(
   '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
 );
@@ -94,10 +98,9 @@ export const WETH9: { [chainId: number]: Token } = {
   4: new Token(4, '0xc778417E063141139Fce010982780140Aa0cD5Ab', 18, 'WETH', 'Wrapped Ether'),
   5: new Token(5, '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', 18, 'WETH', 'Wrapped Ether'),
   42: new Token(42, '0xd0A1E359811322d97991E03f863a0C30C2cF029C', 18, 'WETH', 'Wrapped Ether'),
-
   10: new Token(10, '0x4200000000000000000000000000000000000006', 18, 'WETH', 'Wrapped Ether'),
   69: new Token(69, '0x4200000000000000000000000000000000000006', 18, 'WETH', 'Wrapped Ether'),
-
+  137: new Token(137, '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', 18, 'WETH', 'Wrapped Ether'),
   42161: new Token(
     42161,
     '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
@@ -112,11 +115,16 @@ export const WETH9: { [chainId: number]: Token } = {
     'WETH',
     'Wrapped Ether',
   ),
-
-  137: new Token(137, '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', 18, 'WETH', 'Wrapped Ether'),
 };
 
 export const WMATIC: { [chainId: number]: Token } = {
+  1: new Token(
+    1,
+    '0x7c9f4c87d911613fe9ca58b579f737911aad2d43',
+    18,
+    'WMATIC',
+    'Wrapped Matic Token',
+  ),
   137: new Token(
     137,
     '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
@@ -133,6 +141,19 @@ export const WBTC: { [chainId: number]: Token } = {
 
 export const CRV: { [chainId: number]: Token } = {
   1: new Token(1, '0xD533a949740bb3306d119CC777fa900bA034cd52', 18, 'CRV', 'Curve DAO Token'),
+};
+
+export const MATICX: { [key: number]: Token } = {
+  1: new Token(1, '0xf03a7eb46d01d9ecaa104558c732cf82f6b6b645', 18,
+    'MATICX',
+    'Stader Labs MaticX'),
+  137: new Token(
+    137,
+    '0xfa68fb4628dff1028cfec22b4162fccd0d45efb6',
+    18,
+    'MATICX',
+    'Stader Labs MaticX'
+  ),
 };
 
 export const DEFAULT_SLIPPAGE = new Percent(50, 10_000);
