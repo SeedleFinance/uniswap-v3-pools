@@ -685,22 +685,14 @@ function Position({
                     </button>
                   ) : (
                     <>
-                      <button className="text-left my-1" onClick={handleApprove}>
-                        Approve
-                      </button>
+
                       <button className="text-left my-1" onClick={handleAddLiquidity}>
                         Add Liquidity
-                      </button>
-                      <button className="text-left my-1" onClick={handleClosePosition}>
-                        Close Position
                       </button>
                       <button className="text-left my-1" onClick={handleCollectFees}>
                         Collect Fees
                       </button>
-                      {/* <button className="text-left my-1" onClick={handleManualCompound}>
-                        Compound
-                      </button> */}
-                      <button className="text-left my-1" onClick={handleManualOnChainCompound}>
+                      <button className="text-left my-1" onClick={handleManualCompound} disabled={chainId == 137}>
                         Compound
                       </button>
                       <div className="pt-1 mt-1">
@@ -713,6 +705,19 @@ function Position({
                           Remove
                         </button>
                       </div>
+                      {chainId == 137 && (
+                        <div className="pt-1 mt-1">
+                          <button className="text-left my-1" onClick={handleApprove} >
+                            Approve
+                          </button>
+                          <button className="text-left my-1" onClick={handleClosePosition} >
+                            Close Position
+                          </button>
+                          <button className="text-left my-1" onClick={handleManualOnChainCompound} >
+                            Compound On-Chain
+                          </button>
+                        </div>
+                      )}
                     </>
                   )}
                 </Menu>
