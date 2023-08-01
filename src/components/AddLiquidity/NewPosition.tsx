@@ -554,7 +554,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
     setTransactionHash(null);
   };
 
-  const onRemoveLiquidity = async () => {
+  /* const onRemoveLiquidity = async () => {
     setTransactionPending(true);
     const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
 
@@ -627,7 +627,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
     }
     setTransactionPending(false);
     setTransactionHash(null);
-  };
+  }; */
 
   const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
@@ -865,7 +865,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             </Button>
 
           )}
-          <Button
+          {/* <Button
             onClick={onRemoveLiquidity}
             disabled={transactionPending}
             tabIndex={8}
@@ -873,7 +873,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             className="mr-2"
           >
             Remove Liquidity
-          </Button>
+          </Button> */}
           <Button variant="ghost" onClick={onCancel} tabIndex={9}>
             Cancel
           </Button>
