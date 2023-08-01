@@ -11,10 +11,6 @@ const Logo = () => {
     <div className="flex gap-2 items-center">
       <SeedleSymbol theme={theme} />
       <SeedleMark theme={theme} />
-      <span>
-        <span className="text-2xl text-white font-bold">v2</span>
-      </span>
-
     </div>
   );
 };

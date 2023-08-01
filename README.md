@@ -11,3 +11,11 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## v2 Features
+
+- Collect fees
+- Close position
+- Compound collected fees
+
+
