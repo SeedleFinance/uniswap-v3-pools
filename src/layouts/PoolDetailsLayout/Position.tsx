@@ -38,7 +38,7 @@ import {
   toCurrencyAmount,
 } from '../../components/AddLiquidity/utils';
 import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
-import { parseEther, parseUnits } from '@ethersproject/units';
+import { formatEther, parseEther, parseUnits } from '@ethersproject/units';
 import { getContract } from '../../hooks/useContract';
 import { useAllPositions } from '../../hooks/usePosition';
 import { AddressZero } from '@ethersproject/constants';
@@ -312,22 +312,21 @@ function Position({
     const amount1 = uncollectedFees[1]?.toExact();
 
     try {
-      // Utilizza uint128 max invece di MaxUint256 per amount0Max e amount1Max
-      const maxUint128 = ethers.BigNumber.from("2").pow(128).sub(1).toString();
-      console.log("All Positions: ", allPositions)
+      const collectOptions: CollectOptions = {
+        tokenId: Number(id),
+        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+          pool.token0,
+          Number(parseEther(uncollectedFees[0].toExact()))
+        ),
+        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+          pool.token1,
+          Number(parseEther(uncollectedFees[1].toExact()))
+        ),
+        recipient: await signer?.getAddress() as string,
+      }
 
-      let params = {
-        tokenId: id,
-        recipient: await signer!.getAddress(),
-        amount0Max: maxUint128,
-        amount1Max: maxUint128,
-      };
-
-      const { calldata, value } = NonfungiblePositionManager.safeTransferFromParameters({
-        sender: account as string,
-        recipient: await signer!.getAddress(),
-        tokenId: id.toString(),
-      });
+      const { calldata, value } =
+        NonfungiblePositionManager.collectCallParameters(collectOptions)
 
       const tx = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
@@ -362,6 +361,14 @@ function Position({
     });
     setTransactionPending(true);
 
+    if (!amount0 || !amount1) {
+      setAlert({
+        message: 'No fees to collect.',
+        level: AlertLevel.Error,
+      });
+      return;
+    }
+
     onAddLiquidityAfterCollect(amount0, amount1);
 
     setTransactionPending(false);
@@ -369,24 +376,22 @@ function Position({
   };
 
   async function handleCollectFees() {
-    console.log("Collecting Fees")
     try {
-      // Utilizza uint128 max invece di MaxUint256 per amount0Max e amount1Max
-      const maxUint128 = ethers.BigNumber.from("2").pow(128).sub(1).toString();
-      console.log("All Positions: ", allPositions)
+      const collectOptions: CollectOptions = {
+        tokenId: Number(id),
+        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+          pool.token0,
+          Number(parseEther(uncollectedFees[0].toExact()))
+        ),
+        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+          pool.token1,
+          Number(parseEther(uncollectedFees[1].toExact()))
+        ),
+        recipient: await signer?.getAddress() as string,
+      }
 
-      let params = {
-        tokenId: id,
-        recipient: await signer!.getAddress(),
-        amount0Max: maxUint128,
-        amount1Max: maxUint128,
-      };
-
-      const { calldata, value } = NonfungiblePositionManager.safeTransferFromParameters({
-        sender: account as string,
-        recipient: await signer!.getAddress(),
-        tokenId: id.toString(),
-      });
+      const { calldata, value } =
+        NonfungiblePositionManager.collectCallParameters(collectOptions)
 
       const tx = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
@@ -415,67 +420,6 @@ function Position({
     }
     setTransactionPending(false);
   };
-
-  async function handleManualOnChainCompound() {
-    console.log(
-      Number(parseEther(uncollectedFees[0].toExact())),
-      Number(parseEther(uncollectedFees[1].toFixed())),
-      pool?.fee,
-      entity.tickLower,
-      entity.tickUpper,
-    )
-
-
-    try {
-      const data: Instructions = {
-        whatToDo: 2,
-        targetToken: ethers.constants.AddressZero,
-        amountRemoveMin0: 0,
-        amountRemoveMin1: 0,
-        amountIn0: 0,
-        amountOut0Min: 0,
-        amountIn1: 0,
-        amountOut1Min: 0,
-        feeAmount0: String(parseEther(uncollectedFees[0].toExact())),
-        feeAmount1: String(parseEther(uncollectedFees[1].toExact())),
-        fee: pool?.fee,
-        tickLower: entity.tickLower,
-        tickUpper: entity.tickUpper,
-        liquidity: "0",
-        amountAddMin0: 0,
-        amountAddMin1: 0,
-        deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-        recipient: await signer?.getAddress() as string,
-        recipientNFT: await signer?.getAddress() as string,
-        unwrap: false,
-        returnData: ethers.constants.HashZero,
-        swapAndMintReturnData: ethers.constants.HashZero
-      }
-
-
-
-      const tx = await ctx.execute(id, data);
-
-      if (tx) {
-        setTransactionHash(tx.hash);
-        await tx.wait();
-        // Dopo aver raccolto le fee, inviale al proprietario.
-        setAlert({
-          message: `Successfully collected all fees for token ${id}.`,
-          level: AlertLevel.Success,
-        });
-      } else {
-        setAlert({
-          message: `Error collecting fees for token ${id}.`,
-          level: AlertLevel.Error,
-        });
-      }
-
-    } catch (e: any) {
-      handleTxError(e);
-    }
-    setTransactionPending(false);
-  }
 
   const tx = {
     to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
