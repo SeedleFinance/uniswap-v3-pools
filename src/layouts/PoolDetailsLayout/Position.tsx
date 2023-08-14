@@ -6,14 +6,11 @@ import { useFloating, autoUpdate } from '@floating-ui/react-dom';
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
 import { BigNumber } from '@ethersproject/bignumber';
 import { isAddress } from '@ethersproject/address';
-import { CurrencyAmount, Percent, Price, Token } from '@uniswap/sdk-core';
-import { Pool, Position as UniPosition, NonfungiblePositionManager, TickMath } from '@uniswap/v3-sdk';
-
+import { CurrencyAmount, Price, Token, Fraction, Percent, NativeCurrency } from '@uniswap/sdk-core';
+import { Pool, Position as UniPosition, NonfungiblePositionManager, TickMath, tickToPrice, CollectOptions } from '@uniswap/v3-sdk';
 import { useChainId } from '../../hooks/useChainId';
 import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
-
 import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
-
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 import Transaction from './Transaction';
 import TransferModal from './TransferModal';
@@ -22,16 +19,32 @@ import Alert, { AlertLevel } from '../../components/Alert/Alert';
 import Menu from '../../components/Menu/Menu';
 import RangeVisual from './RangeVisual';
 import TransactionModal from '../../components/TransactionModal';
-
-import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, V3UTILS } from '../../common/constants';
+import {
+  LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, SWAP_ROUTER_ADDRESSES,
+  DEFAULT_SLIPPAGE,
+  SWAP_SLIPPAGE,
+  ZERO_PERCENT,
+} from '../../common/constants';
 import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import Warning from '../../components/icons/Warning';
 import ElipsisVertical from '../../components/EllipsisVertical';
 import { Contract, ethers } from 'ethers';
-import { findMatchingPosition, findPositionById } from '../../components/AddLiquidity/utils';
-import v3utils_abi from '../../abis/v3utils.json';
+import {
+  findMatchingPosition, findPositionById, positionFromAmounts,
+  calculateNewAmounts,
+  positionDistance,
+  tokenAmountNeedApproval,
+  toCurrencyAmount,
+} from '../../components/AddLiquidity/utils';
+import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
 import { parseEther, parseUnits } from '@ethersproject/units';
+import { getContract } from '../../hooks/useContract';
+import { useAllPositions } from '../../hooks/usePosition';
+import { AddressZero } from '@ethersproject/constants';
+import MaticNativeCurrency from '../../utils/matic';
+import { getNativeToken, isNativeToken } from '../../utils/tokens';
+
 
 type Instructions = {
   whatToDo: number;
@@ -93,6 +106,8 @@ function Position({
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
 
   const router = useRouter();
+
+  const allPositions = useAllPositions(account);
 
   const [showTransactions, setShowTransactions] = useState<boolean>(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState<boolean>(false);
@@ -216,91 +231,66 @@ function Position({
     setShowTransactions(!showTransactions);
   };
 
-  const handleApprove = async () => {
-    setShowActions(false);
-    setTransactionPending(true);
-    setAlert({
-      message: 'Approving...',
-      level: AlertLevel.Success,
-    });
-
-    try {
-      let ABI = ["function approve(address to, uint256 tokenId)"];
-      let iface = new ethers.utils.Interface(ABI);
-
-      let calldata = iface.encodeFunctionData("approve", [V3UTILS[chainId as number], id]);
-
-      const tx = await signer!.sendTransaction({
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-        data: calldata,
-      });
-
-      setTransactionHash(tx.hash);
-      await tx.wait();
-      setTransactionPending(false);
-      setAlert({
-        message: 'Approved!',
-        level: AlertLevel.Success,
-      });
-    } catch (e) {
-      setTransactionPending(false);
-      setAlert({
-        message: 'Approval Failed',
-        level: AlertLevel.Error,
-      });
-    }
-  };
-
-
   const handleAddLiquidity = () => {
     router.push(
       `/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=${pool.fee}&position=${id}`,
     );
   };
 
-  async function handleCollectFees() {
+  const onAddLiquidityAfterCollect = async (_amount0: string, _amount1: string) => {
+    setTransactionPending(true);
+    console.log('onAddLiquidityAfterCollect', _amount0, _amount1)
     try {
+      const newPosition = positionFromAmounts(
+        {
+          pool: pool,
+          tickLower: entity.tickLower,
+          tickUpper: entity.tickUpper,
+          val0: Number(_amount0),
+          val1: Number(_amount1),
+        },
+        false,
+      );
 
-      // Utilizza uint128 max invece di MaxUint256 per amount0Max e amount1Max
-      const maxUint128 = ethers.BigNumber.from("2").pow(128).sub(1).toString();
+      const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
 
-      let params = {
-        tokenId: id,
-        recipient: await signer!.getAddress(),
-        amount0Max: maxUint128,
-        amount1Max: maxUint128,
-      };
+      /* const slippageTolerance =
+        baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
+        */
 
-      let ABI = ["function collect(tuple(uint256 tokenId,address recipient,uint128 amount0Max,uint128 amount1Max))"];
-      let iface = new ethers.utils.Interface(ABI);
+      const depositWrapped = false;
+      const useNative =
+        isNativeToken(pool.token0) || isNativeToken(pool.token1)
+          ? !depositWrapped
+            ? getNativeToken(chainId)
+            : undefined
+          : undefined;
 
-      let calldata = iface.encodeFunctionData("collect", [{
-        tokenId: params.tokenId,
-        recipient: params.recipient,
-        amount0Max: params.amount0Max,
-        amount1Max: params.amount1Max
-      }]);
+      const slippageTolerance = DEFAULT_SLIPPAGE
+
+      const { calldata, value } = NonfungiblePositionManager.addCallParameters(newPosition, {
+        tokenId: Number(id),
+        deadline,
+        slippageTolerance,
+        useNative
+      })
 
       const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
         data: calldata,
-        value: 0,
+        value,
       };
-
-      setTransactionPending(true);
 
       const estimatedGas = await signer!.estimateGas(tx);
       const res = await signer!.sendTransaction({
         ...tx,
         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
       });
-
       if (res) {
         setTransactionHash(res.hash);
         await res.wait();
-        // Dopo aver raccolto le fee, inviale al proprietario.
         setAlert({
-          message: `Successfully collected all fees for token ${id}.`,
+          message: 'Liquidity added to the pool.',
           level: AlertLevel.Success,
         });
       }
@@ -308,13 +298,23 @@ function Position({
       handleTxError(e);
     }
     setTransactionPending(false);
+    setTransactionHash(null);
   };
 
-  async function handleManualCompound() {
-    try {
+  const handleCompound = async () => {
+    setTransactionPending(true);
+    setAlert({
+      message: 'Collecting...',
+      level: AlertLevel.Success,
+    });
 
+    const amount0 = uncollectedFees[0]?.toExact();
+    const amount1 = uncollectedFees[1]?.toExact();
+
+    try {
       // Utilizza uint128 max invece di MaxUint256 per amount0Max e amount1Max
       const maxUint128 = ethers.BigNumber.from("2").pow(128).sub(1).toString();
+      console.log("All Positions: ", allPositions)
 
       let params = {
         tokenId: id,
@@ -323,15 +323,11 @@ function Position({
         amount1Max: maxUint128,
       };
 
-      let ABI = ["function collect(tuple(uint256 tokenId,address recipient,uint128 amount0Max,uint128 amount1Max))"];
-      let iface = new ethers.utils.Interface(ABI);
-
-      let calldata = iface.encodeFunctionData("collect", [{
-        tokenId: params.tokenId,
-        recipient: params.recipient,
-        amount0Max: params.amount0Max,
-        amount1Max: params.amount1Max
-      }]);
+      const { calldata, value } = NonfungiblePositionManager.safeTransferFromParameters({
+        sender: account as string,
+        recipient: await signer!.getAddress(),
+        tokenId: id.toString(),
+      });
 
       const tx = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
@@ -350,7 +346,6 @@ function Position({
       if (res) {
         setTransactionHash(res.hash);
         await res.wait();
-        // Dopo aver raccolto le fee, inviale al proprietario.
         setAlert({
           message: `Successfully collected all fees for token ${id}.`,
           level: AlertLevel.Success,
@@ -361,13 +356,64 @@ function Position({
     }
     setTransactionPending(false);
 
-    let amount1, amount0;
-    amount1 = uncollectedFees[1].toFixed(6);
-    amount0 = uncollectedFees[0].toFixed(6);
+    setAlert({
+      message: 'Adding liquidity...',
+      level: AlertLevel.Success,
+    });
+    setTransactionPending(true);
 
-    router.push(
-      `/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=${pool.fee}&position=${id}&amount0=${amount0.toString()}&amount1=${amount1.toString()}`,
-    );
+    onAddLiquidityAfterCollect(amount0, amount1);
+
+    setTransactionPending(false);
+    setTransactionHash(null);
+  };
+
+  async function handleCollectFees() {
+    console.log("Collecting Fees")
+    try {
+      // Utilizza uint128 max invece di MaxUint256 per amount0Max e amount1Max
+      const maxUint128 = ethers.BigNumber.from("2").pow(128).sub(1).toString();
+      console.log("All Positions: ", allPositions)
+
+      let params = {
+        tokenId: id,
+        recipient: await signer!.getAddress(),
+        amount0Max: maxUint128,
+        amount1Max: maxUint128,
+      };
+
+      const { calldata, value } = NonfungiblePositionManager.safeTransferFromParameters({
+        sender: account as string,
+        recipient: await signer!.getAddress(),
+        tokenId: id.toString(),
+      });
+
+      const tx = {
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        data: calldata,
+        value: 0,
+      };
+
+      setTransactionPending(true);
+
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
+        ...tx,
+        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
+      });
+
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: `Successfully collected all fees for token ${id}.`,
+          level: AlertLevel.Success,
+        });
+      }
+    } catch (e: any) {
+      handleTxError(e);
+    }
+    setTransactionPending(false);
   };
 
   async function handleManualOnChainCompound() {
@@ -406,69 +452,7 @@ function Position({
         swapAndMintReturnData: ethers.constants.HashZero
       }
 
-      const ctx = new Contract(
-        V3UTILS[chainId as number],
-        v3utils_abi,
-        signer!
-      );
 
-      const tx = await ctx.execute(id, data);
-
-      if (tx) {
-        setTransactionHash(tx.hash);
-        await tx.wait();
-        // Dopo aver raccolto le fee, inviale al proprietario.
-        setAlert({
-          message: `Successfully collected all fees for token ${id}.`,
-          level: AlertLevel.Success,
-        });
-      } else {
-        setAlert({
-          message: `Error collecting fees for token ${id}.`,
-          level: AlertLevel.Error,
-        });
-      }
-
-    } catch (e: any) {
-      handleTxError(e);
-    }
-    setTransactionPending(false);
-  }
-
-  async function handleClosePosition() {
-    let _liq = Number(parseInt(entity.liquidity.toString()) - parseInt(uncollectedFees[0].toSignificant(6)) - parseInt(uncollectedFees[1].toSignificant(6)))
-
-    try {
-      const data: Instructions = {
-        whatToDo: 1,
-        targetToken: ethers.constants.AddressZero,
-        amountRemoveMin0: 0,
-        amountRemoveMin1: 0,
-        amountIn0: 0,
-        amountOut0Min: 0,
-        amountIn1: 0,
-        amountOut1Min: 0,
-        feeAmount0: "0",
-        feeAmount1: "0",
-        fee: 0,
-        tickLower: 0,
-        tickUpper: 0,
-        liquidity: String(_liq),
-        amountAddMin0: 0,
-        amountAddMin1: 0,
-        deadline: Math.floor(Date.now() / 1000) + 1000,
-        recipient: await signer?.getAddress() as string,
-        recipientNFT: await signer?.getAddress() as string,
-        unwrap: false,
-        returnData: ethers.constants.HashZero,
-        swapAndMintReturnData: ethers.constants.HashZero
-      }
-
-      const ctx = new Contract(
-        V3UTILS[chainId as number],
-        v3utils_abi,
-        signer!
-      );
 
       const tx = await ctx.execute(id, data);
 
@@ -576,6 +560,69 @@ function Position({
       });
     }
   };
+
+  /*  const handleClosePosition = async () => {
+     setTransactionPending(true);
+ 
+     try {
+       const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
+       const depositWrapped = false;
+       const useNative =
+         isNativeToken(pool.token0) || isNativeToken(pool.token1)
+           ? !depositWrapped
+             ? getNativeToken(chainId)
+             : undefined
+           : undefined;
+ 
+       const collectOptions: Omit<CollectOptions, 'tokenId'> = {
+         expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+           pool.token0,
+           0
+         ),
+         expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+           pool.token1,
+           0
+         ),
+         recipient: String(signer?.getAddress()),
+       }
+ 
+       const { calldata, value } = NonfungiblePositionManager.removeCallParameters((id as any),
+         {
+           tokenId: id.toString(),
+           liquidityPercentage: new Percent(1),
+           deadline: deadline,
+           slippageTolerance: new Percent(50, 10_000),
+           burnToken: true,
+           collectOptions
+         },
+       );
+ 
+ 
+       const tx = {
+         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
+         data: calldata,
+         value,
+       };
+ 
+       const estimatedGas = await signer!.estimateGas(tx);
+       const res = await signer!.sendTransaction({
+         ...tx,
+         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
+       });
+       if (res) {
+         setTransactionHash(res.hash);
+         await res.wait();
+         setAlert({
+           message: 'Liquidity removed from the pool.',
+           level: AlertLevel.Success,
+         });
+       }
+     } catch (e: any) {
+       handleTxError(e);
+     }
+     setTransactionPending(false);
+     setTransactionHash(null);
+   }; */
 
   const resetAlert = () => {
     setAlert(null);
@@ -694,14 +741,13 @@ function Position({
                     </button>
                   ) : (
                     <>
-
                       <button className="text-left my-1" onClick={handleAddLiquidity}>
                         Add Liquidity
                       </button>
                       <button className="text-left my-1" onClick={handleCollectFees}>
                         Collect Fees
                       </button>
-                      <button className="text-left my-1" onClick={handleManualCompound} disabled={chainId == 137}>
+                      <button className="text-left my-1" onClick={handleCompound} disabled={false}>
                         Compound
                       </button>
                       <div className="pt-1 mt-1">
@@ -714,19 +760,6 @@ function Position({
                           Remove
                         </button>
                       </div>
-                      {chainId == 137 && (
-                        <div className="pt-1 mt-1">
-                          <button className="text-left my-1" onClick={handleApprove} >
-                            Approve
-                          </button>
-                          <button className="text-left my-1" onClick={handleClosePosition} >
-                            Close Position
-                          </button>
-                          <button className="text-left my-1" onClick={handleManualOnChainCompound} >
-                            Compound On-Chain
-                          </button>
-                        </div>
-                      )}
                     </>
                   )}
                 </Menu>

@@ -1,11 +1,10 @@
-import React from "react";
 import { Token } from "@uniswap/sdk-core";
 import { Pool } from "@uniswap/v3-sdk";
-
 import Position from "./Position";
 import IconHelper from "../../components/icons/Helper";
 import Tooltip from "../../components/Tooltip";
 import { LABELS } from "../../common/constants";
+import { useAccount } from "wagmi";
 
 interface Props {
   positions: any[];
@@ -14,7 +13,9 @@ interface Props {
   quoteToken: Token;
 }
 
+
 function Positions({ positions, pool, baseToken, quoteToken }: Props) {
+
   return (
     <div className="w-full flex overflow-x-auto flex-col my-4 rounded-lg bg-surface-0 shadow-sm">
       <table className="table-auto w-full text-high text-0.875">
