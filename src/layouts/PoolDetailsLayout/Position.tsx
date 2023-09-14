@@ -44,6 +44,7 @@ import { useAllPositions } from '../../hooks/usePosition';
 import { AddressZero } from '@ethersproject/constants';
 import MaticNativeCurrency from '../../utils/matic';
 import { getNativeToken, isNativeToken } from '../../utils/tokens';
+import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 
 
 type Instructions = {
@@ -237,144 +238,6 @@ function Position({
     );
   };
 
-  const onAddLiquidityAfterCollect = async (_amount0: string, _amount1: string) => {
-    setTransactionPending(true);
-    console.log('onAddLiquidityAfterCollect', _amount0, _amount1)
-    try {
-      const newPosition = positionFromAmounts(
-        {
-          pool: pool,
-          tickLower: entity.tickLower,
-          tickUpper: entity.tickUpper,
-          val0: Number(_amount0),
-          val1: Number(_amount1),
-        },
-        false,
-      );
-
-      const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
-
-      /* const slippageTolerance =
-        baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
-        */
-
-      const depositWrapped = false;
-      const useNative =
-        isNativeToken(pool.token0) || isNativeToken(pool.token1)
-          ? !depositWrapped
-            ? getNativeToken(chainId)
-            : undefined
-          : undefined;
-
-      const slippageTolerance = DEFAULT_SLIPPAGE
-
-      const { calldata, value } = NonfungiblePositionManager.addCallParameters(newPosition, {
-        tokenId: Number(id),
-        deadline,
-        slippageTolerance,
-        useNative
-      })
-
-      const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
-        data: calldata,
-        value,
-      };
-
-      const estimatedGas = await signer!.estimateGas(tx);
-      const res = await signer!.sendTransaction({
-        ...tx,
-        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
-      });
-      if (res) {
-        setTransactionHash(res.hash);
-        await res.wait();
-        setAlert({
-          message: 'Liquidity added to the pool.',
-          level: AlertLevel.Success,
-        });
-      }
-    } catch (e: any) {
-      handleTxError(e);
-    }
-    setTransactionPending(false);
-    setTransactionHash(null);
-  };
-
-  const handleCompound = async () => {
-    setTransactionPending(true);
-    setAlert({
-      message: 'Collecting...',
-      level: AlertLevel.Success,
-    });
-
-    const amount0 = uncollectedFees[0]?.toExact();
-    const amount1 = uncollectedFees[1]?.toExact();
-
-    try {
-      const collectOptions: CollectOptions = {
-        tokenId: Number(id),
-        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
-          pool.token0,
-          Number(parseEther(uncollectedFees[0].toExact()))
-        ),
-        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-          pool.token1,
-          Number(parseEther(uncollectedFees[1].toExact()))
-        ),
-        recipient: await signer?.getAddress() as string,
-      }
-
-      const { calldata, value } =
-        NonfungiblePositionManager.collectCallParameters(collectOptions)
-
-      const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
-        data: calldata,
-        value: 0,
-      };
-
-      setTransactionPending(true);
-
-      const estimatedGas = await signer!.estimateGas(tx);
-      const res = await signer!.sendTransaction({
-        ...tx,
-        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
-      });
-
-      if (res) {
-        setTransactionHash(res.hash);
-        await res.wait();
-        setAlert({
-          message: `Successfully collected all fees for token ${id}.`,
-          level: AlertLevel.Success,
-        });
-      }
-    } catch (e: any) {
-      handleTxError(e);
-    }
-    setTransactionPending(false);
-
-    setAlert({
-      message: 'Adding liquidity...',
-      level: AlertLevel.Success,
-    });
-    setTransactionPending(true);
-
-    if (!amount0 || !amount1) {
-      setAlert({
-        message: 'No fees to collect.',
-        level: AlertLevel.Error,
-      });
-      return;
-    }
-
-    onAddLiquidityAfterCollect(amount0, amount1);
-
-    setTransactionPending(false);
-    setTransactionHash(null);
-  };
-
   async function handleCollectFees() {
     try {
       const collectOptions: CollectOptions = {
@@ -419,10 +282,6 @@ function Position({
       handleTxError(e);
     }
     setTransactionPending(false);
-  };
-
-  const tx = {
-    to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
   };
 
   const handleTransfer = () => {
@@ -504,69 +363,6 @@ function Position({
       });
     }
   };
-
-  /*  const handleClosePosition = async () => {
-     setTransactionPending(true);
- 
-     try {
-       const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
-       const depositWrapped = false;
-       const useNative =
-         isNativeToken(pool.token0) || isNativeToken(pool.token1)
-           ? !depositWrapped
-             ? getNativeToken(chainId)
-             : undefined
-           : undefined;
- 
-       const collectOptions: Omit<CollectOptions, 'tokenId'> = {
-         expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
-           pool.token0,
-           0
-         ),
-         expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-           pool.token1,
-           0
-         ),
-         recipient: String(signer?.getAddress()),
-       }
- 
-       const { calldata, value } = NonfungiblePositionManager.removeCallParameters((id as any),
-         {
-           tokenId: id.toString(),
-           liquidityPercentage: new Percent(1),
-           deadline: deadline,
-           slippageTolerance: new Percent(50, 10_000),
-           burnToken: true,
-           collectOptions
-         },
-       );
- 
- 
-       const tx = {
-         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
-         data: calldata,
-         value,
-       };
- 
-       const estimatedGas = await signer!.estimateGas(tx);
-       const res = await signer!.sendTransaction({
-         ...tx,
-         gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
-       });
-       if (res) {
-         setTransactionHash(res.hash);
-         await res.wait();
-         setAlert({
-           message: 'Liquidity removed from the pool.',
-           level: AlertLevel.Success,
-         });
-       }
-     } catch (e: any) {
-       handleTxError(e);
-     }
-     setTransactionPending(false);
-     setTransactionHash(null);
-   }; */
 
   const resetAlert = () => {
     setAlert(null);
@@ -690,9 +486,6 @@ function Position({
                       </button>
                       <button className="text-left my-1" onClick={handleCollectFees}>
                         Collect Fees
-                      </button>
-                      <button className="text-left my-1" onClick={handleCompound} disabled={false}>
-                        Compound
                       </button>
                       <div className="pt-1 mt-1">
                         <div>

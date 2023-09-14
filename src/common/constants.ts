@@ -20,9 +20,7 @@ export const NONFUNGIBLE_POSITION_MANAGER_ADDRESSES = constructSameAddressMap(
   '0xC36442b4a4522E871399CD717aBDD847Ab11FE88',
 );
 
-export const V3UTILS = constructSameAddressMap(
-  '0x865A00aC030B8E01657F3BC4a90bfD43a58FD8ba',
-);
+export const V3UTILS = constructSameAddressMap('0x865A00aC030B8E01657F3BC4a90bfD43a58FD8ba');
 
 export const SWAP_ROUTER_ADDRESSES = constructSameAddressMap(
   '0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45',
@@ -143,16 +141,14 @@ export const CRV: { [chainId: number]: Token } = {
   1: new Token(1, '0xD533a949740bb3306d119CC777fa900bA034cd52', 18, 'CRV', 'Curve DAO Token'),
 };
 
-export const MATICX: { [key: number]: Token } = {
-  1: new Token(1, '0xf03a7eb46d01d9ecaa104558c732cf82f6b6b645', 18,
-    'MATICX',
-    'Stader Labs MaticX'),
+export const MaticX: { [key: number]: Token } = {
+  1: new Token(1, '0xf03a7eb46d01d9ecaa104558c732cf82f6b6b645', 18, 'MATICX', 'Stader Labs MaticX'),
   137: new Token(
     137,
     '0xfa68fb4628dff1028cfec22b4162fccd0d45efb6',
     18,
     'MATICX',
-    'Stader Labs MaticX'
+    'Stader Labs MaticX',
   ),
 };
 

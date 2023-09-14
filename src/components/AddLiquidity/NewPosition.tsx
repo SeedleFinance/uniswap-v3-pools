@@ -64,7 +64,6 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
   const positionId = query.position;
   const amountToken0 = query.amount0;
   const amountToken1 = query.amount1;
-
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
 
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
@@ -157,6 +156,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       tickUpper = Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) * tickSpacing;
     } else {
       const position = findPositionById(positions, positionId as string);
+      console.log(position)
       if (position) {
         tickLower = position.entity.tickLower;
         tickUpper = position.entity.tickUpper;
@@ -553,80 +553,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
     setTransactionHash(null);
   };
 
-  const onRemoveLiquidity = async () => {
-    setTransactionPending(true);
-    const matchingPosition = findMatchingPosition(positions, fee, tickLower, tickUpper);
 
-    try {
-      const tokenId = matchingPosition?.id;
-      if (!tokenId) {
-        throw new Error('No position selected');
-      }
-
-      const liquidity = matchingPosition?.liquidity;
-      if (!liquidity) {
-        throw new Error('No liquidity found');
-      }
-
-      const deadline = +new Date() + 10 * 60 * 1000; // TODO: use current blockchain timestamp
-      const slippageTolerance =
-        baseTokenDisabled || quoteTokenDisabled ? ZERO_PERCENT : DEFAULT_SLIPPAGE;
-
-      const useNative =
-        isNativeToken(pool.token0) || isNativeToken(pool.token1)
-          ? !depositWrapped
-            ? getNativeToken(chainId)
-            : undefined
-          : undefined;
-
-      const collectOptions: Omit<CollectOptions, 'tokenId'> = {
-        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
-          pool.token0,
-          0
-        ),
-        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-          pool.token1,
-          0
-        ),
-        recipient: String(signer?.getAddress()),
-      }
-
-      const { calldata, value } = NonfungiblePositionManager.removeCallParameters((positionId as any),
-        {
-          tokenId: tokenId,
-          liquidityPercentage: new Percent(100),
-          deadline: deadline,
-          slippageTolerance: slippageTolerance,
-          burnToken: true,
-          collectOptions
-        },
-      );
-
-      const tx = {
-        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
-        data: calldata,
-        value,
-      };
-
-      const estimatedGas = await signer!.estimateGas(tx);
-      const res = await signer!.sendTransaction({
-        ...tx,
-        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
-      });
-      if (res) {
-        setTransactionHash(res.hash);
-        await res.wait();
-        setAlert({
-          message: 'Liquidity removed from the pool.',
-          level: AlertLevel.Success,
-        });
-      }
-    } catch (e: any) {
-      handleTxError(e);
-    }
-    setTransactionPending(false);
-    setTransactionHash(null);
-  };
 
   const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
@@ -864,15 +791,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             </Button>
 
           )}
-          <Button
-            onClick={onRemoveLiquidity}
-            disabled={transactionPending}
-            tabIndex={8}
-            size="lg"
-            className="mr-2"
-          >
-            Remove Liquidity
-          </Button>
+         
           <Button variant="ghost" onClick={onCancel} tabIndex={9}>
             Cancel
           </Button>
