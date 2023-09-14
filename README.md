@@ -1,6 +1,5 @@
 # Seedle Finance - Uniswap V3 Pool Manager
 
-
 A UI to manage Uniswap v3 pools. Check the hosted version at https://seedle.finance
 
 ## Getting Started
@@ -12,3 +11,9 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## New Features
+
+- Collect fees
+- Close position
+- Compound collected fees

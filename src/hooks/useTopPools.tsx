@@ -9,7 +9,7 @@ import { getClient } from '../lib/apollo';
 
 const QUERY_TOP_POOLS = gql`
   query top_pools($date: Int!) {
-    poolDayDatas(where: { date: $date }, orderBy: volumeUSD, orderDirection: desc, first: 200) {
+    poolDayDatas(where: { date: $date }, orderBy: volumeUSD, orderDirection: desc, first: 500) {
       pool {
         feeTier
         tick

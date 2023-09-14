@@ -17,7 +17,7 @@ const TokensContext = React.createContext({
   loading: true,
   empty: false,
   totalTokenValue: 0,
-  refreshTokenPrices: () => {},
+  refreshTokenPrices: () => { },
 });
 export const useTokens = () => useContext(TokensContext);
 

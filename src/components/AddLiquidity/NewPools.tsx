@@ -4,6 +4,7 @@ import endOfYesterday from 'date-fns/endOfYesterday';
 
 import { useChainId } from '../../hooks/useChainId';
 import { useTopPools } from '../../hooks/useTopPools';
+
 import Pools from './Pools';
 
 interface Props {

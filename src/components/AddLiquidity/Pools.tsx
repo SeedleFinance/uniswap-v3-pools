@@ -42,7 +42,7 @@ function Pools({ pools, onPoolClick, filter }: Props) {
   return (
     <div className="w-full flex flex-wrap">
       {filteredPools
-        .slice(0, 19)
+        .slice(0, 500)
         .map(({ key, baseToken, quoteToken, entity, positions }: PoolState) => (
           <div
             key={key}

@@ -6,14 +6,11 @@ import { useFloating, autoUpdate } from '@floating-ui/react-dom';
 import { FloatingPortal } from '@floating-ui/react-dom-interactions';
 import { BigNumber } from '@ethersproject/bignumber';
 import { isAddress } from '@ethersproject/address';
-import { CurrencyAmount, Price, Token } from '@uniswap/sdk-core';
-import { Pool, Position as UniPosition, NonfungiblePositionManager } from '@uniswap/v3-sdk';
-
+import { CurrencyAmount, Price, Token, Fraction, Percent, NativeCurrency } from '@uniswap/sdk-core';
+import { Pool, Position as UniPosition, NonfungiblePositionManager, TickMath, tickToPrice, CollectOptions } from '@uniswap/v3-sdk';
 import { useChainId } from '../../hooks/useChainId';
 import { useTransactionTotals, useReturnValue, useAPR, useFeeAPY } from '../../hooks/calculations';
-
 import { getPositionStatus, PositionStatus } from '../../utils/positionStatus';
-
 import { useCurrencyConversions } from '../../providers/CurrencyConversionProvider';
 import Transaction from './Transaction';
 import TransferModal from './TransferModal';
@@ -22,12 +19,58 @@ import Alert, { AlertLevel } from '../../components/Alert/Alert';
 import Menu from '../../components/Menu/Menu';
 import RangeVisual from './RangeVisual';
 import TransactionModal from '../../components/TransactionModal';
-
-import { LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES } from '../../common/constants';
+import {
+  LABELS, NONFUNGIBLE_POSITION_MANAGER_ADDRESSES, SWAP_ROUTER_ADDRESSES,
+  DEFAULT_SLIPPAGE,
+  SWAP_SLIPPAGE,
+  ZERO_PERCENT,
+} from '../../common/constants';
 import Button from '../../components/Button';
 import Tooltip from '../../components/Tooltip';
 import Warning from '../../components/icons/Warning';
 import ElipsisVertical from '../../components/EllipsisVertical';
+import { Contract, ethers } from 'ethers';
+import {
+  findMatchingPosition, findPositionById, positionFromAmounts,
+  calculateNewAmounts,
+  positionDistance,
+  tokenAmountNeedApproval,
+  toCurrencyAmount,
+} from '../../components/AddLiquidity/utils';
+import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
+import { formatEther, parseEther, parseUnits } from '@ethersproject/units';
+import { getContract } from '../../hooks/useContract';
+import { useAllPositions } from '../../hooks/usePosition';
+import { AddressZero } from '@ethersproject/constants';
+import MaticNativeCurrency from '../../utils/matic';
+import { getNativeToken, isNativeToken } from '../../utils/tokens';
+import { useTokenFunctions } from '../../hooks/useTokenFunctions';
+
+
+type Instructions = {
+  whatToDo: number;
+  targetToken: string;
+  amountRemoveMin0: number;
+  amountRemoveMin1: number;
+  amountIn0: number;
+  amountOut0Min: number;
+  amountIn1: number;
+  amountOut1Min: number;
+  feeAmount0: string;
+  feeAmount1: string;
+  fee: number;
+  tickLower: number;
+  tickUpper: number;
+  liquidity: string;
+  amountAddMin0: number;
+  amountAddMin1: number;
+  deadline: number;
+  recipient: string;
+  recipientNFT: string;
+  unwrap: boolean;
+  returnData: string;
+  swapAndMintReturnData: string;
+};
 
 export interface PositionProps {
   id: BigNumber;
@@ -64,6 +107,8 @@ function Position({
   const { convertToGlobalFormatted, formatCurrencyWithSymbol } = useCurrencyConversions();
 
   const router = useRouter();
+
+  const allPositions = useAllPositions(account);
 
   const [showTransactions, setShowTransactions] = useState<boolean>(false);
   const [expandedUncollectedFees, setExpandedUncollectedFees] = useState<boolean>(false);
@@ -191,6 +236,52 @@ function Position({
     router.push(
       `/add?quoteToken=${quoteToken.symbol}&baseToken=${baseToken.symbol}&fee=${pool.fee}&position=${id}`,
     );
+  };
+
+  async function handleCollectFees() {
+    try {
+      const collectOptions: CollectOptions = {
+        tokenId: Number(id),
+        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+          pool.token0,
+          Number(parseEther(uncollectedFees[0].toExact()))
+        ),
+        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+          pool.token1,
+          Number(parseEther(uncollectedFees[1].toExact()))
+        ),
+        recipient: await signer?.getAddress() as string,
+      }
+
+      const { calldata, value } =
+        NonfungiblePositionManager.collectCallParameters(collectOptions)
+
+      const tx = {
+        to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId as number],
+        data: calldata,
+        value: 0,
+      };
+
+      setTransactionPending(true);
+
+      const estimatedGas = await signer!.estimateGas(tx);
+      const res = await signer!.sendTransaction({
+        ...tx,
+        gasLimit: estimatedGas.mul(BigNumber.from(10000 + 2000)).div(BigNumber.from(10000)),
+      });
+
+      if (res) {
+        setTransactionHash(res.hash);
+        await res.wait();
+        setAlert({
+          message: `Successfully collected all fees for token ${id}.`,
+          level: AlertLevel.Success,
+        });
+      }
+    } catch (e: any) {
+      handleTxError(e);
+    }
+    setTransactionPending(false);
   };
 
   const handleTransfer = () => {
@@ -393,6 +484,9 @@ function Position({
                       <button className="text-left my-1" onClick={handleAddLiquidity}>
                         Add Liquidity
                       </button>
+                      <button className="text-left my-1" onClick={handleCollectFees}>
+                        Collect Fees
+                      </button>
                       <div className="pt-1 mt-1">
                         <div>
                           <button className="text-left my-1" onClick={handleTransfer}>
@@ -415,7 +509,7 @@ function Position({
       {showTransactions && (
         <tr>
           <td colSpan={12}>
-            <table className="table-auto w-full border-separate w-full my-2 px-4 -ml-4 mt-6">
+            <table className="table-auto w-full border-separate  my-2 px-4 -ml-4 mt-6">
               <thead className="bg-surface-5">
                 <tr className="text-left">
                   <th className="px-3 py-2">Timestamp</th>

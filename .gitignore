@@ -27,3 +27,4 @@ yarn-error.log*
 
 tsconfig.tsbuildinfo
 .parcel-cache/
+.vercel

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAccount, useProvider, useQuery, useSigner } from 'wagmi';
 // import { useSearchParams } from 'react-router-dom';
-import { TickMath, tickToPrice, NonfungiblePositionManager, Position } from '@uniswap/v3-sdk';
-import { Token, CurrencyAmount, Fraction } from '@uniswap/sdk-core';
+import { TickMath, tickToPrice, NonfungiblePositionManager, Position, CollectOptions } from '@uniswap/v3-sdk';
+import { Token, CurrencyAmount, Fraction, Percent } from '@uniswap/sdk-core';
 import { BigNumber } from '@ethersproject/bignumber';
 import { AlphaRouter, SwapToRatioStatus, SwapToRatioRoute } from '@uniswap/smart-order-router';
-
 import { useChainId } from '../../hooks/useChainId';
 import { useTokenFunctions } from '../../hooks/useTokenFunctions';
 import { usePool } from '../../hooks/usePool';
@@ -45,6 +44,7 @@ import {
   findPositionById,
 } from './utils';
 import { useRouter } from 'next/router';
+import { parseEther } from '@ethersproject/units';
 
 interface Props {
   baseToken: Token;
@@ -62,7 +62,8 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
 
   const { query } = useRouter();
   const positionId = query.position;
-
+  const amountToken0 = query.amount0;
+  const amountToken1 = query.amount1;
   const [depositWrapped, setDepositWrapped] = useState<boolean>(false);
 
   const { getBalances, getAllowances, approveToken } = useTokenFunctions(
@@ -102,6 +103,13 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
 
   const [focusedRangeInput, setFocusedRangeInput] = useState<HTMLInputElement | null>(null);
   const [alert, setAlert] = useState<{ message: string; level: AlertLevel } | null>(null);
+
+  useEffect(() => {
+    if (amountToken0 && amountToken1) {
+      setBaseAmount(parseFloat(String(amountToken0)));
+      setQuoteAmount(parseFloat(String(amountToken1)));
+    }
+  }, [amountToken0, amountToken1]);
 
   useEffect(() => {
     const _run = async () => {
@@ -148,6 +156,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
       tickUpper = Math.round((tickCurrent + 10 * tickSpacing) / tickSpacing) * tickSpacing;
     } else {
       const position = findPositionById(positions, positionId as string);
+      console.log(position)
       if (position) {
         tickLower = position.entity.tickLower;
         tickUpper = position.entity.tickUpper;
@@ -506,17 +515,17 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
 
       const { calldata, value } = matchingPosition
         ? NonfungiblePositionManager.addCallParameters(newPosition, {
-            tokenId: matchingPosition.id,
-            deadline,
-            slippageTolerance,
-            useNative,
-          })
+          tokenId: matchingPosition.id,
+          deadline,
+          slippageTolerance,
+          useNative,
+        })
         : NonfungiblePositionManager.addCallParameters(newPosition, {
-            recipient: account as string,
-            deadline,
-            slippageTolerance,
-            useNative,
-          });
+          recipient: account as string,
+          deadline,
+          slippageTolerance,
+          useNative,
+        });
 
       const tx = {
         to: NONFUNGIBLE_POSITION_MANAGER_ADDRESSES[chainId],
@@ -543,6 +552,8 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
     setTransactionPending(false);
     setTransactionHash(null);
   };
+
+
 
   const onApprove = async (token: Token, amount: number, spender: string) => {
     setTransactionPending(true);
@@ -615,7 +626,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             <PoolButton
               baseToken={baseToken}
               quoteToken={quoteToken}
-              onClick={() => {}}
+              onClick={() => { }}
               tabIndex={0}
               size="md"
             />
@@ -702,7 +713,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           <div className="lg:w-3/4 my-2">
             <DepositInput
               token={quoteToken}
-              value={quoteAmount}
+              value={amountToken0 ? Number(amountToken0) : quoteAmount}
               balance={quoteBalance}
               tabIndex={6}
               disabled={quoteTokenDisabled}
@@ -712,7 +723,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             />
             <DepositInput
               token={baseToken}
-              value={baseAmount}
+              value={amountToken1 ? Number(amountToken1) : baseAmount}
               balance={baseBalance}
               tabIndex={7}
               disabled={baseTokenDisabled}
@@ -725,6 +736,11 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             Total position value:{' '}
             <span className="font-bold">{convertToGlobalFormatted(totalPositionValue)}</span>
           </div>
+          {/*  <div className="w-64 mb-2 text-sm">
+            Total liqudity value:{' '}
+            <span className="font-bold">{String((parseInt(pool.liquidity.toString()) / 1e18).toFixed(2))}
+            </span>
+          </div> */}
         </div>
 
         <div className="w-64 my-2 flex">
@@ -763,6 +779,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
               Approve {quoteToken.symbol}
             </Button>
           ) : (
+
             <Button
               onClick={onAddLiquidity}
               disabled={transactionPending}
@@ -772,8 +789,9 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
             >
               Add Liquidity
             </Button>
-          )}
 
+          )}
+         
           <Button variant="ghost" onClick={onCancel} tabIndex={9}>
             Cancel
           </Button>
@@ -829,7 +847,7 @@ function NewPosition({ baseToken, quoteToken, initFee, positions, onCancel }: Pr
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 export default NewPosition;

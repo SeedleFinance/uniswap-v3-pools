@@ -248,6 +248,7 @@ export function useFetchPriceFeed(
         method: 'POST',
         body: JSON.stringify({ chainId, tokens }),
       });
+
       if (!res.ok) {
         const errors = await res.json();
         console.error(errors);
@@ -258,7 +259,6 @@ export function useFetchPriceFeed(
       }
 
       const results = await res.json();
-
       setPriceFeedResult(results);
       setLoading(false);
     };
